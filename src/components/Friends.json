@@ -1,0 +1,24 @@
+[
+    {
+      "id": 23,
+      "name": "George",
+      "email": "gear@archaiodata.com",
+      "phone": 247977080,
+      "truc": "ca marche",
+      "Type" : "Feature"
+    },
+    {
+      "id": 24,
+      "name": "Kevin",
+      "email": "kev@bsa.uk",
+      "phone": 676318876,
+      "Type" : "Artifact"
+    },
+    {
+      "id": 25,
+      "name": "Lora",
+      "email": "lora@efa.gr",
+      "truc": "ca marche",
+      "Type" : "Artifact"
+    }
+  ]

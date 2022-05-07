@@ -1,0 +1,4941 @@
+
+{
+  "version": 20200528,
+  "project": "JFA Submission",
+  "crs": "Keros",
+  "fields": [
+    {
+        "field": "ConservationAction",
+        "label": "action",
+        "valuelist": [
+            "wall stabilization",
+            "surface protection"
+        ]
+    },
+    {
+        "field": "ConservationDate",
+        "label": "date"
+    },
+    {
+        "field": "ConservationNote",
+        "label": "note",
+        "multiline": true
+    },
+    {
+      "field": "CoverageEarliest",
+      "label": "phase start"
+    },
+    {
+      "field": "CoverageLatest",
+      "label": "phase end"
+    },
+    {
+      "field": "CoverageSpatial",
+      "multiline": true
+    },
+    {
+      "field": "CoverageTemporal",
+      "label": "phase",
+      "valuelist": [
+        "Phase A",
+        "Phase B",
+        "Phase C",
+        "Pre-Phase A",
+        "Phase A/B",
+        "Phase B/C",
+        "Phase A-C",
+        "Post-Phase C",
+        "Middle Cycladic",
+        "Late Cycladic",
+        "Period Group B",
+        "Period Group C",
+        "Period Group D",
+        "EBA",
+        "Unknown"
+      ]
+    },
+    {
+      "field": "Creator",
+      "label": "initials",
+      "tip": "Initials: the initials of the person(s) recording the data",
+      "valuelist": [
+        
+      ],
+      "multivalue": true,
+      "multitype": true
+    },
+    {
+      "field": "DateEarliest",
+      "label": "start"
+    },
+    {
+      "field": "DateLatest",
+      "label": "end"
+    },
+    {
+      "field": "Identifier"
+    },
+    {
+      "field": "Description",
+      "label": "desc",
+      "tip": "Interpretation",
+      "multiline": true
+    },
+    {
+      "field": "MethodConditions",
+      "label": "method",
+      "tip": "Method and conditions: indicate the tool(s) used and whether the context was excavated after having been exposed to rain.",
+      "multivalue": true,
+      "valuelist": [
+        "Trowel",
+        "Hand Pick",
+        "Pick-Axe",
+        "Precision Tools",
+        "After Rain"
+      ]
+    },
+    {
+      "field": "NISP",
+      "label": "NISP",
+      "tip": "Number of Individual Specimens"
+    },
+    {
+      "field": "PotteryInterpretation",
+      "label": "PotteryInterpretation",
+      "tip": "Comments by pottery specialist for context",
+      "multiline": true
+    },
+    {
+      "field": "Quantity",
+      "label": "quantity",
+      "tip": "The number of observations"
+    },
+    {
+      "field": "Relation",
+      "multiline": true
+    },
+    {
+      "field": "RelationAttachments",
+      "multiline": true
+    },
+    {
+      "field": "ResidueAnalysis",
+      "label": "ForResidue?",
+      "valuelist":[
+        "Yes",
+        "No"
+        ]
+    },
+    {
+      "field": "RightsRating",
+      "label": "rating"
+    },
+    {
+      "field": "RightsStatus",
+      "label": "current"
+    },
+    {
+      "field": "RightsSidelined",
+      "label": "sidelined"
+    },
+    {
+      "field": "SlopeDescOpen",
+      "label": "opening",
+      "tip": "Slope description on opening: note the degree and direction of the slope on opening",
+      "multiline": true
+    },
+    {
+      "field": "SlopeDescClose",
+      "label": "closing",
+      "tip": "Slope description on closing: note the degree and direction of the slope on closing",
+      "multiline": true
+    },
+    {
+      "field": "SoilChemistry",
+      "label": "soil chem?",
+      "tip": "Soil chemistry: has soil chemistry been performed on this context?",
+      "valuelist": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "field": "Source",
+      "label": "trench",
+      "locked": true
+    },
+    {
+      "field": "SpecialistComment",
+      "label": "comment",
+      "tip": "Reserved for lab comments",
+      "multiline": true
+    },
+    {
+      "field": "SpecialistInitials",
+      "label": "specInitials",
+      "tip": "Specialist who analyzed a sample."
+    },
+    {
+      "field": "Title",
+      "label": "title",
+      "valuelist": [
+        
+      ],
+      "tip": "Title: a short and descriptive title"
+    },
+    {
+      "field": "Truncation",
+      "tip": "Truncation",
+      "multiline": true
+    },
+    {
+      "field": "Type",
+      "label": "type",
+      "tip": "Type: the item's primary type"
+    },
+    {
+      "field": "OleaEuropaea",
+      "label": "oleuro"
+    },
+    {
+      "field": "Juniperus",
+      "label": "juniper"
+    },
+    {
+      "field": "PrunusSp.",
+      "label": "prunus-sp"
+    },
+    {
+      "field": "PrunusAmygdalus",
+      "label": "prunus-am"
+    },
+    {
+      "field": "Angiosperm",
+      "label": "angiosp"
+    },
+    {
+      "field": "TamarixSp.",
+      "label": "tamarix"
+    },
+    {
+      "field": "EricaSp.",
+      "label": "erica"
+    },
+    {
+      "field": "Conifer",
+      "label": "conifer"
+    },
+    {
+      "field": "Bony",
+      "label": "%Bony",
+      "tip": "Percentage of Bony Fish."
+    },
+    {
+      "field": "Cartilaginous",
+      "label": "%Cartilaginous",
+      "tip": "Percentage of cartilaginous fish."
+    },
+    {
+      "field": "Families",
+      "label": "Families",
+      "tip": "Families of fish in sample.",
+      "multivalue": true,
+      "valuelist": [
+        "Sea-breams",
+        "Groupers", 
+        "Sea-bass", 
+        "Mullets", 
+        "Tuna/Mackeral", 
+        "Other" 
+      ]
+    },
+    {
+      "field": "AnatomicalUnits",
+      "label": "Anatomy",
+      "tip": "Type of anatomy in sample.",
+      "multivalue": true,
+      "valuelist": [
+        "Cranial", 
+        "Vertebrae",
+        "Other"
+      ]
+    },
+    {
+      "field": "Habitats",
+      "label": "Habitats",
+      "tip": "Type of habitats in sample.",
+      "multivalue": true,
+      "valuelist": [
+        "Coastal", 
+        "Oceanic", 
+        "Demersal", 
+        "Pelagic", 
+        "Marine", 
+        "Euryhaline", 
+        "Hard-bottom", 
+        "Soft-Bottom",
+        "Other"
+      ]
+    },
+    {
+      "field": "Burning",
+      "label": "Burning",
+      "tip": "Presence/Absence of burning.",
+      "valuelist": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "field": "CutMarks",
+      "label": "CutMarks",
+      "tip": "Presence/Absence of processing marks.",
+      "valuelist": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "field": "OtherModifications",
+      "label": "OtherMods",
+      "tip": "Presence/Absence of other modifications.",
+      "valuelist": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "field": "Bivalve",
+      "label": "%Bivalve",
+      "tip": "Percentage of bivalve."
+    },
+    {
+      "field": "Gastropod",
+      "label": "%Gastropod",
+      "tip": "Percentage of gastropod."
+    },
+    {
+      "field": "Scaphopod",
+      "label": "%Scaphopod",
+      "tip": "Percentage of schaphopod."
+    },
+    {
+      "field": "Crustacean",
+      "label": "%Crustacean",
+      "tip": "Percentage of crustacean."
+    },
+    {
+      "field": "Cephalopod",
+      "label": "%Cephalopod",
+      "tip": "Percentage of cephalopod."
+    },
+    {
+      "field": "Uchin",
+      "label": "%Uchin",
+      "tip": "Percentage of uchin."
+    },
+    {
+      "field": "Other",
+      "label": "%Other",
+      "tip": "Percentage of other."
+    },                           
+    {
+      "field": "Families",
+      "label": "Families",
+      "tip": "Families of fish in sample.",
+      "multivalue": true,
+      "valuelist": [
+        "Limpet",
+        "Topshell", 
+        "Cockle", 
+        "Murex-shell", 
+        "Other" 
+      ]
+    },
+    {
+      "field": "Burning",
+      "label": "Burning",
+      "tip": "Presence/Absence of burning.",
+      "valuelist": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "field": "Perforation",
+      "label": "Perforation",
+      "tip": "Presence/Absence of perforations.",
+      "valuelist": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "field": "Abrasion",
+      "label": "Abrasion",
+      "tip": "Presence/Absence of abrasion.",
+      "valuelist": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "field": "FinishedObject",
+      "label": "FinObj",
+      "tip": "Is a finished object.",
+      "valuelist": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "field": "Grasses%",
+      "label": "%grasses"
+    },
+    {
+      "field": "EdibleGrasses%",
+      "label": "%ediblegrass"
+    },
+    {"field": "EdibleGrassTypes",
+      "label": "edible types"
+    },
+    {
+      "field": "Dicots%",
+      "label": "%dicot"
+    },
+    {
+      "field": "EdibleDicots%",
+      "label": "%edibledicot"
+    },
+    {
+      "field": "EdibleDicotTypes",
+      "label": "dicot types"
+    },
+    {
+      "field": "Wood%",
+      "label": "%wood"
+    },
+    {
+      "field": "Reeds%",
+      "label": "%reed"
+    },
+    {
+      "field": "Sedges%",
+      "label": "%sedges"
+    },
+    {
+      "field": "Unknown%",
+      "label": "%unk"
+    },
+    {
+      "field": "GrassHuskRatio",
+      "label": "ratiogrshusk"
+    },
+    {"field": "Olive",
+      "label": "olive"
+    },
+    {"field": "OliveFr",
+      "label": "FRolive"
+    },
+    {"field": "Grape",
+      "label": "grape"
+    },
+    {"field": "GrapeFr",
+      "label": "FRgrape"
+    },
+    {"field": "FruitBerry",
+      "label": "fruberry"
+    },
+    {"field": "FruitBerryFr",
+      "label": "FRfruberr"
+    },
+    {"field": "Wheat",
+      "label": "wheat"
+    },
+    {"field": "WheatFr",
+      "label": "FRwheat"
+    },
+    {"field": "Chaff",
+      "label": "chaff"
+    },
+    {"field": "ChaffFr",
+      "label": "FRchaff"
+    },
+    {"field": "Barley",
+      "label": "barley"
+    },
+    {"field": "BarleyFr",
+      "label": "FRbarley"
+    },
+    {"field": "OtherGrain",
+      "label": "otherG"
+    },
+    {"field": "OtherGrainFr",
+      "label": "FRotherG"
+    },
+    {"field": ":Pulses",
+      "label": "pulses"
+    },
+    {"field": "PulsesFr",
+      "label": "FRpulses"
+    },
+    {"field": "Other",
+      "label": "other"
+    },
+    {"field": "OtherFr",
+      "label": "FRother"
+    },
+    {"field": "Weeds",
+      "label": "weeds"
+    },
+    {"field": "WeedsFr",
+      "label": "FRweeds"
+    }
+  ],
+  "types": [
+    {
+      "type": "Context",
+      "label": "Fill or Deposit",
+      "plural": "Fills and Deposits",
+	    "relations": [
+        {
+          "relation": "includes",
+          "type": "Partition"
+        },
+        {
+          "relation": "is above",
+          "type": "Interface"
+        },
+        {
+          "relation": "is above",
+          "type": "Event"
+        },
+        {
+          "relation": "includes",
+          "type": "Artifact"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SampleOrBag"
+        },              
+        {
+          "relation": "includes",
+          "type": "Image"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecBone"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecCharcoal"
+        },        
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecFish"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecGeoChem"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecMarine"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecObsidian"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecOSL"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecPhytolith"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecResidue"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecSeed"
+        },       
+        {
+          "relation": "includes",
+          "type": "Sample",
+		      "subtype": "HumanBone"
+        },
+        {
+          "relation": "includes",
+          "type": "Other"
+        }
+	    ],
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Sub-Type",
+              "label": "sub-type",
+              "valuelist": [
+                "Fill",
+                "Deposit",
+                "Grave fill"
+              ],
+              "tip": "Sub-type: whether this item is a fill, a deposit, or a grave fill"
+            },
+            {
+              "field": "Identifier",
+              "label": "context #",
+              "tip": "Context number: a numeric context number"
+            },
+            {
+              "field": "Title"
+            },
+            {
+              "field": "DateEarliest",
+              "tip": "Start date: the start date and time will be automatically filled in when you create the context"
+            },
+            {
+              "field": "DateLatest",
+              "tip": "End date: the end date and time will be automatically filled in when you take the closing points"
+            },
+            {
+              "field": "Creator"
+            },
+            {
+              "field": "MethodConditions"
+            },
+            {
+              "field": "SoilChemistry"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Points",
+          "label": "Co-ordinates",
+          "fields": [
+            {
+              "field": "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group": "Slope description",
+          "label": "Slope description",
+          "fields": [
+            {
+              "field": "SlopeDescOpen"
+            },
+            {
+              "field": "SlopeDescClose"
+            }
+          ]
+        },
+        {
+          "group": "Colour",
+          "label": "Colour",
+          "fields": [
+            {
+              "field": "ColourModifier",
+              "label": "modifier",
+              "tip": "Colour modifier: the strength of the colour hue",
+              "valuelist": [
+                "light",
+                "mid",
+                "dark"
+              ]
+            },
+            {
+              "field": "ColourHue",
+              "label": "hue",
+              "tip": "Colour hue: the minor colour hue",
+              "valuelist": [
+                "blackish",
+                "greyish",
+                "reddish",
+                "pinkish",
+                "orangey",
+                "yellowish",
+                "greenish",
+                "brownish",
+                "bluish",
+                "whitish"
+              ]
+            },
+            {
+              "field": "ColourMain",
+              "label": "colour",
+              "tip": "Colour: the main colour",
+              "valuelist": [
+                "black",
+                "grey",
+                "red",
+                "pink",
+                "orange",
+                "yellow",
+                "green",
+                "brown",
+                "blue",
+                "white"
+              ]
+            },
+            {
+              "field": "ColourMixed",
+              "label": "mixed?",
+              "tip": "Colour mixed: is the context mixed in colour?",
+              "valuelist": [
+                "Yes",
+                "No"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Composition and compaction",
+          "label": "Soil composition and compaction",
+          "fields": [
+            {
+              "field": "SoilComposition",
+              "label": "composit.",
+              "tip": "Soil composition: use the guide in the manual to determine the soil composition",
+              "valuelist": [
+                "clay",
+                "sandy clay",
+                "silty clay",
+                "silt",
+                "clayey silt",
+                "sandy silt",
+                "fine sand",
+                "medium sand",
+                "coarse sand",
+                "clayey sand",
+                "silty sand"
+              ]
+            },
+            {
+              "field": "CompositionMixed",
+              "label": "mixed?",
+              "tip": "Composition mixed: is the context mixed in composition?",
+              "valuelist": [
+                "Yes",
+                "No"
+              ]
+            },
+            {
+              "field": "SoilCompaction",
+              "label": "compaction",
+              "tip": "Soil compaction: use the table in the manual to determine the soil compaction",
+              "valuelist": [
+                "strongly cemented",
+                "weakly cemented",
+                "compact",
+                "loose",
+                "hard",
+                "firm",
+                "soft",
+                "very soft"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Inclusions",
+          "label": "Inclusions - Percent",
+          "fields": [
+            {
+              "field": "InclStoneBuilding",
+              "label": "building %",
+              "tip": "Inclusions of building stone in percent"
+            },
+            {
+              "field": "InclStoneUnworked",
+              "label": "unworked %",
+              "tip": "Inclusions of unworked stone (not from building) in percent"
+            },
+            {
+              "field": "InclPlasterMortar",
+              "label": "plaster %",
+              "tip": "Inclusions of plaster or mortar in percent"
+            },
+            {
+              "field": "InclMudbrick",
+              "label": "mudbrick %",
+              "tip": "Inclusions of mudbrick in percent"
+            },
+            {
+              "field": "InclTile",
+              "label": "tile %",
+              "tip": "Inclusions of tile in percent"
+            },
+            {
+              "field": "InclPotteryCeramic",
+              "label": "ceramic %",
+              "tip": "Inclusions of pottery and ceramics in percent"
+            },
+            {
+              "field": "InclObsidian",
+              "label": "obsidian %",
+              "tip": "Inclusions of obsidian in percent"
+            },
+            {
+              "field": "InclShell",
+              "label": "shell %",
+              "tip": "Inclusions of shell in percent"
+            },
+            {
+              "field": "InclBone",
+              "label": "bone %",
+              "tip": "Inclusions of bone in percent"
+            },
+            {
+              "field": "InclCarbonCharcoalAsh",
+              "label": "carbon %",
+              "tip": "Inclusions of carbon, charcoal and ash in percent"
+            },
+            {
+              "field": "InclOther",
+              "label": "other %",
+              "tip": "Other inclusions in percent"
+            },
+            {
+              "field": "InclOtherDefine",
+              "label": "define oth",
+              "tip": "Other inclusions: define if present"
+            },
+            {
+              "field": "InclOverall",
+              "label": "overall %",
+              "tip": "Inclusions overall: The overall percentage of inclusions"
+            },
+            {
+              "field": "InclSorting",
+              "label": "sorting",
+              "tip": "Sorting of the inclusions: the degree of sorting is a measure of the frequency with which inclusions of the same size occur.",
+              "valuelist": [
+                "well",
+                "moderately",
+                "poorly",
+                "very poorly"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Inclusion size",
+          "label": "Size of inclusions",
+          "fields": [
+            {
+              "field": "InclSizeStoneBuilding",
+              "label": "building",
+              "tip": "Size of building stone inclusions",
+              "valuelist": [
+                "small pebbles",
+                "medium pebbles",
+                "large pebbles",
+                "cobbles",
+                "boulders"
+              ],
+              "multivalue": true
+            },
+            {
+              "field": "InclSizeStoneUnworked",
+              "label": "unworked",
+              "tip": "Size of unworked, non-building stone inclusions",
+              "valuelist": [
+                "small pebbles",
+                "medium pebbles",
+                "large pebbles",
+                "cobbles",
+                "boulders"
+              ],
+              "multivalue": true
+            },
+            {
+              "field": "InclSizeCeramics",
+              "label": "ceramic",
+              "tip": "Size of ceramic inclusions",
+              "valuelist": [
+                "small sherds",
+                "medium sherds",
+                "large sherds",
+                "mixed"
+              ],
+              "multivalue": true
+            },
+            {
+              "field": "InclSizeShell",
+              "label": "shell",
+              "tip": "Size of shell inclusions",
+              "valuelist": [
+                "fragmentary",
+                "complete (small)",
+                "complete (large)",
+                "mixed"
+              ]
+            },
+            {
+              "field": "InclSizeBone",
+              "label": "bone",
+              "tip": "Size of bone inclusions",
+              "valuelist": [
+                "fragmentary",
+                "complete (small)",
+                "complete (large)",
+                "mixed"
+              ]
+            },
+            {
+              "field": "InclSizeCarbonCharcoalAsh",
+              "label": "carbon",
+              "tip": "Size of carbon, charcoal and ash inclusions",
+              "valuelist": [
+                "flecks",
+                "small burnt wood",
+                "large burnt wood",
+                "ash spreads",
+                "mixed"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Context description",
+          "label": "Context description",
+          "fields": [
+            {
+              "field": "ShapePlan",
+              "label": "in plan",
+              "tip": "Shape in plan: approximate description of the shape of the context from above",
+              "valuelist": [
+                "sub-round",
+                "oval",
+                "sub-rectangular",
+                "irregular"
+              ]
+            },
+            {
+              "field": "ContextualDifferentiation",
+              "label": "difference",
+              "tip": "Contextual differentiation: What makes this context different from others? For example: ‘this context is blacker and more compact than context 7’ or ‘this context has more frequent and smaller pebble inclusions than 22’",
+              "multiline": true
+            },
+            {
+              "field": "ContextBoundaries",
+              "label": "boundaries",
+              "tip": "Boundaries: describe the change between the context you are recording and the context(s) revealed below it",
+              "valuelist": [
+                "sharp",
+                "clear",
+                "diffuse"
+              ]
+            },
+            {
+              "field": "EqualContexts",
+              "label": "equal",
+              "tip": "Equal contexts: where you have indicated an ‘is equal to’ (ie, same as) relationship, explain here with stratigraphic reasoning why the two contexts should be regarded as the same.",
+              "multiline": true
+            },
+            {
+              "field": "Contamination",
+              "label": "contamin.",
+              "tip": "Contamination: where there is a suspicion that stratigraphic bounds may have been exceeded, make a note here of the extent to which you fear the material and samples of this context may be contaminated by material from another context.",
+              "multiline": true
+            }
+          ]
+        },
+        {
+          "group": "Interpretation",
+          "label": "Interpretation",
+          "fields": [
+            {
+              "field": "Description"
+            },
+            { 
+              "field": "PotteryInterpretation"
+            }
+          ]
+        },
+        {
+          "group": "Micromorphology",
+          "label": "Micromorphology",
+          "fields": [
+            {
+              "field": "Micromorphology"
+            }
+          ]
+        },
+        {
+          "group": "Phase",
+          "label": "Phase",
+          "fields": [
+            {
+              "field": "CoverageTemporal"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Interface",
+      "label": "Cut",
+      "plural": "Cuts",
+	    "relations": [
+        {
+          "relation": "is above",
+          "type": "Context"
+        },
+        {
+          "relation": "includes",
+          "type": "Image"
+        },
+        {
+          "relation": "includes",
+          "type": "Other"
+        }
+	    ],
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "context #",
+              "tip": "Context number: a numeric context number"
+            },
+            {
+              "field": "Title"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the cut"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Points",
+          "label": "Co-ordinates",
+          "fields": [
+            {
+              "field": "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group": "Shape",
+          "label": "Shape",
+          "fields": [
+            {
+              "field": "ShapePlan",
+              "label": "in plan",
+              "tip": "Shape in plan: the shape at the top of the cut",
+              "valuelist": [
+                "Square",
+                "Rectangular",
+                "Circular",
+                "Semi-circular",
+                "Oval",
+                "Sub-rectangular",
+                "Linear",
+                "Irregular"
+              ]
+            },
+            {
+              "field": "ShapeBreakSlopeTop",
+              "label": "top slope",
+              "tip": "Break of slope (top): describe the degree with which the top surface of the edge of the cut breaks into the sides",
+              "valuelist": [
+                "sharp",
+                "gradual",
+                "not perceptible"
+              ]
+            },
+            {
+              "field": "ShapeSideSlope",
+              "label": "side slope",
+              "tip": "Side of slope: describe the sides of the cut",
+              "valuelist": [
+                "vertical",
+                "convex",
+                "concave",
+                "stepped",
+                "mixed"
+              ]
+            },
+            {
+              "field": "ShapeSlopeBase",
+              "label": "base slope",
+              "tip": "Break of slope (base): describe the degree with which the sides break into the base of the cut",
+              "valuelist": [
+                "sharp",
+                "gradual",
+                "not perceptible"
+              ]
+            },
+            {
+              "field": "ShapeBaseCut",
+              "label": "cut at base",
+              "tip": "Cut at base: describe the base of the cut",
+              "valuelist": [
+                "flat",
+                "concave",
+                "sloping",
+                "tapered – blunt",
+                "tapered – sharp",
+                "tapered – rounded",
+                "uneven"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Filled by",
+          "label": "Filled by",
+          "fields": [
+            {
+              "field": "FilledBy",
+              "tip": "Filled by: list all contexts which were excavated within the volume created by this cut",
+              "multiline": true
+            }
+          ]
+        },
+        {
+          "group": "Truncation",
+          "label": "Truncation",
+          "fields": [
+            {
+              "field": "Truncation"
+            }
+          ]
+        },
+        {
+          "group": "Interpretation",
+          "label": "Interpretation",
+          "fields": [
+            {
+              "field": "Description"
+            }
+          ]
+        },
+        {
+          "group": "Phase",
+          "label": "Phase",
+          "fields": [
+            {
+              "field": "CoverageTemporal"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Event",
+      "label": "Surface",
+      "plural": "Surfaces",
+	    "relations": [
+        {
+          "relation": "is above",
+          "type": "Context"
+        },
+        {
+          "relation": "includes",
+          "type": "Artifact"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+		      "subtype": "SampleOrBag"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecBone"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecCharcoal"
+        },        
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecFish"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecGeoChem"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecMarine"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecObsidian"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecOSL"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecPhytolith"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecResidue"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecSeed"
+        },        
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "HumanBone"
+        },
+        {
+          "relation": "includes",
+          "type": "Image"
+        },
+        {
+          "relation": "includes",
+          "type": "Other"
+        },
+	      {
+          "relation": "includes",
+          "type": "Partition"
+        }
+	    ],
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "context #",
+              "tip": "Context number: a numeric context number"
+            },
+            {
+              "field": "Title"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the surface"
+            },
+            {
+              "field": "Creator"
+            },
+            {
+              "field": "SoilChemistry"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Points",
+          "label": "Co-ordinates",
+          "fields": [
+            {
+              "field": "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group": "Shape",
+          "label": "Shape",
+          "fields": [
+            {
+              "field": "ShapePlan",
+              "label": "in plan",
+              "tip": "Shape in plan: the shape of the surface from above",
+              "valuelist": [
+                "Square",
+                "Rectangular",
+                "Circular",
+                "Semi-circular",
+                "Oval",
+                "Sub-rectangular",
+                "Linear",
+                "Irregular"
+              ]
+            },
+            {
+              "field": "SurfaceFlatness",
+              "label": "flatness",
+              "tip": "Flatness: the flatness (or otherwise) of the surface",
+              "valuelist": [
+                "flat",
+                "convex",
+                "concave",
+                "irregular"
+              ]
+            },
+            {
+              "field": "SurfaceDamage",
+              "label": "damage",
+              "tip": "Damage: describe how the floor has been damaged (e.g. by falling masonry, wear)",
+              "multiline": true
+            }
+          ]
+        },
+        {
+          "group": "Truncation",
+          "label": "Truncation",
+          "fields": [
+            {
+              "field": "Truncation"
+            }
+          ]
+        },
+        {
+          "group": "Interpretation",
+          "label": "Interpretation",
+          "fields": [
+            {
+              "field": "Description"
+            },
+            { "field": "PotteryInterpretation"
+            }
+          ]
+        },
+        {
+          "group": "Phase",
+          "label": "Phase",
+          "fields": [
+            {
+              "field": "CoverageTemporal"
+            }
+          ]
+        },
+        {
+            "group": "Conservation",
+            "label": "Conservation",
+            "fields": [
+                {
+                    "field": "ConservationAction"
+                },
+                {
+                    "field": "ConservationDate"
+                },
+                {
+                    "field": "ConservationNote"
+                }
+            ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Feature",
+      "label": "Structure",
+      "plural": "Structures",
+	    "relations": [
+        {
+          "relation": "is above",
+          "type": "Context"
+        },
+        {
+          "relation": "includes",
+          "type": "Image"
+        },
+        {
+          "relation": "includes",
+          "type": "Other"
+        }
+  	  ],
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Sub-Type",
+              "label": "sub-type",
+              "tip": "Structure type",
+              "valuelist": [
+                "wall superstructure",
+                "wall foundations",
+                "wall repair",
+                "wall extension",
+                "built floor",
+                "built or metalled road or path",
+                "built hearth",
+                "well head",
+                "drain",
+                "stairs",
+                "bench",
+                "platform",
+                "ramp",
+                "other"
+              ]
+            },
+            {
+              "field": "Identifier",
+              "label": "context #",
+              "tip": "Context number: a numeric context number"
+            },
+            {
+              "field": "Title"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the structure"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Points",
+          "label": "Co-ordinates",
+          "fields": [
+            {
+              "field": "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group": "Dimensions",
+          "label": "Maximum dimensions",
+          "fields": [
+            {
+              "field": "MaxLength",
+              "label": "length",
+              "tip": "Maximum length of wall (metres)"
+            },
+            {
+              "field": "MaxHeight",
+              "label": "height",
+              "tip": "Maximum height of wall (metres)"
+            },
+            {
+              "field": "MaxWidth",
+              "label": "width",
+              "tip": "Maximum width of wall (metres)"
+            }
+          ]
+        },
+        {
+          "group": "Materials",
+          "label": "Materials",
+          "fields": [
+            {
+              "field": "MaterialSchistoseMarble",
+              "label": "schist %",
+              "tip": "Percent of schistose (imported) marble"
+            },
+            {
+              "field": "MaterialAeolianite",
+              "label": "aeolianite %",
+              "tip": "Percent of local aeolianite"
+            },
+            {
+              "field": "MaterialLocalOther",
+              "label": "other %",
+              "tip": "Percent of local other"
+            },
+            {
+              "field": "Working",
+              "label": "working",
+              "tip": "Working: indicate to what extent, if any, stones in the wall are worked"
+            },
+            {
+              "field": "MaterialStoneSizes",
+              "label": "stone sizes",
+              "tip": "Stone sizes: approximate average stone size and variation in stone sizes"
+            },
+            {
+              "field": "BondingMaterial",
+              "label": "bonding",
+              "tip": "Bonding material",
+              "multiline": true
+            }
+          ]
+        },
+        {
+          "group": "Masonry style",
+          "label": "Masonry style",
+          "fields": [
+            {
+              "field": "MasonryStyleMajor",
+              "label": "major",
+              "tip": "Major masonry style: use the diagram in the manual to choose the correct description",
+              "valuelist": [
+                "random uncoursed",
+                "squared random",
+                "ashlar",
+                "random coursed",
+                "squared",
+                "built to courses",
+                "regular courses",
+                "uneven courses",
+                "quoins (corners) stressed",
+                "quoins unstressed",
+                "A string",
+                "fair face",
+                "rough face"
+              ],
+              "multivalue": true
+            },
+            {
+              "field": "MasonryStyleSecondary",
+              "label": "secondary",
+              "tip": "Secondary masonry style: record a secondary style if a) the style is different in different parts of the wall or b) none of the styles given is a close enough match and you see a mix of two styles",
+              "valuelist": [
+                "random uncoursed",
+                "squared random",
+                "ashlar",
+                "random coursed",
+                "squared",
+                "built to courses",
+                "regular courses",
+                "uneven courses",
+                "quoins (corners) stressed",
+                "quoins unstressed",
+                "A string",
+                "fair face",
+                "rough face"
+              ],
+              "multivalue": true
+            }
+          ]
+        },
+        {
+          "group": "Extent of exposure",
+          "label": "Extent of exposure",
+          "fields": [
+            {
+              "field": "ExposureExtent",
+              "tip": "Extent of exposure: list here which faces, ends and parts are exposed, eg ‘North face, top and west end’"
+            }
+          ]
+        },
+        {
+          "group": "Truncation",
+          "label": "Truncation",
+          "fields": [
+            {
+              "field": "Truncation"
+            }
+          ]
+        },
+        {
+          "group": "Related contexts",
+          "label": "Related contexts",
+          "fields": [
+            {
+              "field": "RelatedContexts",
+              "tip": "Related contexts"
+            }
+          ]
+        },
+        {
+          "group": "Interpretation",
+          "label": "Interpretation",
+          "fields": [
+            {
+              "field": "Description"
+            },
+            { "field": "PotteryInterpretation"
+            }
+          ]
+        },
+        {
+          "group": "Phase",
+          "label": "Phase",
+          "fields": [
+            {
+              "field": "CoverageTemporal"
+            }
+          ]
+        },
+        {
+            "group": "Conservation",
+            "label": "Conservation",
+            "fields": [
+                {
+                    "field": "ConservationAction"
+                },
+                {
+                    "field": "ConservationDate"
+                },
+                {
+                    "field": "ConservationNote"
+                }
+            ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Partition",
+      "label": "ASU",
+      "plural": "ASUs",
+	    "relations": [
+        {
+          "relation": "includes",
+          "type": "Artifact"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+		      "subtype": "SampleOrBag"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecBone"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecCharcoal"
+        },        
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecFish"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecGeoChem"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecMarine"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecObsidian"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecOSL"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecPhytolith"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecResidue"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SpecSeed"
+        },        
+        {
+          "relation": "includes",
+          "type": "Image"
+        },
+        {
+          "relation": "includes",
+          "type": "Other"
+        }
+	    ],
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "ASU #",
+              "tip": "ASU number: the context number that this ASU belongs to + asterisk + ASU sequence number"
+            },
+            {
+              "field": "Title"
+            },
+            {
+              "field": "DateEarliest",
+              "tip": "Start date: the start date and time will be automatically filled in when you create the ASU"
+            },
+            {
+              "field": "DateLatest",
+              "tip": "End date: the end date and time will be automatically filled in when you take the closing points"
+            },
+            {
+              "field": "Creator"
+            },
+            {
+              "field": "MethodConditions"
+            },
+            {
+              "field": "SoilChemistry"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Points",
+          "label": "Co-ordinates",
+          "fields": [
+            {
+              "field": "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group": "Contamination",
+          "label": "Contamination",
+          "fields": [
+            {
+              "field": "Contamination",
+              "multiline": true
+            }
+          ]
+        },
+        {
+          "group": "Notes",
+          "label": "Notes",
+          "fields": [
+            {
+              "field": "Description"
+            }
+          ]
+        },
+        {
+          "group": "Phase",
+          "label": "Phase",
+          "fields": [
+            {
+              "field": "CoverageTemporal"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Artifact",
+      "label": "Special Find",
+      "plural": "Special Finds",
+	    "relations": [
+        {
+          "relation": "includes",
+          "type": "Image"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "Residue"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+		      "subtype": "SampleOrBag"
+        }
+	    ],
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "find #",
+              "tip": "Find number: the find number will be automatically assigned when you create the find"
+            },
+            {
+              "field": "Title",
+              "label": "category",
+              "valuelist": [
+                "metals and metallurgical",
+                "worked stone",
+                "stone disc",
+                "marble figurine",
+                "stone vessel",
+                "spool",
+                "Kouphonisi limestone pebble",
+                "unworked imported stone",
+                "worked bone",
+                "worked shell",
+                "bead",
+                "architectural element",
+                "spindle whorl",
+                "worked sherd",
+                "metallurgical ceramic",
+                "matt impression",
+                "other ceramic",
+                "Discarded During Study Season"
+              ]
+            },
+            {
+              "field": "ResidueAnalysis"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Points",
+          "label": "Co-ordinates",
+          "fields": [
+            {
+              "field": "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group": "Notes",
+          "label": "Notes",
+          "fields": [
+            {
+              "field": "Description"
+            }
+          ]
+        },
+        {
+          "group": "Specialist",
+          "label": "SpecialistData",
+          "fields": [
+            {
+              "field": "Class",
+              "label": "Class",
+              "tip": "Indicating of class within the type.",
+              "multitype": true,
+              "valuelist": [
+                "Copper Spill",
+                "Metal Working Remains",
+                "Artifact"
+              ]
+            },
+            {
+              "field": "Material",
+              "label": "Material",
+              "tip": "Indicating type of raw material.",
+              "multitype": true,
+              "valuelist": [
+                "ceramic-tuyere",
+                "ceramic-crucible",
+                "ceramic-mould",
+                "ceramic-baking pan",
+                "slag",
+                "litharge",
+                "copper-awl",
+                "copper-pin",
+                "copper-fish hook",
+                "gold-wire"
+              ]
+            },
+            {
+              "field": "SpecialistComment"
+            },
+            {
+              "field": "SpecialistIntitials"
+            },
+            {
+              "field": "ACRComment"
+            }
+          ]
+        },
+        {
+          "group": "Dimensions",
+          "label": "Dimensions",
+          "fields": [
+            {
+              "field": "Length",
+              "label": "length",
+              "tip": "Length"
+            },
+            {
+              "field": "Width",
+              "label": "width",
+              "tip": "Width"
+            },
+            {
+              "field": "Height",
+              "label": "height",
+              "tip": "Height"
+            },
+            {
+              "field": "Thickness",
+              "label": "thickness",
+              "tip": "Thickness"
+            },
+            {
+              "field": "Diameter",
+              "label": "diameter",
+              "tip": "Diameter"
+            },
+            {
+              "field": "EstimatedDiameter",
+              "label": "est. diam.",
+              "tip": "Estimated Diameter"
+            },
+            {
+              "field": "MaximumDimension",
+              "label": "max. dim.",
+              "tip": "Maximum Dimension"
+            },
+            {
+              "field": "Weight",
+              "label": "weight",
+              "tip": "Weight"
+            }
+          ]
+        },
+        {
+          "group": "Phase",
+          "label": "Phase",
+          "fields": [
+            {
+              "field": "CoverageTemporal"
+            }
+          ]
+        },
+        {
+            "group": "Conservation",
+            "label": "Conservation",
+            "fields": [
+                {
+                    "field": "ConservationAction"
+                },
+                {
+                    "field": "ConservationDate"
+                },
+                {
+                    "field": "ConservationNote"
+                }
+            ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "SampleOrBag",
+      "label": "Sample or Bag",
+      "plural": "Samples and Bags",
+  	  "relations": [
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "Flotation"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "Pottery"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "Micromorphology"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "Residue"
+        }
+	    ],
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "number",
+              "tip": "Sample or bag number: the number will be automatically assigned when you create the item"
+            },
+            {
+              "field": "Title",
+              "label": "category",
+              "valuelist": [
+                "bone",
+                "fish",
+                "charcoal",
+                "shell",
+                "pottery",
+                "obsidian",
+                "flotation",
+                "seeds",
+                "micromorphology",
+                "parasitology",
+                "residue",
+                "radiocarbon",
+                "phytolith",
+                "soil chemistry"
+              ]
+            },
+            {
+              "field": "ResidueAnalysis"
+            },
+            {
+              "field": "Origin",
+              "label": "origin",
+              "valuelist": [
+                "excavation",
+                "sieving",                
+                "flotation",
+                "apothiki processing"
+              ],
+              "tip": "Origin"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "Points",
+          "label": "Co-ordinates",
+          "fields": [
+            {
+              "field": "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group": "Interpretation",
+          "label": "Interpretation",
+          "fields": [
+            {
+              "field": "Description"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "Micromorphology",
+      "label": "Micromorphology",
+      "plural": "Micromorphology",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "bag ID",
+              "tip": "Sample or bag number"
+            },
+            {
+              "field": "ContextID",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "Interpretation",
+          "label": "Interpretation",
+          "fields": [
+            {
+              "field": "Description"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "Residue",
+      "label": "Residue",
+      "plural": "Residues",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "bag ID",
+              "tip": "Sample or bag number"
+            },
+            {
+              "field": "Description"
+            },            
+            {
+              "field": "ContextID",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "LabSamples",
+          "label": "Samples",
+          "fields": [
+            {
+              "field": "Dry",
+              "label": "Dry",
+              "valuelist": [
+                "Yes",
+                "No"
+              ]
+            },
+            {
+              "field": "Wet",
+              "label": "Wet",
+              "valuelist": [
+                "Yes",
+                "No"
+              ]
+            },
+            {
+              "field": "Soil",
+              "label": "Soil",
+              "valuelist": [
+                "Yes",
+                "No"
+              ]
+            },
+            {
+              "field": "Lipid",
+              "label": "Lipid",
+              "valuelist": [
+                "Yes",
+                "No"
+              ]
+            } 
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "SpecBone",
+      "label": "Analysis-Bone",
+      "plural": "Analysis-Bones",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Title",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the record"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "SpecialistAnalysis",
+          "label": "Analysis",
+          "fields": [
+            {
+              "field": "NISP"
+            },
+            {
+              "field": "Cattle",
+              "label": "%Cattle",
+              "tip": "Percentage of cattle."
+            },
+            {
+              "field": "SheepGoat",
+              "label": "%SheepGoat",
+              "tip": "Percentage of goat-sheep."
+            },
+            {
+              "field": "Pig",
+              "label": "%Pig",
+              "tip": "Percentage of pig."
+            },
+            {
+              "field": "Dog",
+              "label": "%Dog",
+              "tip": "Percentage of dog."
+            },
+            {
+              "field": "Other",
+              "label": "%Other",
+              "tip": "Percentage of other/wild animal."
+            },
+            {
+              "field": "Butchery",
+              "label": "Butchery",
+              "tip": "Presence/Absence of processing marks.",
+              "valuelist": [
+                "Yes",
+                "No"
+              ]
+            },
+            {
+              "field": "Burning",
+              "label": "Burning",
+              "tip": "Presence/Absence of burning.",
+              "valuelist": [
+                "Yes",
+                "No"
+              ]
+            },
+            {
+              "field": "SpecialistComment"
+            },
+            {
+              "field": "SpecialistInitials"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "SpecCharcoal",
+      "label": "Analysis-Charcoal",
+      "plural": "Analysis-Charcoal",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Title",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the record"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "SpecialistAnalysis",
+          "label": "Analysis",
+          "fields": [
+            {"field": "Quantity"},
+            {"field": "OleaEuropaea"},
+            {"field": "Juniperus"},
+            {"field": "PrunusSp."},
+            {"field": "PrunusAmygdalus"},
+            {"field": "Angiosperm"},
+            {"field": "TamarixSp."},
+            {"field": "EricaSp."},
+            {"field": "Conifer"},
+            {"field": "SpecialistComment"},
+            {"field": "SpecialistInitials"}
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "SpecFish",
+      "label": "Analysis-Fish",
+      "plural": "Analysis-Fish",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "ContextID",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the record"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "SpecialistAnalysis",
+          "label": "Analysis",
+          "fields": [
+            {"field": "NISP"},
+            {"field": "Bony"},
+            {"field": "Cartilaginous"},
+            {"field": "Families"},
+            {"field": "AnatomicalUnits"},
+            {"field": "Habitats"},
+            {"field": "Burning"},
+            {"field": "CutMarks"},
+            {"field": "OtherModifications"},
+            {"field": "SpecialistComment"},
+            {"field": "SpecialistInitials"}
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "SpecGeoChem",
+      "label": "Analysis-GeoChem",
+      "plural": "Analysis-GeoChem",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "ContextID",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the record"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "SpecialistAnalysis",
+          "label": "Analysis",
+          "fields": [
+            {
+              "field": "SpecialistComment"
+            },
+            {
+              "field": "SpecialistInitials"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "SpecMarine",
+      "label": "Analysis-Marine",
+      "plural": "Analysis-Marine",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "ContextID",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the record"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "SpecialistAnalysis",
+          "label": "Analysis",
+          "fields": [
+            {
+              "field": "NISP"
+            },
+            {"field": "Bivalve"},
+            {"field": "Gastropod"},
+            {"field": "Scaphopod"},
+            {"field": "Crustacean"},
+            {"field": "Cephalopod"},
+            {"field": "Uchin"},
+            {"field": "Other"},                           
+            {"field": "Families"},
+            {"field": "Burning"},
+            {"field": "Perforation"},
+            {"field": "Abrasion"},
+            {"field": "FinishedObject"},
+            {"field": "SpecialistComment"},
+            {"field": "SpecialistInitials"}
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "SpecObsidian",
+      "label": "Analysis-Obsidian",
+      "plural": "Analysis-Obsidian",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "ContextID",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "SpecialistAnalysis",
+          "label": "Analysis",
+          "fields": [
+            {
+              "field": "ObsidianSource",
+              "label": "Source",
+              "tip": "The source of the obsidian"
+            },
+            {
+              "field": "Quantity",
+              "label": "Quantity",
+              "tip": "A count of the individual obsidian pieces."
+            },
+            {
+              "field": "EndProducts",
+              "label": "%EndProducts",
+              "tip": "The percent of overall quantity that is end product."
+            },
+            {
+              "field": "Cores",
+              "label": "%Cores",
+              "tip": "The percent of overall quantity that is cores."
+            },
+            {
+              "field": "Debris",
+              "label": "%ManufacturingDebris",
+              "tip": "The percent of overall quantity that is manufacturing debris."
+            },
+            {
+              "field": "SpecialistComment"
+            },
+            {
+              "field": "SpecialistInitials"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "SpecOSL",
+      "label": "Analysis-OSL",
+      "plural": "Analysis-OSL",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "ContextID",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "SpecialistAnalysis",
+          "label": "Analysis",
+          "fields": [
+            {
+              "field": "OSLTypes",
+              "label": "OSLTypes",
+              "multivalue": true,
+              "valuelist": [
+                "Field Profiling", 
+                "Laboratory Characterization", 
+                "OSL Dating"
+              ]
+            },
+            {
+              "field": "Depth",
+              "label": "Depth"
+            },
+            {
+              "field": "OSLDate",
+              "label": "OSL-Date"
+            },
+            {
+              "field": "SpecialistComment"
+            },
+            {
+              "field": "SpecialistInitials"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "SpecPhytolith",
+      "label": "Analysis-Phytolith",
+      "plural": "Analysis-Phytolith",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "ContextID",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "SpecialistAnalysis",
+          "label": "Analysis",
+          "fields": [
+            {"field": "Quantity"},
+            {"field": "Grasses%"},
+            {"field": "EdibleGrasses%"},
+            {"field": "EdibleGrassTypes"},
+            {"field": "Dicots%"},
+            {"field": "EdibleDicots%"},
+            {"field": "EdibleDicotTypes"},
+            {"field": "Wood%"},
+            {"field": "Reeds%"},
+            {"field": "Sedges%"},
+            {"field": "Unknown%"},
+            {"field": "GrassHuskRatio"},
+            {
+              "field": "SpecialistComment"
+            },
+            {
+              "field": "SpecialistInitials"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "SpecResidue",
+      "label": "Analysis-Residue",
+      "plural": "Analysis-Residue",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "ContextID",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "SpecialistAnalysis",
+          "label": "Analysis",
+          "fields": [
+            {
+              "field": "Starch",
+              "label": "Starch",
+              "valuelist": [
+                "Yes",
+                "No",
+                "Uncertain"
+              ]
+            },
+            {
+              "field": "AnimalLipid",
+              "label": "AnimalLipid",
+              "valuelist": [
+                "Yes",
+                "No",
+                "Uncertain"
+              ]
+            },            
+            {
+              "field": "PlantLipid",
+              "label": "PlantLipid",
+              "valuelist": [
+                "Yes",
+                "No",
+                "Uncertain"
+              ]
+            },            
+            {
+              "field": "SpecialistComment"
+            },
+            {
+              "field": "SpecialistInitials"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "SpecSeed",
+      "label": "Analysis-Seeds",
+      "plural": "Analysis-Seeds",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "ContextID",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "SpecialistAnalysis",
+          "label": "Analysis",
+          "fields": [
+            {"field": "Olive"},
+            {"field": "OliveFr"},
+            {"field": "Grape"},
+            {"field": "GrapeFr"},
+            {"field": "FruitBerry"},
+            {"field": "FruitBerryFr"},
+            {"field": "Wheat"},
+            {"field": "WheatFr"},
+            {"field": "Chaff"},
+            {"field": "ChaffFr"},
+            {"field": "Barley"},
+            {"field": "BarleyFr"},
+            {"field": "OtherGrain"},
+            {"field": "OtherGrainFr"},
+            {"field": ":Pulses"},
+            {"field": "PulsesFr"},
+            {"field": "Other"},
+            {"field": "OtherFr"},
+            {"field": "Weeds"},
+            {"field": "WeedsFr"},
+            {
+              "field": "SpecialistComment"
+            },
+            {
+              "field": "SpecialistInitials"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "HumanBone",
+      "label": "Human Bone",
+      "plural": "Human Bones",
+	    "relations": [
+        {
+          "relation": "includes",
+          "type": "Image"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+	        "subtype": "Residue"
+        }
+	      ],
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "bone #",
+              "tip": "Bone number: the bone number has to be manually corrected"
+            },
+            {
+              "field": "ResidueAnalysis"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "About",
+          "label": "About",
+          "fields": [
+            {
+              "field": "Title",
+              "label": "bone",
+              "valuelist": [
+                "hum",
+                "ulna",
+                "rad",
+                "fem",
+                "tib",
+                "fib",
+                "LB",
+                "c-vert",
+                "t-vert",
+                "l-vert",
+                "rib",
+                "clav",
+                "scap",
+                "pelvis",
+                "pat",
+                "mc",
+                "mt",
+                "mc/mt",
+                "skull",
+                "mand-t",
+                "max-t"
+              ]
+            },
+            {
+              "field": "Side",
+              "label": "body side",
+              "valuelist": [
+                "R",
+                "L"
+              ]
+            },
+            {
+              "field": "Quantity",
+              "label": "quantity",
+              "valuelist": [
+                ">75%",
+                "50-75%",
+                "25-50%",
+                "<25%"
+              ]
+            },
+            {
+              "field": "PositionPlane",
+              "label": "plane",
+              "tip" : "bone position plane",
+              "valuelist": [
+                "Horizontal",
+                "Vertical",
+                "Diagonal/mixed"
+              ]
+            },
+            {
+              "field": "Orientation",
+              "label": "orient",
+              "tip":  "orientation of bone to cardinal directions: e.g. Distal is north"
+            },
+            {
+              "field": "AppearanceSide",
+              "label": "appearance side",
+              "tip": "which aspect of bone is top surface",
+              "valuelist": [
+                "LB-Ant",
+                "LB-Pos",
+                "LB-Med",
+                "LB-Lat",
+                "SK-Ext",
+                "SK-Int",
+                "Vert-Sup",
+                "Vert-Inf"
+              ]              
+            }
+            ]
+        },
+        {
+          "group": "Dimensions",
+          "label": "Dimensions",
+          "fields": [
+            {
+              "field": "Length",
+              "label": "max length",
+              "tip": "Length"
+            },
+            {
+              "field": "Circumference",
+              "label": "Mid-Shaft C",
+              "tip": "mid-shaft cirumference"
+            },
+            {
+              "field": "HeadDiameter",
+              "label": "head diam",
+              "tip": "Head diameter"
+            },
+            {
+              "field": "EpicondylarWidth",
+              "label": "Epi-width",
+              "tip": "Epicondylar width"
+            },
+            {
+              "field": "GlenoidLength",
+              "label": "glenoid",
+              "tip": "Glenoid length"
+            }
+          ]
+        },        
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Points",
+          "label": "Co-ordinates",
+          "fields": [
+            {
+              "field": "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group": "Notes",
+          "label": "Notes",
+          "fields": [
+            {
+              "field": "Description"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Group",
+      "subtype": "PotteryJoin",
+      "label": "Pottery Join",
+      "plural": "Pottery Joins",
+  	  "relations": [
+        {
+          "relation": "includes",
+          "type": "Image"
+        },
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "Pottery"
+        }
+        ],
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "Join ID",
+              "tip": "A number for this join"
+            },
+            {
+              "field": "Title",
+              "label": "title",
+              "tip": "descriptive name of join"
+            },
+            {
+              "field": "Joins",
+              "label": "Joins?",
+              "tip": "Yes for join, No for possibly same vessel",
+              "valuelist":[
+                "Yes",
+                "No"
+                ]
+              },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "Interpretation",
+          "label": "Interpretation",
+          "fields": [
+            {
+              "field": "Description"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },    
+    {
+      "type": "Plan",
+      "label": "Plan",
+      "plural": "Plans",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "photo #",
+              "tip": "Photo number: the photo number will be automatically assigned when you create the photo"
+            },
+            {
+              "field": "Title"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Points",
+          "label": "Co-ordinates",
+          "fields": [
+            {
+              "field": "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Other",
+      "label": "Topo point",
+      "plural": "Topo points",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Sub-Type",
+              "label": "sub-type",
+              "valuelist": [
+                "Fixed points",
+                "Photogrammetry targets",
+                "Grid pegs from 2008 excavation"
+              ]
+            },
+                     {
+                     "field": "Identifier",
+                     "label": "number",
+                     "tip": "Topo point number: enter the code number for this series of points"
+                     },
+            {
+              "field": "Title"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            }
+          ]
+        },
+        {
+          "group": "Notes",
+          "label": "Notes",
+          "fields": [
+            {
+              "field": "Description"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Points",
+          "label": "Co-ordinates",
+          "fields": [
+            {
+              "field": "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Section",
+      "label": "Section",
+      "plural": "Sections",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "photo #",
+              "tip": "Photo number: the photo number will be automatically assigned when you create the photo"
+            },
+            {
+              "field": "Title"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Points",
+          "label": "Co-ordinates",
+          "fields": [
+            {
+              "field": "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Image",
+      "label": "Photo",
+      "plural": "Photos",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "sequence #",
+              "tip": "Sequence number: the sequence number will be automatically assigned when you create a photo"
+            },
+            {
+              "field": "FileNames",
+              "label": "filenames",
+              "tip": "Filenames: give the camera identifier, and the range of photos, eg ‘F 1020655-1020660’. It is important to give the camera identifier as otherwise the photo numbers will be duplicated with other cameras."
+            },
+            {
+              "field": "Title"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Points",
+          "label": "Co-ordinates",
+          "fields": [
+            {
+              "field": "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+	    "subtype": "Flotation",
+      "label": "Flotation",
+      "plural": "Flotations",
+      "relations": [
+        {
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "SampleOrBag"
+        },
+        {
+          "relation": "includes",
+          "type": "Artifact"
+        },
+        { 
+          "relation": "includes",
+          "type": "Sample",
+          "subtype": "HumanBone"
+        },
+        {
+          "relation": "includes",
+          "type": "Image"
+        }
+        ],
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "bag ID",
+              "tip": "Sample or bag number"
+            },
+            {
+              "field": "ContextID",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "Interpretation",
+          "label": "Interpretation",
+          "fields": [
+            {
+              "field": "Description"
+            }
+          ]
+        },
+        {
+          "group": "Flotation Information",
+          "label": "Flotation Information",
+          "fields": [
+            {
+              "field": "FlotationVolume",
+              "label": "volume",
+              "tip": ""
+            }
+          ]
+        },
+        {
+          "group": "Flotation Heavy Residue",
+          "label": "Flotation Heavy Residue",
+          "fields": [
+            {
+              "field": "FlotationVolume",
+              "label": "volume",
+              "tip": ""
+            },
+            {
+              "field": "FlotationShell",
+              "label": "shell",
+              "tip": ""
+            },
+            {
+              "field": "FlotationFish",
+              "label": "fish",
+              "tip": ""
+            },
+            {
+              "field": "FlotationBone",
+              "label": "bone",
+              "tip": ""
+            },
+            {
+              "field": "FlotationCharcoal",
+              "label": "charcoal",
+              "tip": ""
+            },
+            {
+              "field": "FlotationSeeds",
+              "label": "seeds",
+              "tip": ""
+            },
+            {
+              "field": "FlotationObsidian",
+              "label": "obsidian",
+              "tip": ""
+            },
+            {
+              "field": "FlotationPottery",
+              "label": "pottery",
+              "tip": ""
+            },
+            {
+              "field": "FlotationMetal",
+              "label": "metal",
+              "tip": ""
+            },
+            {
+              "field": "FlotationSpecial",
+              "label": "special",
+              "tip": ""
+            }
+          ]
+        },
+        {
+          "group": "Flotation Fine Flot",
+          "label": "Flotation Fine Flot",
+          "fields": [
+            {
+              "field": "FlotationFlotCharcoal",
+              "label": "charcoal",
+              "tip": ""
+            },
+            {
+              "field": "FlotationFlotSeeds",
+              "label": "seeds",
+              "tip": ""
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Sample",
+      "subtype": "Pottery",
+      "label": "Pottery",
+      "plural": "Pottery",
+      "groups": [
+        {
+          "group": "Initial information",
+          "label": "Initial information",
+          "fields": [
+            {
+              "field": "Source"
+            },
+            {
+              "field": "Type"
+            },
+            {
+              "field": "Identifier",
+              "label": "bag ID",
+              "tip": "Sample or bag number"
+            },
+            {
+              "field": "ContextID",
+              "label": "context",
+              "tip": "context number"
+            },
+            {
+              "field": "Origin",
+              "label": "origin",
+              "valuelist": [
+                "excavation",
+                "sieving",
+                "flotation"
+              ],
+              "tip": "Origin"
+            },
+            {
+              "field": "DateEarliest",
+              "label": "date",
+              "tip": "Date: the date and time will be automatically filled in when you create the find"
+            },
+            {
+              "field": "Creator"
+            }
+          ]
+        },
+        {
+          "group": "Attachments",
+          "label": "Related Image",
+          "plural": "Related Images",
+          "fields": [
+            {
+              "field": "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group": "Relationships",
+          "label": "Relationships",
+          "fields": [
+            {
+              "field": "Relation"
+            }
+          ]
+        },
+        {
+          "group": "Interpretation",
+          "label": "Interpretation",
+          "fields": [
+            {
+              "field": "Description"
+            }
+          ]
+        },
+        {
+          "group": "Pottery Information",
+          "label": "Information",
+          "fields": [
+            {
+              "field": "PotterySpecialistInitials",
+              "label": "specialist",
+              "tip": "Pottery specialist initials",
+              "valuelist": [
+                
+              ],
+              "multivalue": true,
+              "multitype": true
+            },
+            {
+              "field": "PotteryJoins",
+              "label": "joins with",
+              "tip": "Pottery joins with other contexts",
+              "multiline": true
+            },
+            {
+              "field": "PotteryInventoriedMaterial",
+              "label": "inventoried",
+              "tip": "Potery inventoried material",
+              "multiline": true
+            },
+            {
+              "field": "PotteryImports",
+              "label": "imports",
+              "tip": "Pottery imports",
+              "multiline": true
+            },
+            {
+              "field": "PotteryWheel",
+              "label": "wheel",
+              "tip": "Pottery wheel-made",
+              "multiline": true
+            },
+            {
+              "field": "PotteryKastri",
+              "label": "kastri",
+              "tip": "Pottery Kastri Group"
+            },
+            {
+              "field": "PotteryImpressions",
+              "label": "impress.",
+              "tip": "Pottery mat impressions",
+              "multiline": true
+            },
+            {
+              "field": "PotteryMarks",
+              "label": "marks",
+              "tip": "Potters' marks",
+              "multiline": true
+            },
+            {
+              "field": "PotterySherdSizes",
+              "label": "sherd sizes",
+              "tip": "Pottery sherd sizes",
+              "valuelist": [
+                "predominantly small",
+                "predominantly medium",
+                "predominantly large"
+              ]
+            },
+            {
+              "field": "PotteryWear",
+              "label": "wear",
+              "tip": "Pottery wear",
+              "valuelist": [
+                "badly preserved",
+                "partly preserved",
+                "well preserved"
+                ]
+            },
+            {
+              "field": "PotteryBurning",
+              "label": "burning",
+              "tip": "Pottery burning",
+              "multiline": true
+            }
+          ]
+        },
+        {
+          "group": "Pottery Fabrics",
+          "label": "Fabrics",
+          "fields": [
+            {
+              "field": "PotteryCountBlueSchist",
+              "label": "B schist #",
+              "tip": "Pottery count blue schist"
+            },
+            {
+              "field": "PotteryCountRedSchist",
+              "label": "R schist #",
+              "tip": "Pottery count red schist"
+            },
+            {
+              "field": "PotteryCountBlueAndRedSchist",
+              "label": "B/R schist #",
+              "tip": "Pottery count blue and red schist"
+            },
+            {
+              "field": "PotteryCountTalcWare",
+              "label": "talc #",
+              "tip": "Pottery count talc ware"
+            },
+            {
+              "field": "PotteryCountPaleVolcanic",
+              "label": "volcanic #",
+              "tip": "Pottery count pale volcanic"
+            },
+            {
+              "field": "PotteryCountMicaceousSchist",
+              "label": "M schist #",
+              "tip": "Pottery count micaceous schist"
+            },
+            {
+              "field": "PotteryCountCalciteTemper",
+              "label": "calc. tmp #",
+              "tip": "Pottery count calcite temper"
+            },
+            {
+              "field": "PotteryCountGranitic",
+              "label": "granitic #",
+              "tip": "Pottery count granitic"
+            },
+            {
+              "field": "PotteryCountSandy",
+              "label": "sandy #",
+              "tip": "Pottery count sandy"
+            },
+            { "field": "PotteryCountBiotiteAmphibole",
+              "label": "biolite/amphibole #",
+              "tip": "Pottery count biotite/amiphole"
+            },
+            {
+              "field": "PotteryCountOtherFabric",
+              "label": "other #",
+              "tip": "Pottery count other fabric"
+            },
+            {
+              "field": "FabricCountComment",
+			  "label": "Comment",
+			  "tip": "Comment on fabric counts",
+			  "multiline": true
+            }			
+          ]
+        },
+        {
+          "group": "Pottery Shapes",
+          "label": "Shapes",
+          "fields": [
+            {
+              "field": "PotteryCountBakingPansOrHearths",
+              "label": "pans #",
+              "tip": "Vessel count baking pans or hearths",
+			  "number": true
+            },
+            {
+              "field": "PotteryFabricBakingPansOrHearths",
+              "label": "pans fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountBakingPansOrHearths",
+              "label": "pan sherd #",
+              "tip": "Sherd count baking pans or hearths",
+			  "number": true
+            },			
+            {
+              "field": "PotteryCountCooking",
+              "label": "cooking #",
+              "tip": "Vessel count cooking pot",
+			  "number": true
+            },
+            {
+              "field": "PotteryFabricCooking",
+              "label": "cooking fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },			
+            {
+              "field": "PotterySherdCountCooking",
+              "label": "cooking sherd #",
+              "tip": "Sherd count cooking pot",
+			  "number": true
+            },
+            {
+              "field": "PotteryCountStorageOrPithoidJars",
+              "label": "storage #",
+              "tip": "Vessel count storage or pithoid jars"
+            },
+            {
+              "field": "PotteryFabricStoragePithoi",
+              "label": "storage fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountStorageOrPithoidJars",
+              "label": "storage sherd #",
+              "tip": "Sherd count storage or pithoid jars"
+            },
+            {
+              "field": "PotteryCountBraziers",
+              "label": "braziers #",
+              "tip": "Vessel count braziers"
+            },
+            {
+              "field": "PotteryFabricBraziers",
+              "label": "brazier fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountBraziers",
+              "label": "brazier sherd #",
+              "tip": "Sherd count braziers"
+            },
+            {
+              "field": "PotteryCountSauceBoats",
+              "label": "saucebt #",
+              "tip": "Vessel count sauceboats"
+            },
+            {
+              "field": "PotteryFabricSauceBoats",
+              "label": "saucebt fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountSauceBoats",
+              "label": "saucebt sherd #",
+              "tip": "Sherd count sauceboats"
+            },
+            {
+              "field": "PotteryCountBowls",
+              "label": "bowls #",
+              "tip": "Vessel count bowls"
+            },
+            {
+              "field": "PotteryFabricBowls",
+              "label": "bowls fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountBowls",
+              "label": "bowl sherd #",
+              "tip": "Sherd count bowls"
+            },
+            {
+              "field": "PotteryCountCups",
+              "label": "cups #",
+              "tip": "Vessel count cups"
+            },
+            {
+              "field": "PotteryFabricCups",
+              "label": "cups fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountCups",
+              "label": "cup sherd #",
+              "tip": "Sherd count cups"
+            },
+            {
+              "field": "PotteryCountDepas",
+              "label": "depas #",
+              "tip": "Vessel count depas"
+            },
+            {
+              "field": "PotteryFabricDepas",
+              "label": "depas fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountDepas",
+              "label": "depas sherd #",
+              "tip": "Sherd count depas"
+            },
+            {
+              "field": "PotteryCountTankards",
+              "label": "tankards #",
+              "tip": "Vessel count tankards"
+            },
+            {
+              "field": "PotteryFabricTankards",
+              "label": "tankards fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountTankards",
+              "label": "tankard sherd #",
+              "tip": "Sherd count tankards"
+            },
+            {
+              "field": "PotteryCountConicalNeckedJars",
+              "label": "conical #",
+              "tip": "Vessel count conical necked jars"
+            },
+            {
+              "field": "PotteryFabricConicalNeckedJars",
+              "label": "conical fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountConicalNeckedJars",
+              "label": "conical sherd #",
+              "tip": "Sherd count conical necked jars"
+            },
+            {
+              "field": "PotteryCountBasins",
+              "label": "basins #",
+              "tip": "Vessel count basins"
+            },
+            {
+              "field": "PotteryFabricBasins",
+              "label": "basins fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountBasins",
+              "label": "basin sherd #",
+              "tip": "Sherd count basins"
+            },
+            {
+              "field": "PotteryCountJugs",
+              "label": "jugs #",
+              "tip": "Vessel count jugs"
+            },
+            {
+              "field": "PotteryFabricJugs",
+              "label": "jugs fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountJugs",
+              "label": "jug sherd #",
+              "tip": "Sherd count jugs"
+            },
+            {
+              "field": "PotteryCountBeakedJug",
+              "label": "beaked #",
+              "tip": "Vessel count beaked jug with cut-away spout"
+            },
+            {
+              "field": "PotteryFabricBeakedJug",
+              "label": "beaked fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountBeakedJug",
+              "label": "beaked sherd #",
+              "tip": "Sherd count beaked jug with cut-away spout"
+            },
+            {
+              "field": "PotteryCountPyxides",
+              "label": "pyxides #",
+              "tip": "Vessel count pyxides"
+            },
+            {
+              "field": "PotteryFabricPyxides",
+              "label": "pyxides fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountPyxides",
+              "label": "pyxides sherd #",
+              "tip": "Sherd count pyxides"
+            },
+            {
+              "field": "PotteryCountLeggedVessels",
+              "label": "legged #",
+              "tip": "Vessel count legged vessels"
+            },
+            {
+              "field": "PotteryFabricLeggedVessels",
+              "label": "legged fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountLeggedVessels",
+              "label": "legged sherds #",
+              "tip": "Sherd count legged vessels"
+            },
+            {
+              "field": "PotteryCountOpenShape",
+              "label": "open #",
+              "tip": "Vessel count open shapes"
+            },
+            {
+              "field": "PotteryFabricOpenShape",
+              "label": "open fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountOpenShape",
+              "label": "open sherd #",
+              "tip": "Sherd count open shapes"
+            },
+            {
+              "field": "PotteryCountClosedShape",
+              "label": "closed #",
+              "tip": "Vessel count closed shapes"
+            },
+            {
+              "field": "PotteryFabricClosedShape",
+              "label": "closed fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountClosedShape",
+              "label": "closed sherd #",
+              "tip": "Sherd count closed shapes"
+            },
+            {
+              "field": "PotteryCountLids",
+              "label": "lids #",
+              "tip": "Vessel count lids"
+            },
+            {
+              "field": "PotteryFabricLids",
+              "label": "lids fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountLids",
+              "label": "lid sherd #",
+              "tip": "Sherd count lids"
+            },
+            {
+              "field": "PotteryCountMoulds",
+              "label": "moulds #",
+              "tip": "Vessel count moulds"
+            },
+            {
+              "field": "PotteryFabricMoulds",
+              "label": "moulds fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountMoulds",
+              "label": "mould sherd #",
+              "tip": "Sherd count moulds"
+            },
+            {
+              "field": "PotteryCountUnknown",
+              "label": "unknown #",
+              "tip": "Vessel count unknown shapes"
+            },
+            {
+              "field": "PotteryFabricUnknown",
+              "label": "unknown fab",
+              "tip": "Indicate one fabric per vessel, e.g.: B,P,A,G,O"
+            },
+            {
+              "field": "PotterySherdCountUnknown",
+              "label": "unknown sherd #",
+              "tip": "Sherd count unknown shapes"
+            },
+            {
+              "field": "ShapeCountComment",
+			        "label": "Comment",
+			        "tip": "Comment on shape counts",
+			        "multiline": true
+            }
+          ]
+        },
+        {
+          "group": "Shape/Fabric correlation",
+          "label": "Shape/Fabric correlation",
+          "fields": [
+            {
+              "field": "ShapeFabricCorrelation",
+			        "multiline": true
+            }
+          ]
+        },
+        {
+          "group": "Pottery Decoration",
+          "label": "Decoration",
+          "fields": [
+            {
+              "field": "PotteryCountImpressed",
+              "label": "impr. #",
+              "tip": "Pottery count impressed"
+            },
+            {
+              "field": "PotteryCountIncised",
+              "label": "incised #",
+              "tip": "Pottery count incised"
+            },
+            {
+              "field": "PotteryCountRelief",
+              "label": "relief #",
+              "tip": "Pottery count relief"
+            },
+            {
+              "field": "PotteryCountReliefAndIncised",
+              "label": "rel/inc #",
+              "tip": "Pottery count relief and incised"
+            },
+            {
+              "field": "PotteryCountPainted",
+              "label": "painted #",
+              "tip": "Pottery count painted"
+            },
+            {
+              "field": "DecorationCountComment",
+			        "label": "Comment",
+			        "tip": "Comment on decoration counts",
+			        "multiline": true
+            }			
+          ]
+        },
+        {
+          "group": "Pottery Surface Treatment",
+          "label": "Surface Treatment",
+          "fields": [
+            {
+              "field": "PotteryCountPlain",
+              "label": "plain #",
+              "tip": "Pottery count plain"
+            },
+            {
+              "field": "PotteryCountWhiteSlip",
+              "label": "white slip #",
+              "tip": "Pottery count white slip"
+            },
+            {
+              "field": "PotteryCountDarkSlip",
+              "label": "dark slip #",
+              "tip": "Pottery count dark slip"
+            },
+            {
+              "field": "PotteryCountRedSlip",
+              "label": "red slip #",
+              "tip": "Pottery count red slip"
+            },			
+            {
+              "field": "PotteryCountSlippedAndBurnished",
+              "label": "slip/burn #",
+              "tip": "Pottery count slipped and burnished"
+            },
+            {
+              "field": "PotteryCountUrfirnis",
+              "label": "urfirnis #",
+              "tip": "Pottery count urfirnis"
+            },
+            {
+              "field": "PotteryCountScoring",
+              "label": "scoring #",
+              "tip": "Pottery count scoring"
+            },            
+			      {
+              "field": "SurfaceTreatmentComment",
+			        "label": "Comment",
+			        "tip": "Comment on surface treatment",
+			        "multiline": true
+            }
+          ]
+        },
+        {
+          "group": "Pottery Feature Count",
+          "label": "Feature Count",
+          "fields": [
+            {
+              "field": "PotteryCountFine",
+              "label": "fine #",
+              "tip": "Pottery count fine"
+            },
+            {
+              "field": "PotteryWeightFine",
+              "label": "fine wt",
+              "tip": "Pottery weight fine"
+            },
+            {
+              "field": "PotteryCountMedium",
+              "label": "medium #",
+              "tip": "Pottery count medium"
+            },
+            {
+              "field": "PotteryWeightMedium",
+              "label": "medium wt",
+              "tip": "Pottery weight medium"
+            },
+            {
+              "field": "PotteryCountCoarse",
+              "label": "coarse #",
+              "tip": "Pottery count coarse"
+            },
+            {
+              "field": "PotteryWeightCoarse",
+              "label": "coarse wt",
+              "tip": "Pottery weight coarse"
+            },
+            {
+              "field": "FeatureCountComment",
+      			  "label": "Comment",
+      			  "tip": "Comment on feature counts",
+      			  "multiline": true
+            }			
+          ]
+        },
+        {
+          "group": "Pottery Mending",
+          "label": "Mending",
+          "fields": [
+            {
+              "field": "PotteryCountDiagnosticsBeforeMending",
+              "label": "diag pre #",
+              "tip": "Diagnostic pottery count before mending"
+            },
+            {
+              "field": "PotteryWeightDiagnosticsBeforeMending",
+              "label": "diag pre w",
+              "tip": "Diagnostic pottery weight before mending"
+            },
+            {
+              "field": "PotteryCountNonDiagnosticBeforeMending",
+              "label": "nond pre #",
+              "tip": "Non-Diagnostic pottery count before mending"
+            },
+            {
+              "field": "PotteryWeightNonDiagnosticBeforeMending",
+              "label": "nond pre w",
+              "tip": "Non-Diagnostic pottery weight before mending"
+            },
+            {
+              "field": "PotteryCountSmallBeforeMending",
+              "label": "Small pre #",
+              "tip": "Small pottery count before mending"
+            },
+            {
+              "field": "PotteryWeightSmallBeforeMending",
+              "label": "small pre w",
+              "tip": "Small pottery weight before mending"
+            },
+            {
+              "field": "PotteryCountBeforeMending",
+              "label": "pre count",
+              "tip": "Total pottery count before mending"
+            },
+            {
+              "field": "PotteryWeightBeforeMending",
+              "label": "pre weight",
+              "tip": "Total pottery weight before mending"
+            },
+            {
+              "field": "PotteryCountAfterMending",
+              "label": "post count",
+              "tip": "Pottery count after mending"
+            },
+            {
+              "field": "PotteryWeightAfterMending",
+              "label": "post weight",
+              "tip": "Pottery weight after mending"
+            },
+            {
+              "field": "MendingComment",
+      			  "label": "Comment",
+      			  "tip": "Comment on mending counts",
+      			  "multiline": true
+            }	
+          ]
+        },
+        {
+          "group": "Phase",
+          "label": "Phase",
+          "fields": [
+            {
+              "field": "CoverageTemporal"
+            },
+            {
+              "field": "ChronologyComment",
+			        "label": "Comment",
+			        "tip": "Comment on chronology",
+			        "multiline": true
+            }
+          ]
+        },
+        {
+          "group": "Status",
+          "label": "Status",
+          "fields": [
+            {
+              "field": "RightsStatus"
+            },
+            {
+              "field": "RightsSidelined"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+© 2022 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Loading complete

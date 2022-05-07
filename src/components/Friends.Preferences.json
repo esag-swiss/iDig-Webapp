@@ -1,0 +1,63 @@
+{
+    "fields" : [
+            {
+            "label": "ID",
+            "field": "id",
+            "width": "3%",
+            "sortable": true,
+            "isKey": true
+            },
+            {
+            "label": "Name",
+            "field": "name",
+            "width": "10%",
+            "sortable": true
+            },
+            {
+            "label": "Email",
+            "field": "email",
+            "width": "15%",
+            "sortable": true
+            },
+            {
+            "label": "phone",
+            "field": "phone",
+            "width": "15%",
+            "sortable": true
+            },
+            {
+            "label": "truc en plus",
+            "field": "truc",
+            "width": "15%",
+            "sortable": true
+            },
+            {
+            "label": "type",
+            "field": "Type",
+            "width": "15%",
+            "sortable": true
+            }
+        ],
+    "types" : [
+            {
+                "type": "Context",
+                "label": "Fill or Deposit",
+                "plural": "Fills and Deposits"
+            },
+            {
+                "type": "Interface",
+                "label": "Cut",
+                "plural": "Cuts"
+            },
+            {
+                "type": "Feature",
+                "label": "Structure",
+                "plural": "Structures"
+            },
+            {
+                "type": "Artifact",
+                "label": "Special Find",
+                "plural": "Special Finds"
+            }
+        ]
+    }
