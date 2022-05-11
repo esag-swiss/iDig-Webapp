@@ -1,12 +1,14 @@
 <template>
   <div class="row">
+
     <div class="col-md-3">
-      <h2>Types</h2>
       <!-- The layer checkboxes go here -->
       <filter-liste
-      @test-emit="testEmit">
+         @test-emit="testEmit">
       </filter-liste>
-      <p>{{testlist}}</p>
+      <filter-fields
+         :selected-filter="selectedfilter">        
+      </filter-fields>
     </div>
 
     <div class="col-md-9">
@@ -14,13 +16,15 @@
               <h2>UsersTable from json file</h2>
         <table class="table table-bordered">
           <users-table
-        v-for="friend in friends"
+        v-for="friend in filteredAndSorted"
         :key="friend.id"
         :name="friend.name"
         :phone-number="friend.phone"
         :email-address="friend.email"
         :friend-type="friend.type"
-        :friend-truc="friend.truc">
+        :friend-truc="friend.truc"
+        :selected-filter="selectedfilter"
+        >
         </users-table>
         </table>
     </div>
@@ -30,12 +34,15 @@
 </template>
 
 <script>
-import FilterListe from './components/FilterListe'
+import FilterListe from './components/FilterListe';
+import FilterFields from './components/FilterFields';
+import usersData from './components/Friends.json';
 
 export default {
   data() {
      return {
-      friends: [
+      friends: usersData,  
+      frinds: [
         {
           id: 23,
           name: "George",
@@ -59,18 +66,36 @@ export default {
           type : "Artifact"
         }
       ],
-      testlist: ["porut","caca"
-      ],
+      // type by default
+      selectedfilter: "Artifact",
    };
+  },
+  computed: {
+    filteredAndSorted(){
+     // function to compare names
+     function compare(a, b) {
+       if (a.name < b.name) return -1;
+       if (a.name > b.name) return 1;
+       return 0;
+     }
+      
+     return this.friends.filter(user => {
+        return user.type.toLowerCase().includes(this.selectedfilter.toLowerCase())
+     }).sort(compare)
+    }
   },
   methods: {
     testEmit(testid) {
-      alert(testid)
-    }
+      this.selectedfilter=testid,
+      console.log(testid)
+    },
+
+    
   },
   name: 'App',
   components: {
-    FilterListe
+    FilterListe,
+    FilterFields
   }
   
 }

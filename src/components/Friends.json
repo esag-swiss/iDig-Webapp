@@ -5,20 +5,20 @@
       "email": "gear@archaiodata.com",
       "phone": 247977080,
       "truc": "ca marche",
-      "Type" : "Feature"
+      "type" : "Context"
     },
     {
       "id": 24,
       "name": "Kevin",
       "email": "kev@bsa.uk",
       "phone": 676318876,
-      "Type" : "Artifact"
+      "type" : "Feature"
     },
     {
       "id": 25,
       "name": "Lora",
       "email": "lora@efa.gr",
-      "truc": "ca marche",
-      "Type" : "Artifact"
+      "truc": "moi j'ai un truc",
+      "type" : "Artifact"
     }
   ]

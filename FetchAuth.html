@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h2>JavaScript Arrays</h2>
+<p>Click to get every element in the array that has a value</p>
+<p><input type="text" id="sectorToCheck" value="e"></p>
+<button onclick="myFunctionsector()">Try it</button>
+<p id="demosector"></p>
+
+
+<script>
+
+
+// ------------------------ avec la l'objet json dans la page 
+// const json = {
+//        "type":"FeatureCollection",
+//        "features": [
+//        {"type":"Feature", "properties":{"RecNum":10,"GTh":62,"Titre":"Th\u00e9\u00e2tre","R\u00e9f\u00e9renc":null,"Description":null}},
+//        {"type":"Feature",  "properties":{"RecNum":28,"GTh":10,"Titre":"Portique nord-ouest","R\u00e9f\u00e9renc":null,"Description":null}},
+//        {"type":"Feature","properties":{"RecNum":95,"GTh":11,"Titre":"Karakatsani","R\u00e9f\u00e9renc":null,"Description":null}}
+//        ]};
+
+
+
+//-------------------------------- avec l'objet json récupéré par Fetch 
+
+
+
+// const promise1 = fetch('https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json');
+// const promise1 = fetch('http://192.168.1.49/iDig/secteurs.json');
+// const promise1 = fetch('http://thacer.archaiodata.com/API/secteurs.json');
+// const promise1 = fetch('http://thacer.archaiodata.com/API/secteurs.json', {method: 'GET', mode: 'no-cors', cache: 'default'});
+
+// const promise1 = fetch('http://bob:1974@192.168.1.82:56848/json');
+let username = ' ';
+let password = '1974';
+const promise1 = fetch('http://192.168.1.82:56848/json', {method: 'GET', headers: {
+  'Authorization': 'Basic ' + btoa(' :1974')
+  }});
+
+  promise1
+   .then(response => response.json())
+   .then(response => alert(JSON.stringify(response)))
+   .catch(error => alert("Erreur : " + error));
+
+ // promise1
+ //   .then((response) => {
+ //       // console.log(response);
+ //       const json = response.json();
+ //       alert(JSON.stringify(json));
+ //       console.log(json);
+ //     });
+
+
+ // from https://gist.github.com/ivermac/922def70ed9eaf83799b68ab1a587595
+// var http = new XMLHttpRequest();            
+//             http.open("get", 'http://bob:1974@192.168.1.82:56848/json', false);
+//             http.send("");
+//             if (http.status == 200) {
+//               alert("OK. You now established a session. You can navigate to the URL.");
+//             } else {
+//               alert(http.status + "⚠️ Authentication failed.");
+//             }
+
+
+// --------------------------------- avec XHR 
+// var requestURL = 'https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json';
+// var requestURL = 'http://thacer.archaiodata.com/API/secteurs.json';
+// var requestURL = 'http://192.168.1.49/iDig/secteurs.json';
+// var requestURL = 'http://bob:1974@192.168.1.82:56408/json';
+
+
+// var request = new XMLHttpRequest();
+// request.open('GET', requestURL, true);
+// request.responseType = 'json';
+// request.send();
+
+// request.onload = function() {
+//   var superHeroes = request.response;
+//   // populateHeader(superHeroes);
+//   // showHeroes(superHeroes);
+//   const json = superHeroes;
+//   alert(JSON.stringify(superHeroes))
+// }
+
+
+function myFunctionsector() {
+  // document.getElementById("demosector").innerHTML = JSON.stringify(json.features.filter(sss => sss.properties.Titre.indexOf('tre') > -1));
+
+  alert(JSON.stringify(json));
+}
+</script>
+
+</body>
+</html>

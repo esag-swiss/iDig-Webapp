@@ -1,0 +1,20 @@
+Date : 5 nov. 2021
+DateEarliest : 2021-11-05T14:12:17Z
+DateEarliestISO8601 : 2021-11-05T15:12:17+0100
+DateLatest : 2021-11-05T14:12:17Z
+DateLatestISO8601 : 2021-11-05T15:12:17+0100
+DateModified : 2021-11-05T14:12:18Z
+DateTimeZone : Europe/Paris
+DateUTC : 2021-11-05T14:12:17Z
+FormatImage : A5D0E3C5-CA86-49A3-AEC5-07A35CF402B7.jpg
+FormatImageHeight : 3264
+FormatImageWidth : 2448
+IdentifierUUID : A5D0E3C5-CA86-49A3-AEC5-07A35CF402B7
+RelationAttachments : n=A5D0E3C5-CA86-49A3-AEC5-07A35CF402B7.jpg\nd=2021-11-05T14:12:18Z
+RightsDeleted : 0
+RightsLocked : 0
+RightsSidelined : 0
+RightsStatus : Will Process
+RightsTrashed : 0
+Source : ΒΘ West 2013
+Type : Image

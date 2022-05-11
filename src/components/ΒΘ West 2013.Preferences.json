@@ -1,0 +1,1737 @@
+{
+  "wgs84cpts" : [
+    {
+      "y" : -200,
+      "lat" : 37.971419451000003,
+      "lon" : 23.720407552899999,
+      "x" : 200
+    },
+    {
+      "y" : -200,
+      "lat" : 37.971426497899998,
+      "lon" : 23.7238219987,
+      "x" : 500
+    },
+    {
+      "y" : -200,
+      "lat" : 37.971431143799997,
+      "lon" : 23.726098297,
+      "x" : 700
+    },
+    {
+      "y" : 300,
+      "lat" : 37.975924281700003,
+      "lon" : 23.720392538599999,
+      "x" : 200
+    },
+    {
+      "y" : 300,
+      "lat" : 37.975931329799998,
+      "z" : 0,
+      "lon" : 23.723807194199999,
+      "x" : 500
+    },
+    {
+      "y" : 300,
+      "lat" : 37.975935976499997,
+      "lon" : 23.7260836327,
+      "x" : 700
+    },
+    {
+      "y" : 400,
+      "lat" : 37.976825245599997,
+      "lon" : 23.720389535300001,
+      "x" : 200
+    },
+    {
+      "y" : 400,
+      "lat" : 37.976832293999998,
+      "lon" : 23.723804233700001,
+      "x" : 500
+    },
+    {
+      "y" : 400,
+      "lat" : 37.976836940799998,
+      "lon" : 23.726080698899999,
+      "x" : 700
+    }
+  ],
+  "fields" : [
+    {
+      "field" : "ArchiveNumber",
+      "labels" : {
+        "el" : "# Καταγραφής",
+        "en" : "Archive #"
+      }
+    },
+    {
+      "field" : "BelowOther",
+      "labels" : {
+        "el" : "κάτω από",
+        "en" : "below other"
+      }
+    },
+    {
+      "field" : "Buckets",
+      "labels" : {
+        "el" : "κουβάδες",
+        "en" : "buckets"
+      }
+    },
+    {
+      "field" : "Category",
+      "labels" : {
+        "el" : "κατηγορία",
+        "en" : "category"
+      }
+    },
+    {
+      "field" : "Contents",
+      "multiline" : true
+    },
+    {
+      "field" : "Context",
+      "labels" : {
+        "el" : "στρωμ. ενότητα",
+        "en" : "context"
+      },
+      "valuelist" : [
+
+      ]
+    },
+    {
+      "multitype" : true,
+      "multivalue" : true,
+      "valuelist" : [
+
+      ],
+      "field" : "Contributor",
+      "labels" : {
+        "el" : "ανασκαφείς",
+        "en" : "diggers"
+      }
+    },
+    {
+      "field" : "CoverageEarliest",
+      "labels" : {
+        "el" : "έναρξη χρονολ.",
+        "en" : "chron. start"
+      }
+    },
+    {
+      "field" : "CoverageLatest",
+      "labels" : {
+        "el" : "τέλος χρονολ.",
+        "en" : "chron. end"
+      }
+    },
+    {
+      "field" : "CoverageSpatial",
+      "labels" : {
+        "el" : "σημεία",
+        "en" : "points"
+      },
+      "multiline" : true
+    },
+    {
+      "multitype" : true,
+      "valuelist" : [
+
+      ],
+      "field" : "CoverageTemporal",
+      "labels" : {
+        "el" : "χρονολ.",
+        "en" : "chron."
+      }
+    },
+    {
+      "multitype" : true,
+      "valuelist" : [
+
+      ],
+      "field" : "Creator",
+      "labels" : {
+        "el" : "τομεάρχης",
+        "en" : "supervisor"
+      }
+    },
+    {
+      "field" : "DateEarliest",
+      "labels" : {
+        "el" : "έναρξη",
+        "en" : "start"
+      }
+    },
+    {
+      "field" : "DateLatest",
+      "labels" : {
+        "el" : "λήξη",
+        "en" : "end"
+      }
+    },
+    {
+      "multitype" : true,
+      "valuelist" : [
+
+      ],
+      "field" : "Deposit",
+      "labels" : {
+        "el" : "απόθεση",
+        "en" : "deposit"
+      }
+    },
+    {
+      "field" : "Description",
+      "multiline" : true
+    },
+    {
+      "field" : "Elevations",
+      "labels" : {
+        "el" : "βάθη",
+        "en" : "elevations"
+      }
+    },
+    {
+      "field" : "Format",
+      "labels" : {
+        "el" : "διαστάσεις",
+        "en" : "dimensions"
+      }
+    },
+    {
+      "tip" : "Enter the basket number.",
+      "tips" : {
+        "el" : "# ομάδας",
+        "en" : "basket number"
+      },
+      "field" : "Identifier",
+      "labels" : {
+        "el" : "αύξων #",
+        "en" : "identifier"
+      }
+    },
+    {
+      "field" : "IdentifierUUID",
+      "labels" : {
+        "el" : "αύξων #",
+        "en" : "identifier"
+      }
+    },
+    {
+      "field" : "InventoryNumber",
+      "labels" : {
+        "el" : "# καταγραφής",
+        "en" : "inventory #"
+      }
+    },
+    {
+      "multitype" : true,
+      "valuelist" : [
+
+      ],
+      "field" : "Looking",
+      "labels" : {
+        "el" : "προσανατολισμός",
+        "en" : "looking"
+      }
+    },
+    {
+      "field" : "LotContexts",
+      "labels" : {
+        "el" : "περιεχ.ομαδ.",
+        "en" : "lot contexts"
+      }
+    },
+    {
+      "field" : "LotDates",
+      "labels" : {
+        "el" : "ημερομ.ομαδοπ.",
+        "en" : "lot dates"
+      }
+    },
+    {
+      "field" : "LotGrid",
+      "labels" : {
+        "el" : "κάνναβος ομαδ.",
+        "en" : "lot grid"
+      }
+    },
+    {
+      "field" : "LotLevels",
+      "labels" : {
+        "el" : "βάθη ομαδοπ.",
+        "en" : "lot levels"
+      }
+    },
+    {
+      "field" : "LotStorage",
+      "labels" : {
+        "el" : "θέση αποθήκευσης",
+        "en" : "storage"
+      },
+      "valuelist" : [
+        "Sack",
+        "Tin",
+        "Box",
+        "Envelope"
+      ]
+    },
+    {
+      "multivalue" : true,
+      "valuelist" : [
+        "Alabaster",
+        "Amber",
+        "Antler",
+        "Basalt",
+        "Bone",
+        "Botanical",
+        "Ceramic",
+        "Copper alloy",
+        "Enamel",
+        "Faience",
+        "Flint or chert",
+        "Frit",
+        "Gilded Bronze",
+        "Glass",
+        "Glaze",
+        "Gold",
+        "Hair",
+        "Horn",
+        "Iron",
+        "Ivory",
+        "Lead",
+        "Leather",
+        "Limestone",
+        "Marble",
+        "Mudstone",
+        "Obsidian",
+        "Pigment",
+        "Plaster",
+        "Semi-Precious",
+        "Shell",
+        "Silver",
+        "Slag",
+        "Slip",
+        "Steatite",
+        "Stone",
+        "Terracotta",
+        "Unbaked Clay",
+        "Unidentified",
+        "Unidentified Metal",
+        "Unidentified Stone",
+        "Unknown",
+        "Wood"
+      ],
+      "field" : "Material",
+      "labels" : {
+        "el" : "υλικό",
+        "en" : "material"
+      }
+    },
+    {
+      "field" : "NotebookPage",
+      "labels" : {
+        "el" : "σελίδα ημερολ.",
+        "en" : "page"
+      }
+    },
+    {
+      "field" : "Relation",
+      "labels" : {
+        "el" : "σχέση",
+        "en" : "relation"
+      },
+      "multiline" : true
+    },
+    {
+      "field" : "RelationAttachments",
+      "labels" : {
+        "el" : "σχετικές εικόνες",
+        "en" : "related images"
+      },
+      "multiline" : true
+    },
+    {
+      "field" : "RelationURLs",
+      "labels" : {
+        "el" : "σύνδεσμοι σχέσεων",
+        "en" : "relation URLs"
+      }
+    },
+    {
+      "field" : "RightsRating",
+      "labels" : {
+        "el" : "εκτίμηση",
+        "en" : "rating"
+      }
+    },
+    {
+      "field" : "RightsStatus",
+      "labels" : {
+        "el" : "τρέχων",
+        "en" : "current"
+      }
+    },
+    {
+      "field" : "RightsSidelined",
+      "labels" : {
+        "el" : "μετατοπισμένο",
+        "en" : "sidelined"
+      }
+    },
+    {
+      "field" : "SectionNumber",
+      "labels" : {
+        "el" : "# τομέα",
+        "en" : "section #"
+      }
+    },
+    {
+      "field" : "Source",
+      "labels" : {
+        "el" : "τομέας",
+        "en" : "trench"
+      }
+    },
+    {
+      "field" : "Storage",
+      "labels" : {
+        "el" : "θέση αποθήκευσης",
+        "en" : "storage"
+      }
+    },
+    {
+      "field" : "Title",
+      "labels" : {
+        "el" : "τίτλος",
+        "en" : "title"
+      },
+      "valuelist" : [
+
+      ]
+    },
+    {
+      "field" : "Type",
+      "labels" : {
+        "el" : "τύπος",
+        "en" : "type"
+      }
+    },
+    {
+      "multitype" : true,
+      "valuelist" : [
+
+      ],
+      "field" : "TypeName",
+      "labels" : {
+        "el" : "υπότυπος",
+        "en" : "subtype"
+      }
+    }
+  ],
+  "types" : [
+    {"relations" : [
+        {
+          "type" : "Context",
+          "relation" : "is above"
+        },
+        {
+          "type" : "Artifact",
+          "relation" : "includes"
+        },
+        {
+          "type" : "Feature",
+          "relation" : "includes"
+        },
+        {
+          "type" : "Group",
+          "relation" : "belongs to"
+        }
+      ],
+      "plurals" : {
+        "el" : "Ομάδες",
+        "en" : "Baskets"
+      },
+      "type" : "Context",
+      "groups" : [
+        {"group" : "General",
+          "labels" : {
+            "el" : "Γενικά",
+            "en" : "General"
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "DateEarliest"
+            },
+            {
+              "field" : "DateLatest"
+            }
+          ]
+        },
+        {"group" : "Attachments",
+          "labels" : {
+            "el" : "Σχετικές Εικόνες",
+            "en" : "Related Images"
+          },
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ]
+        },
+        {"group" : "URLs",
+          "labels" : {
+            "el" : "URLs",
+            "en" : "URLs"
+          },
+          "fields" : [
+            {
+              "field" : "RelationURLs"
+            }
+          ]
+        },
+        {"group" : "Points",
+          "labels" : {
+            "el" : "Σημεία",
+            "en" : "Points"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {"group" : "Description",
+          "labels" : {
+            "el" : "Περιγραφή",
+            "en" : "Description"
+          },
+          "fields" : [
+            {
+              "field" : "Description"
+            }
+          ]
+        },
+        {"group" : "Contents",
+          "labels" : {
+            "el" : "Περιεχόμενα",
+            "en" : "Contents"
+          },
+          "fields" : [
+            {
+              "field" : "Contents"
+            }
+          ]
+        },
+        {"group" : "Fields",
+          "labels" : {
+            "el" : "Πεδία",
+            "en" : "Fields"
+          },
+          "fields" : [
+            {
+              "field" : "Contributor"
+            },
+            {
+              "field" : "Buckets"
+            },
+            {
+              "field" : "Category",
+              "valuelist" : [
+                "Burial",
+                "Cistern",
+                "Coin Hoard",
+                "Cremation",
+                "Drain",
+                "Dump",
+                "Fill",
+                "Inhumation",
+                "Pit",
+                "Pithos",
+                "Pyre",
+                "Road",
+                "Wall",
+                "Well",
+                "Mudbrick",
+                "Deposit",
+                "Surface"
+              ]
+            },
+            {
+              "field" : "NotebookPage"
+            },
+            {
+              "field" : "Deposit"
+            },
+            {
+              "field" : "BelowOther"
+            }
+          ]
+        },
+        {"group" : "Chronology",
+          "labels" : {
+            "el" : "Χρονολόγηση",
+            "en" : "Chronology"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageTemporal"
+            },
+            {
+              "field" : "CoverageEarliest"
+            },
+            {
+              "field" : "CoverageLatest"
+            }
+          ]
+        },
+        {"group" : "Status",
+          "labels" : {
+            "el" : "Κατάσταση",
+            "en" : "Status"
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        },
+        {"group" : "Relationships",
+          "labels" : {
+            "el" : "Σχέσεις",
+            "en" : "Relationships"
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "el" : "Ομάδα",
+        "en" : "Basket"
+      }
+    },
+    {
+      "plurals" : {
+        "el" : "Ευρήματα",
+        "en" : "Finds"
+      },
+      "type" : "Artifact",
+      "groups" : [
+        {"group" : "General",
+          "labels" : {
+            "el" : "Γενικά",
+            "en" : "General"
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "DateEarliest"
+            }
+          ]
+        },
+        {"group" : "Attachments",
+          "labels" : {
+            "el" : "Σχετικές Εικόνες",
+            "en" : "Related Images"
+          },
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ]
+        },
+        {"group" : "Points",
+          "labels" : {
+            "el" : "Σημεία",
+            "en" : "Points"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {"group" : "Description",
+          "labels" : {
+            "el" : "Περιγραφή",
+            "en" : "Description"
+          },
+          "fields" : [
+            {
+              "field" : "Description"
+            }
+          ]
+        },
+        {"group" : "Fields",
+          "labels" : {
+            "el" : "Πεδία",
+            "en" : "Fields"
+          },
+          "fields" : [
+            {
+              "field" : "InventoryNumber"
+            },
+            {
+              "field" : "SectionNumber"
+            },
+            {
+              "field" : "Context"
+            },
+            {
+              "field" : "Deposit"
+            },
+            {
+              "field" : "NotebookPage"
+            },
+            {
+              "field" : "Material"
+            },
+            {
+              "field" : "Category",
+              "valuelist" : [
+                "Architecture Terracotta",
+                "Architecture Poros",
+                "Architecture Misc.",
+                "Architecture Marble",
+                "Bronze",
+                "Bone & Ivory",
+                "Coin",
+                "Glass",
+                "Inscriptions",
+                "Iron & Lead",
+                "Jewelry & Gems",
+                "Lamps",
+                "Misc. Clay Objects",
+                "Misc. Moulds",
+                "Plastic Vases",
+                "Pottery",
+                "Pottery Moulds",
+                "Sculpture",
+                "SS Misc.",
+                "SS Thasian",
+                "SS Rhodian",
+                "ST Marble",
+                "ST Stone",
+                "Terracotta",
+                "Terracotta Moulds",
+                "Wood"
+              ]
+            },
+            {
+              "field" : "Format"
+            },
+            {
+              "field" : "Storage"
+            }
+          ]
+        },
+        {"group" : "Chronology",
+          "labels" : {
+            "el" : "Χρονολόγηση",
+            "en" : "Chronology"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageTemporal"
+            },
+            {
+              "field" : "CoverageEarliest"
+            },
+            {
+              "field" : "CoverageLatest"
+            }
+          ]
+        },
+        {"group" : "Status",
+          "labels" : {
+            "el" : "Κατάσταση",
+            "en" : "Status"
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        },
+        {"group" : "Relationships",
+          "labels" : {
+            "el" : "Σχέσεις",
+            "en" : "Relationships"
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "el" : "Εύρημα",
+        "en" : "Find"
+      }
+    },
+    {
+      "plurals" : {
+        "el" : "Εγκάρσιες Τομές",
+        "en" : "X-Sections"
+      },
+      "type" : "Section",
+      "groups" : [
+        {
+          "group" : "General",
+          "labels" : {
+            "el" : "Γενικά",
+            "en" : "General"
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "DateEarliest"
+            },
+            {
+              "field" : "DateLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "labels" : {
+            "el" : "Σχετικές Εικόνες",
+            "en" : "Related Images"
+          },
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "el" : "Σημεία",
+            "en" : "Points"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Description",
+          "labels" : {
+            "el" : "Περιγραφή",
+            "en" : "Description"
+          },
+          "fields" : [
+            {
+              "field" : "Description"
+            }
+          ]
+        },
+        {
+          "group" : "Fields",
+          "labels" : {
+            "el" : "Πεδία",
+            "en" : "Fields"
+          },
+          "fields" : [
+            {
+              "field" : "Elevations"
+            },
+            {
+              "field" : "Looking"
+            },
+            {
+              "field" : "NotebookPage"
+            }
+          ]
+        },
+        {
+          "group" : "Chronology",
+          "labels" : {
+            "el" : "Χρονολόγηση",
+            "en" : "Chronology"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageTemporal"
+            },
+            {
+              "field" : "CoverageEarliest"
+            },
+            {
+              "field" : "CoverageLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Status",
+          "labels" : {
+            "el" : "Κατάσταση",
+            "en" : "Status"
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group" : "Relationships",
+          "labels" : {
+            "el" : "Σχέσεις",
+            "en" : "Relationships"
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "el" : "Εγκάρσια Τομή",
+        "en" : "X-Section"
+      }
+    },
+    {
+      "color" : "rgba:0.761,0.263,0.431,0.3",
+      "plurals" : {
+        "el" : "Χαρακτηριστικά",
+        "en" : "Features"
+      },
+      "type" : "Feature",
+      "groups" : [
+        {
+          "group" : "General",
+          "labels" : {
+            "el" : "Γενικά",
+            "en" : "General"
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "DateEarliest"
+            },
+            {
+              "field" : "DateLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "labels" : {
+            "el" : "Σχετικές Εικόνες",
+            "en" : "Related Images"
+          },
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "el" : "Σημεία",
+            "en" : "Points"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Description",
+          "labels" : {
+            "el" : "Περιγραφή",
+            "en" : "Description"
+          },
+          "fields" : [
+            {
+              "field" : "Description"
+            }
+          ]
+        },
+        {
+          "group" : "Contents",
+          "labels" : {
+            "el" : "Περιεχόμενα",
+            "en" : "Contents"
+          },
+          "fields" : [
+            {
+              "field" : "Contents"
+            }
+          ]
+        },
+        {
+          "group" : "Fields",
+          "labels" : {
+            "el" : "Πεδία",
+            "en" : "Fields"
+          },
+          "fields" : [
+            {
+              "field" : "Category",
+              "valuelist" : [
+
+              ]
+            },
+            {
+              "field" : "Deposit"
+            }
+          ]
+        },
+        {
+          "group" : "Chronology",
+          "labels" : {
+            "el" : "Χρονολόγηση",
+            "en" : "Chronology"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageTemporal"
+            },
+            {
+              "field" : "CoverageEarliest"
+            },
+            {
+              "field" : "CoverageLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Status",
+          "labels" : {
+            "el" : "Κατάσταση",
+            "en" : "Status"
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group" : "Relationships",
+          "labels" : {
+            "el" : "Σχέσεις",
+            "en" : "Relationships"
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "el" : "Χαρακτηριστικό",
+        "en" : "Feature"
+      }
+    },
+    {
+      "plurals" : {
+        "el" : "Εικόνες",
+        "en" : "Photos"
+      },
+      "type" : "Image",
+      "groups" : [
+        {
+          "group" : "General",
+          "labels" : {
+            "el" : "Γενικά",
+            "en" : "General"
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "DateEarliest"
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "labels" : {
+            "el" : "Σχετικές Εικόνες",
+            "en" : "Related Images"
+          },
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "el" : "Σημεία",
+            "en" : "Points"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Fields",
+          "labels" : {
+            "el" : "Πεδία",
+            "en" : "Fields"
+          },
+          "fields" : [
+            {
+              "field" : "ArchiveNumber"
+            },
+            {
+              "field" : "Looking"
+            },
+            {
+              "field" : "RightsRating"
+            }
+          ]
+        },
+        {
+          "group" : "Status",
+          "labels" : {
+            "el" : "Κατάσταση",
+            "en" : "Status"
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group" : "Relationships",
+          "labels" : {
+            "el" : "Σχέσεις",
+            "en" : "Relationships"
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "el" : "Εικόνα",
+        "en" : "Photo"
+      }
+    },
+    {
+      "plurals" : {
+        "el" : "Ομαδοποιήσεις",
+        "en" : "Lots"
+      },
+      "type" : "Group",
+      "groups" : [
+        {
+          "group" : "General",
+          "labels" : {
+            "el" : "Γενικά",
+            "en" : "General"
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "DateEarliest"
+            },
+            {
+              "field" : "DateLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "labels" : {
+            "el" : "Σχετικές Εικόνες",
+            "en" : "Related Images"
+          },
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group" : "URLs",
+          "labels" : {
+            "el" : "URLs",
+            "en" : "URLs"
+          },
+          "fields" : [
+            {
+              "field" : "RelationURLs"
+            }
+          ]
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "el" : "Σημεία",
+            "en" : "Points"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Contents",
+          "labels" : {
+            "el" : "Περιεχόμενα",
+            "en" : "Contents"
+          },
+          "fields" : [
+            {
+              "field" : "Contents"
+            }
+          ]
+        },
+        {
+          "group" : "Fields",
+          "labels" : {
+            "el" : "Πεδία",
+            "en" : "Fields"
+          },
+          "fields" : [
+            {
+              "field" : "Category",
+              "valuelist" : [
+
+              ]
+            },
+            {
+              "field" : "Deposit"
+            },
+            {
+              "field" : "LotStorage"
+            },
+            {
+              "field" : "LotGrid"
+            },
+            {
+              "field" : "LotLevels"
+            },
+            {
+              "field" : "LotDates"
+            },
+            {
+              "field" : "LotContexts"
+            },
+            {
+              "field" : "NotebookPage",
+              "multivalue" : true
+            }
+          ]
+        },
+        {
+          "group" : "Chronology",
+          "labels" : {
+            "el" : "Χρονολόγηση",
+            "en" : "Chronology"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageTemporal"
+            },
+            {
+              "field" : "CoverageEarliest"
+            },
+            {
+              "field" : "CoverageLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Status",
+          "labels" : {
+            "el" : "Κατάσταση",
+            "en" : "Status"
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group" : "Relationships",
+          "labels" : {
+            "el" : "Σχέσεις",
+            "en" : "Relationships"
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "el" : "Ομαδοποίηση",
+        "en" : "Lot"
+      }
+    },
+    {
+      "plurals" : {
+        "el" : "Άλλο",
+        "en" : "Other"
+      },
+      "type" : "Other",
+      "groups" : [
+        {
+          "group" : "General",
+          "labels" : {
+            "el" : "Γενικά",
+            "en" : "General"
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "DateEarliest"
+            },
+            {
+              "field" : "DateLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "labels" : {
+            "el" : "Σχετικές Εικόνες",
+            "en" : "Related Images"
+          },
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "el" : "Σημεία",
+            "en" : "Points"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Description",
+          "labels" : {
+            "el" : "Περιγραφή",
+            "en" : "Description"
+          },
+          "fields" : [
+            {
+              "field" : "Description"
+            }
+          ]
+        },
+        {
+          "group" : "Fields",
+          "labels" : {
+            "el" : "Πεδία",
+            "en" : "Fields"
+          },
+          "fields" : [
+            {
+              "field" : "Category",
+              "valuelist" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "group" : "Chronology",
+          "labels" : {
+            "el" : "Χρονολόγηση",
+            "en" : "Chronology"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageTemporal"
+            },
+            {
+              "field" : "CoverageEarliest"
+            },
+            {
+              "field" : "CoverageLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Status",
+          "labels" : {
+            "el" : "Κατάσταση",
+            "en" : "Status"
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group" : "Relationships",
+          "labels" : {
+            "el" : "Σχέσεις",
+            "en" : "Relationships"
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "el" : "Άλλο",
+        "en" : "Other"
+      }
+    },
+    {
+      "plurals" : {
+        "el" : "Σχέδια",
+        "en" : "Plans"
+      },
+      "type" : "Plan",
+      "groups" : [
+        {
+          "group" : "General",
+          "labels" : {
+            "el" : "Γενικά",
+            "en" : "General"
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "DateEarliest"
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "labels" : {
+            "el" : "Σχετικές Εικόνες",
+            "en" : "Related Images"
+          },
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "el" : "Σημεία",
+            "en" : "Points"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Description",
+          "labels" : {
+            "el" : "Περιγραφή",
+            "en" : "Description"
+          },
+          "fields" : [
+            {
+              "field" : "Description"
+            }
+          ]
+        },
+        {
+          "group" : "Status",
+          "labels" : {
+            "el" : "Κατάσταση",
+            "en" : "Status"
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group" : "Relationships",
+          "labels" : {
+            "el" : "Σχέσεις",
+            "en" : "Relationships"
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "el" : "Σχέδιο",
+        "en" : "Plan"
+      }
+    },
+    {
+      "plurals" : {
+        "el" : "Άτυπο",
+        "en" : "Untyped"
+      },
+      "type" : "Untyped",
+      "groups" : [
+        {
+          "group" : "General",
+          "labels" : {
+            "el" : "Γενικά",
+            "en" : "General"
+          },
+          "fields" : [
+            {
+              "field" : "IdentifierUUID",
+              "locked" : true
+            },
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "DateEarliest"
+            },
+            {
+              "field" : "DateLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "labels" : {
+            "el" : "Σχετικές Εικόνες",
+            "en" : "Related Images"
+          },
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "el" : "Σημεία",
+            "en" : "Points"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Description",
+          "labels" : {
+            "el" : "Περιγραφή",
+            "en" : "Description"
+          },
+          "fields" : [
+            {
+              "field" : "Description"
+            }
+          ]
+        },
+        {
+          "group" : "Chronology",
+          "labels" : {
+            "el" : "Χρονολόγηση",
+            "en" : "Chronology"
+          },
+          "fields" : [
+            {
+              "field" : "CoverageTemporal"
+            },
+            {
+              "field" : "CoverageEarliest"
+            },
+            {
+              "field" : "CoverageLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Status",
+          "labels" : {
+            "el" : "Κατάσταση",
+            "en" : "Status"
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        },
+        {
+          "group" : "Relationships",
+          "labels" : {
+            "el" : "Σχέσεις",
+            "en" : "Relationships"
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "el" : "Άτυπα",
+        "en" : "Untyped"
+      }
+    }
+  ],
+  "version" : 2,
+  "project" : "Agora",
+  "maxdigits" : "6.3"
+}
