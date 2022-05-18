@@ -1,103 +1,68 @@
 <template>
   <div class="row">
-
     <div class="col-md-3">
       <!-- The layer checkboxes go here -->
       <filter-liste
          @test-emit="testEmit">
       </filter-liste>
       <filter-fields
-         :selected-filter="selectedfilter">        
+         :selected-filter="selectedFilter">        
       </filter-fields>
     </div>
 
     <div class="col-md-9">
       <!-- The map goes here -->
-              <h2>UsersTable from json file</h2>
         <table class="table table-bordered">
-          <users-table
-        v-for="friend in filteredAndSorted"
-        :key="friend.id"
-        :name="friend.name"
-        :phone-number="friend.phone"
-        :email-address="friend.email"
-        :friend-type="friend.type"
-        :friend-truc="friend.truc"
-        :selected-filter="selectedfilter"
-        >
-        </users-table>
-        </table>
-    </div>
 
+        </table>
+        <dyna-table
+          :selected-fields="selectedFields"
+          :selected-data="selectedData">
+        </dyna-table>  
+    </div>
   </div> 
-  
 </template>
 
 <script>
 import FilterListe from './components/FilterListe';
 import FilterFields from './components/FilterFields';
-import usersData from './components/Friends.json';
+// import UsersTable from './components/UsersTable';
+import DynaTable from './components/DynaTable';
+import preferencesData from "./components/AMA21-S24.Preferences.json";
+import trenchData from "./components/AMA21-S24.json";
 
 export default {
-  data() {
-     return {
-      friends: usersData,  
-      frinds: [
-        {
-          id: 23,
-          name: "George",
-          email: "gear@archaiodata.com",
-          phone: 247977080,
-          truc: "ca marche",
-          type : "Feature"
-        },
-        {
-          id: 24,
-          name: "Kevin",
-          email: "kev@bsa.uk",
-          phone: 676318876,
-          type : "Artifact"
-        },
-        {
-          id: 25,
-          name: "Lora",
-          email: "lora@efa.gr",
-          truc: "ca marche",
-          type : "Artifact"
-        }
-      ],
-      // type by default
-      selectedfilter: "Artifact",
-   };
-  },
-  computed: {
-    filteredAndSorted(){
-     // function to compare names
-     function compare(a, b) {
-       if (a.name < b.name) return -1;
-       if (a.name > b.name) return 1;
-       return 0;
-     }
-      
-     return this.friends.filter(user => {
-        return user.type.toLowerCase().includes(this.selectedfilter.toLowerCase())
-     }).sort(compare)
-    }
-  },
-  methods: {
-    testEmit(testid) {
-      this.selectedfilter=testid,
-      console.log(testid)
-    },
-
-    
-  },
   name: 'App',
   components: {
     FilterListe,
-    FilterFields
-  }
-  
+    FilterFields,
+    DynaTable
+  },
+  data() {
+     return {
+      fields: preferencesData.types,
+       trenchdata: trenchData,
+      selectedFilter: "Artifact", // type by default
+   };
+  },
+  computed: {
+    selectedFields(){
+     return this.fields.filter(x => {
+      return x.type.includes(this.selectedFilter)
+     })[0].groups[0].fields
+    },
+    selectedData(){
+     return this.trenchdata.filter(object => {
+        return object.Type.includes(this.selectedFilter)
+     })
+    } 
+  },
+  methods: {
+    testEmit(testid) {
+      this.selectedFilter=testid,
+      console.log(testid)
+    },
+  },
 }
 </script>
 
@@ -110,7 +75,7 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
-
+/*
 * {
   box-sizing: border-box;
 }
@@ -140,14 +105,13 @@ header {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   margin: 1rem auto;
   border-radius: 10px;
-  padding: 1rem;
   text-align: center;
   width: 90%;
   max-width: 40rem;
 }
 #app h2 {
   font-size: 2rem;
-  border-bottom: 4px solid #ccc;
+  border-bottom: 2px solid #ccc;
   color: #58004d;
   margin: 0 0 1rem 0;
 }
@@ -165,5 +129,5 @@ header {
   background-color: #ec3169;
   border-color: #ec3169;
   box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.26);
-}
+}*/
 </style>

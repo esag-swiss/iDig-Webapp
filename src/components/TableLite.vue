@@ -46,7 +46,7 @@
                     }"
                     @click="col.sortable ? doSort(col.field) : false"
                   >
-                    {{ col.label }}
+                    <p v-if="col.label">{{ col.label }}</p><p v-if="!col.label">{{ col.field }}</p>
                   </div>
                 </th>
               </tr>

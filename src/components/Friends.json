@@ -5,20 +5,59 @@
       "email": "gear@archaiodata.com",
       "phone": 247977080,
       "truc": "ca marche",
-      "type" : "Context"
+      "Type" : "Context"
     },
     {
       "id": 24,
       "name": "Kevin",
       "email": "kev@bsa.uk",
       "phone": 676318876,
-      "type" : "Feature"
+      "Type" : "Artifact"
     },
     {
       "id": 25,
       "name": "Lora",
       "email": "lora@efa.gr",
       "truc": "moi j'ai un truc",
-      "type" : "Artifact"
+      "Type" : "Artifact"
+    },
+    {
+      "id": 26,
+      "name": "Prout",
+      "email": "Prout@efa.gr",
+      "truc": "moi j'ai un truc",      
+      "Type" : "Artifact",
+      "CoverageXYZ" : "GEOMETRYCOLLECTION(POINT Z (406.08 357.089 54.289))",
+      "RightsTrashed" : "0",
+      "Title" : "Bronze Object",
+      "RightsLocked" : "0",
+      "RelationBelongsTo" : "west:2019:b:0",
+      "Material" : [
+        "Copper alloy"
+      ],
+      "IdentifierUUID" : "E78EC1B5-8F77-4FDC-B2BF-8873FE42BDDF",
+      "RightsStatus" : "All Done",
+      "DateLatest" : "2013-06-11T06:10:42Z",
+      "Identifier" : "1",
+      "DateModified" : "2014-07-28T12:25:31Z",
+      "DateTimeZone" : "Europe\/Athens",
+      "NotebookPage" : "3426",
+      "Date" : "11 juin 2013",
+      "CoverageSerialized" : "n=find-spot\nd=2013-06-11T06:10:42Z\nx=0X1.96147AE147AE1P+8\ny=0X1.6516C8B439581P+8\nz=0X1.B24FDF3B645A2P+5\nv=0X1.654B17E4B17E4P+6\ns=0X1.823D70A3D70A4P+3\nhz=0X1.3ADDF01234569P+8\nh=0X1.8CCCCCCCCCCCDP+0",
+      "DateUTC" : "2013-06-11T06:10:12Z",
+      "RightsDeleted" : "0",
+      "Description" : "Non-descript debris, thrown.",
+      "DateEarliest" : "2013-06-11T06:10:12Z",
+      "DateEarliestISO8601" : "2013-06-11T09:10:12+0300",
+      "DateLatestISO8601" : "2013-06-11T09:10:42+0300",
+      "Category" : "Bronze",
+      "CoverageAltitude" : "[54.289 TO 54.289]",
+      "RightsSidelined" : "0",
+      "Source" : "ΒΘ West 2013",
+      "RelationBelongsToUUID" : [
+        "AEF394AD-E157-48D5-9BB4-AB7260AE9A41"
+      ],
+      "CoveragePosition" : "406.08, 357.089",
+      "CoverageGEO" : "POINT (23.7227365 37.97644346)"
     }
   ]

@@ -12,24 +12,45 @@
 </template>
 
 <script>
-import { defineComponent, reactive, ref, computed } from "vue";
+import { defineComponent, reactive, ref, computed, toRef} from "vue";
 import TableLite from "../components/TableLite.vue";
-import data from "../components/Friends.json";
-import headersData from "../components/Friends.Preferences.json";
+// import preferencesData from "../components/AMA21-S24.Preferences.json";
+// import trenchData from "../components/AMA21-S24.json";
 
 export default defineComponent({
   name: "App",
   components: { TableLite },
-  setup() {
-    const searchTerm = ref(""); // Search text
+  props: {
+    selectedFields: {
+      type: String,
+      required: true
+    },
+    selectedData: {
+      type: String,
+      required: true
+    },
+  },
+
+  setup(props) {
+  const searchTerm = ref(""); // Search text
+
+    // data
+    const data = toRef(props, 'selectedData');
+
+    // utiliser toRef pour ne pas perdre la réactivité lorsque le props est destructuré
+    const headers = toRef(props, 'selectedFields');
+
+
+// Table config
     const table = reactive({
-      columns: headersData.fields,
+
+      columns: headers,
       rows: computed(() => {
-        return data.filter(
+        return data.value.filter(
           (x) =>
-            x.email.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-            x.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-        );
+            x.Type.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
+            x.Identifier.toLowerCase().includes(searchTerm.value.toLowerCase())
+        ); 
       }),
       totalRecordCount: computed(() => {
         return table.rows.length;
@@ -41,7 +62,7 @@ export default defineComponent({
     });
     return {
       searchTerm,
-      table,
+      table 
     };
   },
 });

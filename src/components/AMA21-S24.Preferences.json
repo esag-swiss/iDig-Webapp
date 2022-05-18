@@ -1,0 +1,3843 @@
+{
+  "fields" : [
+    {"field" : "Category",
+      "labels" : {
+        "de" : "Kategorie",
+        "en" : "Category",
+        "fr" : "Catégorie",
+        "it" : "Categoria",
+        "el" : ""
+      }
+    },
+    {"tips" : {
+        "de" : "Bearbeitungsstatus des Lot (Auswahl: Datierung ok, Quantifizierung ok, Scherben weggeworfen ok",
+        "en" : "Lot study check list (Multi-choice list: datation ok, quantification ok, discarded sherds ok)",
+        "fr" : "État de l’étude du lot (Liste multi-choix: datation ok, quantification ok, tessons jetés ok)",
+        "it" : "Situazione sullo studio del Gruppo  (Elenco a selezione multipla: datazione ok, quantificazione ok, cocci gettati ok)",
+        "el" : ""
+      },
+      "multivalue" : true,
+      "valuelist" : [
+        "datation ok",
+        "quantification ok",
+        "tessons jetés ok"
+      ],
+      "field" : "Check list",
+      "labels" : {
+        "de" : "Checkliste",
+        "en" : "Check list",
+        "fr" : "Check list",
+        "it" : "Check list",
+        "el" : ""
+      }
+    },
+    {
+      "multiline" : true,
+      "tips" : {
+        "de" : "allfällige Kommentare",
+        "en" : "Any comments",
+        "fr" : "Éventuels commentaires",
+        "it" : "Commento eventuale",
+        "el" : ""
+      },
+      "field" : "Comments",
+      "labels" : {
+        "de" : "Kommentare",
+        "en" : "Comments",
+        "fr" : "Commentaires",
+        "it" : "Commento",
+        "el" : ""
+      }
+    },
+    {
+      "tips" : {
+        "de" : "Art der Ausgrabung (positiv oder künstlich)",
+        "en" : "Excavation type (Positive or Artificial)",
+        "fr" : "Type de fouille (Positif ou Artificiel)",
+        "it" : "Tipo di scavo (Positivo, Artificiale)",
+        "el" : ""
+      },
+      "valuelist" : [
+        "Positif",
+        "Artificiel"
+      ],
+      "field" : "Context type",
+      "labels" : {
+        "de" : "Ausgrabung",
+        "en" : "Context type",
+        "fr" : "Fouille",
+        "it" : "Scavo",
+        "el" : ""
+      }
+    },
+    {
+      "multitype" : true,
+      "tips" : {
+        "de" : "Liste zur Periodenauswahl. Auswahl mehrerer Stichworte zur Angabe einer Zeitspanne möglich.",
+        "en" : "Multi choice list of periods. It is possible to indicate a timespan",
+        "fr" : "Liste multi-choix de périodes. Il est possible d'indiquer une fourchette chronologique",
+        "it" : "Elenco a selezione multipla dei periodi cronologici. Possibilità di indicare un'intervallo cronologico",
+        "el" : ""
+      },
+      "multivalue" : true,
+      "valuelist" : [
+        "préhistorique",
+        "bronze ancien",
+        "bronze moyen",
+        "bronze récent",
+        "géométrique",
+        "__9e siècle av.",
+        "__8e siècle av.",
+        "archaïque",
+        "__7e siècle av.",
+        "__6e siècle av.",
+        "classique",
+        "__5e siècle av.",
+        "__4e siècle av., 1ère moitié",
+        "hellénistique",
+        "haute époque hellénistique",
+        "__4e siècle av., 2e moitié",
+        "__3e siècle av.",
+        "basse époque hellénistique",
+        "__2e siècle av.",
+        "__1er siècle av.",
+        "romain",
+        "__1er siècle apr.",
+        "__2e siècle apr.",
+        "__3e siècle apr.",
+        "__4e siècle apr.",
+        "byzantin",
+        "médiéval",
+        "moderne"
+      ],
+      "field" : "CoverageTemporal",
+      "labels" : {
+        "de" : "Chrono",
+        "en" : "Timespan",
+        "fr" : "Chrono",
+        "it" : "Cronologia",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "CoverageEarliest",
+      "disabled" : true,
+      "label" : "chron. start"
+    },
+    {
+      "field" : "CoverageLatest",
+      "disabled" : true,
+      "label" : "chron. end"
+    },
+    {
+      "field" : "DateEarliest",
+      "labels" : {
+        "de" : "Beginn",
+        "en" : "Date start",
+        "fr" : "Début",
+        "it" : "Inizio",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "DateLatest",
+      "labels" : {
+        "de" : "Ende",
+        "en" : "Date end",
+        "fr" : "Fin",
+        "it" : "Fine",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Description",
+      "labels" : {
+        "de" : "Beschreibung",
+        "en" : "Description",
+        "fr" : "Description",
+        "it" : "Descrizione",
+        "el" : ""
+      },
+      "multiline" : true
+    },
+    {
+      "field" : "Diameter",
+      "labels" : {
+        "de" : "Dm.",
+        "en" : "Diameter",
+        "fr" : "Diamètre",
+        "it" : "Diametro",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Discarded",
+      "labels" : {
+        "de" : "entsorgt",
+        "en" : "Discarded",
+        "fr" : "Jeté",
+        "it" : "Scartato",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Weggeworfenes Material (Gewicht in kg)",
+        "en" : "Discarded finds (in kg)",
+        "fr" : "Matériel jeté (poids en kg)",
+        "it" : "Materiale scartato (peso in kg)",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Figurines count",
+      "labels" : {
+        "de" : "Figuren",
+        "en" : "Figurines",
+        "fr" : "Figurines",
+        "it" : "Figurine",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Nur eine Zahl, ohne inventarisierte Figuren",
+        "en" : "One figure only, excluding inventoried figurines",
+        "fr" : "Un chiffre uniquement, à l'exclusion des figurines inventoriées",
+        "it" : "Solo una cifra, escluse le figurine inventariate",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Obsidians count",
+      "labels" : {
+        "de" : "Obsidiane",
+        "en" : "Obsidians",
+        "fr" : "Obsidiennes",
+        "it" : "Ossidiane",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Nur eine Zahl",
+        "en" : "One figure only",
+        "fr" : "Un chiffre uniquement",
+        "it" : "Solo una cifra",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Homogeneity",
+      "labels" : {
+        "de" : "Homogenität",
+        "en" : "Homogeneity",
+        "fr" : "Homogénéité",
+        "it" : "Omogeneità",
+        "el" : ""
+      }
+    },
+    {
+      "tips" : {
+        "de" : "Angeben, ob es zu diesem Kontext eine Skizze gibt (ja\/nein)",
+        "en" : "Specifiy whether the context or feature is represented on a sketch (yes\/no)",
+        "fr" : "Indiquer si le contexte ou la structure figure sur un croquis (oui\/non)",
+        "it" : "Indica se il contesto o la struttura figurano su uno schizzo (si\/no)",
+        "el" : ""
+      },
+      "valuelist" : [
+        "yes",
+        "no"
+      ],
+      "field" : "Drawing",
+      "labels" : {
+        "de" : "Skizze",
+        "en" : "Sketch",
+        "fr" : "Croquis",
+        "it" : "Schizzo",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Profile",
+      "labels" : {
+        "de" : "Nr. Zeichnung",
+        "en" : "Nr. drawing",
+        "fr" : "N° dessin strati",
+        "it" : "N. stratigrafia",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Angeben, ob es zu diesem Kontext eine Strati gibt (Zeichnung und Schicht Nr)",
+        "en" : "Specifiy whether the context or feature is represented on a stratigraphy (drawing and layer nr)",
+        "fr" : "Indiquer si le contexte ou la structure figure sur une stratigraphie (n° de dessin et n° de couche)",
+        "it" : "Indica se il contesto o la struttura figurano su uno Stratigrafia (numero)",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Drawings",
+      "labels" : {
+        "de" : "Zeichnung",
+        "en" : "Drawing",
+        "fr" : "Dessin",
+        "it" : "Disegno",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Angeben, ob Objekte aus diesem Kontext gezeichnet wurden (z.B. GYM2016_FK600_ceram01, attischer Zungenbecher)",
+        "en" : "Specifiy whether finds from the context have been drawn (Ex.: GYM2016_FK600_ceram01, Attic moulded bowl)",
+        "fr" : "Indiquer si des objets du contexte ont été dessinés (Ex.: GYM2016_FK600_ceram01, bol à godrons attique)",
+        "it" : "Indica se dei reperti appartenenti al contesto sono stati disegnati (Esempio.: GYM2016_FK600_ceram01, coppetta attica a stampo)",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "DrawingType",
+      "labels" : {
+        "de" : "Typ",
+        "en" : "Type",
+        "fr" : "Type",
+        "it" : "Tipo",
+        "el" : ""
+      },
+      "valuelist" : [
+        "Strati",
+        "Orthophoto",
+        "Croquis"
+      ]
+    },
+    {
+      "multitype" : true,
+      "tips" : {
+        "de" : "Name des Archäologen (auch mehrere möglich), der die Dokumentation ausfüllt (z.B. A. Soschön)",
+        "en" : "Name of the archaeologist(s) filling the form only (ex. M. Smith)",
+        "fr" : "Nom du ou des archéologues qui remplissent la fiche uniquement(ex. R. Duschmol)",
+        "it" : "Nome dell'archeologo o degli archeologi che compilano la scheda (es. T. Veramente)",
+        "el" : ""
+      },
+      "multivalue" : true,
+      "valuelist" : [
+
+      ],
+      "field" : "Excavators",
+      "labels" : {
+        "de" : "Ausgräber",
+        "en" : "Diggers",
+        "fr" : "Fouilleurs",
+        "it" : "Scavatore",
+        "el" : ""
+      }
+    },
+    {
+      "multitype" : true,
+      "multivalue" : true,
+      "valuelist" : [
+
+      ],
+      "field" : "Workmen",
+      "labels" : {
+        "de" : "Arbeiter",
+        "en" : "Workmen",
+        "fr" : "Ouvriers",
+        "it" : "Lavoratori",
+        "el" : ""
+      }
+    },
+    {
+      "tips" : {
+        "de" : "Kategorien der Funde dieses Kontexts (Auswahl)",
+        "en" : "Categories of finds yielded from the context (multi-choice list)",
+        "fr" : "Catégories d’objets découverts dans le contexte (liste multi-choix)",
+        "it" : "Categorie dei reperti rinvenuti nel contesto (Elenco a selezione multipla)",
+        "el" : ""
+      },
+      "multivalue" : true,
+      "valuelist" : [
+        "Céramiques",
+        "Tuiles",
+        "Briques crues",
+        "Lampes",
+        "Verre",
+        "Fer",
+        "Plomb",
+        "Enduit",
+        "Scorie",
+        "Obsidienne",
+        "Figurines non inventoriées",
+        "Os",
+        "Coquillages",
+        "Echantillons"
+      ],
+      "field" : "Finds",
+      "labels" : {
+        "de" : "Funde",
+        "en" : "Finds",
+        "fr" : "Mobilier",
+        "it" : "Reperti",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Format",
+      "labels" : {
+        "de" : "Größe",
+        "en" : "Format",
+        "fr" : "Dimensions",
+        "it" : "Dimensioni",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Masse des Objektes in cm",
+        "en" : "Size of the artefact (in cm)",
+        "fr" : "Dimensions de l’objet en cm",
+        "it" : "Dimensioni dell'oggetto in cm",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Height",
+      "labels" : {
+        "de" : "Höhe",
+        "en" : "Height",
+        "fr" : "Hauteur",
+        "it" : "Altezza",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Höhe oder Tiefe der Struktur (in cm). Angeben, ob es sich um die erreichte oder komplette Höhe\/Tiefe handelt",
+        "en" : "Height or depth of the feature (in cm). Specify whether it is the total height or depth or if it is the level excavated",
+        "fr" : "Hauteur ou profondeur de la structure (en cm). Précisez s'il s'agit d'une hauteur ou profondeur totale ou atteinte",
+        "it" : "Altezza o profondità della struttura (in cm). Specifica se si tratta dell'altezza o della profondità totali oppure del livello scavato",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Identifier",
+      "labels" : {
+        "de" : "ID Nummer",
+        "en" : "Identifier",
+        "fr" : "Identifiant",
+        "it" : "Numero ID",
+        "el" : ""
+      }
+    },
+    {
+      "multiline" : true,
+      "tips" : {
+        "de" : "Interpretation(en) des Kontexts oder der Struktur. Falls es Änderungen der Interpretation oder mehrere Hypothesen gibt, diese mit Namen und Datum versehen.",
+        "en" : "Interpretation of the context or feature. If there are concurrent or successive interpretations, please mention them together with the date and the author",
+        "fr" : "Interprétation(s) du contexte ou de la structure. Si l'interprétation  change ou si plusieurs interprétations coexistent, prière de les indiquer en mentionnant la date et l'auteur",
+        "it" : "Interpretazione(i) del contesto o della struttura. Se l'interpretazione cambia o se coesistono interpretazioni diverse, indica sempre l'autore e la data",
+        "el" : ""
+      },
+      "field" : "Interpretations",
+      "labels" : {
+        "de" : "Interpretation",
+        "en" : "Interpretations",
+        "fr" : "Interprétations",
+        "it" : "Interpretazioni",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "InventoryNumber",
+      "labels" : {
+        "de" : "Inv. ESAG",
+        "en" : "Inv. ESAG",
+        "fr" : "Inv. ESAG",
+        "it" : "Inv. ESAG",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Inventarnummer der ESAG (M, B, N, L, D, T, V). Sich nach den Inventarbüchern richten, um eine Nummer zu vergeben.",
+        "en" : "ESAG inventory number  (M, B, N, L, D, T, V). Refer to the inventory books to attribute a number",
+        "fr" : "Numéro d'inventaire ESAG (M, B, N, L, D, T, V). Se référer aux livres d'inventaire pour attribuer un numéro à la suite",
+        "it" : "Numero d'inventario ESAG (M, B, N, L, D, T, V). Fai riferimento ai libri d'inventario per attribuire il numero seguente",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Length",
+      "labels" : {
+        "de" : "Länge",
+        "en" : "Length",
+        "fr" : "Longueur",
+        "it" : "Lunghezza",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Länge der Struktur (in cm). Angeben, ob es sich um die komplette oder die erreichte Länge handelt.",
+        "en" : "Length of the feature (in cm). Specify whether it is the total or preserved length",
+        "fr" : "Longueur de la structure (en cm). Précisez s'il s'agit d'une longueur totale ou conservée",
+        "it" : "Lunghezza della struttura (in cm). Specifica se si tratta della lunghezza totale o parziale",
+        "el" : ""
+      }
+    },
+    {
+      "tips" : {
+        "de" : "Blickrichtung \/ Orientierung des Fotos. Falls das Foto nach NW ausgerichtet ist, N und W auswählen.",
+        "en" : "Orientation of the picture. If the picture is oriented towards the North-West, select both N and W",
+        "fr" : "Orientation de la photo. Si la photo est orientée vers le nord-ouest, sélectionner à la fois N et W",
+        "it" : "Orientamento della foto. Se la foto è orientata a nord-ovest, seleziona sia N che W",
+        "el" : ""
+      },
+      "multivalue" : true,
+      "valuelist" : [
+        "N",
+        "S",
+        "E",
+        "W"
+      ],
+      "field" : "Looking",
+      "labels" : {
+        "de" : "Richtung",
+        "en" : "Looking",
+        "fr" : "Vue vers",
+        "it" : "Orientamento",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "LotLevels",
+      "labels" : {
+        "de" : "Höhe",
+        "en" : "Alt.",
+        "fr" : "Alt.",
+        "it" : "Alt.",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "LotDates",
+      "labels" : {
+        "de" : "Datum",
+        "en" : "Date",
+        "fr" : "Date",
+        "it" : "Data",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "LotContexts",
+      "labels" : {
+        "de" : "Kontext",
+        "en" : "Context",
+        "fr" : "Contexte",
+        "it" : "Contesto",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Markers",
+      "labels" : {
+        "de" : "Markers",
+        "en" : "Markers",
+        "fr" : "Marqueurs",
+        "it" : "Indicatori",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Für Chronologie diagnostische Objekte (z.B. 3 RS von Zungenbechern, 1 RS eines ESA Tellers",
+        "en" : "Diagnostic artefacts, if any (Ex:3 rims of moulded bowls, 1 rim of an ESA plate)",
+        "fr" : "Marqueurs chronologiques (Ex: 3 bords de bol à godrons, 1 bord d’assiette en ESA)",
+        "it" : "Indicatori cronologici (Es: 3 bordi di coppetta a stampo, 1 bordo di piatto in ESA)",
+        "el" : ""
+      }
+    },
+    {
+      "tips" : {
+        "de" : "Material des Objektes. Mehrere Stichworte auf English auswählbar bei Objekten, die aus verschiedenen Materialien bestehen. Kein '?' benutzen, sondern zusätzlich 'Indet.' auswählen; für Terrakotta-Figurinen und Architekturfragmenten 'Terracotta' wählen; für Vasen und Lampen 'ceramic', für Schlacke 'slag'; im Falle eines unbestimmten Gesteins oder Metalls, den Grabungsleiter fragen oder 'Stein' oder 'Metall' wählen",
+        "en" : "Materials the artefact is made of. The list is multi-choice if the artefact is made of different materials. Don't use '?', but select 'Indet.'; for terracotta figurines and architectures, select 'Terracotta'; for vases and lamps: 'Ceramic'; for slags: 'Slag'; in case of undetermined stone or metal, ask the field director or select 'Stone' or 'Metal'",
+        "fr" : "Matière de l’objet. Liste multi-choix en anglais si l'objet est composé de plusieurs matières. Ne pas mettre '?', mais sélectionner 'Indet.'; pour les figurines en TC et les TC architecturales: 'Terracotta'; pour les vases et lampes: 'Ceramic'; pour les scories: 'Slag'; si vous ne connaissez pas le type de pierre ou métal, demandez au responsable ou indiquez 'Stone' ou 'Metal'",
+        "it" : "Materiale dell'oggetto. Elenco a selezione multipla nel caso in cui l'oggetto è composto da piu materiali",
+        "el" : ""
+      },
+      "multivalue" : true,
+      "valuelist" : [
+        "Indet.",
+        "Agate",
+        "Alabaster",
+        "Amber",
+        "Basalt",
+        "Bone",
+        "Bronze",
+        "Ceramic",
+        "Clay",
+        "Conglomerate",
+        "Copper",
+        "Copper-Nickel",
+        "Coral",
+        "Crystal",
+        "Diorite",
+        "Electron",
+        "Faience",
+        "Glass",
+        "Gneiss",
+        "Gold",
+        "Granit",
+        "Horn",
+        "Iron",
+        "Ivory",
+        "Lead",
+        "Leather",
+        "Limestone",
+        "Marble",
+        "Metal",
+        "Mortar",
+        "Obsidian",
+        "Pebble",
+        "Poros",
+        "Pumice",
+        "Quartz",
+        "Radiolarite",
+        "Sandstone",
+        "Schist",
+        "Seed",
+        "Serpentine",
+        "Shell",
+        "Silex",
+        "Silver",
+        "Slag",
+        "Soapstone",
+        "Soil",
+        "Stone",
+        "Stucco",
+        "Terracotta",
+        "Textile",
+        "Tin",
+        "Wood"
+      ],
+      "field" : "Material",
+      "labels" : {
+        "de" : "Material",
+        "en" : "Materials",
+        "fr" : "Matière",
+        "it" : "Materiale",
+        "el" : ""
+      }
+    },
+    {
+      "tips" : {
+        "de" : "Bezieht sich auf für die Grabung definierte Phasen (z.B. Phase 2a)",
+        "en" : "Refers to specific phases determined for each excavation (Ex. phase 2a)",
+        "fr" : "Se réfère à des phases déterminées pour chaque fouille (Ex. phase 2a)",
+        "it" : "Si riferisce a delle fasi precise determinate sugli scavi (Es. fase 2a)",
+        "el" : ""
+      },
+      "valuelist" : [
+
+      ],
+      "field" : "Phase",
+      "labels" : {
+        "de" : "Phase",
+        "en" : "Phase",
+        "fr" : "Phase",
+        "it" : "Fase",
+        "el" : ""
+      }
+    },
+    {
+      "tips" : {
+        "de" : "Angeben, ob das Objekt im Museum NACH der Restaurierung fotografiert wurde (ja\/nein)",
+        "en" : "Specifiy if a picture of the artifact has been taken at the museum, after restoration only (yes\/no)",
+        "fr" : "Indiquer si une photo de l'objet a été prise au musée, après restauration seulement (oui\/non)",
+        "it" : "Indica se il reperto è stato fotografato al museo. La foto deve essere realizzata solo dopo il restauro dell'oggetto (si\/no)",
+        "el" : ""
+      },
+      "valuelist" : [
+        "Oui",
+        "Non"
+      ],
+      "field" : "Photo",
+      "labels" : {
+        "de" : "Fotos",
+        "en" : "Photos",
+        "fr" : "Photos",
+        "it" : "Foto",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Photos #",
+      "labels" : {
+        "de" : "Foto-Nr.",
+        "en" : "Photos no",
+        "fr" : "Photos no",
+        "it" : "Foto n.",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Foto-Nummern angeben, Nikon Kamera der Grabung (z.B. 175-181)",
+        "en" : "Enter the pictures number of the excavation camera Nikon (Ex. 175-181)",
+        "fr" : "Indiquer les numéros de photos de l’appareil de fouille Nikon (Ex. 175-181)",
+        "it" : "Indica i numeri delle foto della macchina fotografica Nikon dello scavo (Es. 175-181)",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Quantity",
+      "labels" : {
+        "de" : "Keramik",
+        "en" : "Pottery",
+        "fr" : "Céramique",
+        "it" : "Ceramica",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Anzahl der Scherben, einschließlich der inventarisierten Vasen (nur eine Zahl!).",
+        "en" : "Number of shards, including the inventoried vases (one figure only!)",
+        "fr" : "Nombre de tessons, inclus les vases inventoriés (un chiffre uniquement!)",
+        "it" : "Numero di frammenti, compresi i vasi inventariati (un solo numero!",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Rating",
+      "labels" : {
+        "de" : "Rangliste",
+        "en" : "Rating",
+        "fr" : "Rang",
+        "it" : "Posto",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Diese Rangliste (1 bis x) ermöglicht die Auswahl des präferierten Thumbnails.",
+        "en" : "This rating (from 1 to x) allows to select the picture displayed first in the thumbnail",
+        "fr" : "Ce rang (de 1 à x) permet de sélectionner l'image que l'on souhaite afficher de préférence en thumbnail",
+        "it" : "Questo posto (da 1 a x) permette di selezionare l'immagine che si desidera visualizzare in thumbnail",
+        "el" : ""
+      }
+    },
+    {
+      "multivalue" : true,
+      "valuelist" : [
+
+      ],
+      "field" : "Researchers",
+      "labels" : {
+        "de" : "Forscher",
+        "en" : "Researchers",
+        "fr" : "Chercheurs",
+        "it" : "Ricercatore",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "RightsStatus",
+      "labels" : {
+        "de" : "Status",
+        "en" : "Status",
+        "fr" : "Statut",
+        "it" : "Status",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "RightsSidelined",
+      "labels" : {
+        "de" : "Unsichtbar",
+        "en" : "Sidelined",
+        "fr" : "Invisible",
+        "it" : "Invisibile",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Ermöglicht es, Polygone oder Punkte auf dem Plan auszublenden",
+        "en" : "Allows to sideline polygons or points so that they are not displayed on the map",
+        "fr" : "Permet de ne pas faire figurer les polygones ou points sur le plan",
+        "it" : "Rende invisibili poligoni e punti sulla pianta",
+        "el" : ""
+      }
+    },
+    {
+      "multitype" : true,
+      "tips" : {
+        "de" : "Optional. Bezeichnung des Raumes oder der Zone (z.B. Raum 3)",
+        "en" : "Optional. Designation of the room or space (Ex. Room 3)",
+        "fr" : "Optionel. Appellation de l’espace ou du local (Ex: Local 3)",
+        "it" : "Facoltativo. Denominazione dello spazio o del locale (Es: Locale 3)",
+        "el" : ""
+      },
+      "multivalue" : true,
+      "valuelist" : [
+
+      ],
+      "field" : "Room",
+      "labels" : {
+        "de" : "Raum",
+        "en" : "Room",
+        "fr" : "Espace",
+        "it" : "Spazio",
+        "el" : ""
+      }
+    },
+    {
+      "multiline" : true,
+      "tips" : {
+        "de" : "Beschreiben: 1) Art des Sediments: Humus, Lehm, Silt\/Schluff, Sand, Kies; 2) Textur: kompakt - locker \/ homogen - heterogen; 3) Farbe; 4) natürliche \/ anthropogene Einschlüsse",
+        "en" : "Describe 1) the nature of the soil: humus, clay, silt, sand, gravel; 2) texture: compact - soft \/ homogenous - heterogeneous; 3) color; 4) natural and anthropic inclusions",
+        "fr" : "Décrire: 1) Nature: humus, argile, limon, sable, gravier; 2) Texture: compact - meuble \/ homogène - hétérogène; 3) Couleur; 4) Inclusions naturelles \/ anthropiques",
+        "it" : "Descrivi: 1) Natura del sedimento: humus, argilla, limo, sabbia, ghiaia; 2) Consistenza: compatto - friabile \/ omogeneo - eterogeneo; 3) Colore; 4) Inclusioni naturali \/ antropiche",
+        "el" : ""
+      },
+      "field" : "Sediment Description",
+      "labels" : {
+        "de" : "Beschreibung des Sediments",
+        "en" : "Sediment Description",
+        "fr" : "Description des sédiments",
+        "it" : "Descrizione del sedimento",
+        "el" : ""
+      }
+    },
+    {
+      "multitype" : true,
+      "tips" : {
+        "de" : "Sondagen-Nr. (falls vorhanden). Nichts angeben, falls gleich wie Sektor-Bezeichnung.",
+        "en" : "Trench number(s) if any. Optional if redundant with the general Trench indication",
+        "fr" : "Numéro(s) du sondage s'il y en a un. Optionel si redondant avec l'indication du secteur",
+        "it" : "Numero\/i del\/dei sondaggio\/i (se esistono) . Facoltativo nel caso l'informazione è ridondante con il nome del settore",
+        "el" : ""
+      },
+      "multivalue" : true,
+      "valuelist" : [
+
+      ],
+      "field" : "Sondage",
+      "labels" : {
+        "de" : "Sondage",
+        "en" : "Trench",
+        "fr" : "Sondage",
+        "it" : "Sondaggio",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Source",
+      "labels" : {
+        "de" : "Sektor",
+        "en" : "Trench",
+        "fr" : "Secteur",
+        "it" : "Settore",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Bezeichnung des Sektors, automatisch",
+        "en" : "Trench name, auto populated",
+        "fr" : "Nom du secteur, attribué automatiquement",
+        "it" : "Nome del settore, attribuito automaticamente",
+        "el" : ""
+      }
+    },
+    {
+      "tips" : {
+        "de" : "Aufbewahrungsort des Objektes angeben (Apothiki Sandoz oder Museum Eretria)",
+        "en" : "Specify where the artifact is stored (Apothiki Sandoz or Museum of Eretria)",
+        "fr" : "Indiquer où l'objet est stocké (Apothèque Sandoz ou Musée d'Erétrie)",
+        "it" : "Indica dove l'oggetto è conservato (Apothiki Sandoz o Museo d'Eretria)",
+        "el" : ""
+      },
+      "valuelist" : [
+        "Apothiki",
+        "Museum Eretria",
+        "Lapidary",
+        "Wiener Lab Athens",
+        "Fitch Lab Athens"
+      ],
+      "field" : "Storage",
+      "labels" : {
+        "de" : "Lagerung",
+        "en" : "Storage",
+        "fr" : "Rangement",
+        "it" : "Riordino",
+        "el" : ""
+      }
+    },
+    {
+      "tips" : {
+        "de" : "Stratigrafische Abgrenzung (gut, mittel, schlecht)",
+        "en" : "Is the context sediment easily distinguished or not (good, average, bad)",
+        "fr" : "Différenciation stratigraphique (Bonne, Moyenne, Mauvaise)",
+        "it" : "Distinzione stratigrafica (Buona, Sufficente, Pessima)",
+        "el" : ""
+      },
+      "valuelist" : [
+        "Bonne",
+        "Moyenne",
+        "Mauvaise"
+      ],
+      "field" : "Stratigraphy",
+      "labels" : {
+        "de" : "Strati",
+        "en" : "Stratigraphy",
+        "fr" : "Strati",
+        "it" : "Stratigrafia",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Title",
+      "labels" : {
+        "de" : "Titel",
+        "en" : "Title",
+        "fr" : "Titre",
+        "it" : "Titolo",
+        "el" : ""
+      },
+      "valuelist" : [
+
+      ]
+    },
+    {
+      "field" : "TPQ",
+      "labels" : {
+        "de" : "TPQ",
+        "en" : "TPQ",
+        "fr" : "TPQ",
+        "it" : "TPQ",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Terminus post quem gemäss den chronologischen Markers (z.B. 100 v.Chr.)",
+        "en" : "Terminus post quem specified according to the diagnostic markers (Ex.: 100 BC",
+        "fr" : "Terminus post quem précisé en relation avec les marqueurs chronologiques (Ex.: 100 av. J.-C.)",
+        "it" : "Specifica il Terminus post quem conformemente agli indicatori cronologici (Es.: 100 a.C.)",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Total weight",
+      "labels" : {
+        "de" : "Gewicht",
+        "en" : "Total weight",
+        "fr" : "Poids total",
+        "it" : "Peso totale",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Gesamtgewicht in kg",
+        "en" : "In kg",
+        "fr" : "En kg",
+        "it" : "In kg",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Type",
+      "labels" : {
+        "de" : "Typ",
+        "en" : "Type",
+        "fr" : "Type",
+        "it" : "Tipo",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Art des Eintrages: Kontext, Struktur, inventarisiertes Objekt, Lot, Bild, Plan, andere",
+        "en" : "Type of item: context, feature, artifact, lot, image, plan, other",
+        "fr" : "Type d'enregistrement: contexte, structure, objet inventorié, lot, image, plan, divers",
+        "it" : "Tipo di categoria: contesto, struttura, reperto, gruppo, immagine, pianta, varia",
+        "el" : ""
+      }
+    },
+    {
+      "field" : "Width",
+      "labels" : {
+        "de" : "Breite",
+        "en" : "Width",
+        "fr" : "Largeur",
+        "it" : "Larghezza",
+        "el" : ""
+      },
+      "tips" : {
+        "de" : "Breite der Struktur (in cm). Angeben, ob es sich um die erreichte oder komplette Breite handelt.",
+        "en" : "Width of the feature (in cm). Specify whether it is the total or preserved width",
+        "fr" : "Largeur de la structure (en cm). Précisez s'il s'agit d'une largeur totale ou conservée",
+        "it" : "Larghezza della struttura (in cm). Specifica se si tratta della larghezza totale o parziale",
+        "el" : ""
+      }
+    }
+  ],
+  "types" : [
+    {
+      "relations" : [
+        {
+          "type" : "Context",
+          "relation" : "is above"
+        },
+        {
+          "type" : "Artifact",
+          "relation" : "includes"
+        },
+        {
+          "type" : "Sample",
+          "relation" : "includes"
+        },
+        {
+          "type" : "Image",
+          "relation" : "includes"
+        },
+        {
+          "type" : "Partition",
+          "relation" : "includes",
+          "subtype" : "Tile_Lithic"
+        },
+        {
+          "type" : "Group",
+          "relation" : "belongs to",
+          "subtype" : "Lot"
+        }
+      ],
+      "label" : "Contexte",
+      "plurals" : {
+        "de" : "Kontexte",
+        "en" : "Contexts",
+        "fr" : "Contextes",
+        "it" : "Contesti",
+        "el" : ""
+      },
+      "type" : "Context",
+      "groups" : [
+        {
+          "group" : "General Section",
+          "labels" : {
+            "de" : "Allgemein",
+            "en" : "General",
+            "fr" : "Général",
+            "it" : "Generale",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier",
+              "tips" : {
+                "de" : "FK-Nr. gemäss fortlaufender Nummerierung",
+                "en" : "FK nr according to serial number",
+                "fr" : "No de FK selon numérotation continue",
+                "it" : "N. di FK secondo la numerazione continua",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Title",
+              "tips" : {
+                "de" : "FK-Lokalisierung (z.B. FK538 - Lokal 1 - 3. Abtrag)",
+                "en" : "FK - location (Ex: FK538 - Room 1 - 3rd layer)",
+                "fr" : "FK - localisation (Ex: FK538 - Local 1 - 3e décapage)",
+                "it" : "FK - localizzazione (Es: FK538 - Locale 1 - strato 3)",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Excavators"
+            },
+            {
+              "field" : "Workmen"
+            },
+            {
+              "field" : "DateEarliest"
+            },
+            {
+              "field" : "DateLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Location",
+          "labels" : {
+            "de" : "Lokalisierung",
+            "en" : "Location",
+            "fr" : "Localisation",
+            "it" : "Localizzazione",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Room"
+            },
+            {
+              "field" : "Sondage"
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ],
+          "plurals" : {
+            "de" : "Fotos",
+            "en" : "Photos",
+            "fr" : "Photos",
+            "it" : "Foto",
+            "el" : ""
+          },
+          "labels" : {
+            "de" : "Foto",
+            "en" : "Photo",
+            "fr" : "Photo",
+            "it" : "Foto",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "de" : "Plan",
+            "en" : "Mapping",
+            "fr" : "Plan",
+            "it" : "Pianta",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Work Section",
+          "tips" : {
+            "de" : "Ausgeführte Arbeit, Schichtdicke, Lokalisierung, Fundmaterial, Spezielles",
+            "en" : "Describe the job done, the width of the layer, its location, retrieved artifacts and any peculiarties",
+            "fr" : "Travail effectué, épaisseur de la couche, localisation, mobilier, particularités",
+            "it" : "Lavoro effettuato, spessore dello strato, localizzazione, reperti, particolarità",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Description",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Ausgeführte Arbeit, Schichtdicke, Lokalisierung, Fundmaterial, Spezielles",
+                "en" : "Describe the job done, the width of the layer, its location, retrieved artifacts and any peculiarties",
+                "fr" : "Travail effectué, épaisseur de la couche, localisation, mobilier, particularités",
+                "it" : "Lavoro effettuato, spessore dello strato, localizzazione, reperti, particolarità",
+                "el" : ""
+              }
+            }
+          ],
+          "labels" : {
+            "de" : "Ausgeführte Arbeit",
+            "en" : "Work done",
+            "fr" : "Travail effectué",
+            "it" : "Lavoro effettuato",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Properties Section",
+          "label" : "",
+          "fields" : [
+            {
+              "field" : "Finds"
+            },
+            {
+              "tips" : {
+                "de" : "Wenn der Kontext keine Ziegel enthält, geben Sie dies hier an; andernfalls erstellen Sie einen Ziegel-\/Stein-Datensatz. Nur an das Museum gesendete Ziegeln werden im oben Feld erwähnt",
+                "en" : "If the context does not contain any tiles, indicate this here; otherwise, create a tile\/lithic record. Only tiles sent to the museum are listed in the above field",
+                "fr" : "Si le contexte ne contient aucune tuile, indiquez-le ici; sinon, créez une fiche tuile\/lithique. Seules les tuiles envoyées au musée sont mentionnées dans le champs supra",
+                "it" : "XXX",
+                "el" : ""
+              },
+              "valuelist" : [
+                "yes",
+                "no"
+              ],
+              "field" : "Tiles yes\/no",
+              "labels" : {
+                "de" : "Ziegeln Ja\/Nein",
+                "en" : "Tiles yes\/no",
+                "fr" : "Tuiles oui\/non",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Stratigraphy"
+            },
+            {
+              "field" : "Context type"
+            },
+            {
+              "field" : "Drawing"
+            },
+            {
+              "field" : "Profile"
+            },
+            {
+              "field" : "Photos #"
+            }
+          ]
+        },
+        {
+          "group" : "Sediment Section",
+          "tips" : {
+            "de" : "Beschreiben: 1) Art des Sediments: Humus, Lehm, Silt\/Schluff, Sand, Kies; 2) Textur: kompakt - locker \/ homogen - heterogen; 3) Farbe; 4) natürliche \/ anthropogene Einschlüsse",
+            "en" : "Describe 1) the nature of the soil: humus, clay, silt, sand, gravel; 2) texture: compact - soft \/ homogenous - heterogeneous; 3) color; 4) natural and anthropic inclusions",
+            "fr" : "Décrire: 1) Nature: humus, argile, limon, sable, gravier; 2) Texture: compact - meuble \/ homogène - hétérogène; 3) Couleur; 4) Inclusions naturelles \/ anthropiques",
+            "it" : "Descrivi: 1) Natura del sedimento: humus, argilla, limo, sabbia, ghiaia; 2) Consistenza: compatto - friabile \/ omogeneo - eterogeneo; 3) Colore; 4) Inclusioni naturali \/ antropiche",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Sediment Description",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ],
+          "labels" : {
+            "de" : "Beschreibung des Sediments",
+            "en" : "Sediment Section",
+            "fr" : "Description des sédiments",
+            "it" : "Descrizione dei sedimenti",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Interpretations Section",
+          "tips" : {
+            "de" : "Interpretation(en) des Kontexts oder der Struktur. Falls es Änderungen der Interpretation oder mehrere Hypothesen gibt, diese mit Namen und Datum versehen.",
+            "en" : "Interpretation of the context or feature. If there are concurrent or successive interpretations, please mention them together with the date and the author",
+            "fr" : "Interprétation(s) du contexte ou de la structure. Si l'interprétation  change ou si plusieurs interprétations coexistent, prière de les indiquer en mentionnant la date et l'auteur",
+            "it" : "Interpretazione(i) del contesto o della struttura. Se l'interpretazione cambia o se coesistono interpretazioni diverse, indica sempre l'autore e la data",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Interpretations",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ],
+          "labels" : {
+            "de" : "Interpretationen",
+            "en" : "Interpretations",
+            "fr" : "Interprétations",
+            "it" : "Interpretazioni",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Chronology Section",
+          "labels" : {
+            "de" : "Chronologie",
+            "en" : "Chronology",
+            "fr" : "Chronologie",
+            "it" : "Cronologia",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Phase"
+            },
+            {
+              "field" : "CoverageTemporal"
+            },
+            {
+              "field" : "CoverageEarliest"
+            },
+            {
+              "field" : "CoverageLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Comments Section",
+          "labels" : {
+            "de" : "Kommentare",
+            "en" : "Comments",
+            "fr" : "Commentaires",
+            "it" : "Commenti",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Comments",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Relation Section",
+          "labels" : {
+            "de" : "Beziehungen",
+            "en" : "Relations",
+            "fr" : "Relations",
+            "it" : "Relazioni",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        },
+        {
+          "group" : "Status Section",
+          "labels" : {
+            "de" : "Status",
+            "en" : "Status",
+            "fr" : "Statuts",
+            "it" : "Status",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus",
+              "tips" : {
+                "de" : "Nur folgende Status verwenden: Offen (Grabung noch nicht abgeschlossen); Erledigt (Grabung des FK abgeschlossen; all done); Achtung (Probleme zu lösen)",
+                "en" : "Only the following status must be used here: open (the context is under excavation); All done (the context is done excavating); Attention (there is a problem that needs clarification)",
+                "fr" : "On utilisera ici uniquement les statuts suivants: En cours (le contexte n'est pas fini d'être fouillé); Terminé (le contexte est fini d'être fouillé); Attention (problème à clarifier)",
+                "it" : "Usa unicamente gli status seguenti: In corso (lo scavo del contesto non è ancora terminato); Terminato (lo scavo del constesto è terminato); Attenzione (problema da risolvere)",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "de" : "Kontext",
+        "en" : "Context",
+        "fr" : "Contexte",
+        "it" : "Contesto",
+        "el" : ""
+      }
+    },
+    {
+      "labels" : {
+        "de" : "Struktur",
+        "en" : "Feature",
+        "fr" : "Structure",
+        "it" : "Struttura",
+        "el" : ""
+      },
+      "color" : "rgba:0.761,0.263,0.431,0.3",
+      "groups" : [
+        {
+          "group" : "General Section",
+          "labels" : {
+            "de" : "Allgemein",
+            "en" : "General",
+            "fr" : "Général",
+            "it" : "Generale",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier",
+              "tips" : {
+                "de" : "M oder St gefolgt von einer fortlaufenden Nummer (z.B. M32 oder St17)",
+                "en" : "M or St followed by a serial number, according to the list of Features (Ex: M32 or St17)",
+                "fr" : "M ou St suivi d'un numéro continu, selon la liste des structures (Ex: M32 ou St17)",
+                "it" : "M o St seguiti da un numero continuo, secondo la lista delle strutture (Es: M32 o St17)",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Title",
+              "tips" : {
+                "de" : "Identifikation - Lokalisierung (z.B. Grube St24 - im Innern von Ed2)",
+                "en" : "Identification - location (Ex: Pit St24 - Inside Ed2",
+                "fr" : "Identification - localisation (Ex: Fosse St24 - Intérieur Ed2)",
+                "it" : "Identificazione - localizzazione (Es: Fossa St24 - All'interno dell'Edificio 2)",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Excavators"
+            },
+            {
+              "field" : "DateEarliest"
+            },
+            {
+              "field" : "DateLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Location",
+          "labels" : {
+            "de" : "Lokalisierung",
+            "en" : "Location",
+            "fr" : "Localisation",
+            "it" : "Localizzazione",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Room"
+            },
+            {
+              "field" : "Sondage"
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ],
+          "plurals" : {
+            "de" : "Fotos",
+            "en" : "Photos",
+            "fr" : "Photos",
+            "it" : "Foto",
+            "el" : ""
+          },
+          "labels" : {
+            "de" : "Foto",
+            "en" : "Photo",
+            "fr" : "Photo",
+            "it" : "Foto",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "de" : "Plan",
+            "en" : "Mapping",
+            "fr" : "Plan",
+            "it" : "Pianta",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Description Section",
+          "labels" : {
+            "de" : "Beschreibung",
+            "en" : "Description",
+            "fr" : "Description",
+            "it" : "Descrizione",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Description",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Properties Section",
+          "labels" : {
+            "de" : "",
+            "en" : "",
+            "fr" : "",
+            "it" : "",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Category",
+              "valuelist" : [
+                "Mur",
+                "Base",
+                "Bassin",
+                "Bloc",
+                "Canalisation",
+                "Cloison",
+                "Drain",
+                "Edifice",
+                "Fosse",
+                "Four",
+                "Foyer",
+                "Niveau de travail",
+                "Niveau de route",
+                "Seuil",
+                "Sol",
+                "Tranchée de fondation",
+                "Trou de poteau",
+                "Autre"
+              ]
+            },
+            {
+              "field" : "Length"
+            },
+            {
+              "field" : "Width"
+            },
+            {
+              "field" : "Height"
+            },
+            {
+              "field" : "Diameter"
+            },
+            {
+              "field" : "Drawing"
+            },
+            {
+              "field" : "Photos #"
+            }
+          ]
+        },
+        {
+          "group" : "Chronology Section",
+          "labels" : {
+            "de" : "Chronologie",
+            "en" : "Chronology",
+            "fr" : "Chronologie",
+            "it" : "Cronologia",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Phase"
+            },
+            {
+              "field" : "CoverageTemporal"
+            },
+            {
+              "field" : "CoverageEarliest"
+            },
+            {
+              "field" : "CoverageLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Interpretations Section",
+          "labels" : {
+            "de" : "Interpretationen",
+            "en" : "Interpretations",
+            "fr" : "Interprétations",
+            "it" : "Interpretazioni",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Interpretations",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Comments Section",
+          "labels" : {
+            "de" : "Kommentare",
+            "en" : "Comments",
+            "fr" : "Commentaires",
+            "it" : "Commenti",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Comments",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Relation Section",
+          "labels" : {
+            "de" : "Beziehungen",
+            "en" : "Relations",
+            "fr" : "Relations",
+            "it" : "Relazioni",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        },
+        {
+          "group" : "Status Section",
+          "labels" : {
+            "de" : "Status",
+            "en" : "Status",
+            "fr" : "Statuts",
+            "it" : "Status",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus",
+              "tips" : {
+                "de" : "Offen (Grabung noch nicht abgeschlossen); Erledigt (Grabung des FK abgeschlossen; all done); Achtung (Probleme zu lösen)",
+                "en" : "open (the feature is under excavation and not documented); All done (the feature is documented); Attention (there is a problem that needs clarification)",
+                "fr" : "En cours (la structure n'est pas fini d'être fouillée ou documentée); Terminé (la structure est fini d'être documentée); Attention (problème à clarifier)",
+                "it" : "In corso (la struttura è ancora in corso di scavo o documentazione); Terminato (la documentazione della struttura è terminata); Attenzione (problema da risolvere)",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        }
+      ],
+      "relations" : [
+        {
+          "type" : "Context",
+          "relation" : "includes"
+        },
+        {
+          "type" : "Sample",
+          "relation" : "includes"
+        },
+        {
+          "type" : "Image",
+          "relation" : "includes"
+        }
+      ],
+      "label" : "Structure",
+      "type" : "Feature",
+      "plurals" : {
+        "de" : "Strukturen",
+        "en" : "Features",
+        "fr" : "Structures",
+        "it" : "Strutture",
+        "el" : ""
+      }
+    },
+    {
+      "relations" : [
+        {
+          "type" : "Image",
+          "relation" : "includes"
+        },
+        {
+          "type" : "Sample",
+          "relation" : "includes"
+        }
+      ],
+      "label" : "Objets inventoriés",
+      "plurals" : {
+        "de" : "Inventarobjekte",
+        "en" : "Artifacts",
+        "fr" : "Objets inventoriés",
+        "it" : "Reperti",
+        "el" : ""
+      },
+      "type" : "Artifact",
+      "groups" : [
+        {
+          "group" : "General Section",
+          "labels" : {
+            "de" : "Allgemein",
+            "en" : "General",
+            "fr" : "Général",
+            "it" : "Generale",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Title",
+              "tips" : {
+                "de" : "Identifizierung des Objektes (z.B. Bronzemünze oder Ziegelfragment)",
+                "en" : "Object Identification (Ex: Bronze coin or Tile fragment",
+                "fr" : "Identification de l'objet (Ex: Monnaie en bronze ou Fragment de tuile)",
+                "it" : "Identificazione del reperto (Es: Moneta in bronzo o frammento di tegola)",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Identifier",
+              "labels" : {
+                "de" : "FK-Nr.",
+                "en" : "FK-nr",
+                "fr" : "FK-no",
+                "it" : "FK-n.",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Kontext-Nr. - fortlaufend-Nr. (z.B. 500-3). Objekte ohne exakten Fundort tragen lediglich die Kontext-Nr.",
+                "en" : "Context nr - serial nr (Ex. 500-3). Artifacts without exact provenance have the context number only",
+                "fr" : "No du contexte - no continu (Ex. 500-3). Les objets sans provenance exacte ont uniquement le numéro du contexte",
+                "it" : "N. del contesto - n. continuo (Es. 500-3). I reperti senza un luogo di ritrovamento esatto, avranno unicamente il numero del contesto",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "DateEarliest",
+              "labels" : {
+                "de" : "Datum",
+                "en" : "Date",
+                "fr" : "Date",
+                "it" : "Data",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ],
+          "plurals" : {
+            "de" : "Fotos",
+            "en" : "Photos",
+            "fr" : "Photos",
+            "it" : "Foto",
+            "el" : ""
+          },
+          "labels" : {
+            "de" : "Foto",
+            "en" : "Photo",
+            "fr" : "Photo",
+            "it" : "Foto",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "de" : "Plan",
+            "en" : "Mapping",
+            "fr" : "Plan",
+            "it" : "Pianta",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Description Section",
+          "labels" : {
+            "de" : "Beschreibung",
+            "en" : "Description",
+            "fr" : "Description",
+            "it" : "Descrizione",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Description",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Properties Section",
+          "labels" : {
+            "de" : "Eigenschaften (im Museum ausfüllen)",
+            "en" : "Properties (museum)",
+            "fr" : "Caractéristiques (à remplir au musée)",
+            "it" : "Caratteristiche (da compilare al mueo)",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "InventoryNumber"
+            },
+            {
+              "multivalue" : true,
+              "tips" : {
+                "de" : "Objektkategorien gemäss Schlagwortliste (auf English). Kein '?' benutzen, sondern zusätzlich 'Indet.' auswählen; für Terrakotta-Figurinen, 'Representation' wählen; für jegliches Objekt mit Inschrift, 'Inscription' hinzufügen; für Webgewichte, 'Workshop' und 'Tool' angeben",
+                "en" : "Categories of artefacts according to a keywords list. Don't use '?', but select 'Indet.'; for terracotta figurines, select 'Representation'; for any inscribed artefact, add 'Inscription'; for weigths, select 'Workshop' and 'Tool'",
+                "fr" : "Catégories d'objet selon la liste de mots clefs (en anglais). Ne pas mettre '?', mais sélectionner 'Indet.'; pour les figurines en TC: 'Representation'; pour tout objet inscrit, ajouter 'Inscription'; pour les pesons, 'Workshop' et 'Tool'",
+                "it" : "Catégories d'objet selon la liste de mots clefs (en anglais). Ne pas mettre '?', mais sélectionner 'Indet.'; pour les figurines en TC: 'Representation'; pour tout objet inscrit, ajouter 'Inscription'",
+                "el" : ""
+              },
+              "valuelist" : [
+                "Indet.",
+                "Architecture",
+                "Coin",
+                "Container",
+                "Ecofacts",
+                "Funerary",
+                "Furniture",
+                "Hardware",
+                "Inscription",
+                "Lighting",
+                "Ornament",
+                "Other",
+                "Representation",
+                "Toilet set",
+                "Tool",
+                "Toy",
+                "Transport",
+                "Weaponry",
+                "Workshop"
+              ],
+              "field" : "Category"
+            },
+            {
+              "field" : "Material"
+            },
+            {
+              "field" : "Format"
+            },
+            {
+              "field" : "Storage"
+            },
+            {
+              "field" : "Photo"
+            }
+          ]
+        },
+        {
+          "group" : "Chronology Section",
+          "labels" : {
+            "de" : "Chronologie",
+            "en" : "Chronology",
+            "fr" : "Chronologie",
+            "it" : "Cronologia",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Phase"
+            },
+            {
+              "field" : "CoverageTemporal"
+            },
+            {
+              "field" : "CoverageEarliest"
+            },
+            {
+              "field" : "CoverageLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Comments Section",
+          "labels" : {
+            "de" : "Kommentare",
+            "en" : "Comments",
+            "fr" : "Commentaires",
+            "it" : "Commenti",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Comments",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Relation Section",
+          "labels" : {
+            "de" : "Beziehungen",
+            "en" : "Relations",
+            "fr" : "Relations",
+            "it" : "Relazioni",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        },
+        {
+          "group" : "Status Section",
+          "labels" : {
+            "de" : "Status",
+            "en" : "Status",
+            "fr" : "Statuts",
+            "it" : "Status",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus",
+              "tips" : {
+                "de" : "Nur folgende Status verwenden: conservation (Objekt ist in Restaurierung); All done (Objekt ist restaurierung und verräumt); Achtung (Probleme zu lösen)",
+                "en" : "Only the following status must be used here: conservation (the artifact is being restored); All done (the artifact is restored and stored); Attention (there is a problem that needs clarification)",
+                "fr" : "On utilisera ici uniquement les statuts suivants: conservation (l'objet est en restauration); All done (l'objet a été restauré et est rangé); Attention (problème à clarifier)",
+                "it" : "Usa unicamente gli status seguenti: conservation (il reperto è in fase di restauro); All done (il reperto è stato restaurato e riordinato); Attention (problema da risolvere)",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "de" : "Inventarobjekt",
+        "en" : "Artifact",
+        "fr" : "Objet inventorié",
+        "it" : "Reperto",
+        "el" : ""
+      }
+    },
+    {
+      "relations" : [
+        {
+          "type" : "Artifact",
+          "relation" : "includes"
+        }
+      ],
+      "groups" : [
+        {
+          "group" : "General Section",
+          "labels" : {
+            "de" : "Allgemein",
+            "en" : "General",
+            "fr" : "Général",
+            "it" : "Generale",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Title",
+              "tips" : {
+                "de" : "Ziegel- und Steinfragmente",
+                "en" : "Tiles & lithic fragments",
+                "fr" : "Tuiles et fragments lithiques",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Identifier",
+              "labels" : {
+                "de" : "FK",
+                "en" : "FK",
+                "fr" : "FK",
+                "it" : "FK",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Kontext-Nr. lediglich",
+                "en" : "Context nr only",
+                "fr" : "No du contexte uniquement",
+                "it" : "N. del contesto unicamente",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "DateEarliest",
+              "labels" : {
+                "de" : "Datum",
+                "en" : "Date",
+                "fr" : "Date",
+                "it" : "Data",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ],
+          "plurals" : {
+            "de" : "Fotos",
+            "en" : "Photos",
+            "fr" : "Photos",
+            "it" : "Foto",
+            "el" : ""
+          },
+          "labels" : {
+            "de" : "Foto",
+            "en" : "Photo",
+            "fr" : "Photo",
+            "it" : "Foto",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Tiles Section",
+          "labels" : {
+            "de" : "Ziegeln",
+            "en" : "Tiles",
+            "fr" : "Tuiles",
+            "it" : "XXX",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "LaconianImbrex",
+              "labels" : {
+                "de" : "Lak.Imbrex",
+                "en" : "Lac.imbrex",
+                "fr" : "Lac.imbrex",
+                "it" : "Lac.imbrex",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Anzahl von lakonische Imbrex ͡",
+                "en" : "Number of laconian imbrex ͡",
+                "fr" : "Nombre d'imbrex de type laconien ͡",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "LaconianTegula",
+              "labels" : {
+                "de" : "Lak.Tegula",
+                "en" : "Lac.tegula",
+                "fr" : "Lac.tegula",
+                "it" : "Lac.tegula",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Anzahl von lakonische Tegulae ͜",
+                "en" : "Number of laconian tegulae ͜",
+                "fr" : "Nombre de tegulae de type laconien ͜",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "CorinthianImbrex",
+              "labels" : {
+                "de" : "Kor.Imbrex",
+                "en" : "Cor.imbrex",
+                "fr" : "Cor.imbrex",
+                "it" : "Cor.imbrex",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Anzahl von korintische Imbrex ^",
+                "en" : "Number of corinthian imbrex ^",
+                "fr" : "Nombre d'imbrex de type corinthien ^",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "CorinthianTegula",
+              "labels" : {
+                "de" : "Kor.Tegula",
+                "en" : "Cor.tegula",
+                "fr" : "Cor.tegula",
+                "it" : "Cor.tegula",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Anzahl von korintische Tegulae ˽",
+                "en" : "Number of Corinthian tegulae ˽",
+                "fr" : "Nombre de tegulae de type corinthien ˽",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "OtherTiles",
+              "labels" : {
+                "de" : "Andere",
+                "en" : "Other",
+                "fr" : "Autres",
+                "it" : "XXX",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Bestimmen Sie andere Ziegel Typen",
+                "en" : "Specify other types of tiles",
+                "fr" : "Préciser les types de tuiles autres que laconien et corinthien",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "TotalWeight",
+              "labels" : {
+                "de" : "Gewicht",
+                "en" : "Total weight",
+                "fr" : "Poids total",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "TotalTilesKept",
+              "labels" : {
+                "de" : "Gesamtgehalten",
+                "en" : "Total kept",
+                "fr" : "Total gardé",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "multivalue" : true,
+              "valuelist" : [
+                "Fouilles ✓",
+                "Apothiki ✓"
+              ],
+              "field" : "Control",
+              "labels" : {
+                "de" : "Kontrol",
+                "en" : "Control",
+                "fr" : "Contrôle",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "TilesRemarks",
+              "labels" : {
+                "de" : "Bemerkungen",
+                "en" : "Remarks",
+                "fr" : "Remarques",
+                "it" : "",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Geben Sie die wichtigsten Eigenschaften an (glasiert, graffiti, usw), ob das Korpus homogen oder heterogen ist",
+                "en" : "Indicate remarkable features (glazed, graffiti, and so on), whether the assemblage is homogenous or heterogeneous",
+                "fr" : "Précisez des éléments particuliers (vernis, graffiti, etc), si le corpus est homogène ou au contraire hétérogène",
+                "it" : "XXX",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Lithic Section",
+          "labels" : {
+            "de" : "Stein",
+            "en" : "Lithics",
+            "fr" : "Lithique",
+            "it" : "XXX",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Description",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "TotalLithicsKept",
+              "labels" : {
+                "de" : "Gesamtgehalten",
+                "en" : "Total kept",
+                "fr" : "Total gardé",
+                "it" : "XXX",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Comments Section",
+          "labels" : {
+            "de" : "Kommentare",
+            "en" : "Comments",
+            "fr" : "Commentaires",
+            "it" : "Commenti",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Comments",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Relation Section",
+          "labels" : {
+            "de" : "Beziehungen",
+            "en" : "Relations",
+            "fr" : "Relations",
+            "it" : "Relazioni",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        },
+        {
+          "group" : "Status Section",
+          "labels" : {
+            "de" : "Status",
+            "en" : "Status",
+            "fr" : "Statuts",
+            "it" : "Status",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus",
+              "tips" : {
+                "de" : "Nur folgende Status verwenden: Abgeschlossen oder Achtung (Probleme zu lösen)",
+                "en" : "Only the following status must be used here: All done or Attention (there is a problem that needs clarification)",
+                "fr" : "On utilisera ici uniquement les statuts suivants: Terminé ou Attention (problème à clarifier)",
+                "it" : "Usa unicamente gli status seguenti: Terminato; Attention (problema da risolvere)",
+                "el" : ""
+              }
+            }
+          ]
+        }
+      ],
+      "plurals" : {
+        "de" : "Ziegel & Steine",
+        "en" : "Tiles & Lithics",
+        "fr" : "Tuiles et lithiques",
+        "it" : "XXX",
+        "el" : ""
+      },
+      "type" : "Partition",
+      "subtype" : "Tile_Lithic",
+      "labels" : {
+        "de" : "Ziegel & Stein",
+        "en" : "Tile & Lithic",
+        "fr" : "Tuile et lithique",
+        "it" : "XXX",
+        "el" : ""
+      }
+    },
+    {
+      "relations" : [
+        {
+          "type" : "Image",
+          "relation" : "includes"
+        }
+      ],
+      "plurals" : {
+        "de" : "Proben",
+        "en" : "Samples",
+        "fr" : "Échantillons",
+        "it" : "XXX",
+        "el" : ""
+      },
+      "type" : "Sample",
+      "groups" : [
+        {
+          "group" : "General Section",
+          "labels" : {
+            "de" : "Allgemein",
+            "en" : "General",
+            "fr" : "Général",
+            "it" : "Generale",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Title",
+              "tips" : {
+                "de" : "Probe Typ",
+                "en" : "Sample Type",
+                "fr" : "Type d'échantillon",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Identifier",
+              "labels" : {
+                "de" : "Id",
+                "en" : "Id",
+                "fr" : "Id",
+                "it" : "Id",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Probe Id",
+                "en" : "Sample identifier",
+                "fr" : "Identifiant de l'échantillon",
+                "it" : "XXX",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Field section",
+          "labels" : {
+            "de" : "Ausgrabung",
+            "en" : "Field",
+            "fr" : "Terrain",
+            "it" : "XXX",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "multivalue" : true,
+              "valuelist" : [
+
+              ],
+              "field" : "SampleTakenBy",
+              "labels" : {
+                "de" : "Name",
+                "en" : "Name",
+                "fr" : "Nom",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "DateEarliest",
+              "labels" : {
+                "de" : "Datum",
+                "en" : "Date",
+                "fr" : "Date",
+                "it" : "Data",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Location",
+              "labels" : {
+                "de" : "Lokalisierung",
+                "en" : "Location",
+                "fr" : "Localisation",
+                "it" : "Localizzazione",
+                "el" : ""
+              },
+              "valuelist" : [
+
+              ]
+            },
+            {
+              "multivalue" : true,
+              "valuelist" : [
+                "Clay",
+                "Container",
+                "Charcoal",
+                "Ecofact",
+                "Floor",
+                "Metal",
+                "Mineral",
+                "Seed",
+                "Slag",
+                "Soil",
+                "Stone"
+              ],
+              "field" : "SampleType",
+              "labels" : {
+                "de" : "Kategorie",
+                "en" : "Category",
+                "fr" : "Categorie",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "multivalue" : true,
+              "valuelist" : [
+                "Sieving",
+                "Flottation",
+                "Micromorphology",
+                "Residue analysis",
+                "Material analysis"
+              ],
+              "field" : "SampleMethod",
+              "labels" : {
+                "de" : "Art",
+                "en" : "Method",
+                "fr" : "Méthode",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "SampleGoals",
+              "labels" : {
+                "de" : "Ziele",
+                "en" : "Goals",
+                "fr" : "Objectifs",
+                "it" : "XXX",
+                "el" : ""
+              },
+              "multiline" : true
+            }
+          ]
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "de" : "Plan",
+            "en" : "Mapping",
+            "fr" : "Plan",
+            "it" : "Pianta",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Processing section",
+          "labels" : {
+            "de" : "Bearbeitung",
+            "en" : "Processing",
+            "fr" : "Traîtement",
+            "it" : "XXX",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "multivalue" : true,
+              "valuelist" : [
+
+              ],
+              "field" : "SampleProcessedBy",
+              "labels" : {
+                "de" : "Name",
+                "en" : "Name",
+                "fr" : "Nom",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "DateLatest",
+              "labels" : {
+                "de" : "Datum",
+                "en" : "Date",
+                "fr" : "Date",
+                "it" : "Data",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "SampleProcessing",
+              "labels" : {
+                "de" : "Bearbeitung",
+                "en" : "Work done",
+                "fr" : "Traitement",
+                "it" : "XXX",
+                "el" : ""
+              },
+              "multiline" : true
+            },
+            {
+              "field" : "SampleVolume",
+              "labels" : {
+                "de" : "Volume",
+                "en" : "Volume",
+                "fr" : "Volume",
+                "it" : "Volume",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Probe Volume, wenn geeignet",
+                "en" : "Sample volume, if requested",
+                "fr" : "Volume de l'échantillon, si adapté",
+                "it" : "XXX",
+                "el" : ""
+              }
+            },
+            {
+              "tips" : {
+                "de" : "Kategorien der Funde dieses Kontexts (Auswahl)",
+                "en" : "Categories of finds yielded from the context (multi-choice list)",
+                "fr" : "Catégories d’objets découverts dans le contexte (liste multi-choix)",
+                "it" : "Categorie dei reperti rinvenuti nel contesto (Elenco a selezione multipla)",
+                "el" : ""
+              },
+              "multivalue" : true,
+              "valuelist" : [
+                "Céramique",
+                "Os",
+                "Coquillage",
+                "Bronze",
+                "Fer",
+                "Plomb",
+                "Verre",
+                "Scorie",
+                "Obsidienne"
+              ],
+              "field" : "Finds",
+              "labels" : {
+                "de" : "Funde",
+                "en" : "Finds",
+                "fr" : "Mobilier",
+                "it" : "Reperti",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Storage"
+            }
+          ]
+        },
+        {
+          "group" : "Analysis section",
+          "labels" : {
+            "de" : "Analysis",
+            "en" : "Analysis",
+            "fr" : "Analyse",
+            "it" : "XXX",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Description",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              },
+              "multiline" : true
+            }
+          ]
+        },
+        {
+          "group" : "Comments Section",
+          "labels" : {
+            "de" : "Kommentare",
+            "en" : "Comments",
+            "fr" : "Commentaires",
+            "it" : "Commenti",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Comments",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ],
+          "plurals" : {
+            "de" : "Fotos",
+            "en" : "Photos",
+            "fr" : "Photos",
+            "it" : "Foto",
+            "el" : ""
+          },
+          "labels" : {
+            "de" : "Foto",
+            "en" : "Photo",
+            "fr" : "Photo",
+            "it" : "Foto",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Relation Section",
+          "labels" : {
+            "de" : "Beziehungen",
+            "en" : "Relations",
+            "fr" : "Relations",
+            "it" : "Relazioni",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        },
+        {
+          "group" : "Status Section",
+          "labels" : {
+            "de" : "Status",
+            "en" : "Status",
+            "fr" : "Statuts",
+            "it" : "Status",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "de" : "Probe",
+        "en" : "Sample",
+        "fr" : "Échantillon",
+        "it" : "XXX",
+        "el" : ""
+      }
+    },
+    {
+      "groups" : [
+        {
+          "group" : "General Section",
+          "labels" : {
+            "de" : "Allgemein",
+            "en" : "General",
+            "fr" : "Général",
+            "it" : "generale",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "LotContexts"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "Researchers"
+            },
+            {
+              "field" : "DateEarliest"
+            },
+            {
+              "field" : "DateLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ],
+          "plurals" : {
+            "de" : "Fotos",
+            "en" : "Photos",
+            "fr" : "Photos",
+            "it" : "Foto",
+            "el" : ""
+          },
+          "labels" : {
+            "de" : "Foto",
+            "en" : "Photo",
+            "fr" : "Photo",
+            "it" : "Foto",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Lot Section",
+          "labels" : {
+            "de" : "Funde",
+            "en" : "Finds",
+            "fr" : "Mobilier",
+            "it" : "Reperto",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Finds"
+            },
+            {
+              "field" : "Drawings"
+            },
+            {
+              "field" : "Check list"
+            }
+          ]
+        },
+        {
+          "group" : "Count Section",
+          "labels" : {
+            "de" : "Zählen",
+            "en" : "Counts",
+            "fr" : "Comptage",
+            "it" : "Conteggio",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Quantity",
+              "tips" : {
+                "de" : "Anzahl der Scherben, einschließlich der inventarisierten Vasen (nur eine Zahl!).",
+                "en" : "Number of shards, including the inventoried vases (one figure only!)",
+                "fr" : "Nombre de tessons, inclus les vases inventoriés (un chiffre uniquement!)",
+                "it" : "Numero di frammenti, compresi i vasi inventariati (un solo numero!",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Total weight"
+            },
+            {
+              "field" : "Discarded"
+            },
+            {
+              "field" : "Figurines count"
+            },
+            {
+              "field" : "Obsidians count"
+            }
+          ]
+        },
+        {
+          "group" : "Chronology Section",
+          "labels" : {
+            "de" : "Chronologie",
+            "en" : "Chronology",
+            "fr" : "Chronologie",
+            "it" : "Cronologia",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Markers"
+            },
+            {
+              "field" : "TPQ"
+            },
+            {
+              "field" : "Homogeneity"
+            },
+            {
+              "field" : "CoverageTemporal"
+            },
+            {
+              "field" : "CoverageEarliest"
+            },
+            {
+              "field" : "CoverageLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Description Section",
+          "labels" : {
+            "de" : "Beschreibung",
+            "en" : "Description",
+            "fr" : "Description",
+            "it" : "Descrizione",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Description",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Kurze Beschreibung der Lot und der bemerkenswerten Vasen",
+                "en" : "Brief description of the lot and noteworthy vases",
+                "fr" : "Description succincte du lot et des vases remarquables",
+                "it" : "XXX",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Comments Section",
+          "labels" : {
+            "de" : "Kommentare",
+            "en" : "Comments",
+            "fr" : "Commentaires",
+            "it" : "Commenti",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Comment",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              },
+              "multiline" : true
+            }
+          ]
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "de" : "Plan",
+            "en" : "Mapping",
+            "fr" : "Plan",
+            "it" : "Pianta",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Relation Section",
+          "labels" : {
+            "de" : "Beziehungen",
+            "en" : "Relations",
+            "fr" : "Relations",
+            "it" : "Relazioni",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        },
+        {
+          "group" : "Status Section",
+          "labels" : {
+            "de" : "Status",
+            "en" : "Status",
+            "fr" : "Statuts",
+            "it" : "Status",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus",
+              "tips" : {
+                "de" : "Offen (Grabung noch nicht abgeschlossen); Erledigt (Grabung des FK abgeschlossen; all done); Achtung (Probleme zu lösen)",
+                "en" : "Only the following status must be used here: open (the context is under excavation); All done (the context is done excavating); Attention (there is a problem that needs clarification)",
+                "fr" : "En cours (le lot n'est pas fini d'être traité); Terminé (le lot a été traité); Attention (problème à clarifier)",
+                "it" : "In corso (lo studio del gruppo non è ancora terminato); Terminato (il gruppo è stato elaborato); Attenzione (problema da risolvere)",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        }
+      ],
+      "plurals" : {
+        "de" : "Lots",
+        "en" : "Lots",
+        "fr" : "Lots",
+        "it" : "Gruppi",
+        "el" : ""
+      },
+      "type" : "Group",
+      "subtype" : "Lot",
+      "labels" : {
+        "de" : "Lot",
+        "en" : "Lot",
+        "fr" : "Lot",
+        "it" : "Gruppo",
+        "el" : ""
+      }
+    },
+    {
+      "label" : "Photo",
+      "plurals" : {
+        "de" : "Fotos",
+        "en" : "Photos",
+        "fr" : "Photos",
+        "it" : "Foto",
+        "el" : ""
+      },
+      "type" : "Image",
+      "groups" : [
+        {
+          "group" : "General Section",
+          "labels" : {
+            "de" : "Allgemein",
+            "en" : "General",
+            "fr" : "Général",
+            "it" : "Generale",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Title",
+              "labels" : {
+                "de" : "Legende",
+                "en" : "Caption",
+                "fr" : "Légende",
+                "it" : "Didascalia",
+                "el" : ""
+              },
+              "tips" : {
+                "de" : "Kontexte, Strukturen, Objekte oder Lots präzisieren, welche auf dem Foto zu sehen sind.",
+                "en" : "Specify which contexts, features, artefacts or lots are represented on the picture",
+                "fr" : "Préciser quels contextes, structures, objets ou lots figurent sur la photo",
+                "it" : "Precisa quali contesti, strutture, reperti o gruppi sono rappresentati sulla foto",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "DateEarliest",
+              "labels" : {
+                "de" : "Datum",
+                "en" : "Date",
+                "fr" : "Date",
+                "it" : "Data",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ],
+          "plurals" : {
+            "de" : "Fotos",
+            "en" : "Photos",
+            "fr" : "Photos",
+            "it" : "Foto",
+            "el" : ""
+          },
+          "labels" : {
+            "de" : "Foto",
+            "en" : "Photo",
+            "fr" : "Photo",
+            "it" : "Foto",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "de" : "Plan",
+            "en" : "Mapping",
+            "fr" : "Plan",
+            "it" : "Pianta",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Image section",
+          "labels" : {
+            "de" : "Bild",
+            "en" : "Image",
+            "fr" : "Image",
+            "it" : "Immagine",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Looking"
+            },
+            {
+              "field" : "Rating"
+            }
+          ]
+        },
+        {
+          "group" : "Relation Section",
+          "labels" : {
+            "de" : "Beziehungen",
+            "en" : "Relations",
+            "fr" : "Relations",
+            "it" : "Relazioni",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        },
+        {
+          "group" : "Status Section",
+          "labels" : {
+            "de" : "Status",
+            "en" : "Status",
+            "fr" : "Statuts",
+            "it" : "Status",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "de" : "Foto",
+        "en" : "Photo",
+        "fr" : "Photo",
+        "it" : "Foto",
+        "el" : ""
+      }
+    },
+    {
+      "label" : "Strati",
+      "plurals" : {
+        "de" : "Profile",
+        "en" : "Sections",
+        "fr" : "Stratis",
+        "it" : "Stratis",
+        "el" : ""
+      },
+      "type" : "Section",
+      "groups" : [
+        {
+          "group" : "General Section",
+          "labels" : {
+            "de" : "Allgemein",
+            "en" : "General",
+            "fr" : "Général",
+            "it" : "Generale",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "DrawingType"
+            },
+            {
+              "field" : "Excavators"
+            },
+            {
+              "field" : "DateEarliest",
+              "labels" : {
+                "de" : "Datum",
+                "en" : "Date",
+                "fr" : "Date",
+                "it" : "Data",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ],
+          "plurals" : {
+            "de" : "Profile",
+            "en" : "Sections",
+            "fr" : "Stratis",
+            "it" : "Stratis",
+            "el" : ""
+          },
+          "labels" : {
+            "de" : "Profil",
+            "en" : "Section",
+            "fr" : "Strati",
+            "it" : "Strati",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Description Section",
+          "labels" : {
+            "de" : "Beschreibung",
+            "en" : "Description",
+            "fr" : "Description",
+            "it" : "Descrizione",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Description",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "de" : "Lokalisierung",
+            "en" : "Location",
+            "fr" : "Situation",
+            "it" : "Situazione",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Relation Section",
+          "labels" : {
+            "de" : "Beziehungen",
+            "en" : "Relations",
+            "fr" : "Relations",
+            "it" : "Relazioni",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        },
+        {
+          "group" : "Status Section",
+          "labels" : {
+            "de" : "Status",
+            "en" : "Status",
+            "fr" : "Statuts",
+            "it" : "Status",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "de" : "Profil",
+        "en" : "Section",
+        "fr" : "Strati",
+        "it" : "Strati",
+        "el" : ""
+      }
+    },
+    {
+      "label" : "Plan",
+      "plurals" : {
+        "de" : "Pläne",
+        "en" : "Plans",
+        "fr" : "Plans",
+        "it" : "Piante",
+        "el" : ""
+      },
+      "type" : "Plan",
+      "groups" : [
+        {
+          "group" : "General Section",
+          "labels" : {
+            "de" : "Allgemein",
+            "en" : "General",
+            "fr" : "Général",
+            "it" : "Generale",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "DateEarliest",
+              "labels" : {
+                "de" : "Datum",
+                "en" : "Date",
+                "fr" : "Date",
+                "it" : "Date",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "labels" : {
+            "de" : "Plan",
+            "en" : "Plan",
+            "fr" : "Plan",
+            "it" : "Pianta",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ]
+        },
+        {
+          "group" : "Description Section",
+          "labels" : {
+            "de" : "Beschreibung",
+            "en" : "Description",
+            "fr" : "Description",
+            "it" : "Descrizione",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Description",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "de" : "Plan",
+            "en" : "Mapping",
+            "fr" : "Plan",
+            "it" : "Pianta",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Status Section",
+          "labels" : {
+            "de" : "Status",
+            "en" : "Status",
+            "fr" : "Statuts",
+            "it" : "Status",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "de" : "Plan",
+        "en" : "Plan",
+        "fr" : "Plan",
+        "it" : "Pianta",
+        "el" : ""
+      }
+    },
+    {
+      "labels" : {
+        "de" : "Tagebuch",
+        "en" : "Notebook",
+        "fr" : "Journal de fouille",
+        "it" : "XXX",
+        "el" : ""
+      },
+      "groups" : [
+        {
+          "group" : "General Section",
+          "labels" : {
+            "de" : "Allgemein",
+            "en" : "General",
+            "fr" : "Général",
+            "it" : "Generale",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "DateEarliest",
+              "labels" : {
+                "de" : "Datum",
+                "en" : "Date",
+                "fr" : "Date",
+                "it" : "Data",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Identifier",
+              "number" : true,
+              "tips" : {
+                "de" : "Tag angeben, nur Nummer (z. B. 1 für den ersten Tag)",
+                "en" : "Indicate day, number only (e.g. 1 for the first day)",
+                "fr" : "Indiquer le jour, nombre uniquement (ex: 1 pour le premier jour)",
+                "it" : "Indicare il giorno, solo il numero (es. 1 per il primo giorno)",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Creator",
+              "labels" : {
+                "de" : "Autor",
+                "en" : "Creator",
+                "fr" : "Auteur",
+                "it" : "Autore",
+                "el" : ""
+              },
+              "valuelist" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "group" : "Description Section",
+          "labels" : {
+            "de" : "Tagesarbeit",
+            "en" : "Work of the day",
+            "fr" : "Travail de la journée",
+            "it" : "Lavoro del giorno",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Description",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            },
+            {
+              "multivalue" : true,
+              "valuelist" : [
+
+              ],
+              "field" : "Excavators",
+              "labels" : {
+                "de" : "Ausgräber",
+                "en" : "Diggers",
+                "fr" : "Fouilleurs",
+                "it" : "Scavatore",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Comments Section",
+          "labels" : {
+            "de" : "Kommentare",
+            "en" : "Comments",
+            "fr" : "Commentaires",
+            "it" : "Commenti",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Comments",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ],
+          "plurals" : {
+            "de" : "Fotos",
+            "en" : "Photos",
+            "fr" : "Photos",
+            "it" : "Foto",
+            "el" : ""
+          },
+          "labels" : {
+            "de" : "Foto",
+            "en" : "Photo",
+            "fr" : "Photo",
+            "it" : "Foto",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Relation Section",
+          "labels" : {
+            "de" : "Beziehungen",
+            "en" : "Relations",
+            "fr" : "Relations",
+            "it" : "Relazioni",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        },
+        {
+          "group" : "Status Section",
+          "labels" : {
+            "de" : "Status",
+            "en" : "Status",
+            "fr" : "Statuts",
+            "it" : "Status",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            }
+          ]
+        }
+      ],
+      "subtype" : "Notebook",
+      "label" : "Notebook",
+      "type" : "Event",
+      "plurals" : {
+        "de" : "Tagebuch",
+        "en" : "Notebook",
+        "fr" : "Journal de fouille",
+        "it" : "XXX",
+        "el" : ""
+      },
+      "relations" : [
+        {
+          "type" : "Event",
+          "relation" : "is before",
+          "subtype" : "Notebook"
+        },
+        {
+          "type" : "Image",
+          "relation" : "includes"
+        }
+      ]
+    },
+    {
+      "label" : "Divers",
+      "plurals" : {
+        "de" : "Varia",
+        "en" : "Other",
+        "fr" : "Divers",
+        "it" : "Varia",
+        "el" : ""
+      },
+      "plural" : "Divers",
+      "type" : "Other",
+      "groups" : [
+        {
+          "group" : "General Section",
+          "labels" : {
+            "de" : "Allgemein",
+            "en" : "General",
+            "fr" : "Général",
+            "it" : "Generale",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "DateEarliest",
+              "labels" : {
+                "de" : "Datum",
+                "en" : "Date",
+                "fr" : "Date",
+                "it" : "Data",
+                "el" : ""
+              }
+            },
+            {
+              "field" : "Category"
+            },
+            {
+              "field" : "Room"
+            }
+          ]
+        },
+        {
+          "group" : "Points",
+          "labels" : {
+            "de" : "Plan",
+            "en" : "Mapping",
+            "fr" : "Plan",
+            "it" : "Pianta",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "CoverageSpatial"
+            }
+          ]
+        },
+        {
+          "group" : "Attachments",
+          "fields" : [
+            {
+              "field" : "RelationAttachments"
+            }
+          ],
+          "plurals" : {
+            "de" : "Fotos",
+            "en" : "Photos",
+            "fr" : "Photos",
+            "it" : "Foto",
+            "el" : ""
+          },
+          "labels" : {
+            "de" : "Foto",
+            "en" : "Photo",
+            "fr" : "Photo",
+            "it" : "Foto",
+            "el" : ""
+          }
+        },
+        {
+          "group" : "Description Section",
+          "labels" : {
+            "de" : "Beschreibung",
+            "en" : "Description",
+            "fr" : "Description",
+            "it" : "Descrizione",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Description",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Chronology Section",
+          "labels" : {
+            "de" : "Chronologie",
+            "en" : "Chronology",
+            "fr" : "Chronologie",
+            "it" : "Cronologia",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Phase"
+            },
+            {
+              "field" : "CoverageTemporal"
+            },
+            {
+              "field" : "CoverageEarliest"
+            },
+            {
+              "field" : "CoverageLatest"
+            }
+          ]
+        },
+        {
+          "group" : "Comments Section",
+          "labels" : {
+            "de" : "Kommentare",
+            "en" : "Comments",
+            "fr" : "Commentaires",
+            "it" : "Commenti",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Comments",
+              "labels" : {
+                "de" : "",
+                "en" : "",
+                "fr" : "",
+                "it" : "",
+                "el" : ""
+              }
+            }
+          ]
+        },
+        {
+          "group" : "Relation Section",
+          "labels" : {
+            "de" : "Beziehungen",
+            "en" : "Relations",
+            "fr" : "Relations",
+            "it" : "Relazioni",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Relation"
+            }
+          ]
+        },
+        {
+          "group" : "Status Section",
+          "labels" : {
+            "de" : "Status",
+            "en" : "Status",
+            "fr" : "Statuts",
+            "it" : "Status",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "RightsStatus"
+            },
+            {
+              "field" : "RightsSidelined"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "de" : "Varia",
+        "en" : "Other",
+        "fr" : "Divers",
+        "it" : "Varia",
+        "el" : ""
+      }
+    },
+    {
+      "label" : "Indéterminé",
+      "plurals" : {
+        "de" : "Undeterminiert",
+        "en" : "Untyped",
+        "fr" : "Indéterminés",
+        "it" : "Indeterminati",
+        "el" : ""
+      },
+      "type" : "Untyped",
+      "groups" : [
+        {
+          "group" : "General Section",
+          "labels" : {
+            "de" : "Allgemein",
+            "en" : "General",
+            "fr" : "Général",
+            "it" : "Generale",
+            "el" : ""
+          },
+          "fields" : [
+            {
+              "field" : "Title"
+            },
+            {
+              "field" : "Source"
+            },
+            {
+              "field" : "Type"
+            },
+            {
+              "field" : "Identifier"
+            },
+            {
+              "field" : "DateEarliest"
+            },
+            {
+              "field" : "DateLatest"
+            }
+          ]
+        }
+      ],
+      "labels" : {
+        "de" : "Undeterminiert",
+        "en" : "Untyped",
+        "fr" : "Indéterminé",
+        "it" : "Indeterminato",
+        "el" : ""
+      }
+    }
+  ],
+  "lists" : [
+    {
+      "values" : [
+        {
+          "color" : "rgba:0.824,0.776,0.676,0.4",
+          "value" : "Neolithic",
+          "latest" : -3500,
+          "labels" : {
+            "en_US" : "Locale based label"
+          }
+        },
+        {
+          "latest" : -1200,
+          "value" : "Bronze Age",
+          "typelist" : [
+            "Array",
+            "of",
+            "types"
+          ],
+          "color" : "rgba:0.832,0.522,0.084,0.191"
+        }
+      ],
+      "list" : "Phases"
+    }
+  ],
+  "version" : 2,
+  "project" : "Agora",
+  "crs" : "Agora",
+  "maxdigits" : "6.3"
+}

@@ -1,29 +1,36 @@
 <template>
-  <h2>Types</h2>
-    <p class="buttons" v-for="(type, index) in types" :key="index"  >
-        <button @click="check(type.type)" :key="index" class="button is-light">{{ type.type }}</button>
-    </p>
+  <h3>Types</h3>
+  <!-- une liste déroulante -->
+  <select
+    id="dropdown"
+    text="Options"
+    v-model="selected"
+    @change="changeSelectedType"
+    class="form-control"
+  >
+    <option v-for="type in types" :key="type" :value="type.type">
+      {{ type.type }}
+    </option>
+  </select>
 </template>
 
 <script>
-// import headersData from "../components/Friends.Preferences.json";
-import preferencesData from "../components/ΒΘ West 2013.Preferences.json";
+import preferencesData from "../components/AMA21-S24.Preferences.json";
 
 export default {
   data() {
     return {
-      types: preferencesData.types
+      types: preferencesData.types,
+      selected: "Artifact", // default type 
     };
   },
   methods: {
-    check: function(e) {
-      // console.log(e),
+    changeSelectedType: function () {
       // reçoit du @change et renvoie au parent
-      this.$emit('test-emit', e);
+      this.$emit("test-emit", this.selected);
     },
-  }
+  },
 };
 </script>
 <style>
-
 </style>
