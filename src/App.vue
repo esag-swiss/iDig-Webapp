@@ -2,22 +2,23 @@
   <div class="row">
     <div class="col-md-3">
       <!-- The layer checkboxes go here -->
-      <filter-liste
-         @test-emit="testEmit">
+      <filter-liste 
+         @selected-emit="selectedEmit">
       </filter-liste>
       <filter-fields
-         :selected-filter="selectedFilter">        
+          :selected-filter="selectedFilter"
+          @check-fields="checkFields">        
       </filter-fields>
     </div>
 
     <div class="col-md-9">
       <!-- The map goes here -->
-        <table class="table table-bordered">
-
-        </table>
+    <!-- <div v-for="type in checkedFields" :key="type">{{selectedFields}}</div>  -->
         <dyna-table
           :selected-fields="selectedFields"
-          :selected-data="selectedData">
+          :selected-data="selectedData"
+          :checked-fields="checkedFields"
+          >
         </dyna-table>  
     </div>
   </div> 
@@ -41,8 +42,9 @@ export default {
   data() {
      return {
       fields: preferencesData.types,
-       trenchdata: trenchData,
+      trenchdata: trenchData,
       selectedFilter: "Artifact", // type by default
+      checkedFields: [{ "field": "Source" }, { "field": "Type" }, { "field": "Identifier", "labels": { "de": "FK-Nr.", "en": "FK-nr", "fr": "FK-no", "it": "FK-n.", "el": "" }, "tips": { "de": "Kontext-Nr. - fortlaufend-Nr. (z.B. 500-3). Objekte ohne exakten Fundort tragen lediglich die Kontext-Nr.", "en": "Context nr - serial nr (Ex. 500-3). Artifacts without exact provenance have the context number only", "fr": "No du contexte - no continu (Ex. 500-3). Les objets sans provenance exacte ont uniquement le numéro du contexte", "it": "N. del contesto - n. continuo (Es. 500-3). I reperti senza un luogo di ritrovamento esatto, avranno unicamente il numero del contesto", "el": "" } }]
    };
   },
   computed: {
@@ -51,6 +53,11 @@ export default {
       return x.type.includes(this.selectedFilter)
      })[0].groups[0].fields
     },
+    selectedGroups(){
+     return this.fields.filter(x => {
+      return x.type.includes(this.selectedFilter)
+     })[0].groups
+    },
     selectedData(){
      return this.trenchdata.filter(object => {
         return object.Type.includes(this.selectedFilter)
@@ -58,9 +65,11 @@ export default {
     } 
   },
   methods: {
-    testEmit(testid) {
-      this.selectedFilter=testid,
-      console.log(testid)
+    selectedEmit(field) {
+      this.selectedFilter=field
+    },
+    checkFields(fields) {
+      this.checkedFields=fields
     },
   },
 }
@@ -74,6 +83,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+th {
+  background-color: #eee;
 }
 /*
 * {

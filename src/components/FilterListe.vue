@@ -1,4 +1,5 @@
 <template>
+  <div class="bg-light border border-grey rounded" >
   <h3>Types</h3>
   <!-- une liste déroulante -->
   <select
@@ -12,6 +13,7 @@
       {{ type.type }}
     </option>
   </select>
+  </div>
 </template>
 
 <script>
@@ -27,7 +29,7 @@ export default {
   methods: {
     changeSelectedType: function () {
       // reçoit du @change et renvoie au parent
-      this.$emit("test-emit", this.selected);
+      this.$emit("selected-emit", this.selected);
     },
   },
 };

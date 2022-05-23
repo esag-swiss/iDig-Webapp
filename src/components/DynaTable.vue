@@ -1,6 +1,6 @@
 <template>
   <div style="text-align: left">
-    <label>SearchBy:</label><input v-model="searchTerm" />
+    <label>Search:</label><input v-model="searchTerm" />
   </div>
   <table-lite
     :is-static-mode="true"
@@ -14,8 +14,6 @@
 <script>
 import { defineComponent, reactive, ref, computed, toRef} from "vue";
 import TableLite from "../components/TableLite.vue";
-// import preferencesData from "../components/AMA21-S24.Preferences.json";
-// import trenchData from "../components/AMA21-S24.json";
 
 export default defineComponent({
   name: "App",
@@ -29,6 +27,10 @@ export default defineComponent({
       type: String,
       required: true
     },
+    checkedFields: {
+      type: String,
+      required: true
+    },    
   },
 
   setup(props) {
@@ -38,13 +40,14 @@ export default defineComponent({
     const data = toRef(props, 'selectedData');
 
     // utiliser toRef pour ne pas perdre la réactivité lorsque le props est destructuré
-    const headers = toRef(props, 'selectedFields');
-
+    // const headers = toRef(props, 'selectedFields');
+    const headers = toRef(props, 'checkedFields');
 
 // Table config
     const table = reactive({
 
       columns: headers,
+      // columns: header,
       rows: computed(() => {
         return data.value.filter(
           (x) =>
@@ -62,7 +65,8 @@ export default defineComponent({
     });
     return {
       searchTerm,
-      table 
+      table,
+      headers
     };
   },
 });

@@ -811,9 +811,9 @@ tr {
 }
 .vtl-table thead th {
   vertical-align: bottom;
-  color: #fff;
-  background-color: #343a40;
-  border-color: #454d55;
+  /* color: #fff; */
+  background-color: #eee;
+  /* border-color: #454d55; */
   border-bottom: 2px solid #dee2e6;
 }
 .vtl-table-bordered td,
