@@ -1,72 +1,81 @@
 <template>
-  <div style="text-align: left">
-    <label>Search:</label><input v-model="searchTerm" />
-  </div>
+
+  <input class="m-2" v-model="searchTerm" />
   <table-lite
-    :is-static-mode="true"
+    :has-checkbox="true"
+    :is-loading="table.isLoading"
+    :is-re-search="table.isReSearch"
     :columns="table.columns"
     :rows="table.rows"
+    :rowClasses="table.rowClasses"
     :total="table.totalRecordCount"
     :sortable="table.sortable"
+    :messages="table.messages"
+
+    @return-checked-rows="updateCheckedRows"
+    @row-clicked="rowClicked"
+    
   ></table-lite>
 </template>
 
 <script>
-import { defineComponent, reactive, ref, computed, toRef} from "vue";
+import { defineComponent, reactive, ref, computed, toRef } from "vue";
 import TableLite from "../components/TableLite.vue";
 
 export default defineComponent({
-  name: "App",
+  name: "Dyna-Table",
   components: { TableLite },
   props: {
-    selectedFields: {
-      type: String,
-      required: true
-    },
     selectedData: {
-      type: String,
-      required: true
+      type: Array,
+      required: true,
     },
     checkedFields: {
-      type: String,
-      required: true
-    },    
+      type: Array,
+      required: true,
+    },
   },
-
   setup(props) {
-  const searchTerm = ref(""); // Search text
-
-    // data
-    const data = toRef(props, 'selectedData');
-
+    const searchTerm = ref(""); // Search text
+    // data utiliser toRef pour ne pas perdre la réactivité lorsque le props est destructuré
+    const data = toRef(props, "selectedData");
     // utiliser toRef pour ne pas perdre la réactivité lorsque le props est destructuré
-    // const headers = toRef(props, 'selectedFields');
-    const headers = toRef(props, 'checkedFields');
+    const headers = toRef(props, "checkedFields");
 
-// Table config
+    // Table config
     const table = reactive({
-
       columns: headers,
-      // columns: header,
       rows: computed(() => {
         return data.value.filter(
           (x) =>
             x.Type.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
             x.Identifier.toLowerCase().includes(searchTerm.value.toLowerCase())
-        ); 
+        );
       }),
       totalRecordCount: computed(() => {
         return table.rows.length;
       }),
       sortable: {
-        order: "id",
+        order: "Identifier",
         sort: "asc",
       },
     });
+    
+    // Row checked event
+    const updateCheckedRows = (rowsKey) => {
+      console.log(rowsKey);
+    };
+    // Row clicked event
+    const rowClicked = (rowsKey) => {
+      console.log("Row clicked!", rowsKey);
+    };
     return {
       searchTerm,
       table,
-      headers
+      headers,
+      rowClicked,
+      updateCheckedRows,
+      
     };
   },
 });

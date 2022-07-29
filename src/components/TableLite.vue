@@ -3,7 +3,13 @@
     <div class="vtl-card-title" v-if="title">{{ title }}</div>
     <div class="vtl-card-body">
       <div class="vtl-row">
-        <div class="col-sm-12">
+        <div
+          class="col-sm-12"
+          :class="{
+            'fixed-first-column': isFixedFirstColumn,
+            'fixed-first-second-column': isFixedFirstColumn && hasCheckbox,
+          }"
+        >
           <div v-if="isLoading" class="vtl-loading-mask">
             <div class="vtl-loading-content">
               <span style="color: white">Loading...</span>
@@ -31,7 +37,9 @@
                   :key="index"
                   :style="
                     Object.assign(
-                      { width: col.width ? col.width : 'auto' },
+                      {
+                        width: col.width ? col.width : 'auto',
+                      },
                       col.headerStyles
                     )
                   "
@@ -46,7 +54,7 @@
                     }"
                     @click="col.sortable ? doSort(col.field) : false"
                   >
-                    <p v-if="col.label">{{ col.label }}</p><p v-if="!col.label">{{ col.field }}</p>
+                    {{ col.label }}
                   </div>
                 </th>
               </tr>
@@ -58,6 +66,7 @@
                   :key="i"
                   class="vtl-tbody-tr"
                   :class="typeof rowClasses === 'function' ? rowClasses(row) : rowClasses"
+                  @click="$emit('row-clicked', row)"
                 >
                   <td v-if="hasCheckbox" class="vtl-tbody-td">
                     <div>
@@ -97,6 +106,7 @@
                   :key="i"
                   class="vtl-tbody-tr"
                   :class="typeof rowClasses === 'function' ? rowClasses(row) : rowClasses"
+                  @click="$emit('row-clicked', row)"
                 >
                   <td v-if="hasCheckbox" class="vtl-tbody-td">
                     <div>
@@ -260,7 +270,13 @@ import {
 } from "vue";
 export default defineComponent({
   name: "my-table",
-  emits: ["return-checked-rows", "do-search", "is-finished", "get-now-page"],
+  emits: [
+    "return-checked-rows",
+    "do-search",
+    "is-finished",
+    "get-now-page",
+    "row-clicked",
+  ],
   props: {
     // 是否讀取中 (is data loading)
     isLoading: {
@@ -286,6 +302,11 @@ export default defineComponent({
     title: {
       type: String,
       default: "",
+    },
+    // 是否鎖定第一欄位位置 (Fixed first column's position)
+    isFixedFirstColumn: {
+      type: Boolean,
+      default: false,
     },
     // 欄位 (Field)
     columns: {
@@ -462,21 +483,15 @@ export default defineComponent({
     });
     // 組件內用資料 (Data rows for local)
     const localRows = computed(() => {
-      // sort rows
-      let property = setting.order;
-      let sort_order = 1;
-      if (setting.sort === "desc") {
-        sort_order = -1;
-      }
       let rows = props.rows;
-      rows.sort((a, b) => {
-        if (a[property] < b[property]) {
-          return -1 * sort_order;
-        } else if (a[property] > b[property]) {
-          return sort_order;
-        } else {
-          return 0;
-        }
+      // refs https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/compare
+      var collator = new Intl.Collator(undefined, {
+        numeric: true,
+        sensitivity: "base",
+      });
+      let sortOrder = setting.sort === "desc" ? -1 : 1;
+      rows.sort(function (a, b) {
+        return collator.compare(a[setting.order], b[setting.order]) * sortOrder;
       });
       // return sorted and offset rows
       let result = [];
@@ -533,7 +548,8 @@ export default defineComponent({
     /**
      * Checkbox點擊事件 (Checkbox click event)
      */
-    const checked = () => {
+    const checked = (event) => {
+      event.stopPropagation();
       let isChecked = [];
       rowCheckbox.value.forEach((val, i) => {
         if (val && val.checked) {
@@ -637,8 +653,15 @@ export default defineComponent({
         setting.isCheckAll = false;
       }
     };
-    // 監聽顯示筆數切換 (Monitor display number switch)
+    // 監聽組件內顯示筆數切換 (Monitor display number switch from component)
     watch(() => setting.pageSize, changePageSize);
+    // 監聽來自Prop的顯示筆數切換 (Monitor display number switch from prop)
+    watch(
+      () => props.pageSize,
+      (newPageSize) => {
+        setting.pageSize = newPageSize;
+      }
+    );
     /**
      * 上一頁 (Previous page)
      */
@@ -811,9 +834,9 @@ tr {
 }
 .vtl-table thead th {
   vertical-align: bottom;
-  /* color: #fff; */
-  background-color: #eee;
-  /* border-color: #454d55; */
+  color: #fff;
+  background-color: #343a40;
+  border-color: #454d55;
   border-bottom: 2px solid #dee2e6;
 }
 .vtl-table-bordered td,
@@ -917,5 +940,22 @@ tr {
     flex: 0 0 33.333333%;
     max-width: 33.333333%;
   }
+}
+.fixed-first-column {
+  overflow-x: auto;
+}
+.fixed-first-column tr th:first-child,
+.fixed-first-column tr td:first-child {
+  position: sticky;
+  left: 0;
+}
+.fixed-first-second-column tr th:nth-child(2),
+.fixed-first-second-column tr td:nth-child(2) {
+  position: sticky;
+  left: 36px;
+}
+.fixed-first-column tr td:first-child,
+.fixed-first-second-column tr td:nth-child(2) {
+  background-color: white;
 }
 </style>

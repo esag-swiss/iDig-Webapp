@@ -1,78 +1,76 @@
 <template>
   <div class="row">
-    <div class="col-md-3">
+    <div class="p-1 col-md-3">
       <!-- The layer checkboxes go here -->
-      <filter-liste 
-         @selected-emit="selectedEmit">
-      </filter-liste>
+      <access-idig
+        @selected-trench="selectedTrench"
+      >
+      </access-idig>
       <filter-fields
-          :selected-filter="selectedFilter"
-          @check-fields="checkFields">        
+        @check-fields="checkFields"
+        @selected-type="selectedType"
+      >
       </filter-fields>
     </div>
 
-    <div class="col-md-9">
-      <!-- The map goes here -->
-    <!-- <div v-for="type in checkedFields" :key="type">{{selectedFields}}</div>  -->
-        <dyna-table
-          :selected-fields="selectedFields"
-          :selected-data="selectedData"
-          :checked-fields="checkedFields"
-          >
-        </dyna-table>  
+    <div class="p-1 col-md-9">
+      <!-- The map or tab goes here -->
+      <dyna-table
+        :selected-data="selectedData"
+        :checked-fields="checkedFields"
+      >
+      </dyna-table>
     </div>
-  </div> 
+  </div>
 </template>
 
 <script>
-import FilterListe from './components/FilterListe';
-import FilterFields from './components/FilterFields';
-// import UsersTable from './components/UsersTable';
-import DynaTable from './components/DynaTable';
-import preferencesData from "./components/AMA21-S24.Preferences.json";
-import trenchData from "./components/AMA21-S24.json";
+import AccessIdig from "./components/AccessIdig";
+import FilterFields from "./components/FilterFields";
+import DynaTable from "./components/DynaTable";
+import preferencesData from "./data/AMA21-S24.Preferences.json";
+import Data from "./data/AMA21-S24.json"; //Default data
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    FilterListe,
+    AccessIdig,
     FilterFields,
-    DynaTable
+    DynaTable,
   },
   data() {
-     return {
+    return {
+      trenchData: Data, // load default data, will be populate when selecting trenches on AccessIdig componant
       fields: preferencesData.types,
-      trenchdata: trenchData,
+      
       selectedFilter: "Artifact", // type by default
-      checkedFields: [{ "field": "Source" }, { "field": "Type" }, { "field": "Identifier", "labels": { "de": "FK-Nr.", "en": "FK-nr", "fr": "FK-no", "it": "FK-n.", "el": "" }, "tips": { "de": "Kontext-Nr. - fortlaufend-Nr. (z.B. 500-3). Objekte ohne exakten Fundort tragen lediglich die Kontext-Nr.", "en": "Context nr - serial nr (Ex. 500-3). Artifacts without exact provenance have the context number only", "fr": "No du contexte - no continu (Ex. 500-3). Les objets sans provenance exacte ont uniquement le numéro du contexte", "it": "N. del contesto - n. continuo (Es. 500-3). I reperti senza un luogo di ritrovamento esatto, avranno unicamente il numero del contesto", "el": "" } }]
-   };
+      checkedFields: [ // columns by default before any selection /!\ label needed to display headers
+        { field: "Source", sortable: true, label: "Source" },
+        { field: "Type", sortable: true, label: "Type"},
+        { field: "Identifier",
+          isKey: true, sortable: true, label: "Identifier"},
+      ],// ca pourrait etre emis de FilterFields
+    };
   },
   computed: {
-    selectedFields(){
-     return this.fields.filter(x => {
-      return x.type.includes(this.selectedFilter)
-     })[0].groups[0].fields
+    selectedData() {
+      return this.trenchData.filter((object) => {
+        return object.Type.includes(this.selectedFilter);
+      });
     },
-    selectedGroups(){
-     return this.fields.filter(x => {
-      return x.type.includes(this.selectedFilter)
-     })[0].groups
-    },
-    selectedData(){
-     return this.trenchdata.filter(object => {
-        return object.Type.includes(this.selectedFilter)
-     })
-    } 
   },
   methods: {
-    selectedEmit(field) {
-      this.selectedFilter=field
+    selectedTrench(trench) {
+      this.trenchData = trench;
     },
-    checkFields(fields) {
-      this.checkedFields=fields
+    selectedType(type) {
+      this.selectedFilter = type;
+    },    
+    checkFields(emited) {
+      this.checkedFields = emited;
     },
   },
-}
+};
 </script>
 
 <style>
@@ -80,9 +78,8 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 th {
   background-color: #eee;
@@ -120,13 +117,14 @@ header {
   text-align: center;
   width: 90%;
   max-width: 40rem;
+}*/
+#app h3 {
+  font-size: 1.3rem;
+  /* border-bottom: 2px solid #ccc; */
+  /* color: #58004d; */
+  /* margin: 0 0 1rem 0; */
 }
-#app h2 {
-  font-size: 2rem;
-  border-bottom: 2px solid #ccc;
-  color: #58004d;
-  margin: 0 0 1rem 0;
-}
+/*
 #app button {
   font: inherit;
   cursor: pointer;

@@ -1,4 +1,5 @@
 {
+  "comment" : "il n'y a pas d'objet field pour tous les fields et quand l'objet field exist il n'y a pas forcement les lables",
   "fields" : [
     {"field" : "Category",
       "labels" : {
@@ -9,7 +10,8 @@
         "el" : ""
       }
     },
-    {"tips" : {
+    {"field" : "Check list", 
+      "tips" : {
         "de" : "Bearbeitungsstatus des Lot (Auswahl: Datierung ok, Quantifizierung ok, Scherben weggeworfen ok",
         "en" : "Lot study check list (Multi-choice list: datation ok, quantification ok, discarded sherds ok)",
         "fr" : "État de l’étude du lot (Liste multi-choix: datation ok, quantification ok, tessons jetés ok)",
@@ -22,7 +24,7 @@
         "quantification ok",
         "tessons jetés ok"
       ],
-      "field" : "Check list",
+      
       "labels" : {
         "de" : "Checkliste",
         "en" : "Check list",
@@ -31,7 +33,7 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Comments",
       "multiline" : true,
       "tips" : {
         "de" : "allfällige Kommentare",
@@ -40,7 +42,7 @@
         "it" : "Commento eventuale",
         "el" : ""
       },
-      "field" : "Comments",
+      
       "labels" : {
         "de" : "Kommentare",
         "en" : "Comments",
@@ -49,7 +51,7 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Context type",
       "tips" : {
         "de" : "Art der Ausgrabung (positiv oder künstlich)",
         "en" : "Excavation type (Positive or Artificial)",
@@ -61,7 +63,7 @@
         "Positif",
         "Artificiel"
       ],
-      "field" : "Context type",
+      
       "labels" : {
         "de" : "Ausgrabung",
         "en" : "Context type",
@@ -70,7 +72,7 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "CoverageTemporal",
       "multitype" : true,
       "tips" : {
         "de" : "Liste zur Periodenauswahl. Auswahl mehrerer Stichworte zur Angabe einer Zeitspanne möglich.",
@@ -110,7 +112,7 @@
         "médiéval",
         "moderne"
       ],
-      "field" : "CoverageTemporal",
+      
       "labels" : {
         "de" : "Chrono",
         "en" : "Timespan",
@@ -119,18 +121,15 @@
         "el" : ""
       }
     },
-    {
-      "field" : "CoverageEarliest",
+    { "field" : "CoverageEarliest",
       "disabled" : true,
       "label" : "chron. start"
     },
-    {
-      "field" : "CoverageLatest",
+    { "field" : "CoverageLatest",
       "disabled" : true,
       "label" : "chron. end"
     },
-    {
-      "field" : "DateEarliest",
+    { "field" : "DateEarliest",
       "labels" : {
         "de" : "Beginn",
         "en" : "Date start",
@@ -139,8 +138,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "DateLatest",
+    { "field" : "DateLatest",
       "labels" : {
         "de" : "Ende",
         "en" : "Date end",
@@ -149,8 +147,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Description",
+    { "field" : "Description",
       "labels" : {
         "de" : "Beschreibung",
         "en" : "Description",
@@ -160,8 +157,7 @@
       },
       "multiline" : true
     },
-    {
-      "field" : "Diameter",
+    { "field" : "Diameter",
       "labels" : {
         "de" : "Dm.",
         "en" : "Diameter",
@@ -170,8 +166,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Discarded",
+    { "field" : "Discarded",
       "labels" : {
         "de" : "entsorgt",
         "en" : "Discarded",
@@ -187,8 +182,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Figurines count",
+    { "field" : "Figurines count",
       "labels" : {
         "de" : "Figuren",
         "en" : "Figurines",
@@ -204,8 +198,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Obsidians count",
+    { "field" : "Obsidians count",
       "labels" : {
         "de" : "Obsidiane",
         "en" : "Obsidians",
@@ -221,8 +214,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Homogeneity",
+    { "field" : "Homogeneity",
       "labels" : {
         "de" : "Homogenität",
         "en" : "Homogeneity",
@@ -231,7 +223,7 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Drawing",
       "tips" : {
         "de" : "Angeben, ob es zu diesem Kontext eine Skizze gibt (ja\/nein)",
         "en" : "Specifiy whether the context or feature is represented on a sketch (yes\/no)",
@@ -243,7 +235,7 @@
         "yes",
         "no"
       ],
-      "field" : "Drawing",
+      
       "labels" : {
         "de" : "Skizze",
         "en" : "Sketch",
@@ -252,8 +244,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Profile",
+    { "field" : "Profile",
       "labels" : {
         "de" : "Nr. Zeichnung",
         "en" : "Nr. drawing",
@@ -269,8 +260,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Drawings",
+    { "field" : "Drawings",
       "labels" : {
         "de" : "Zeichnung",
         "en" : "Drawing",
@@ -286,8 +276,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "DrawingType",
+    { "field" : "DrawingType",
       "labels" : {
         "de" : "Typ",
         "en" : "Type",
@@ -301,7 +290,7 @@
         "Croquis"
       ]
     },
-    {
+    { "field" : "Excavators",
       "multitype" : true,
       "tips" : {
         "de" : "Name des Archäologen (auch mehrere möglich), der die Dokumentation ausfüllt (z.B. A. Soschön)",
@@ -314,7 +303,7 @@
       "valuelist" : [
 
       ],
-      "field" : "Excavators",
+      
       "labels" : {
         "de" : "Ausgräber",
         "en" : "Diggers",
@@ -323,13 +312,12 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Workmen",
       "multitype" : true,
       "multivalue" : true,
       "valuelist" : [
 
       ],
-      "field" : "Workmen",
       "labels" : {
         "de" : "Arbeiter",
         "en" : "Workmen",
@@ -338,7 +326,8 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Finds",
+      
       "tips" : {
         "de" : "Kategorien der Funde dieses Kontexts (Auswahl)",
         "en" : "Categories of finds yielded from the context (multi-choice list)",
@@ -363,7 +352,6 @@
         "Coquillages",
         "Echantillons"
       ],
-      "field" : "Finds",
       "labels" : {
         "de" : "Funde",
         "en" : "Finds",
@@ -372,8 +360,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Format",
+    { "field" : "Format",
       "labels" : {
         "de" : "Größe",
         "en" : "Format",
@@ -389,8 +376,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Height",
+    { "field" : "Height",
       "labels" : {
         "de" : "Höhe",
         "en" : "Height",
@@ -406,8 +392,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Identifier",
+    { "field" : "Identifier",
       "labels" : {
         "de" : "ID Nummer",
         "en" : "Identifier",
@@ -416,7 +401,8 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Interpretations",
+      
       "multiline" : true,
       "tips" : {
         "de" : "Interpretation(en) des Kontexts oder der Struktur. Falls es Änderungen der Interpretation oder mehrere Hypothesen gibt, diese mit Namen und Datum versehen.",
@@ -425,7 +411,6 @@
         "it" : "Interpretazione(i) del contesto o della struttura. Se l'interpretazione cambia o se coesistono interpretazioni diverse, indica sempre l'autore e la data",
         "el" : ""
       },
-      "field" : "Interpretations",
       "labels" : {
         "de" : "Interpretation",
         "en" : "Interpretations",
@@ -434,8 +419,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "InventoryNumber",
+    { "field" : "InventoryNumber",
       "labels" : {
         "de" : "Inv. ESAG",
         "en" : "Inv. ESAG",
@@ -451,8 +435,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Length",
+    { "field" : "Length",
       "labels" : {
         "de" : "Länge",
         "en" : "Length",
@@ -468,8 +451,8 @@
         "el" : ""
       }
     },
-    {
-      "tips" : {
+    { "field" : "Looking",
+       "tips" : {
         "de" : "Blickrichtung \/ Orientierung des Fotos. Falls das Foto nach NW ausgerichtet ist, N und W auswählen.",
         "en" : "Orientation of the picture. If the picture is oriented towards the North-West, select both N and W",
         "fr" : "Orientation de la photo. Si la photo est orientée vers le nord-ouest, sélectionner à la fois N et W",
@@ -483,7 +466,6 @@
         "E",
         "W"
       ],
-      "field" : "Looking",
       "labels" : {
         "de" : "Richtung",
         "en" : "Looking",
@@ -492,8 +474,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "LotLevels",
+    { "field" : "LotLevels",
       "labels" : {
         "de" : "Höhe",
         "en" : "Alt.",
@@ -502,8 +483,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "LotDates",
+    { "field" : "LotDates",
       "labels" : {
         "de" : "Datum",
         "en" : "Date",
@@ -512,8 +492,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "LotContexts",
+    { "field" : "LotContexts",
       "labels" : {
         "de" : "Kontext",
         "en" : "Context",
@@ -522,8 +501,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Markers",
+    { "field" : "Markers",
       "labels" : {
         "de" : "Markers",
         "en" : "Markers",
@@ -539,7 +517,8 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Material",
+      
       "tips" : {
         "de" : "Material des Objektes. Mehrere Stichworte auf English auswählbar bei Objekten, die aus verschiedenen Materialien bestehen. Kein '?' benutzen, sondern zusätzlich 'Indet.' auswählen; für Terrakotta-Figurinen und Architekturfragmenten 'Terracotta' wählen; für Vasen und Lampen 'ceramic', für Schlacke 'slag'; im Falle eines unbestimmten Gesteins oder Metalls, den Grabungsleiter fragen oder 'Stein' oder 'Metall' wählen",
         "en" : "Materials the artefact is made of. The list is multi-choice if the artefact is made of different materials. Don't use '?', but select 'Indet.'; for terracotta figurines and architectures, select 'Terracotta'; for vases and lamps: 'Ceramic'; for slags: 'Slag'; in case of undetermined stone or metal, ask the field director or select 'Stone' or 'Metal'",
@@ -602,7 +581,6 @@
         "Tin",
         "Wood"
       ],
-      "field" : "Material",
       "labels" : {
         "de" : "Material",
         "en" : "Materials",
@@ -611,7 +589,8 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Phase",
+      
       "tips" : {
         "de" : "Bezieht sich auf für die Grabung definierte Phasen (z.B. Phase 2a)",
         "en" : "Refers to specific phases determined for each excavation (Ex. phase 2a)",
@@ -622,7 +601,6 @@
       "valuelist" : [
 
       ],
-      "field" : "Phase",
       "labels" : {
         "de" : "Phase",
         "en" : "Phase",
@@ -631,7 +609,8 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Photo",
+      
       "tips" : {
         "de" : "Angeben, ob das Objekt im Museum NACH der Restaurierung fotografiert wurde (ja\/nein)",
         "en" : "Specifiy if a picture of the artifact has been taken at the museum, after restoration only (yes\/no)",
@@ -643,7 +622,6 @@
         "Oui",
         "Non"
       ],
-      "field" : "Photo",
       "labels" : {
         "de" : "Fotos",
         "en" : "Photos",
@@ -652,8 +630,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Photos #",
+    { "field" : "Photos #",
       "labels" : {
         "de" : "Foto-Nr.",
         "en" : "Photos no",
@@ -669,8 +646,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Quantity",
+    { "field" : "Quantity",
       "labels" : {
         "de" : "Keramik",
         "en" : "Pottery",
@@ -686,8 +662,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Rating",
+    { "field" : "Rating",
       "labels" : {
         "de" : "Rangliste",
         "en" : "Rating",
@@ -703,12 +678,12 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Researchers",
+      
       "multivalue" : true,
       "valuelist" : [
 
       ],
-      "field" : "Researchers",
       "labels" : {
         "de" : "Forscher",
         "en" : "Researchers",
@@ -717,8 +692,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "RightsStatus",
+    { "field" : "RightsStatus",
       "labels" : {
         "de" : "Status",
         "en" : "Status",
@@ -727,8 +701,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "RightsSidelined",
+    { "field" : "RightsSidelined",
       "labels" : {
         "de" : "Unsichtbar",
         "en" : "Sidelined",
@@ -744,7 +717,8 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Room",
+      
       "multitype" : true,
       "tips" : {
         "de" : "Optional. Bezeichnung des Raumes oder der Zone (z.B. Raum 3)",
@@ -757,7 +731,6 @@
       "valuelist" : [
 
       ],
-      "field" : "Room",
       "labels" : {
         "de" : "Raum",
         "en" : "Room",
@@ -766,7 +739,8 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Sediment Description",
+      
       "multiline" : true,
       "tips" : {
         "de" : "Beschreiben: 1) Art des Sediments: Humus, Lehm, Silt\/Schluff, Sand, Kies; 2) Textur: kompakt - locker \/ homogen - heterogen; 3) Farbe; 4) natürliche \/ anthropogene Einschlüsse",
@@ -775,7 +749,6 @@
         "it" : "Descrivi: 1) Natura del sedimento: humus, argilla, limo, sabbia, ghiaia; 2) Consistenza: compatto - friabile \/ omogeneo - eterogeneo; 3) Colore; 4) Inclusioni naturali \/ antropiche",
         "el" : ""
       },
-      "field" : "Sediment Description",
       "labels" : {
         "de" : "Beschreibung des Sediments",
         "en" : "Sediment Description",
@@ -784,7 +757,8 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Sondage",
+      
       "multitype" : true,
       "tips" : {
         "de" : "Sondagen-Nr. (falls vorhanden). Nichts angeben, falls gleich wie Sektor-Bezeichnung.",
@@ -797,7 +771,6 @@
       "valuelist" : [
 
       ],
-      "field" : "Sondage",
       "labels" : {
         "de" : "Sondage",
         "en" : "Trench",
@@ -806,8 +779,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Source",
+    { "field" : "Source",
       "labels" : {
         "de" : "Sektor",
         "en" : "Trench",
@@ -823,7 +795,8 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Storage",
+      
       "tips" : {
         "de" : "Aufbewahrungsort des Objektes angeben (Apothiki Sandoz oder Museum Eretria)",
         "en" : "Specify where the artifact is stored (Apothiki Sandoz or Museum of Eretria)",
@@ -838,7 +811,6 @@
         "Wiener Lab Athens",
         "Fitch Lab Athens"
       ],
-      "field" : "Storage",
       "labels" : {
         "de" : "Lagerung",
         "en" : "Storage",
@@ -847,7 +819,8 @@
         "el" : ""
       }
     },
-    {
+    { "field" : "Stratigraphy",
+      
       "tips" : {
         "de" : "Stratigrafische Abgrenzung (gut, mittel, schlecht)",
         "en" : "Is the context sediment easily distinguished or not (good, average, bad)",
@@ -860,7 +833,6 @@
         "Moyenne",
         "Mauvaise"
       ],
-      "field" : "Stratigraphy",
       "labels" : {
         "de" : "Strati",
         "en" : "Stratigraphy",
@@ -869,8 +841,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Title",
+    { "field" : "Title",
       "labels" : {
         "de" : "Titel",
         "en" : "Title",
@@ -882,8 +853,7 @@
 
       ]
     },
-    {
-      "field" : "TPQ",
+    { "field" : "TPQ",
       "labels" : {
         "de" : "TPQ",
         "en" : "TPQ",
@@ -899,8 +869,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Total weight",
+    { "field" : "Total weight",
       "labels" : {
         "de" : "Gewicht",
         "en" : "Total weight",
@@ -916,8 +885,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Type",
+    { "field" : "Type",
       "labels" : {
         "de" : "Typ",
         "en" : "Type",
@@ -933,8 +901,7 @@
         "el" : ""
       }
     },
-    {
-      "field" : "Width",
+    { "field" : "Width",
       "labels" : {
         "de" : "Breite",
         "en" : "Width",
@@ -1134,7 +1101,13 @@
         },
         {
           "group" : "Properties Section",
-          "label" : "",
+          "labels" : {
+            "de" : "",
+            "en" : "",
+            "fr" : "Properties Section",
+            "it" : "",
+            "el" : ""
+          },
           "fields" : [
             {
               "field" : "Finds"
@@ -1681,6 +1654,10 @@
             "el" : ""
           },
           "fields" : [
+            {
+              "field" : "IdentifierUUID",
+              "isKey": true
+            },            
             {
               "field" : "Source"
             },
