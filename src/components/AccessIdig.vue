@@ -1,20 +1,17 @@
 <template>
   <div class="p-1 m-1 bg-light border border-grey rounded">
-    <h3>Projet :</h3>
+    <h3>Projet</h3>
     <select
-      id="dropdown"
-      text="Options"
-      v-model="selectedProject"
-      @change="addSelectedTrench()"
       class="form-control"
+      v-model="project"
+      @change="changeSelectedProject"
     >
       <option v-for="project in projects" :key="project" :value="project">
         {{ project }}
       </option>
     </select>
-
     <div
-      v-for="trench in trenches"
+      v-for="trench in groups"
       :key="trench"
       @change="addSelectedTrench()"
       class="mt-1"
@@ -31,21 +28,29 @@ import axios from "axios";
 export default {
   data() {
     return {
-      projects: ["Agora", "Amarynthos"],
-      selectedProject: "Agora",
-      trenches: [2013, "ΒΘ West 2013"],
+      project: "Amarynthos",
+      projects: ["Amarynthos", "Agora"], // for futur dev
+      selectedProject: {
+        Agora: [2013, "ΒΘ West 2013"],
+        Amarynthos: ["AMA21-S24"],
+      }, // for futur dev
+      trenches: [2013, "ΒΘ West 2013"], //plan is to  have a list of "sources" (trenches, secteurs) as an array in the preference file under "source"
       checkedTrenches: [],
       arr: [],
+      Agora: [2013, "ΒΘ West 2013"],
+      Amarythos: ["AMA21-S24"],
     };
   },
-  // props: {
-  //   selectedFilter: {
-  //     type: String,
-  //     required: false,
-  //   },
-  // },
+  computed: {
+    groups() {
+      return this.selectedProject[this.project];
+    },
+  },
   methods: {
-    changeSelectedProject() {},
+    changeSelectedProject() {
+      // this.trenches = this.selectedProject[this.projects];
+    },
+
     addSelectedTrench: function () {
       this.arr = [];
       this.checkedTrenches.forEach((value) => {
@@ -70,6 +75,5 @@ export default {
     },
   },
   created() {},
-  computed: {},
 };
 </script>
