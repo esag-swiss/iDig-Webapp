@@ -2,75 +2,71 @@
   <div class="row">
     <div class="p-1 col-md-3">
       <!-- The layer checkboxes go here -->
-      <access-idig
-        @selected-trench="selectedTrench"
-      >
+      <access-idig @selected-trench="selectedTrench">
       </access-idig>
-      <filter-fields
-        @check-fields="checkFields"
-        @selected-type="selectedType"
-      >
+      <filter-fields @check-fields="checkFields" @selected-type="selectedType">
       </filter-fields>
     </div>
 
     <div class="p-1 col-md-9">
       <!-- The map or tab goes here -->
-      <dyna-table
-        :selected-data="selectedData"
-        :checked-fields="checkedFields"
-      >
+      <dyna-table :selected-data="selectedData" :checked-fields="checkedFields">
       </dyna-table>
     </div>
   </div>
 </template>
 
 <script>
-import AccessIdig from "./components/AccessIdig";
-import FilterFields from "./components/FilterFields";
-import DynaTable from "./components/DynaTable";
-import preferencesData from "./data/AMA21-S24.Preferences.json";
-import Data from "./data/AMA21-S24.json"; //Default data
+  import AccessIdig from "./components/AccessIdig";
+  import FilterFields from "./components/FilterFields";
+  import DynaTable from "./components/DynaTable";
+  import preferencesData from "./data/AMA21-S24.Preferences.json";
+  import Data from "./data/AMA21-S24.json"; //Default data
 
-export default {
-  name: "App",
-  components: {
-    AccessIdig,
-    FilterFields,
-    DynaTable,
-  },
-  data() {
-    return {
-      trenchData: Data, // load default data, will be populate when selecting trenches on AccessIdig componant
-      fields: preferencesData.types,
-      
-      selectedFilter: "Artifact", // type by default
-      checkedFields: [ // columns by default before any selection /!\ label needed to display headers
-        { field: "Source", sortable: true, label: "Source" },
-        { field: "Type", sortable: true, label: "Type"},
-        { field: "Identifier",
-          isKey: true, sortable: true, label: "Identifier"},
-      ],// ca pourrait etre emis de FilterFields
-    };
-  },
-  computed: {
-    selectedData() {
-      return this.trenchData.filter((object) => {
-        return object.Type.includes(this.selectedFilter);
-      });
+  export default {
+    name: "App",
+    components: {
+      AccessIdig,
+      FilterFields,
+      DynaTable
+
     },
-  },
-  methods: {
-    selectedTrench(trench) {
-      this.trenchData = trench;
+    data() {
+      return {
+        trenchData: Data, // load default data, will be populate when selecting trenches on AccessIdig componant
+        fields: preferencesData.types,
+
+        selectedFilter: "Artifact", // type by default
+        checkedFields: [ // columns by default before any selection /!\ label needed to display headers
+          { field: "Source", sortable: true, label: "Source" },
+          { field: "Type", sortable: true, label: "Type" },
+          {
+            field: "Identifier",
+            isKey: true, sortable: true, label: "Identifier"
+          },
+        ],
+        // ca pourrait etre emis de FilterFields
+      };
     },
-    selectedType(type) {
-      this.selectedFilter = type;
-    },    
-    checkFields(emited) {
-      this.checkedFields = emited;
+    computed: {
+      selectedData() {
+        return this.trenchData.filter((object) => {
+          return object.Type.includes(this.selectedFilter);
+        });
+      },
     },
-  },
-};
+    methods: { // reçoit des enfants
+      selectedTrench(trench) {
+        this.trenchData = trench;
+      },
+      selectedType(type) {
+        this.selectedFilter = type;
+      },
+      checkFields(emited) {
+        this.checkedFields = emited;
+      },
+    },
+  };
 </script>
 
 <style>

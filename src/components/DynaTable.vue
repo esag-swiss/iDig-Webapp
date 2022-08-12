@@ -1,26 +1,28 @@
 <template>
-
   <input class="m-2" v-model="searchTerm" />
+  <!-- trigger pour afficher les images des attachments -->
+  <!-- <button type="button" @click="getImage">Image</button> -->
   <table-lite
     :has-checkbox="true"
     :is-loading="table.isLoading"
     :is-re-search="table.isReSearch"
     :columns="table.columns"
     :rows="table.rows"
+    :is-static-mode="true"
     :rowClasses="table.rowClasses"
     :total="table.totalRecordCount"
     :sortable="table.sortable"
     :messages="table.messages"
-
+    @is-finished="tableLoadingFinish"
     @return-checked-rows="updateCheckedRows"
     @row-clicked="rowClicked"
-    
   ></table-lite>
 </template>
 
 <script>
 import { defineComponent, reactive, ref, computed, toRef } from "vue";
 import TableLite from "../components/TableLite.vue";
+import axios from "axios";
 
 export default defineComponent({
   name: "Dyna-Table",
@@ -42,6 +44,10 @@ export default defineComponent({
     // utiliser toRef pour ne pas perdre la réactivité lorsque le props est destructuré
     const headers = toRef(props, "checkedFields");
 
+    // pour rajouter un champ à la mano
+    // const headers2 = headers.value.push({ field: "IdentifierUUID", sortable: true, label: "UUID"});
+    // console.log(headers2);
+
     // Table config
     const table = reactive({
       columns: headers,
@@ -52,6 +58,12 @@ export default defineComponent({
             x.Identifier.toLowerCase().includes(searchTerm.value.toLowerCase())
         );
       }),
+      messages: {
+        pagingInfo: "{0}-{1} / {2}",
+        pageSizeChangeLabel: "item/page",
+        gotoPageLabel: " page ",
+        noDataAvailable: "no data",
+      },
       totalRecordCount: computed(() => {
         return table.rows.length;
       }),
@@ -60,7 +72,28 @@ export default defineComponent({
         sort: "asc",
       },
     });
-    
+
+    /**
+     * Loading finish event
+     */
+    const tableLoadingFinish = (elements) => {
+      table.isLoading = false;
+      Array.prototype.forEach.call(elements, function (element) {
+        if (element.classList.contains("name-btn")) {
+          element.addEventListener("click", function (event) {
+            event.stopPropagation(); // prevents further propagation of the current event in the capturing and bubbling phases.
+            console.log(this.dataset.id + " name-btn click!!");
+          });
+        }
+        if (element.classList.contains("quick-btn")) {
+          element.addEventListener("click", function (event) {
+            event.stopPropagation(); // prevents further propagation of the current event in the capturing and bubbling phases.
+            console.log(this.dataset.id + " quick-btn click!!");
+          });
+        }
+      });
+    };
+
     // Row checked event
     const updateCheckedRows = (rowsKey) => {
       console.log(rowsKey);
@@ -69,13 +102,48 @@ export default defineComponent({
     const rowClicked = (rowsKey) => {
       console.log("Row clicked!", rowsKey);
     };
+
+    // Work in progress
+    // fetch image from server when image button click
+    const getImage = () => {
+      axios({
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        method: "get",
+        url: "http://localhost:9000/idig/Agora/2013/attachments/ΒΓ (407,291,447,318).png?checksum=2022-05-12T12:30:42Z",
+        responseType: "blob",
+        auth: {
+          username: "idig",
+          password: "idig",
+        },
+        data: {},
+      })
+        .then((response) => {
+          let imageNode = document.getElementById("image");
+          let blob = new Blob([response.data], {
+            type: response.headers["content-type"],
+          });
+          let imgUrl = URL.createObjectURL(blob);
+          imageNode.src = imgUrl;
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          alert(
+            error +
+              "something goes wrong! Maybe image url broken, try another img url."
+          );
+        });
+    };
+
     return {
       searchTerm,
       table,
       headers,
       rowClicked,
       updateCheckedRows,
-      
+      tableLoadingFinish,
+      getImage,
     };
   },
 });

@@ -1,6 +1,7 @@
 <template>
   <div class="p-1 m-1 bg-light border border-grey rounded">
     <h3>Type</h3>
+
     <!-- dropdown for types -->
     <select
       class="form-control"
@@ -35,11 +36,20 @@
         </div>
       </div>
     </ul>
+
+
+    <input
+      id="checkboxattachment"
+      type="checkbox"
+      @change="attachmentcolumn(img_url)"
+    />
+    <label class="p-1 m-0" for="checkbox">attachments</label>
   </div>
 </template>
 
 <script>
 import preferencesData from "../data/AMA21-S24.Preferences.json";
+// import axios from "axios";
 
 export default {
   data() {
@@ -47,14 +57,20 @@ export default {
       fields: preferencesData.fields,
       types: preferencesData.types,
       checkFields: [
-        { field: "Source" },
-        { field: "Type" },
-        { field: "Title" },
-        { field: "Identifier" },
+        // columns by default before any selection /!\ label needed to display headers
+        { field: "Source", sortable: true, label: "Source" },
+        { field: "Type", sortable: true, label: "Type" },
+        {
+          field: "Identifier",
+          isKey: true,
+          sortable: true,
+          label: "Identifier",
+        },
       ],
       selectedtype: "Artifact", // default type
       isHidden: true,
-      lang: "fr",
+      lang: "fr", // for later dev
+      img_url: "http://thacer.archaiodata.com/ThaCER.svg",
     };
   },
   computed: {
@@ -88,20 +104,12 @@ export default {
 
     // Maintenant on travaille pour faire le tableau des headers
     // dans le format de TableLite
-
-    zipandaddsortabletrue() {
-      // reste à mettre le nom des propriétés
-      return this.allfields.map((x, i) => [x, this.alllabels[i], "true"]);
-    },
-    addpropertiesname() {
-      // ajout du nom des propriétés
-      return this.zipandaddsortabletrue.map(([field, label, sortable]) => {
-        return { field, label, sortable };
-      });
-    },
-    fieldsforHeader() {
-      // selectionne les checked
-      return this.addpropertiesname.filter(item => this.checkFields.includes(item.field));
+    addsortabletrue() {
+      // j'ajoute les propriétés label et sortable: true
+      // pas certain que tous les undefined soient gérés
+      return this.checkFields.map((v) =>
+        Object.assign(v, { label: this.fieldLabel[v.field], sortable: true })
+      );
     },
   },
 
@@ -112,7 +120,7 @@ export default {
     },
     checkfields() {
       // reçoit du @change et renvoie au parent
-      this.$emit("check-fields", this.checkFields);
+      this.$emit("check-fields", this.addsortabletrue);
     },
 
     labels: function (Obj) {
@@ -120,6 +128,39 @@ export default {
         return this.fieldLabel[Obj];
       } else {
         return Obj;
+      }
+    },
+
+    // WORK IN PROGRESS
+    // inclure des images
+
+    attachmentcolumn: function (img_url) {
+ var elm = document.getElementById("checkboxattachment");
+      if (elm.checked == true) {
+        this.addsortabletrue.push({
+          field: "RelationIncludesUUID",
+          sortable: false,
+          label: "Attachment",
+          display: function (row) {
+            if (
+              row.RelationIncludesUUID == "69413B9C-F4F6-4AAF-BD1E-1C2E5B73A281"
+            ) {
+              return (
+                '<img class="dqg img-UID" width="180" id="image" alt="' +
+                img_url +
+                '" src="' +
+                img_url +
+                '">'
+              );
+            } else {
+              return row.RelationIncludesUUID;
+            }
+          },
+        });
+        this.$emit("check-fields", this.addsortabletrue);
+      } else {
+        this.addsortabletrue.splice(-1, 1);
+        this.$emit("check-fields", this.checkFields);
       }
     },
   },
