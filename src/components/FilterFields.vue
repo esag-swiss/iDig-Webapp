@@ -1,6 +1,8 @@
 <template>
   <div class="p-1 m-1 bg-light border border-grey rounded">
-    <h3>Type</h3>
+    <h3 class="doigt" title="filter table data and show only fields available for the selected type">
+      Type
+    </h3>
 
     <!-- dropdown for types -->
     <select
@@ -15,35 +17,38 @@
   </div>
 
   <div class="p-1 m-1 bg-light border border-grey rounded">
-    <h3>Champs</h3>
+    <h3 class="doigt" title="display only fields for the selected type">
+      Champs
+    </h3>
     <!-- liste les groupes pour le type selectionné -->
-    <ul v-for="group in groups" :key="group" class="list-group">
-      <li class="list-group-item accordion" @click="isHidden = !isHidden">
+    <ul v-for="(group, index) in groups" :key="group" class="list-group">
+      <li class="list-group-item accordion" @click="isHiddenArray[index] = !isHiddenArray[index]">
         {{ group.labels.fr }}
       </li>
       <!-- liste les champs pour chaque groupe -->
-      <div v-if="!isHidden">
+      <div v-if="!isHiddenArray[index]">
         <div
           v-for="field in group.fields"
           :key="field"
           @change="checkfields()"
-          class="mt-1"
+          class="m-0"
         >
-          <input type="checkbox" v-model="checkFields" :value="field" />
-          <label class="p-1 m-0" for="checkbox">{{
+          <input type="checkbox"  :id="checkFields.field" v-model="checkFields" :value="field" />
+          <label class="pl-1 m-0" for="checkbox">{{
             labels(field.field)
           }}</label>
         </div>
       </div>
     </ul>
 
+    
 
     <input
       id="checkboxattachment"
       type="checkbox"
       @change="attachmentcolumn(img_url)"
     />
-    <label class="p-1 m-0" for="checkbox">attachments</label>
+    <label class="p-1 my-0" for="checkbox">attachments</label>
   </div>
 </template>
 
@@ -56,19 +61,21 @@ export default {
     return {
       fields: preferencesData.fields,
       types: preferencesData.types,
+      checkFields2:["Source","Title", "Identifier"],
       checkFields: [
         // columns by default before any selection /!\ label needed to display headers
-        { field: "Source", sortable: true, label: "Source" },
-        { field: "Type", sortable: true, label: "Type" },
+        { field: "Source", sortable: true, label: "Source", checked: true },
+        { field: "Title", sortable: true, label: "Titre", checked: true },
         {
           field: "Identifier",
           isKey: true,
           sortable: true,
-          label: "Identifier",
+          label: "Identifier", checked: true
         },
       ],
       selectedtype: "Artifact", // default type
       isHidden: true,
+      isHiddenArray: [false, true,  true, true, true, true, true, true, true, true, true, true,],
       lang: "fr", // for later dev
       img_url: "http://thacer.archaiodata.com/ThaCER.svg",
     };
@@ -135,7 +142,7 @@ export default {
     // inclure des images
 
     attachmentcolumn: function (img_url) {
- var elm = document.getElementById("checkboxattachment");
+      var elm = document.getElementById("checkboxattachment");
       if (elm.checked == true) {
         this.addsortabletrue.push({
           field: "RelationIncludesUUID",
@@ -172,9 +179,9 @@ export default {
 /* Style the buttons that are used to open and close the accordion panel */
 .accordion {
   background-color: #eee;
-  color: #444;
   cursor: pointer;
-  padding: 10px;
+  color: #444;
+  padding: 5px;
   width: 100%;
   text-align: left;
   border: none;
@@ -197,5 +204,8 @@ export default {
 }
 .h3 {
   font-size: 1.2rem;
+}
+.doigt {
+  cursor: pointer;
 }
 </style>

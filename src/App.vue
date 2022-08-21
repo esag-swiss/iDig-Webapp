@@ -1,14 +1,18 @@
 <template>
   <div class="row">
-    <div class="p-1 col-md-3">
+    <div class="p-1 col-md-2" id="sticky-sidebar">
+      <div class="sticky-top">
       <!-- The layer checkboxes go here -->
+      
       <access-idig @selected-trench="selectedTrench">
       </access-idig>
       <filter-fields @check-fields="checkFields" @selected-type="selectedType">
       </filter-fields>
+      </div>
     </div>
 
-    <div class="p-1 col-md-9">
+    <div class="p-1 col-md-10">
+      
       <!-- The map or tab goes here -->
       <dyna-table :selected-data="selectedData" :checked-fields="checkedFields">
       </dyna-table>
@@ -39,7 +43,7 @@
         selectedFilter: "Artifact", // type by default
         checkedFields: [ // columns by default before any selection /!\ label needed to display headers
           { field: "Source", sortable: true, label: "Source" },
-          { field: "Type", sortable: true, label: "Type" },
+          { field: "Title", sortable: true, label: "Titre" },
           {
             field: "Identifier",
             isKey: true, sortable: true, label: "Identifier"
@@ -75,7 +79,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin-top: 20px;
+  margin-top: 0px;
 }
 th {
   background-color: #eee;

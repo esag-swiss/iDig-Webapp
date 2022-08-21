@@ -71,6 +71,8 @@ export default defineComponent({
         order: "Identifier",
         sort: "asc",
       },
+      
+      
     });
 
     /**
@@ -148,3 +150,38 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+::v-deep(.vtl-table) {
+ margin: 0;
+}
+::v-deep(.vtl-table tr span) {
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+       display: -webkit-box;
+   -webkit-line-clamp: 1; 
+           line-clamp: 1; 
+   -webkit-box-orient: vertical;
+}
+::v-deep(.vtl-table td) {
+  vertical-align: top;
+  padding: 0.25rem;
+ 
+  max-height: 50px;
+  
+
+  
+}
+
+::v-deep(.vtl-paging-pagination-page-link) {
+  border: none;
+}
+::v-deep(.page-link) {
+  padding: 0.25rem;
+}
+::v-deep(.vtl-pagination) {
+  margin: 0;
+}
+
+</style>
