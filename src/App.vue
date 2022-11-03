@@ -1,27 +1,42 @@
 <template>
-  <div class="row">
-    <div class="p-1 col-md-2" id="sticky-sidebar">
-      <div class="sticky-top">
-      <!-- The layer checkboxes go here -->
-      
-      <access-idig @selected-trench="selectedTrench">
-      </access-idig>
-      <filter-fields @check-fields="checkFields" @selected-type="selectedType">
-      </filter-fields>
-      </div>
-    </div>
+  <!-- header -->
+<header-idig>
+</header-idig>
 
-    <div class="p-1 col-md-10">
-      
-      <!-- The map or tab goes here -->
-      <dyna-table :selected-data="selectedData" :checked-fields="checkedFields">
-      </dyna-table>
-    </div>
-  </div>
+
+  <!-- To display sidebar -->
+  <div class="p-1" style="float: right; position: absolute; z-index: 1; top:58px; left:8px">
+<button v-on:click="changeDisplay()">Filters</button>
+</div>
+
+<div class="container-fluid">
+  <div class="row flex-xl-nowrap">
+
+
+    <!-- SIDEBAR -->
+    <div class="p-1 col-md-2" id="sticky-sidebar" style="z-index: 1" v-bind:style="{ display: computedDisplay }">
+<div class="sticky-top" v-if="!isHidden">
+  <access-idig @selected-trench="selectedTrench" @display-sidebar="changeDisplay" @trench-version="trenchVersion"> </access-idig>
+
+  <filter-fields @check-fields="checkFields" @selected-type="selectedType" :selected-data="selectedData">
+  </filter-fields>
+</div>
+</div>
+
+
+<!-- MAIN FRAME The map or tab goes here -->
+<div class="p-1 col-md-10">
+
+  <dyna-table :selected-data="selectedData" :checked-fields="checkedFields" :selected-trenches="trenchesversion">
+  </dyna-table>
+</div>
+</div>
+</div>
 </template>
 
 <script>
   import AccessIdig from "./components/AccessIdig";
+  import HeaderIdig from "./components/HeaderIdig";
   import FilterFields from "./components/FilterFields";
   import DynaTable from "./components/DynaTable";
   import preferencesData from "./data/AMA21-S24.Preferences.json";
@@ -32,24 +47,30 @@
     components: {
       AccessIdig,
       FilterFields,
-      DynaTable
-
+      DynaTable,
+      HeaderIdig
     },
     data() {
       return {
         trenchData: Data, // load default data, will be populate when selecting trenches on AccessIdig componant
         fields: preferencesData.types,
-
+        isHidden: false,
+        display: "block",
         selectedFilter: "Artifact", // type by default
-        checkedFields: [ // columns by default before any selection /!\ label needed to display headers
+        checkedFields: [
+          // columns by default before any selection /!\ label needed to display headers
           { field: "Source", sortable: true, label: "Source" },
           { field: "Title", sortable: true, label: "Titre" },
           {
             field: "Identifier",
-            isKey: true, sortable: true, label: "Identifier"
+            isKey: true,
+            sortable: true,
+            label: "Identifier",
           },
         ],
-        // ca pourrait etre emis de FilterFields
+        trenchesversion: {}
+
+
       };
     },
     computed: {
@@ -58,8 +79,15 @@
           return object.Type.includes(this.selectedFilter);
         });
       },
+      computedDisplay() {
+        return this.display;
+      },
     },
-    methods: { // reçoit des enfants
+    methods: {
+      changeDisplay(dis) {
+        this.display = dis;
+      },
+      // reçoit des enfants
       selectedTrench(trench) {
         this.trenchData = trench;
       },
@@ -68,6 +96,12 @@
       },
       checkFields(emited) {
         this.checkedFields = emited;
+      },
+      selectedSidebar(XXXX) {
+        this.display = XXXX;
+      },
+      trenchVersion(version) {
+        this.trenchesversion = version;
       },
     },
   };
@@ -84,6 +118,13 @@
 th {
   background-color: #eee;
 }
+/* #sidebar {
+  display: none;
+}
+
+#sidebar:target {
+  display: block;
+} */
 /*
 * {
   box-sizing: border-box;

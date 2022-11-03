@@ -1,6 +1,9 @@
 <template>
   <div class="p-1 m-1 bg-light border border-grey rounded">
-    <h3 class="doigt" title="filter table data and show only fields available for the selected type">
+    <h3
+      class="doigt"
+      title="filter table data and show only fields available for the selected type"
+    >
       Type
     </h3>
 
@@ -22,7 +25,10 @@
     </h3>
     <!-- liste les groupes pour le type selectionné -->
     <ul v-for="(group, index) in groups" :key="group" class="list-group">
-      <li class="list-group-item accordion" @click="isHiddenArray[index] = !isHiddenArray[index]">
+      <li
+        class="list-group-item accordion"
+        @click="isHiddenArray[index] = !isHiddenArray[index]"
+      >
         {{ group.labels.fr }}
       </li>
       <!-- liste les champs pour chaque groupe -->
@@ -33,15 +39,18 @@
           @change="checkfields()"
           class="m-0"
         >
-          <input type="checkbox"  :id="checkFields.field" v-model="checkFields" :value="field" />
+          <input
+            type="checkbox"
+            :id="checkFields.field"
+            v-model="checkFields"
+            :value="field"
+          />
           <label class="pl-1 m-0" for="checkbox">{{
             labels(field.field)
           }}</label>
         </div>
       </div>
     </ul>
-
-    
 
     <input
       id="checkboxattachment"
@@ -61,7 +70,6 @@ export default {
     return {
       fields: preferencesData.fields,
       types: preferencesData.types,
-      checkFields2:["Source","Title", "Identifier"],
       checkFields: [
         // columns by default before any selection /!\ label needed to display headers
         { field: "Source", sortable: true, label: "Source", checked: true },
@@ -70,17 +78,45 @@ export default {
           field: "Identifier",
           isKey: true,
           sortable: true,
-          label: "Identifier", checked: true
+          label: "Identifier",
+          checked: true,
         },
       ],
       selectedtype: "Artifact", // default type
       isHidden: true,
-      isHiddenArray: [false, true,  true, true, true, true, true, true, true, true, true, true,],
+      isHiddenArray: [
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+      ],
       lang: "fr", // for later dev
       img_url: "http://thacer.archaiodata.com/ThaCER.svg",
+      // testingsplit: "5500E8FB-7206-422C-9654-7679879ADCF2 B4F4278C-3995-4CBE-9CE6-156C7EEEE5CB",
     };
   },
+  props: {
+    selectedData: {
+      type: Object,
+      required: true,
+    },
+  },
   computed: {
+    testing() {
+      return this.selectedData.filter((x) => {
+        return x.IdentifierUUID.includes(
+          "1CF4D560-8E7B-4E94-BBB5-E893E463D1EC"
+        );
+      })[0].Type;
+    },
     groups() {
       return this.types.filter((x) => {
         // la liste des fields par groupe se trouvent dans types.groups.fields
@@ -142,6 +178,8 @@ export default {
     // inclure des images
 
     attachmentcolumn: function (img_url) {
+      var regExp = /[-]/g;
+      // let imgUrl = "";
       var elm = document.getElementById("checkboxattachment");
       if (elm.checked == true) {
         this.addsortabletrue.push({
@@ -149,9 +187,43 @@ export default {
           sortable: false,
           label: "Attachment",
           display: function (row) {
-            if (
-              row.RelationIncludesUUID == "69413B9C-F4F6-4AAF-BD1E-1C2E5B73A281"
-            ) {
+            if (regExp.test(row.RelationIncludesUUID)) {
+              // return axios({
+              //   headers: {
+              //     "Content-Type": "application/x-www-form-urlencoded",
+              //   },
+              //   method: "get",
+              //   url: "http://localhost:9000/idig/Agora/ΒΓ 2013/attachments/ΒΓ (407,291,447,318).png?checksum=2022-05-12T12:30:42Z",
+              //   responseType: "blob",
+              //   auth: {
+              //     username: "idig",
+              //     password: "idig",
+              //   },
+              //   data: {},
+              // })
+              //   .then((response) => {
+              //     let blob = new Blob([response.data], {
+              //       type: response.headers["content-type"],
+              //     });
+              //      URL.createObjectURL(blob);
+              //   });
+              
+
+              return row.RelationIncludesUUID.split('\n');
+
+              // return this.selectedData.filter((x) => {
+              //   return x.IdentifierUUID.includes("1CF4D560-8E7B-4E94-BBB5-E893E463D1EC");
+              // })[0].Type;
+
+              // return (
+              //   '<img class="dqg img-UID" width="180" id="image" alt="' +
+              //   imgUrl +
+              //   'dfhd" src="' +
+              //   img_url +
+              //   '">'
+              // );
+            } else {
+              // return row.RelationIncludesUUID;
               return (
                 '<img class="dqg img-UID" width="180" id="image" alt="' +
                 img_url +
@@ -159,8 +231,6 @@ export default {
                 img_url +
                 '">'
               );
-            } else {
-              return row.RelationIncludesUUID;
             }
           },
         });

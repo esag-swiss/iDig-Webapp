@@ -1056,7 +1056,8 @@
     }
   ],
   "types": [
-    { "type": "Context",
+    {
+      "type": "Context",
       "relations": [
         {
           "type": "Context",
@@ -1439,7 +1440,8 @@
         "el": ""
       }
     },
-    { "type": "Feature",
+    {
+      "type": "Feature",
       "labels": {
         "de": "Struktur",
         "en": "Feature",
@@ -1573,7 +1575,7 @@
             }
           ]
         },
-        { 
+        {
           "group": "Properties Section",
           "labels": {
             "de": "",
@@ -1758,7 +1760,8 @@
         "el": ""
       }
     },
-    { "type": "Artifact",
+    {
+      "type": "Artifact",
       "relations": [
         {
           "type": "Image",
@@ -2050,7 +2053,8 @@
         "el": ""
       }
     },
-    { "type": "Partition",
+    {
+      "type": "Partition",
       "relations": [
         {
           "type": "Artifact",
@@ -2392,7 +2396,8 @@
         "el": ""
       }
     },
-    { "type": "Sample",
+    {
+      "type": "Sample",
       "relations": [
         {
           "type": "Image",
@@ -2765,7 +2770,8 @@
         "el": ""
       }
     },
-    { "type": "Group",
+    {
+      "type": "Group",
       "groups": [
         {
           "group": "General Section",
@@ -3034,7 +3040,8 @@
         "el": ""
       }
     },
-    { "type": "Image",
+    {
+      "type": "Image",
       "label": "Photo",
       "plurals": {
         "de": "Fotos",
@@ -3189,7 +3196,8 @@
         "el": ""
       }
     },
-    { "type": "Section",
+    {
+      "type": "Section",
       "label": "Strati",
       "plurals": {
         "de": "Profile",
@@ -3340,7 +3348,8 @@
         "el": ""
       }
     },
-    { "type": "Plan",
+    {
+      "type": "Plan",
       "label": "Plan",
       "plurals": {
         "de": "Pläne",
@@ -3463,7 +3472,8 @@
         "el": ""
       }
     },
-    { "type": "Event",
+    {
+      "type": "Event",
       "labels": {
         "de": "Tagebuch",
         "en": "Notebook",
@@ -3655,7 +3665,8 @@
         }
       ]
     },
-    { "type": "Other",
+    {
+      "type": "Other",
       "label": "Divers",
       "plurals": {
         "de": "Varia",
@@ -3853,7 +3864,8 @@
         "el": ""
       }
     },
-    { "type": "Untyped",
+    {
+      "type": "Untyped",
       "label": "Indéterminé",
       "plurals": {
         "de": "Undeterminiert",
@@ -3928,5 +3940,68 @@
       "list": "Phases"
     }
   ],
-  "source":[2013, "ΒΘ West 2013"]
+  "source": [
+    2013,
+    "ΒΘ West 2013"
+  ],
+  "automatedfields": [
+    "CoverageXYZ",
+    "CoverageGEO",
+    "CoverageUTC",
+    "DateUTC",
+    "FormatImage",
+    "FormatImageTransformXYZ",
+    "FormatImageTransformGEO",
+    "IdentifierUUID",
+    "RelationIsAboveUUID",
+    "RelationIsBelowUUID",
+    "RelationIsNextToUUID",
+    "RelationCutsUUID",
+    "RelationIsCutByUUID",
+    "RelationIsAfterUUID",
+    "RelationIsBeforeUUID",
+    "RelationIsCoevalWithUUID",
+    "RelationBelongsToUUID",
+    "RelationIncludesUUID"
+  ],
+  "optionalautomatedfields": [
+    "CoverageEarliest",
+    "CoverageLatest",
+    "CoverageSerialized",
+    "CoverageGeoJSON",
+    "CoverageAltitude",
+    "CoverageArea",
+    "CoverageEnvelope",
+    "CoveragePosition",
+    "CoverageStyle",
+    "CoverageTiles",
+    "CoverageUnion",
+    "CoverageCoordinates",
+    "CoverageSpatialUUID",
+    "CoverageTemporalUUID",
+    "DateEarliest",
+    "DateLatest",
+    "DateTimeZone",
+    "DateModified",
+    "FormatImageHeight",
+    "FormatImageWidth",
+    "FormatImageAnnotations",
+    "FormatPDF",
+    "RelationAttachments",
+    "RelationURLs",
+    "RelationIsAbove",
+    "RelationIsBelow",
+    "RelationIsNextTo",
+    "RelationIsAfter",
+    "RelationIsBefore",
+    "RelationIsCoevalWith",
+    "RelationBelongsTo",
+    "RelationIncludes",
+    "RelationCuts",
+    "RelationIsCutBy",
+    "RightsLocked",
+    "RightsSidelined",
+    "RightsTrashed",
+    "RightsStatus"
+  ]
 }

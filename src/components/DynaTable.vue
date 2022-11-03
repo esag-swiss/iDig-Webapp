@@ -1,6 +1,14 @@
 <template>
+  <over-lay
+    :selected-trenches="selectedTrenches"
+    :selected-row="selectedRow"
+    v-show="overlay"
+    @remove-overlay="removeLOverlay"
+  >
+  </over-lay>
+
   <input class="m-2" v-model="searchTerm" />
-  <!-- trigger pour afficher les images des attachments -->
+  <!-- Work in progress bouton pour afficher les images des attachments -->
   <!-- <button type="button" @click="getImage">Image</button> -->
   <table-lite
     :has-checkbox="true"
@@ -17,25 +25,37 @@
     @return-checked-rows="updateCheckedRows"
     @row-clicked="rowClicked"
   ></table-lite>
+   <!-- Work in progress image test du bouton pour afficher les images des attachments -->
+   <!-- <img id="image" src="http://thacer.archaiodata.com/ThaCER.svg" alt="test" width="280" /> -->
 </template>
 
 <script>
 import { defineComponent, reactive, ref, computed, toRef } from "vue";
 import TableLite from "../components/TableLite.vue";
+import OverLay from "../components/OverLay.vue";
 import axios from "axios";
 
 export default defineComponent({
   name: "Dyna-Table",
-  components: { TableLite },
+  components: { TableLite, OverLay },
   props: {
     selectedData: {
-      type: Array,
+      type: Object,
       required: true,
     },
     checkedFields: {
-      type: Array,
+      type: Object,
       required: true,
     },
+    selectedTrenches: {
+      type: Object,
+      required: false,
+    },
+  },
+  data() {
+    return {
+      // selectedRow: 'prout',
+    };
   },
   setup(props) {
     const searchTerm = ref(""); // Search text
@@ -43,10 +63,6 @@ export default defineComponent({
     const data = toRef(props, "selectedData");
     // utiliser toRef pour ne pas perdre la réactivité lorsque le props est destructuré
     const headers = toRef(props, "checkedFields");
-
-    // pour rajouter un champ à la mano
-    // const headers2 = headers.value.push({ field: "IdentifierUUID", sortable: true, label: "UUID"});
-    // console.log(headers2);
 
     // Table config
     const table = reactive({
@@ -71,8 +87,6 @@ export default defineComponent({
         order: "Identifier",
         sort: "asc",
       },
-      
-      
     });
 
     /**
@@ -100,9 +114,20 @@ export default defineComponent({
     const updateCheckedRows = (rowsKey) => {
       console.log(rowsKey);
     };
+
     // Row clicked event
+    let overlay = ref(false);
+    let selectedRow = ref();
     const rowClicked = (rowsKey) => {
-      console.log("Row clicked!", rowsKey);
+      
+      // console.log("Row clicked!", rowsKey);
+      // Pour modifier une variable réactive, déclaré avec ref(), vous devez utiliser sa propriété .value
+      overlay.value = true;
+      selectedRow.value = rowsKey;
+    };
+    
+    const removeLOverlay = () => {
+      overlay.value = false;
     };
 
     // Work in progress
@@ -113,7 +138,7 @@ export default defineComponent({
           "Content-Type": "application/x-www-form-urlencoded",
         },
         method: "get",
-        url: "http://localhost:9000/idig/Agora/2013/attachments/ΒΓ (407,291,447,318).png?checksum=2022-05-12T12:30:42Z",
+        url: "http://localhost:9000/idig/Agora/ΒΓ 2013/attachments/ΒΓ (407,291,447,318).png?checksum=2022-05-12T12:30:42Z",
         responseType: "blob",
         auth: {
           username: "idig",
@@ -146,6 +171,9 @@ export default defineComponent({
       updateCheckedRows,
       tableLoadingFinish,
       getImage,
+      overlay,
+      removeLOverlay,
+      selectedRow,
     };
   },
 });
@@ -153,25 +181,21 @@ export default defineComponent({
 
 <style scoped>
 ::v-deep(.vtl-table) {
- margin: 0;
+  margin: 0;
 }
 ::v-deep(.vtl-table tr span) {
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-       display: -webkit-box;
-   -webkit-line-clamp: 1; 
-           line-clamp: 1; 
-   -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 ::v-deep(.vtl-table td) {
   vertical-align: top;
   padding: 0.25rem;
- 
-  max-height: 50px;
-  
 
-  
+  max-height: 50px;
 }
 
 ::v-deep(.vtl-paging-pagination-page-link) {
@@ -183,5 +207,15 @@ export default defineComponent({
 ::v-deep(.vtl-pagination) {
   margin: 0;
 }
+#hideoverlay {
+    /* color: white; */
+    z-index: 999999999;
+    height: 20px;
+    width: 12px;
+    position: absolute;
+    right: 20px;
+    background-color: white;
+}
+
 
 </style>
