@@ -24,4 +24,7 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Configuration
-This Beta version is intended to run on the same machine as iDig-server since connected to localhost. Default iDig-server credentials are use and should be edit in AccessIdig.vue as well as the list of trenches. 
+This release is no more restricted to run on the same machine as iDig-server, although localhost is set by default. To use your settings fill in fields 'server', 'projet', 'user' and password then click on connexion. Message will prompt either settings are valid or not and then stored in localstorage to be used in the future until change is made by user.
+Originally developed for Amarythos project and with Agora sample data only those two project are listed. To add more please edit HeaderIdig.vue on line 76.
+Related trenches are to be added on AccessIdig.vue line 36.
+
