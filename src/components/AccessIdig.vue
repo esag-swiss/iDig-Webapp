@@ -1,8 +1,6 @@
 <template>
   <div class="p-1 m-1 bg-light border border-grey rounded">
-    <div @click="changeDisplay" id="close" class="position-absolute top-0">
-      <p>x</p>
-    </div>
+
 
     <!-- {{ prout }}
     <select class="form-control" v-model="project" @change="changeSelectedProject">
@@ -11,15 +9,30 @@
       </option>
     </select> -->
     <h3>Trenches</h3>
-    <div
-      v-for="trench in trenches"
-      :key="trench"
-      @change="addSelectedTrench()"
-      class="mt-1"
-    >
-      <input type="checkbox" v-model="checkedTrenches" :value="trench" />
-      <label class="p-1 m-0" for="checkbox">{{ trench }}</label>
-    </div>
+    <!-- accordion -->
+    <ul v-for="(n, index) in  nbtrenches * 1" :key="n" class="list-group">
+      <li
+        class="list-group-item accordion"
+        @click="isHiddenArray[index] = !isHiddenArray[index]"
+      >
+        {{ index * 10 + 1 }} - {{ index * 10 + 10 }} 
+      </li>
+      <!-- liste tenches -->
+      <div v-if="!isHiddenArray[index]">
+        <div v-for="(trench, index2) in trenches" :key="trench">
+          <li
+            v-if="index2 < index * 10 + 10 && index2 >= index * 10"
+            @change="addSelectedTrench()"
+            class="mt-1"
+          >
+            <input type="checkbox" v-model="checkedTrenches" :value="trench" />
+            <label class="p-1 m-0" for="checkbox">{{ trench }}</label>
+          </li>
+        </div>
+      </div>
+    </ul>
+    <!-- accordion end -->
+
   </div>
 </template>
 
@@ -36,7 +49,90 @@ export default {
       selectedProject: {
         Agora: ["ΒΓ 2013", "ΒΘ West 2013"],
         Amarynthos: [
+          "AMA_Kokalas",
+          "AMA-Micromorpho",
+          "AMA07",
+          "AMA12",
+          "AMA13",
+          "AMA14",
+          "AMA15-S14",
+          "AMA15-S15",
+          "AMA15-S16",
+          "AMA15-S17",
+          "AMA16_plans",
+          "AMA16-S14",
+          "AMA16-S14E",
+          "AMA16-S15",
+          "AMA16-S16",
+          "AMA16·S17",
+          "AMA16-S19",
+          "AMA16-S20",
+          "AMA17- plans",
+          "AMA17-S17",
+          "AMA17-S19",
+          "AMA17-S20",
+          "AMA17-S21",
+          "AMA17-S22C",
+          "AMA17-S22N",
+          "AMA17-S22S",
+          "AMA17-S23",
+          "AMA18_plans",
+          "AMA18-Ed4",
+          "AMA18-S14",
+          "AMA18-S19",
+          "AMA18-S20",
+          "AMA18-S21",
+          "AMA18-S22C",
+          "AMA18-S22N",
+          "AMA18-S22S",
+          "AMA18-S24",
+          "AMA18-S25",
+          "AMA18-S26",
+          "AMA18-S27",
+          "AMA19-plans",
+          "AMA19-S17",
+          "AMA19-S19",
+          "AMA19-S20",
+          "AMA19-S21",
+          "AMA19-S22C",
+          "AMA19-S22N",
+          "AMA19-S22S",
+          "AMA19-S24",
+          "AMA19-S26",
+          "AMA19-S27",
+          "AMA19-S28",
+          "AMA19-S29",
+          "AMA19-S30",
+          "AMA19-S31",
+          "AMA19-S32",
+          "AMA19-S33",
+          "AMA20-plans",
+          "AMA20-S14",
+          "AMA20-S14E",
+          "AMA20-S19",
+          "AMA20-S21",
+          "AMA20-S22-NE",
+          "AMA20-S22N",
+          "AMA20-S24",
+          "AMA20-S26",
+          "AMA20-S28",
+          "AMA20-S31",
+          "AMA20-S32",
+          "AMA20-S34",
+          "AMA20-S35",
+          "AMA20-S36",
+          "AMA21-Plans",
+          "AMA21-S21",
+          "AMA21-S22N",
           "AMA21-S24",
+          "AMA21-S28",
+          "AMA21-S2801",
+          "AMA21-S2802",
+          "AMA21-S2803",
+          "AMA21-S33",
+          "AMA21-S34",
+          "AMA21-S35",
+          "AMA21-S37",
           "AMA22-S22C",
           "AMA22-S24C",
           "AMA22-S24E",
@@ -57,6 +153,21 @@ export default {
       version: {},
       username: "idig",
       password: "idig",
+      isHidden: true,
+      isHiddenArray: [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+      ],
     };
   },
   mounted() {
@@ -81,6 +192,9 @@ export default {
   computed: {
     trenches() {
       return this.selectedProject[this.project];
+    },   
+    nbtrenches() {
+      return parseInt((this.trenches.length + 10) * 0.1);
     },
     groupedtrenches() {
       return [

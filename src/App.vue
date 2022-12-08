@@ -1,110 +1,128 @@
 <template>
   <!-- header -->
-<header-idig>
-</header-idig>
-
+  <header-idig @toggle-menu="toggleMenu"> </header-idig>
 
   <!-- To display sidebar -->
-  <div class="p-1" style="float: right; position: absolute; z-index: 1; top:58px; left:8px">
-<button v-on:click="changeDisplay()">Filters</button>
-</div>
+  <!-- <div
+    class="p-1"
+    style="float: right; position: absolute; z-index: 1; top: 58px; left: 8px"
+  >
+    <button v-on:click="changeDisplay()">Filters</button>
+  </div> -->
 
-<div class="container-fluid">
-  <div class="row flex-xl-nowrap">
+  <div class="container-fluid">
+    <div class="row flex-xl-nowrap">
+      <!-- SIDEBAR -->
+      <div
+        class="p-1 col-md-2"
+        id="sticky-sidebar"
+        style="z-index: 1"
+        v-bind:style="{ display: computedDisplay }"
+      >
+        <div class="sticky-top">
+          <access-idig
+            @selected-trench="selectedTrench"
+            @display-sidebar="changeDisplay"
+            @trench-version="trenchVersion"
+          >
+          </access-idig>
 
+          <filter-fields
+            @check-fields="checkFields"
+            @selected-type="selectedType"
+            :selected-data="selectedData"
+          >
+          </filter-fields>
+        </div>
+      </div>
 
-    <!-- SIDEBAR -->
-    <div class="p-1 col-md-2" id="sticky-sidebar" style="z-index: 1" v-bind:style="{ display: computedDisplay }">
-<div class="sticky-top" v-if="!isHidden">
-  <access-idig @selected-trench="selectedTrench" @display-sidebar="changeDisplay" @trench-version="trenchVersion"> </access-idig>
-
-  <filter-fields @check-fields="checkFields" @selected-type="selectedType" :selected-data="selectedData">
-  </filter-fields>
-</div>
-</div>
-
-
-<!-- MAIN FRAME The map or tab goes here -->
-<div class="p-1 col-md-10">
-
-  <dyna-table :selected-data="selectedData" :checked-fields="checkedFields" :selected-trenches="trenchesversion">
-  </dyna-table>
-</div>
-</div>
-</div>
+      <!-- MAIN FRAME The map or tab goes here -->
+      <div class="p-1" :class="{ 'col-md-10' : isHidden, 'col-md-12' : !isHidden }">
+        <dyna-table
+          :selected-data="selectedData"
+          :checked-fields="checkedFields"
+          :selected-trenches="trenchesversion"
+        >
+        </dyna-table>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-  import AccessIdig from "./components/AccessIdig";
-  import HeaderIdig from "./components/HeaderIdig";
-  import FilterFields from "./components/FilterFields";
-  import DynaTable from "./components/DynaTable";
-  import preferencesData from "./data/AMA21-S24.Preferences.json";
-  import Data from "./data/AMA21-S24.json"; //Default data
+import AccessIdig from "./components/AccessIdig";
+import HeaderIdig from "./components/HeaderIdig";
+import FilterFields from "./components/FilterFields";
+import DynaTable from "./components/DynaTable";
+import preferencesData from "./data/AMA21-S24.Preferences.json";
+import Data from "./data/AMA21-S24.json"; //Default data
 
-  export default {
-    name: "App",
-    components: {
-      AccessIdig,
-      FilterFields,
-      DynaTable,
-      HeaderIdig
+export default {
+  name: "App",
+  components: {
+    AccessIdig,
+    FilterFields,
+    DynaTable,
+    HeaderIdig,
+  },
+  data() {
+    return {
+      trenchData: Data, // load default data, will be populate when selecting trenches on AccessIdig componant
+      fields: preferencesData.types,
+      isHidden: true,
+      display: "block",
+      class: true,
+      selectedFilter: "Artifact", // type by default
+      checkedFields: [
+        // columns by default before any selection /!\ label needed to display headers
+        { field: "Source", sortable: true, label: "Source" },
+        { field: "Title", sortable: true, label: "Titre" },
+        {
+          field: "Identifier",
+          isKey: true,
+          sortable: true,
+          label: "Identifier",
+        },
+      ],
+      trenchesversion: {},
+    };
+  },
+  computed: {
+    selectedData() {
+      return this.trenchData.filter((object) => {
+        return object.Type.includes(this.selectedFilter);
+      });
     },
-    data() {
-      return {
-        trenchData: Data, // load default data, will be populate when selecting trenches on AccessIdig componant
-        fields: preferencesData.types,
-        isHidden: false,
-        display: "block",
-        selectedFilter: "Artifact", // type by default
-        checkedFields: [
-          // columns by default before any selection /!\ label needed to display headers
-          { field: "Source", sortable: true, label: "Source" },
-          { field: "Title", sortable: true, label: "Titre" },
-          {
-            field: "Identifier",
-            isKey: true,
-            sortable: true,
-            label: "Identifier",
-          },
-        ],
-        trenchesversion: {}
-
-
-      };
+    computedDisplay() {
+      return this.display;
     },
-    computed: {
-      selectedData() {
-        return this.trenchData.filter((object) => {
-          return object.Type.includes(this.selectedFilter);
-        });
-      },
-      computedDisplay() {
-        return this.display;
-      },
+  },
+  methods: {
+    // reçoit des enfants
+    selectedTrench(trench) {
+      this.trenchData = trench;
     },
-    methods: {
-      changeDisplay(dis) {
-        this.display = dis;
-      },
-      // reçoit des enfants
-      selectedTrench(trench) {
-        this.trenchData = trench;
-      },
-      selectedType(type) {
-        this.selectedFilter = type;
-      },
-      checkFields(emited) {
-        this.checkedFields = emited;
-      },
-      selectedSidebar(XXXX) {
-        this.display = XXXX;
-      },
-      trenchVersion(version) {
-        this.trenchesversion = version;
-      },
+    selectedType(type) {
+      this.selectedFilter = type;
     },
-  };
+    checkFields(emited) {
+      this.checkedFields = emited;
+    },
+    // selectedSidebar(XXXX) {
+    //   this.display = XXXX;
+    // },
+    trenchVersion(version) {
+      this.trenchesversion = version;
+    },
+    // changeDisplay(dis) {
+    //   this.display = dis;
+    // },
+    toggleMenu() {//a simplifier avec :class
+      if (this.display == "none") {this.display = "block"} else {this.display = "none"}
+      this.isHidden = !this.isHidden;
+    },
+  },
+};
 </script>
 
 <style>

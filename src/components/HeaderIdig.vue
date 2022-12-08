@@ -1,16 +1,18 @@
 <template>
   <nav class="navbar navbar-dark bg-dark p-0">
     <!-- Navbar content -->
+    
     <div class="container-fluid">
+      <Burger @toggle-menu="toggleMenu"></Burger>
       <!-- Brand -->
-      <a class="navbar-brand" href="#">iDig webapp</a>
+      <div class="navbar-brand" href="#">iDig webapp</div>
 
       <!-- select server -->
       <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav pt-2 py-md-0">
-        <li class="nav-item col-6 col-md-auto p-0">
+        <li class="nav-item col-1 col-md-auto p-0">
           <a class="nav-link p-2">server:</a>
         </li>
-        <li class="nav-item col-6 col-md-auto p-0">
+        <li class="nav-item col-2 col-md-auto p-0">
           <input
             class="m-2 text-light"
             v-model="server"
@@ -18,10 +20,10 @@
           />
         </li>
         <!-- select project -->
-        <li class="nav-item col-6 col-md-auto p-0">
+        <li class="nav-item col-1 col-md-auto p-0">
           <a class="nav-link p-2">projet:</a>
         </li>
-        <li class="nav-item col-6 col-md-auto p-0">
+        <li class="nav-item col-2 col-md-auto p-0">
           <select
             class="m-2 text-light"
             v-model="project"
@@ -32,17 +34,17 @@
             </option>
           </select>
         </li>
-        <li class="nav-item col-6 col-md-auto p-0">
+        <li class="nav-item col-1 col-md-auto p-0">
           <a class="nav-link p-2">user:</a>
         </li>
-        <li class="nav-item col-6 col-md-auto p-0">
+        <li class="nav-item col-2 col-md-auto p-0">
           <input
             class="m-2 text-light"
             v-model="username"
             style="background: #212529; border: 0px"
           />
         </li>
-        <li class="nav-item col-6 col-md-auto p-0">
+        <li class="nav-item col-1 col-md-auto p-0">
           <input
             type="password"
             class="m-2 text-light"
@@ -51,7 +53,7 @@
             placeholder="Password"
           />
         </li>
-
+       <li class="nav-item col-1 col-md-auto p-0">
         <!-- test API connexion -->
         <button
           type="button"
@@ -61,13 +63,14 @@
         >
           connexion
         </button>
+        </li>
       </ul>
     </div>
   </nav>
 </template>
 <script>
 import axios from "axios";
-
+import Burger from '../components/Burger.vue';
 export default {
   data() {
     return {
@@ -82,6 +85,7 @@ export default {
       password: "idig",
     };
   },
+
     mounted() {
     if (localStorage.IdigServer) {
       this.server = localStorage.IdigServer;
@@ -100,6 +104,9 @@ export default {
 
    
   },
+  components: {
+   Burger
+ },
   methods: {
     retrieveToLocal: function () {
       this.server = localStorage.getItem("IdigServer");
@@ -146,6 +153,10 @@ export default {
           }
         });
     },
+    toggleMenu() {
+        this.isBurgerActive = !this.isBurgerActive;
+        this.$emit("toggle-menu", "none");
+      },
   },
 };
 </script>
