@@ -1,117 +1,107 @@
 <template>
   <nav class="navbar navbar-dark bg-dark p-0">
     <!-- Navbar content -->
-    
-    <div class="container-fluid">
-      <Burger @toggle-menu="toggleMenu"></Burger>
-      <!-- Brand -->
-      <div class="navbar-brand" href="#">iDig webapp</div>
 
-      <!-- select server -->
+    <div class="container-fluid">
       <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav pt-2 py-md-0">
-        <li class="nav-item col-1 col-md-auto p-0">
-          <a class="nav-link p-2">server:</a>
-        </li>
-        <li class="nav-item col-2 col-md-auto p-0">
-          <input
-            class="m-2 text-light"
-            v-model="server"
-            style="background: #212529; border: 0px"
-          />
-        </li>
+        <Burger @toggle-menu="toggleMenu"></Burger>
+        <!-- Title -->
+        <div class="navbar-brand pr-3" href="#">iDig webapp</div>
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <!-- select server -->
+        <div class="navbar-text text-light p-2">server:</div>
+        <input
+          class="my-2 text-light"
+          v-model="server"
+          style="background: #212529; border: 0px; width: 7em"
+        />
         <!-- select project -->
-        <li class="nav-item col-1 col-md-auto p-0">
-          <a class="nav-link p-2">projet:</a>
-        </li>
-        <li class="nav-item col-2 col-md-auto p-0">
-          <select
-            class="m-2 text-light"
-            v-model="project"
-            style="background: #212529; border: 0px; height: 26px"
-          >
-            <option v-for="project in projects" :key="project" :value="project">
-              {{ project }}
-            </option>
-          </select>
-        </li>
-        <li class="nav-item col-1 col-md-auto p-0">
-          <a class="nav-link p-2">user:</a>
-        </li>
-        <li class="nav-item col-2 col-md-auto p-0">
-          <input
-            class="m-2 text-light"
-            v-model="username"
-            style="background: #212529; border: 0px"
-          />
-        </li>
-        <li class="nav-item col-1 col-md-auto p-0">
-          <input
-            type="password"
-            class="m-2 text-light"
-            v-model="password"
-            style="background: #212529; border: 0px"
-            placeholder="Password"
-          />
-        </li>
-       <li class="nav-item col-1 col-md-auto p-0">
-        <!-- test API connexion -->
+        <a class="navbar-text text-light p-2">projet:</a>
+        <select
+          class="m-2 text-light"
+          v-model="project"
+          style="background: #212529; border: 0px; height: 26px"
+          @change="allTrenches"
+        >
+          <option v-for="project in projects" :key="project" :value="project" >
+            {{ project }}
+          </option>
+        </select>
+        <!-- select user -->
+        <a class="navbar-text text-light p-2">user:</a>
+        <input
+          class="m-2 text-light"
+          v-model="username"
+          style="background: #212529; border: 0px; width: 6em"
+        />
+        <input
+          type="password"
+          class="m-2 text-light"
+          v-model="password"
+          style="background: #212529; border: 0px; width: 6em"
+          placeholder="Password"
+        />
         <button
           type="button"
-          class="m-2"
-          style="height: 26px"
+          class="btn btn-outline-secondary my-0 my-sm-0 m-2 p-0"
           @click="testConnexion"
         >
           connexion
         </button>
-        </li>
-      </ul>
+      </form>
     </div>
   </nav>
 </template>
 <script>
 import axios from "axios";
-import Burger from '../components/Burger.vue';
+import Burger from "../components/Burger.vue";
+import Preferences from "../data/Amarynthos.Preferences.json";
+
 export default {
   data() {
     return {
       server: "localhost",
       project: "Amarynthos",
+      Preferences: Preferences,
       projects: ["Amarynthos", "Agora"],
-      selectedProject: {
-        Agora: ["ΒΓ 2013", "ΒΘ West 2013"],
-        Amarynthos: ["AMA21-S24", "AMA22-S22C"],
-      },
       username: "idig",
       password: "idig",
     };
   },
-
-    mounted() {
+    components: {
+    Burger,
+  },
+// charge les préférences de connexion si elles existent  
+  mounted() {
     if (localStorage.IdigServer) {
       this.server = localStorage.IdigServer;
     }
-        if (localStorage.project) {
+    if (localStorage.project) {
       this.project = localStorage.project;
     }
-        if (localStorage.IdigServer) {
+    if (localStorage.IdigServer) {
       this.username = localStorage.username;
     }
-        if (localStorage.project) {
+    if (localStorage.project) {
       this.password = localStorage.password;
     }
   },
   computed: {
+    trenches() {
+      return this.Preferences[this.project];
+    },
 
-   
   },
-  components: {
-   Burger
- },
+
   methods: {
     retrieveToLocal: function () {
       this.server = localStorage.getItem("IdigServer");
     },
     testConnexion: function () {
+      this.server = this.server.replace("https://", "");
+      this.server = this.server.replace("http://", "");
+      this.server = this.server.replace(":9000", "");
       //store to local
       localStorage.setItem("IdigServer", this.server);
       localStorage.setItem("project", this.project);
@@ -130,7 +120,7 @@ export default {
           ":9000/idig/" +
           this.project +
           "/" +
-          this.selectedProject[this.project][0] +
+          this.trenches[0] +
           "/surveys",
         auth: {
           username: this.username,
@@ -152,11 +142,16 @@ export default {
             alert("server not reachable");
           }
         });
+        
     },
+    allTrenches() {
+      this.$emit("all-trenches", this.trenches);
+    },    
     toggleMenu() {
-        this.isBurgerActive = !this.isBurgerActive;
-        this.$emit("toggle-menu", "none");
-      },
+      this.isBurgerActive = !this.isBurgerActive;
+      this.$emit("toggle-menu");
+      
+    },
   },
 };
 </script>

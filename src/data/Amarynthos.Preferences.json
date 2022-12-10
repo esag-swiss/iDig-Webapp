@@ -97,7 +97,7 @@
     "[SourceUUID: idig://agathe.gr/source/Trench Name]"
   ],
   "version": 2,
-  "project": "Agora",
+  "project": "Amarynthos",
   "maxdigits": "6.3",
   "comment": "il n'y a pas d'objet field pour tous les fields et quand l'objet field exist il n'y a pas forcement les lables",
   "crs": "Agora",
@@ -3940,11 +3940,11 @@
       "list": "Phases"
     }
   ],
-  "source": [
-    2013,
-    "ΒΘ West 2013"
+  "Agora": [
+    "ΒΓ 2013", "ΒΘ West 2013"
   ],
-  "Trenches": [
+  "Amarynthos": [
+    "AMA21-S24",
     "AMA_Kokalas",
     "AMA-Micromorpho",
     "AMA07",

@@ -1,7 +1,7 @@
 <template>
     <div id="burger"
          :class="{ 'active' : isBurgerActive } "
-         @click.prevent="toggle" class="navbar-brand" style="margin:0px;">
+         @click.prevent="toggle" class="navbar-brand" >
          
         <slot>
             <button type="button" class="burger-button" title="Menu">
