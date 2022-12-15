@@ -98,7 +98,7 @@
   ],
   "version": 2,
   "project": "Agora",
-  "tenches": ["ΒΓ 2013", "ΒΘ West 2013"],
+  "trenches": ["ΒΓ 2013", "ΒΘ West 2013"],
   "maxdigits": "6.3",
   "wgs84cpts": [
     {

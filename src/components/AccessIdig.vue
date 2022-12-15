@@ -88,22 +88,8 @@ export default {
     nbtrenches() {
       return parseInt((this.trenches.length + 10) * 0.1);
     },
-    // groupedtrenches() {
-    //   return [
-    //     ...new Set(
-    //       this.selectedProject.Amarynthos.map((x) => x.substring(0, 5))
-    //     ),
-    //   ];
-    // },
-    // trenchesbygroup() {
-    //   return this.groupedtrenches.filter((x) => x.startsWith("AMA21"));
-    // },
   },
   methods: {
-    changeDisplay() {
-      this.display = "none";
-      this.$emit("display-sidebar", this.display);
-    },
     addSelectedTrench: function () {
       this.arr = [];
       this.checkedTrenches.forEach((value) => {
@@ -139,7 +125,4 @@ export default {
 };
 </script>
 <style>
-#close {
-  right: 10px;
-}
 </style>
