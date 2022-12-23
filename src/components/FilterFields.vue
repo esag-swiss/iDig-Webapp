@@ -65,7 +65,7 @@
 import preferencesData from "../data/AMA21-S24.Preferences.json";
 // import axios from "axios";
 
-export default {
+export default { 
   data() {
     return {
       fields: preferencesData.fields,
@@ -110,7 +110,7 @@ export default {
     },
   },
   computed: {
-    testing() {
+    testing() { //pour les images
       return this.selectedData.filter((x) => {
         return x.IdentifierUUID.includes(
           "1CF4D560-8E7B-4E94-BBB5-E893E463D1EC"
@@ -123,11 +123,12 @@ export default {
         return x.type.includes(this.selectedtype);
       })[0].groups;
     },
-    allfields() {
+    allfields() { // list les objet field dans l'array fields
       return this.fields.map(({ field }) => {
         return field;
       });
     },
+
     alllabels() {
       // je ne comprends pas grand chose mais ca marche et j'en suis fier !
       return this.fields.map((field) =>

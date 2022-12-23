@@ -33,6 +33,7 @@
           :selected-data="selectedData"
           :checked-fields="checkedFields"
           :selected-trenches="trenchesversion"
+          :selected-type="selectedFilter"
         >
         </dyna-table>
       </div>

@@ -1,6 +1,7 @@
 {
 	"version": 3,
 	"project": "Amarynthos",
+	"projects": ["Amarynthos", "Agora","Labraunda"],
 	"crs": "Amarynthos",
 	"maxdigits": "6.3",
 	"_comment": [
@@ -78,6 +79,7 @@
 		"[RelationCuts:]",
 		"[RelationIsCutBy:]"
 	],
+	"comment": "Attention, il n'y a pas d'objet field pour tous les fields et quand l'objet field exist il n'y a pas forcement les lables",
 	"types": [
 		{
 			"type": "Context",

@@ -36,14 +36,14 @@ export default {
     return {
       server: "localhost",
       project: "Amarynthos",
-      projects: ["Amarynthos", "Agora"], // could it be populated by XXXX.preferences.json files present in Data folder?
+
       username: "idig",
       password: "idig",
       
       checkedTrenches: [],
       arr: [],
       version: {},
-      display: "block",
+      
       isHidden: true,
       isHiddenArray: [
         true,
@@ -74,10 +74,10 @@ export default {
     if (localStorage.project) {
       this.project = localStorage.project;
     }
-    if (localStorage.IdigServer) {
+    if (localStorage.username) {
       this.username = localStorage.username;
     }
-    if (localStorage.project) {
+    if (localStorage.password) {
       this.password = localStorage.password;
     }
   },

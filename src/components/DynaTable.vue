@@ -1,6 +1,7 @@
 <template>
   <over-lay
     :selected-trenches="selectedTrenches"
+    :selected-type="selectedType"
     :selected-row="selectedRow"
     v-show="overlay"
     @remove-overlay="removeLOverlay"
@@ -49,6 +50,10 @@ export default defineComponent({
     },
     selectedTrenches: {
       type: Object,
+      required: false,
+    },
+    selectedType: {
+      type: String,
       required: false,
     },
   },
