@@ -46,7 +46,7 @@ import AccessIdig from "./components/AccessIdig";
 import HeaderIdig from "./components/HeaderIdig";
 import FilterFields from "./components/FilterFields";
 import DynaTable from "./components/DynaTable";
-import preferencesData from "./data/AMA21-S24.Preferences.json";
+import preferencesData from "./data/Preferences.json";
 import Data from "./data/AMA21-S24.json"; //Default data
 
 export default {

@@ -1,7 +1,7 @@
 {
 	"version": 3,
 	"project": "Amarynthos",
-	"projects": ["Amarynthos", "Agora","Labraunda"],
+	"projects": ["Amarynthos", "Agora"],
 	"crs": "Amarynthos",
 	"maxdigits": "6.3",
 	"_comment": [

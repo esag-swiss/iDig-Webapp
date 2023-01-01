@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import preferencesData from "../data/AMA21-S24.Preferences.json";
+import preferencesData from "../data/Preferences.json";
 // import axios from "axios";
 
 export default { 
