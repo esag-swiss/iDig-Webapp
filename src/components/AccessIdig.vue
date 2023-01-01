@@ -23,7 +23,7 @@
         </div>
       </div>
     </ul>
-    
+
     <!-- accordion end -->
   </div>
 </template>
@@ -34,17 +34,17 @@ import axios from "axios";
 export default {
   data() {
     return {
-      server: "localhost",
-      project: "Amarynthos",
+      // server: "localhost",
+      // project: "Amarynthos",
+      // username: "idig",
+      // password: "idig",
 
-      username: "idig",
-      password: "idig",
-      
-      checkedTrenches: [],
-      arr: [],
+      checkedTrenches: [], // attention garde en mémoire les trenches cochées lorsque l'on change de projet
+      arr: [], // data de toutes les trenches, pourra être remplacé par trenchData
+      trenchesData: {},
       version: {},
-      
-      isHidden: true,
+
+      // isHidden: true,
       isHiddenArray: [
         true,
         true,
@@ -61,25 +61,25 @@ export default {
       ],
     };
   },
-    props: {
+  props: {
     allTrenches: {
       type: Object,
       required: true,
     },
   },
   mounted() {
-    if (localStorage.IdigServer) {
-      this.server = localStorage.IdigServer;
-    }
-    if (localStorage.project) {
-      this.project = localStorage.project;
-    }
-    if (localStorage.username) {
-      this.username = localStorage.username;
-    }
-    if (localStorage.password) {
-      this.password = localStorage.password;
-    }
+    // if (localStorage.IdigServer) {
+    //   this.server = localStorage.IdigServer;
+    // }
+    // if (localStorage.project) {
+    //   this.project = localStorage.project;
+    // }
+    // if (localStorage.username) {
+    //   this.username = localStorage.username;
+    // }
+    // if (localStorage.password) {
+    //   this.password = localStorage.password;
+    // }
   },
   computed: {
     trenches() {
@@ -89,37 +89,41 @@ export default {
       return parseInt((this.trenches.length + 10) * 0.1);
     },
   },
-  methods: {
+  methods: { 
     addSelectedTrench: function () {
       this.arr = [];
-      this.checkedTrenches.forEach((value) => {
+      this.checkedTrenches.forEach((trench) => {
         var session_url =
           "http://" +
-          this.server +
+          localStorage.IdigServer +
           ":9000/idig/" +
-          this.project +
+          localStorage.project +
           "/" +
-          value +
+          trench +
           "/surveys";
         axios({
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           method: "get",
           url: session_url,
           auth: {
-            username: this.username,
-            password: this.password,
+            username: localStorage.username,
+            password: localStorage.password,
           },
           data: {
             datastuff: "survey",
           },
         }).then((response) => {
           Array.prototype.push.apply(this.arr, response.data.surveys);
-          // alert(value + response.data.version);
-          this.version[value] = response.data.version;
+
+          this.trenchesData[trench] = response.data.surveys;
+
+          this.version[trench] = response.data.version;
         });
-        this.$emit("selected-trench", this.arr);
-        this.$emit("trench-version", this.version);
       });
+      // list all objects type in array types
+      sessionStorage.setItem("trenchesData", JSON.stringify(this.trenchesData));
+      this.$emit("selected-trench", this.arr);
+      this.$emit("trench-version", this.version);
     },
   },
 };
