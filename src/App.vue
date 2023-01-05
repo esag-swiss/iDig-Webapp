@@ -1,6 +1,6 @@
 <template>
   <!-- header -->
-  <header-idig @toggle-menu="toggleMenu" @all-trenches="setallTrench">
+  <header-idig @toggle-menu="toggleMenu" @all-trenches="setallTrench" @all-types="setallTypes" >
   </header-idig>
 
   <div class="container-fluid">
@@ -10,7 +10,7 @@
         <div class="sticky-top">
           <access-idig
             @selected-trench="selectedTrench"
-            @trench-version="trenchVersion"
+            
             :all-trenches="allTrench"
           >
           </access-idig>
@@ -32,8 +32,9 @@
         <dyna-table
           :selected-data="selectedData"
           :checked-fields="checkedFields"
-          :selected-trenches="trenchesversion"
+          
           :selected-type="selectedFilter"
+          :all-types="allTypes"
         >
         </dyna-table>
       </div>
@@ -76,8 +77,9 @@ export default {
           label: "Identifier",
         },
       ],
-      trenchesversion: {},
+      // trenchesversion: {},
       allTrench: [],
+      allTypes: [],
     };
   },
   computed: {
@@ -104,6 +106,9 @@ export default {
     setallTrench(allTrenches) { // recoit toutes les trenches de HeaderIdig
       this.allTrench = allTrenches;
     },
+    setallTypes(types) {
+      this.allTypes = types;
+    },
     selectedTrench(trench) {
       this.trenchData = trench;
     },
@@ -112,9 +117,6 @@ export default {
     },
     checkFields(emited) {
       this.checkedFields = emited;
-    },
-    trenchVersion(version) {
-      this.trenchesversion = version;
     },
   },
 };

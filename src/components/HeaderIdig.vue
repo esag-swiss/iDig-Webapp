@@ -24,11 +24,10 @@
         <input type="password" class="m-2 text-light" v-model="password"
           style="background: #212529; border: 0px; width: 6em" placeholder="Password" />
         <button type="button" class="btn btn-outline-secondary my-0 my-sm-0 m-2 p-0" :class="{ isConnected: isActive }"
-          @click="testConnexion(), getPreference(), emitallTrenches()">
+          @click="Connexion()">
           connexion
         </button>
       </form>
-
     </div>
   </nav>
 </template>
@@ -41,11 +40,11 @@ export default {
   data() {
     return {
       server: "localhost",
-      project: "",
-      Preferences: Preferences,
-      projects: Preferences.projects,
+      project: "Amarynthos",
       username: "idig",
       password: "idig",
+      Preferences: Preferences,
+      projects: Preferences.projects,
       isActive: false,
     };
   },
@@ -74,47 +73,68 @@ export default {
   },
 
   methods: {
-    // retrieveToLocal: function () {
-    //   this.server = localStorage.getItem("IdigServer");
-    // },
-    testConnexion: function () {
+    Connexion: function () {
+
+      // clean server entry by user 
       this.server = this.server.replace("https://", "");
       this.server = this.server.replace("http://", "");
       this.server = this.server.replace(":9000", "");
-      //store to local
-      localStorage.setItem("IdigServer", this.server);
-      localStorage.setItem("project", this.project);
-      localStorage.setItem("username", this.username);
-      localStorage.setItem("password", this.password);
-      localStorage.setItem(
-        "trenches",
-        JSON.stringify(this.Preferences[this.project])
-      );
-      //test connexion
+      // retrieve preferences from server if connection settings valid
       axios({
+
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        method: "get",
+        method: "post",
         url:
           "http://" +
           this.server +
           ":9000/idig/" +
           this.project +
           "/" +
-          this.trenches[0] +
-          "/surveys",
+          this.trenches[0],
         auth: {
           username: this.username,
           password: this.password,
         },
-        data: {},
+        data: {
+          head: "",
+          surveys: [],
+        },
       })
-        .then(() => {
-          // alert("connection valide");
+        .then((response) => {
+          // switch button to green
           this.isActive = true;
+          // envoi les trenches du projet au parent
+          this.$emit("all-trenches", this.trenches); // pour lister les trenches à gauche peut etre doublon avec local storage
+          
+          // stores  prefences base64 in session storage to allow PUSH
+          sessionStorage.setItem("preferences", response.data.preferences);
+
+          // get preferences in json to access groupes, types, fields etc 
+          this.preferences = decodeURIComponent(
+            escape(window.atob(response.data.preferences))
+          ); // escape is deprecated
+          this.preferences = JSON.parse(this.preferences);
+
+          // utilisé par Overlay.vue pour afficher les champs attachés au type d'objet
+          localStorage.setItem("types", JSON.stringify(this.preferences.types));
+          this.$emit("all-types", this.preferences.types);
+
+
+
+          // store to local
+          localStorage.setItem("IdigServer", this.server);
+          localStorage.setItem("project", this.project);
+          localStorage.setItem("username", this.username);
+          localStorage.setItem("password", this.password);
+          localStorage.setItem(
+            "trenches",
+            JSON.stringify(this.Preferences[this.project])
+          );
         })
         .catch((error) => {
+          this.isActive = false;
           if (error.response.status == 401) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
@@ -126,68 +146,7 @@ export default {
           }
         });
     },
-    getPreference() {
-      // attention gérer les cas où il n'y a pas de preferences
-      var session_url =
-        "http://" + this.server + ":9000/idig/" +
-        this.project +
-        "/" + this.trenches[0];
-      axios({
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        method: "post",
-        url: session_url,
-        auth: {
-          username: this.username,
-          password: this.password,
-        },
-        data: {
-          head: "",
-          surveys: [],
-        },
-      }).then((response) => {
-        // alert(response.data.version);
-        
-        // alert(response.data.preferences); //string en base64
-        // this.preferences = atob(response.data.preferences);   // ca met les é en Ã© etc, atob ne gère pas l'unicode
-        this.preferences = decodeURIComponent(escape(window.atob(response.data.preferences))); // escape is deprecated
-        this.preferences = JSON.parse(this.preferences);
 
-        
-
-        localStorage.setItem("fields", this.preferences.fields);
-        localStorage.setItem("types", JSON.stringify(this.preferences.types));
-        // alert(JSON.stringify(this.preferences.fields[0][0]));
-        // alert(this.preferences.fields[0].field);
-
-
-
-        // list all objects type in array types
-        localStorage.setItem("listtype", this.preferences.types.map(({ type }) => {
-          return type;
-        }));
-
-        // list all objects field in array fileds
-        localStorage.setItem("listfield", this.preferences.fields.map(({ field }) => {
-          return field;
-        }));
-
-
-        // lister les groupes pour un type
-        localStorage.setItem("groups", JSON.stringify(this.preferences.types.filter((x) => {
-          return x.type.includes("Artifact");
-        })[0].groups.map(({ group }) => {
-          return group;
-        })));
-
-  
-
-
-      });
-    },
-
-    emitallTrenches() {
-      this.$emit("all-trenches", this.trenches);
-    },
     toggleMenu() {
       this.isBurgerActive = !this.isBurgerActive;
       this.$emit("toggle-menu");

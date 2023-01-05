@@ -1,33 +1,17 @@
 <template>
-  <over-lay
-    :selected-trenches="selectedTrenches"
-    :selected-type="selectedType"
-    :selected-row="selectedRow"
-    v-show="overlay"
-    @remove-overlay="removeLOverlay"
-  >
+  <over-lay :all-types="allTypes" :selected-type="selectedType" :selected-row="selectedRow" v-show="overlay"
+    @remove-overlay="removeLOverlay">
   </over-lay>
 
   <input class="m-2" v-model="searchTerm" />
   <!-- Work in progress bouton pour afficher les images des attachments -->
   <!-- <button type="button" @click="getImage">Image</button> -->
-  <table-lite
-    :has-checkbox="true"
-    :is-loading="table.isLoading"
-    :is-re-search="table.isReSearch"
-    :columns="table.columns"
-    :rows="table.rows"
-    :is-static-mode="true"
-    :rowClasses="table.rowClasses"
-    :total="table.totalRecordCount"
-    :sortable="table.sortable"
-    :messages="table.messages"
-    @is-finished="tableLoadingFinish"
-    @return-checked-rows="updateCheckedRows"
-    @row-clicked="rowClicked"
-  ></table-lite>
-   <!-- Work in progress image test du bouton pour afficher les images des attachments -->
-   <!-- <img id="image" src="http://thacer.archaiodata.com/ThaCER.svg" alt="test" width="280" /> -->
+  <table-lite :has-checkbox="true" :is-loading="table.isLoading" :is-re-search="table.isReSearch"
+    :columns="table.columns" :rows="table.rows" :is-static-mode="true" :rowClasses="table.rowClasses"
+    :total="table.totalRecordCount" :sortable="table.sortable" :messages="table.messages"
+    @is-finished="tableLoadingFinish" @return-checked-rows="updateCheckedRows" @row-clicked="rowClicked"></table-lite>
+  <!-- Work in progress image test du bouton pour afficher les images des attachments -->
+  <!-- <img id="image" src="http://thacer.archaiodata.com/ThaCER.svg" alt="test" width="280" /> -->
 </template>
 
 <script>
@@ -48,14 +32,19 @@ export default defineComponent({
       type: Object,
       required: true,
     },
-    selectedTrenches: {
-      type: Object,
-      required: false,
-    },
+    // selectedTrenches: {
+    //   type: Object,
+    //   required: false,
+    // },
     selectedType: {
       type: String,
       required: false,
     },
+    allTypes: {
+      type: Object,
+      required: false,
+    },
+
   },
   data() {
     return {
@@ -124,13 +113,13 @@ export default defineComponent({
     let overlay = ref(false);
     let selectedRow = ref();
     const rowClicked = (rowsKey) => {
-      
+
       // console.log("Row clicked!", rowsKey);
       // Pour modifier une variable réactive, déclaré avec ref(), vous devez utiliser sa propriété .value
       overlay.value = true;
       selectedRow.value = rowsKey;
     };
-    
+
     const removeLOverlay = () => {
       overlay.value = false;
     };
@@ -163,7 +152,7 @@ export default defineComponent({
           // eslint-disable-next-line
           alert(
             error +
-              "something goes wrong! Maybe image url broken, try another img url."
+            "something goes wrong! Maybe image url broken, try another img url."
           );
         });
     };
@@ -188,6 +177,7 @@ export default defineComponent({
 ::v-deep(.vtl-table) {
   margin: 0;
 }
+
 ::v-deep(.vtl-table tr span) {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -196,6 +186,7 @@ export default defineComponent({
   line-clamp: 1;
   -webkit-box-orient: vertical;
 }
+
 ::v-deep(.vtl-table td) {
   vertical-align: top;
   padding: 0.25rem;
@@ -206,21 +197,22 @@ export default defineComponent({
 ::v-deep(.vtl-paging-pagination-page-link) {
   border: none;
 }
+
 ::v-deep(.page-link) {
   padding: 0.25rem;
 }
+
 ::v-deep(.vtl-pagination) {
   margin: 0;
 }
+
 #hideoverlay {
-    /* color: white; */
-    z-index: 999999999;
-    height: 20px;
-    width: 12px;
-    position: absolute;
-    right: 20px;
-    background-color: white;
+  /* color: white; */
+  z-index: 999999999;
+  height: 20px;
+  width: 12px;
+  position: absolute;
+  right: 20px;
+  background-color: white;
 }
-
-
 </style>

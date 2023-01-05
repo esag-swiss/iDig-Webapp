@@ -1,44 +1,22 @@
 <template>
-  <div class="overlay justify-content-center">
-    <div
-      id="overlay"
-      class="center-block mx-auto p-3"
-      style="
-        height: auto;
-        margin-top: 3%;
-        margin-bottom: 3%;
-        width: 90%;
-        background: rgb(255, 255, 255);
-      "
-    >
+  <div class="overlayframe justify-content-center">
+    <div  v-if="selectedRow" id="overlay" class="overlay center-block mx-auto p-3">
       <!--header-->
       <div class="row align-items-start border-bottom mb-2">
-        <div v-if="selectedRow" class="col text-left">
+        <div class="col text-left">
           <h3>{{ selectedRow.Type }} {{ selectedRow.Identifier }}</h3>
         </div>
-        <div v-if="selectedRow" class="navbar-text py-0">
+        <div  class="navbar-text py-0">
           {{ selectedRow.IdentifierUUID }}
         </div>
 
-        <button
-          type="button"
-          class="btn btn-outline-danger my-sm-0 m-2 py-0"
-          @click="prout()"
-        >
+        <button type="button" class="btn btn-outline-danger my-sm-0 m-2 py-0" @click="pushSurvey()">
           save
         </button>
-        <button
-          type="button"
-          class="btn btn-outline-primary my-0 my-sm-0 m-2 py-0"
-          @click="$emit('removeOverlay')"
-        >
+        <button type="button" class="btn btn-outline-primary my-0 my-sm-0 m-2 py-0" @click="$emit('removeOverlay')">
           back
         </button>
-        <button
-          type="button"
-          class="btn btn-outline-secondary my-0 my-sm-0 m-2 py-0"
-          @click="prout()"
-        >
+        <button type="button" class="btn btn-outline-secondary my-0 my-sm-0 m-2 py-0" @click="setUserPreferences()">
           settings
         </button>
       </div>
@@ -51,58 +29,30 @@
           {{ group.labels.fr }}
         </li>
 
-        <div
-          v-for="field in group.fields"
-          :key="field"
-          class="row align-items-start border-bottom my-1"
-        >
+        <div v-for="field in group.fields" :key="field" class="row align-items-start border-bottom my-1">
           <div v-if="selectedRow" class="col-md-3">{{ field.field }}</div>
-          <!--  V1  -->
-          <!-- <input type="text" :value="selectedRow.Source" class="col-md-9 p-0 pl-1" style="border: none" />  -->
-
-          <!-- <input type="text" :value="selectedRow['Source']" class="col-md-9 p-0 pl-1" style="border: none" /> -->
-          <input
-            v-if="selectedRow"
-            type="text"
-            :value="selectedRow[field.field]"
-            class="col-md-9 p-0 pl-1"
-            style="border: none"
-          />
-          <!-- <input type="text" :value="selectedValue" class="col-md-9 p-0 pl-1" style="border: none" /> -->
+          <input v-if="trenchtoUpdate != ''" type="text" v-model="trenchtoUpdate.filter((x) => {
+            return x.IdentifierUUID.includes(selectedRow.IdentifierUUID);
+          })[0][field.field]" class="col-md-9 p-0 pl-1" style="border: none" />
         </div>
-      </ul>
 
-      <!--Formulaire old-->
-      <!-- <div
-        v-for="(value, name) in selectedRow"
-        :key="value.IdentifierUUID"
-        class="row align-items-start border-bottom my-1"
-      >
-        <div class="col-md-3">{{ name }}</div>
-                <input
-          type="text"
-          :value="value"
-          class="col-md-9 p-0 pl-1"
-          style="border: none"
-        />
-        
-      </div> -->
-      <p v-if="selectedRow">
-        Version GIT: {{ selectedTrenches[selectedRow.Source] }}
-      </p>
+      </ul>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "over-lay",
   props: {
-    selectedTrenches: {
+    selectedRow: {
       type: Object,
       required: false,
+      
     },
-    selectedRow: {
+    allTypes: {
       type: Object,
       required: false,
     },
@@ -113,108 +63,83 @@ export default {
   },
   data() {
     return {
-      // selectedtype: "Artifact",
-      groupByDefault: [
-        {
-          group: "General Section",
-          labels: {
-            de: "Allgemein",
-            en: "General",
-            fr: "Général",
-            it: "Generale",
-            el: "",
-          },
-          fields: [
-            { field: "IdentifierUUID", isKey: true },
-            { field: "Source" },
-            { field: "Type" },
-            {
-              field: "Title",
-              tips: {
-                de: "Identifizierung des Objektes (z.B. Bronzemünze oder Ziegelfragment)",
-                en: "Object Identification (Ex: Bronze coin or Tile fragment",
-                fr: "Identification de l'objet (Ex: Monnaie en bronze ou Fragment de tuile)",
-                it: "Identificazione del reperto (Es: Moneta in bronzo o frammento di tegola)",
-                el: "",
-              },
-            },
-            {
-              field: "Identifier",
-              labels: {
-                de: "FK-Nr.",
-                en: "FK-nr",
-                fr: "FK-no",
-                it: "FK-n.",
-                el: "",
-              },
-              tips: {
-                de: "Kontext-Nr. - fortlaufend-Nr. (z.B. 500-3). Objekte ohne exakten Fundort tragen lediglich die Kontext-Nr.",
-                en: "Context nr - serial nr (Ex. 500-3). Artifacts without exact provenance have the context number only",
-                fr: "No du contexte - no continu (Ex. 500-3). Les objets sans provenance exacte ont uniquement le numéro du contexte",
-                it: "N. del contesto - n. continuo (Es. 500-3). I reperti senza un luogo di ritrovamento esatto, avranno unicamente il numero del contesto",
-                el: "",
-              },
-            },
-            {
-              field: "DateEarliest",
-              labels: {
-                de: "Datum",
-                en: "Date",
-                fr: "Date",
-                it: "Data",
-                el: "",
-              },
-            },
-          ],
-        },
-      ],
     };
   },
   computed: {
-     selectedtype() {
-      if (this.selectedType) {
-        return this.selectedType;
-      } else {
-        return "Artifact";
-      }
-    },   
-    // selectedValue() {
-    //   if (this.selectedRow) {
-    //     return this.selectedRow.Source;
-    //   } else {
-    //     return "NA";
-    //   }
-    // },
-
-    // allgroups() {
-    //   return JSON.parse(localStorage.types);
-    // },
-
+    trenchtoUpdate() {
+      if (this.selectedRow) {
+        return JSON.parse(sessionStorage.trenchesData)[this.selectedRow.Source];
+      } else return "";
+    },
     groups() {
       if (localStorage.types) {
         return JSON.parse(localStorage.types).filter((x) => {
-          return x.type.includes(this.selectedtype);
+          return x.type.includes(this.selectedType);
         })[0].groups;
       } else {
-        return this.groupByDefault;
+        return this.allTypes;
       }
     },
-    filteredField() {
-      return this.fields.filter((x) => {
-        return x.type.includes(this.selectedFilter);
-      })[0].groups[0].fields;
+  },
+  methods: {
+    setUserPreferences() {
+      // alert("to use for user preferences settings")
     },
-    filtered() {
-      return this.trenchdata.filter((object) => {
-        return object.Type.includes(this.selectedFilter);
-      });
+    pushSurvey() {
+      console.log(this.selectedRow.Title);
+      console.log(
+        JSON.parse(sessionStorage.trenchesData)[this.selectedRow.Source].filter(
+          (x) => {
+            return x.IdentifierUUID.includes(this.selectedRow.IdentifierUUID);
+          }
+        )[0]
+      );
+      console.log(this.selectedRow);
+      axios({
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        method: "post",
+        url:
+          "http://" +
+          localStorage.IdigServer +
+          ":9000/idig/" +
+          localStorage.project +
+          "/" +
+          this.selectedRow.Source,
+        auth: {
+          username: localStorage.username,
+          password: localStorage.password,
+        },
+        data: {
+          head: JSON.parse(sessionStorage.trenchesVersion)[
+            this.selectedRow.Source
+          ],
+          device: "webapp",
+          surveys: this.trenchtoUpdate,
+          preferences: sessionStorage.preferences,
+        },
+      })
+        .then(() => {
+          // alert("connection valide");
+        })
+        .catch((error) => {
+          if (error.response.status == 401) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            alert(error.response.data + "or project"); // idig server retourne 401 si le endpoint n'est pas bon
+            console.log(error.response.status);
+            console.log(error.response.headers);
+          } else {
+            alert("server not reachable");
+          }
+        });
     },
   },
-  method: {},
 };
 </script>
 <style scoped>
-.overlay {
+.overlayframe {
   position: absolute;
   top: 0;
   left: 0;
@@ -223,22 +148,18 @@ export default {
   background: rgba(0, 0, 0, 0.7);
   z-index: 999;
 }
-/* Style the buttons that are used to open and close the accordion panel */
+
+.overlay {
+  height: auto;
+  margin-top: 3%;
+  margin-bottom: 3%;
+  width: 90%;
+  background: rgb(255, 255, 255);
+}
+
+/* to avoid on hover style */
 .accordion {
   background-color: #eee;
   cursor: default;
-  color: #444;
-  padding: 5px;
-  width: 100%;
-  text-align: left;
-  border: none;
-  outline: none;
-  transition: 0.4s;
-}
-
-/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-.active,
-.accordion:hover {
-  background-color: #eee;
 }
 </style>
