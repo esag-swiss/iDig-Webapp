@@ -25,11 +25,17 @@
     </h3>
     <!-- liste les groupes pour le type selectionné -->
     <ul v-for="(group, index) in groups" :key="group" class="list-group">
-      <li
+      <li v-if="group.hasOwnProperty('labels')"
         class="list-group-item accordion"
         @click="isHiddenArray[index] = !isHiddenArray[index]"
       >
         {{ group.labels.fr }}
+      </li>
+            <li v-else
+        class="list-group-item accordion"
+        @click="isHiddenArray[index] = !isHiddenArray[index]"
+      >
+        {{ group.group }}
       </li>
       <!-- liste les champs pour chaque groupe -->
       <div v-if="!isHiddenArray[index]">
