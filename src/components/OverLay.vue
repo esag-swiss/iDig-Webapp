@@ -1,22 +1,31 @@
 <template>
-  <div class="overlayframe justify-content-center">
-    <div  v-if="selectedRow" id="overlay" class="overlay center-block mx-auto p-3">
+  <div class="overlaywrapper justify-content-center">
+    <div
+      v-if="selectedRow"
+      id="overlay"
+      class="overlay center-block mx-auto p-3"
+    >
       <!--header-->
       <div class="row align-items-start border-bottom mb-2">
         <div class="col text-left">
           <h3>{{ selectedRow.Type }} {{ selectedRow.Identifier }}</h3>
         </div>
-        <div  class="navbar-text py-0">
+        <div class="navbar-text py-0">
           {{ selectedRow.IdentifierUUID }}
         </div>
 
-        <button type="button" class="btn btn-outline-danger my-sm-0 m-2 py-0" @click="pushSurvey()">
+        <button
+          type="button"
+          class="btn btn-outline-danger my-sm-0 m-2 py-0"
+          @click="pushSurvey()"
+        >
           save
         </button>
-        <button type="button" class="btn btn-outline-primary my-0 my-sm-0 m-2 py-0" @click="$emit('removeOverlay')">
-          back
-        </button>
-        <button type="button" class="btn btn-outline-secondary my-0 my-sm-0 m-2 py-0" @click="setUserPreferences()">
+        <button
+          type="button"
+          class="btn btn-outline-secondary my-0 my-sm-0 m-2 py-0"
+          @click="setUserPreferences()"
+        >
           settings
         </button>
       </div>
@@ -24,18 +33,36 @@
       <!--Formulaire-->
 
       <ul v-for="group in groups" :key="group" class="list-group">
-        <li class="list-group-item accordion">
+        <li
+          v-if="group.labels.hasOwnProperty('fr')"
+          class="list-group-item accordion"
+        >
           <!-- attention gérer les langues -->
           {{ group.labels.fr }}
         </li>
+        <li v-else class="list-group-item accordion">
+          <!-- attention gérer les langues -->
+          {{ group.group }}
+        </li>
 
-        <div v-for="field in group.fields" :key="field" class="row align-items-start border-bottom my-1">
+        <div
+          v-for="field in group.fields"
+          :key="field"
+          class="row align-items-start border-bottom my-1"
+        >
           <div v-if="selectedRow" class="col-md-3">{{ field.field }}</div>
-          <input v-if="trenchtoUpdate != ''" type="text" v-model="trenchtoUpdate.filter((x) => {
-            return x.IdentifierUUID.includes(selectedRow.IdentifierUUID);
-          })[0][field.field]" class="col-md-9 p-0 pl-1" style="border: none" />
+          <input
+            v-if="trenchtoUpdate != ''"
+            type="text"
+            v-model="
+              trenchtoUpdate.filter((x) => {
+                return x.IdentifierUUID.includes(selectedRow.IdentifierUUID);
+              })[0][field.field]
+            "
+            class="col-md-9 p-0 pl-1"
+            style="border: none"
+          />
         </div>
-
       </ul>
     </div>
   </div>
@@ -50,7 +77,6 @@ export default {
     selectedRow: {
       type: Object,
       required: false,
-      
     },
     allTypes: {
       type: Object,
@@ -62,8 +88,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     trenchtoUpdate() {
@@ -139,21 +164,21 @@ export default {
 };
 </script>
 <style scoped>
-.overlayframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+.overlaywrapper {
+  position: fixed;
+  top: 5%;
+  left: 5%;
+  width: 90%;
   height: auto;
   background: rgba(0, 0, 0, 0.7);
-  z-index: 999;
+  z-index: 9999;
 }
 
 .overlay {
   height: auto;
-  margin-top: 3%;
-  margin-bottom: 3%;
-  width: 90%;
+  margin-top: 0%;
+  margin-bottom: 0%;
+  width: 100%;
   background: rgb(255, 255, 255);
 }
 

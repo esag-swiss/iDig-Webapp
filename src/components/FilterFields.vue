@@ -25,13 +25,15 @@
     </h3>
     <!-- liste les groupes pour le type selectionné -->
     <ul v-for="(group, index) in groups" :key="group" class="list-group">
-      <li v-if="group.hasOwnProperty('labels')"
+      <li
+        v-if="group.hasOwnProperty('labels')"
         class="list-group-item accordion"
         @click="isHiddenArray[index] = !isHiddenArray[index]"
       >
         {{ group.labels.fr }}
       </li>
-            <li v-else
+      <li
+        v-else
         class="list-group-item accordion"
         @click="isHiddenArray[index] = !isHiddenArray[index]"
       >
@@ -69,9 +71,8 @@
 
 <script>
 import preferencesData from "../data/Preferences.json";
-// import axios from "axios";
 
-export default { 
+export default {
   data() {
     return {
       fields: preferencesData.fields,
@@ -106,7 +107,6 @@ export default {
       ],
       lang: "fr", // for later dev
       img_url: "http://thacer.archaiodata.com/ThaCER.svg",
-      // testingsplit: "5500E8FB-7206-422C-9654-7679879ADCF2 B4F4278C-3995-4CBE-9CE6-156C7EEEE5CB",
     };
   },
   props: {
@@ -116,25 +116,20 @@ export default {
     },
   },
   computed: {
-    testing() { //pour les images
-      return this.selectedData.filter((x) => {
-        return x.IdentifierUUID.includes(
-          "1CF4D560-8E7B-4E94-BBB5-E893E463D1EC"
-        );
-      })[0].Type;
-    },
+
+    
     groups() {
       return this.types.filter((x) => {
         // la liste des fields par groupe se trouvent dans types.groups.fields
         return x.type.includes(this.selectedtype);
       })[0].groups;
     },
-    allfields() { // list les objet field dans l'array fields
+    allfields() {
+      // list les objets field dans l'array fields
       return this.fields.map(({ field }) => {
         return field;
       });
     },
-
     alllabels() {
       // je ne comprends pas grand chose mais ca marche et j'en suis fier !
       return this.fields.map((field) =>
@@ -214,9 +209,8 @@ export default {
               //     });
               //      URL.createObjectURL(blob);
               //   });
-              
 
-              return row.RelationIncludesUUID.split('\n');
+              return row.RelationIncludesUUID.split("\n");
 
               // return this.selectedData.filter((x) => {
               //   return x.IdentifierUUID.includes("1CF4D560-8E7B-4E94-BBB5-E893E463D1EC");
@@ -248,6 +242,7 @@ export default {
       }
     },
   },
+
   emits: ["checkFields", "selectedType"], // si je ne mets pas cette ligne j'ai un message Extraneous non-emits event listeners (checkFields) were passed to component but could not be automatically inherited
 };
 </script>

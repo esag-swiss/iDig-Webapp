@@ -1,15 +1,32 @@
 <template>
-  <over-lay :all-types="allTypes" :selected-type="selectedType" :selected-row="selectedRow" v-show="overlay"
-    @remove-overlay="removeLOverlay">
+  <div class="overlayframe" @click="removeLOverlay()" v-show="overlay"></div>
+  <over-lay
+    :all-types="allTypes"
+    :selected-type="selectedType"
+    :selected-row="selectedRow"
+    v-show="overlay"
+    
+  >
   </over-lay>
 
   <input class="m-2" v-model="searchTerm" />
   <!-- Work in progress bouton pour afficher les images des attachments -->
   <!-- <button type="button" @click="getImage">Image</button> -->
-  <table-lite :has-checkbox="true" :is-loading="table.isLoading" :is-re-search="table.isReSearch"
-    :columns="table.columns" :rows="table.rows" :is-static-mode="true" :rowClasses="table.rowClasses"
-    :total="table.totalRecordCount" :sortable="table.sortable" :messages="table.messages"
-    @is-finished="tableLoadingFinish" @return-checked-rows="updateCheckedRows" @row-clicked="rowClicked"></table-lite>
+  <table-lite
+    :has-checkbox="true"
+    :is-loading="table.isLoading"
+    :is-re-search="table.isReSearch"
+    :columns="table.columns"
+    :rows="table.rows"
+    :is-static-mode="true"
+    :rowClasses="table.rowClasses"
+    :total="table.totalRecordCount"
+    :sortable="table.sortable"
+    :messages="table.messages"
+    @is-finished="tableLoadingFinish"
+    @return-checked-rows="updateCheckedRows"
+    @row-clicked="rowClicked"
+  ></table-lite>
   <!-- Work in progress image test du bouton pour afficher les images des attachments -->
   <!-- <img id="image" src="http://thacer.archaiodata.com/ThaCER.svg" alt="test" width="280" /> -->
 </template>
@@ -44,12 +61,16 @@ export default defineComponent({
       type: Object,
       required: false,
     },
-
   },
   data() {
     return {
       // selectedRow: 'prout',
     };
+  },
+  methods: {
+    removeLOverlay() {
+      this.overlay = false;
+    }
   },
   setup(props) {
     const searchTerm = ref(""); // Search text
@@ -113,16 +134,13 @@ export default defineComponent({
     let overlay = ref(false);
     let selectedRow = ref();
     const rowClicked = (rowsKey) => {
-
       // console.log("Row clicked!", rowsKey);
       // Pour modifier une variable réactive, déclaré avec ref(), vous devez utiliser sa propriété .value
       overlay.value = true;
       selectedRow.value = rowsKey;
     };
 
-    const removeLOverlay = () => {
-      overlay.value = false;
-    };
+
 
     // Work in progress
     // fetch image from server when image button click
@@ -152,7 +170,7 @@ export default defineComponent({
           // eslint-disable-next-line
           alert(
             error +
-            "something goes wrong! Maybe image url broken, try another img url."
+              "something goes wrong! Maybe image url broken, try another img url."
           );
         });
     };
@@ -166,7 +184,7 @@ export default defineComponent({
       tableLoadingFinish,
       getImage,
       overlay,
-      removeLOverlay,
+      
       selectedRow,
     };
   },
@@ -214,5 +232,17 @@ export default defineComponent({
   position: absolute;
   right: 20px;
   background-color: white;
+}
+.overlayframe {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+}
+.overlayframe:hover {
+  background: rgba(0, 0, 0, 0.5);
 }
 </style>
