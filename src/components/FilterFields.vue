@@ -41,16 +41,11 @@
       </li>
       <!-- liste les champs pour chaque groupe -->
       <div v-if="!isHiddenArray[index]">
-        <div
-          v-for="field in group.fields"
-          :key="field"
-          @change="checkfields()"
-          class="m-0"
-        >
+        <div v-for="field in group.fields" :key="field" class="m-0">
           <input
             type="checkbox"
-            :id="checkFields.field"
             v-model="checkFields"
+            @change="checkfields()"
             :value="field"
           />
           <label class="pl-1 m-0" for="checkbox">{{
@@ -77,7 +72,8 @@ export default {
     return {
       fields: preferencesData.fields,
       types: preferencesData.types,
-      checkFields: [
+      checkFields: [],
+      defaultcheckFields: [
         // columns by default before any selection /!\ label needed to display headers
         { field: "Source", sortable: true, label: "Source", checked: true },
         { field: "Title", sortable: true, label: "Titre", checked: true },
@@ -85,12 +81,12 @@ export default {
           field: "Identifier",
           isKey: true,
           sortable: true,
-          label: "Identifier",
+          label: "Identifiant",
           checked: true,
         },
       ],
       selectedtype: "Artifact", // default type
-      isHidden: true,
+      // isHidden: true,
       isHiddenArray: [
         false,
         true,
@@ -106,7 +102,7 @@ export default {
         true,
       ],
       lang: "fr", // for later dev
-      img_url: "http://thacer.archaiodata.com/ThaCER.svg",
+      img_url: "http://thacer.archaiodata.com/ThaCER.svg", // test images
     };
   },
   props: {
@@ -116,28 +112,51 @@ export default {
     },
   },
   computed: {
-
-    
+    // liste les groupes pour l'accordéon
+    // info : la liste des fields par groupe se trouvent dans types.groups.fields
     groups() {
-      return this.types.filter((x) => {
-        // la liste des fields par groupe se trouvent dans types.groups.fields
-        return x.type.includes(this.selectedtype);
-      })[0].groups;
+      if (localStorage.types) {
+        return JSON.parse(localStorage.types).filter((x) => {
+          return x.type.includes(this.selectedtype);
+        })[0].groups;
+      } else {
+        return this.types.filter((x) => {
+          return x.type.includes(this.selectedtype);
+        })[0].groups;
+      }
     },
+
+    // liste tous les fields afin ensuite d'établi la liste des labels correspondants
     allfields() {
-      // list les objets field dans l'array fields
-      return this.fields.map(({ field }) => {
-        return field;
-      });
+      if (localStorage.fields) {
+        return JSON.parse(localStorage.fields).map(({ field }) => {
+          return field;
+        });
+      } else {
+        return this.fields.map(({ field }) => {
+          return field;
+        });
+      }
     },
+
     alllabels() {
-      // je ne comprends pas grand chose mais ca marche et j'en suis fier !
-      return this.fields.map((field) =>
-        field.labels !== undefined ? field.labels.fr : field.field
-      );
+      if (localStorage.fields) {
+        return JSON.parse(localStorage.fields).map((field) => {
+          if (Object.prototype.hasOwnProperty.call(field, "labels")) {
+            return field.labels[localStorage.lang];
+          } else {
+            return field.field;
+          }
+        });
+      } else {
+        return this.fields.map((field) =>
+          field.labels !== undefined ? field.labels.en : field.field
+        );
+      }
     },
+
     fieldLabel() {
-      // calcul les correspondances field : label dans un objet field : label
+      // calcule les correspondances field : label dans un objet field : label
       // sert pour afficher les labels des check box
       var langKeys = {};
       var i;
@@ -147,8 +166,7 @@ export default {
       return langKeys;
     },
 
-    // Maintenant on travaille pour faire le tableau des headers
-    // dans le format de TableLite
+    // Maintenant on travaille pour faire le tableau des headers dans le format de TableLite
     addsortabletrue() {
       // j'ajoute les propriétés label et sortable: true
       // pas certain que tous les undefined soient gérés
@@ -160,10 +178,13 @@ export default {
 
   methods: {
     changeSelectedType: function () {
+      this.checkFields = this.defaultcheckFields;
       // reçoit du @change et renvoie au parent
       this.$emit("selected-type", this.selectedtype);
+      this.$emit("check-fields", this.addsortabletrue);
     },
     checkfields() {
+
       // reçoit du @change et renvoie au parent
       this.$emit("check-fields", this.addsortabletrue);
     },
@@ -253,7 +274,7 @@ export default {
   background-color: #eee;
   cursor: pointer;
   color: #444;
-  padding: 5px;
+  padding: 0.1rem;
   width: 100%;
   text-align: left;
   border: none;

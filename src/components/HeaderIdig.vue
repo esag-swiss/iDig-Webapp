@@ -10,21 +10,53 @@
       <form class="form-inline my-2 my-lg-0">
         <!-- select server -->
         <div class="navbar-text text-light p-2">server:</div>
-        <input class="my-2 text-light" v-model="server" style="background: #212529; border: 0px; width: 7em" />
+        <input
+          class="my-2 text-light"
+          v-model="server"
+          style="background: #212529; border: 0px; width: 7em"
+        />
         <!-- select project -->
         <a class="navbar-text text-light p-2">project:</a>
-        <select class="m-2 text-light" v-model="project" style="background: #212529; border: 0px; height: 26px">
+        <select
+          class="m-2 text-light"
+          v-model="project"
+          style="background: #212529; border: 0px; height: 26px"
+        >
           <option v-for="project in projects" :key="project" :value="project">
             {{ project }}
           </option>
         </select>
         <!-- select user -->
         <a class="navbar-text text-light p-2">user:</a>
-        <input class="m-2 text-light" v-model="username" style="background: #212529; border: 0px; width: 6em" />
-        <input type="password" class="m-2 text-light" v-model="password"
-          style="background: #212529; border: 0px; width: 6em" placeholder="Password" />
-        <button type="button" class="btn btn-outline-secondary my-0 my-sm-0 m-2 p-0" :class="{ isConnected: isActive }"
-          @click="Connexion()">
+        <input
+          class="m-2 text-light"
+          v-model="username"
+          style="background: #212529; border: 0px; width: 6em"
+        />
+        <input
+          type="password"
+          class="m-2 text-light"
+          v-model="password"
+          style="background: #212529; border: 0px; width: 6em"
+          placeholder="Password"
+        />
+         <!-- select lang -->
+        
+        <select
+          class="m-2 text-light"
+          v-model="lang"
+          style="background: #212529; border: 0px; height: 26px"
+        >
+          <option v-for="lang in langs" :key="lang" :value="lang">
+            {{ lang }}
+          </option>
+        </select>
+        <button
+          type="button"
+          class="btn btn-outline-secondary my-0 my-sm-0 m-2 p-0"
+          :class="{ isConnected: isActive }"
+          @click="Connexion()"
+        >
           connexion
         </button>
       </form>
@@ -43,8 +75,10 @@ export default {
       project: "Amarynthos",
       username: "idig",
       password: "idig",
+      lang: "fr",
       Preferences: Preferences,
       projects: Preferences.projects,
+      langs: ['fr','en','el'],
       isActive: false,
     };
   },
@@ -53,7 +87,10 @@ export default {
   },
   // charge les préférences de connexion si elles existent
   mounted() {
-    if (localStorage.IdigServer) {
+    if (localStorage.lang) {
+      this.lang = localStorage.lang;
+    }
+        if (localStorage.IdigServer) {
       this.server = localStorage.IdigServer;
     }
     if (localStorage.project) {
@@ -74,14 +111,12 @@ export default {
 
   methods: {
     Connexion: function () {
-
-      // clean server entry by user 
+      // clean server entry by user
       this.server = this.server.replace("https://", "");
       this.server = this.server.replace("http://", "");
       this.server = this.server.replace(":9000", "");
       // retrieve preferences from server if connection settings valid
       axios({
-
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
@@ -107,11 +142,11 @@ export default {
           this.isActive = true;
           // envoi les trenches du projet au parent
           this.$emit("all-trenches", this.trenches); // pour lister les trenches à gauche peut etre doublon avec local storage
-          
+
           // stores  prefences base64 in session storage to allow PUSH
           sessionStorage.setItem("preferences", response.data.preferences);
 
-          // get preferences in json to access groupes, types, fields etc 
+          // get preferences in json to access groupes, types, fields etc
           this.preferences = decodeURIComponent(
             escape(window.atob(response.data.preferences))
           ); // escape is deprecated
@@ -121,9 +156,11 @@ export default {
           localStorage.setItem("types", JSON.stringify(this.preferences.types));
           this.$emit("all-types", this.preferences.types);
 
-
+          // utilisé par FilterFields.vue pour afficher les champs
+          localStorage.setItem("fields", JSON.stringify(this.preferences.fields));
 
           // store to local
+          localStorage.setItem("lang", this.lang);
           localStorage.setItem("IdigServer", this.server);
           localStorage.setItem("project", this.project);
           localStorage.setItem("username", this.username);
@@ -132,6 +169,7 @@ export default {
             "trenches",
             JSON.stringify(this.Preferences[this.project])
           );
+
         })
         .catch((error) => {
           this.isActive = false;
