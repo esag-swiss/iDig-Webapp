@@ -1,4 +1,10 @@
 <template>
+  <input
+    class="m-0 form-control input-sm"
+    v-model="search"
+    placeholder="Search..."
+    @input="filteredList(), testingKey()"
+  />
   <div class="p-1 m-1 bg-light border border-grey rounded">
     <h3>Trenches</h3>
     <ul v-for="(n, index) in groupedTrenches" :key="n" class="list-group">
@@ -37,8 +43,12 @@ export default {
   },
   data() {
     return {
+      search: "",
+      search2: "",
+      filtarraytemp: [],
       checkedTrenches: [], // attention garde en mémoire les trenches cochées lorsque l'on change de projet
       arr: [], // data de toutes les trenches, pourra être remplacé par trenchData
+      arrtoEmit: [],
       trenchesData: {},
       trenchesVersion: {},
       isHiddenArray: [
@@ -59,7 +69,6 @@ export default {
         true,
         true,
       ],
-      test: ["AMA", "AMA", "BABA"],
     };
   },
 
@@ -119,8 +128,50 @@ export default {
       });
       this.$emit("selected-trench", this.arr);
     },
+    filteredList() {
+      let champ = this.search;
+      if (champ.includes(":")) {
+        champ = champ.split(":");
+        // limite d'abord tout les objet ayant la proprieté demandée
+        this.arrtoEmit = this.arr.filter((x) =>
+          Object.prototype.hasOwnProperty.call(x, champ[0])
+        );
+        this.arrtoEmit = this.arrtoEmit.filter(function (x) {
+          
+          return x[champ[0]].toLowerCase().includes(champ[1]);
+        });
+      } else {
+        this.arrtoEmit = this.arr.filter((x) => {
+          return (
+            x.Title.toLowerCase().includes(this.search.toLowerCase()) ||
+            x.IdentifierUUID.toLowerCase().includes(this.search.toLowerCase()) ||
+            x.Identifier.toLowerCase().includes(this.search.toLowerCase())
+          );
+        });
+      }
+
+      this.$emit("selected-trench", this.arrtoEmit);
+    },
+
+    testingKeys() {
+      let champ = this.search;
+      if (champ.includes(":")) {
+        champ = champ.split(":");
+        this.filtarraytemp = this.arr.filter((x) =>
+          Object.prototype.hasOwnProperty.call(x, champ[0])
+        );
+        this.filtarraytemp = this.filtarraytemp.filter(function (x) {
+          // return x.Title.toLowerCase().includes('frag') || x.IdentifierUUID.toLowerCase().includes("35");
+          return x.Title.toLowerCase().includes(champ[1]);
+        });
+      }
+    },
   },
 };
 </script>
 <style>
+.form-control {
+  /* height: calc(1em + 0.75rem + 2px); */
+  width: 98%;
+}
 </style>

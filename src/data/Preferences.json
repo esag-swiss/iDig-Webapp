@@ -1,7 +1,10 @@
 {
 	"version": 3,
 	"project": "Amarynthos",
-	"projects": ["Amarynthos", "Agora"],
+	"projects": [
+		"Amarynthos",
+		"Agora"
+	],
 	"crs": "Amarynthos",
 	"maxdigits": "6.3",
 	"_comment": [
@@ -3903,6 +3906,7 @@
 		"ΒΘ West 2013"
 	],
 	"Amarynthos": [
+		"AMA21-S24",
 		"AMA_Kokalas",
 		"AMA-Micromorpho",
 		"AMA07",
@@ -3978,7 +3982,6 @@
 		"AMA21-Plans",
 		"AMA21-S21",
 		"AMA21-S22N",
-		"AMA21-S24",
 		"AMA21-S28",
 		"AMA21-S2801",
 		"AMA21-S2802",

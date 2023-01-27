@@ -4,7 +4,7 @@
     <div class="vtl-card-body">
       <div class="vtl-row">
         <div
-          class="col-sm-12"
+          class="col-sm-12 p-1 rounded rounded"
           :class="{
             'fixed-first-column': isFixedFirstColumn,
             'fixed-first-second-column': isFixedFirstColumn && hasCheckbox,
@@ -16,7 +16,7 @@
             </div>
           </div>
           <table
-            class="vtl-table vtl-table-hover vtl-table-bordered vtl-table-responsive vtl-table-responsive-sm"
+            class="vtl-table vtl-table-hover vtl-table-bordered vtl-table-responsive vtl-table-responsive-sm rounded"
             ref="localTable"
           >
             <thead class="vtl-thead">

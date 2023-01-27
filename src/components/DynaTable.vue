@@ -5,11 +5,11 @@
     :selected-type="selectedType"
     :selected-row="selectedRow"
     v-show="overlay"
-    
   >
   </over-lay>
+  <!-- old search method -->
+  <!-- <input class="m-2" v-model="searchTerm" /> -->
 
-  <input class="m-2" v-model="searchTerm" />
   <!-- Work in progress bouton pour afficher les images des attachments -->
   <!-- <button type="button" @click="getImage">Image</button> -->
   <table-lite
@@ -70,7 +70,7 @@ export default defineComponent({
   methods: {
     removeLOverlay() {
       this.overlay = false;
-    }
+    },
   },
   setup(props) {
     const searchTerm = ref(""); // Search text
@@ -140,8 +140,6 @@ export default defineComponent({
       selectedRow.value = rowsKey;
     };
 
-
-
     // Work in progress
     // fetch image from server when image button click
     const getImage = () => {
@@ -184,7 +182,7 @@ export default defineComponent({
       tableLoadingFinish,
       getImage,
       overlay,
-      
+
       selectedRow,
     };
   },
