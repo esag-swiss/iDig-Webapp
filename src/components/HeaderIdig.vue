@@ -42,7 +42,7 @@
         />
          <!-- select lang -->
         
-        <select
+        <!-- <select
           class="m-2 text-light"
           v-model="lang"
           style="background: #212529; border: 0px; height: 26px"
@@ -50,7 +50,7 @@
           <option v-for="lang in langs" :key="lang" :value="lang">
             {{ lang }}
           </option>
-        </select>
+        </select> -->
         <button
           type="button"
           class="btn btn-outline-secondary my-0 my-sm-0 m-2 p-0"

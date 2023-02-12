@@ -6,7 +6,7 @@
     @input="filteredList()"
   />
   <div class="p-1 m-1 bg-light border border-grey rounded">
-    <h3>Sondages</h3>
+    <h3>Secteurs</h3>
     <ul v-for="(n, index) in groupedTrenches" :key="n" class="list-group">
       <li
         class="list-group-item accordion"
