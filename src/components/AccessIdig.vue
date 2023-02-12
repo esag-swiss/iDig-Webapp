@@ -3,10 +3,10 @@
     class="m-0 form-control input-sm"
     v-model="search"
     placeholder="Search..."
-    @input="filteredList(), testingKey()"
+    @input="filteredList()"
   />
   <div class="p-1 m-1 bg-light border border-grey rounded">
-    <h3>Trenches</h3>
+    <h3>Sondages</h3>
     <ul v-for="(n, index) in groupedTrenches" :key="n" class="list-group">
       <li
         class="list-group-item accordion"
@@ -44,8 +44,6 @@ export default {
   data() {
     return {
       search: "",
-      search2: "",
-      filtarraytemp: [],
       checkedTrenches: [], // attention garde en mémoire les trenches cochées lorsque l'on change de projet
       arr: [], // data de toutes les trenches, pourra être remplacé par trenchData
       arrtoEmit: [],
@@ -73,16 +71,11 @@ export default {
   },
 
   computed: {
-    first5Trenches() {
-      // return this.allTrenches.map(([v]) => v);
+    first5Trenches() { // new array of 5 substring
       return this.allTrenches.map((x) => x.substr(0, 5));
     },
-    groupedTrenches() {
+    groupedTrenches() { // groups and send reverse order
       return [...new Set(this.first5Trenches)].sort().reverse();
-    },
-
-    nbtrenches() {
-      return parseInt((this.allTrenches.length + 10) * 0.1);
     },
   },
 
@@ -132,39 +125,23 @@ export default {
       let champ = this.search;
       if (champ.includes(":")) {
         champ = champ.split(":");
-        // limite d'abord tout les objet ayant la proprieté demandée
+        // limite d'abord tout les objets ayant la proprieté demandée
         this.arrtoEmit = this.arr.filter((x) =>
           Object.prototype.hasOwnProperty.call(x, champ[0])
         );
         this.arrtoEmit = this.arrtoEmit.filter(function (x) {
-          
-          return x[champ[0]].toLowerCase().includes(champ[1]);
+          return x[champ[0]].toLowerCase().includes(champ[1].toLowerCase());
         });
+        // search in all proprties 
       } else {
-        this.arrtoEmit = this.arr.filter((x) => {
-          return (
-            x.Title.toLowerCase().includes(this.search.toLowerCase()) ||
-            x.IdentifierUUID.toLowerCase().includes(this.search.toLowerCase()) ||
-            x.Identifier.toLowerCase().includes(this.search.toLowerCase())
+        this.arrtoEmit = this.arr.filter((o) =>
+            Object.keys(o).some((k) =>
+              o[k].toLowerCase().includes(this.search.toLowerCase())
+            )
           );
-        });
       }
 
       this.$emit("selected-trench", this.arrtoEmit);
-    },
-
-    testingKeys() {
-      let champ = this.search;
-      if (champ.includes(":")) {
-        champ = champ.split(":");
-        this.filtarraytemp = this.arr.filter((x) =>
-          Object.prototype.hasOwnProperty.call(x, champ[0])
-        );
-        this.filtarraytemp = this.filtarraytemp.filter(function (x) {
-          // return x.Title.toLowerCase().includes('frag') || x.IdentifierUUID.toLowerCase().includes("35");
-          return x.Title.toLowerCase().includes(champ[1]);
-        });
-      }
     },
   },
 };
