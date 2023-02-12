@@ -68,13 +68,13 @@ export default {
       selectedFilter: "Artifact", // type by default
       checkedFields: [
         // columns by default before any selection /!\ label needed to display headers
-        { field: "Source", sortable: true, label: "Source" },
+        { field: "Source", sortable: true, label: "Secteur" },
         { field: "Title", sortable: true, label: "Titre" },
         {
           field: "Identifier",
           isKey: true,
           sortable: true,
-          label: "Identifier",
+          label: "Identifiant",
         },
       ],
       // trenchesversion: {},

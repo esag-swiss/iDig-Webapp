@@ -13,7 +13,7 @@
   <!-- Work in progress bouton pour afficher les images des attachments -->
   <!-- <button type="button" @click="getImage">Image</button> -->
   <table-lite
-    :has-checkbox="true"
+    :has-checkbox="false"
     :is-loading="table.isLoading"
     :is-re-search="table.isReSearch"
     :columns="table.columns"

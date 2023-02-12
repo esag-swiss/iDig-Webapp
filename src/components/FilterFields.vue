@@ -55,12 +55,13 @@
       </div>
     </ul>
 
-    <input
+    <!-- lignes commentées work in progress pour visualiser les images
+       <input
       id="checkboxattachment"
       type="checkbox"
       @change="attachmentcolumn(img_url)"
-    />
-    <label class="p-1 my-0" for="checkbox">attachments</label>
+    /> 
+    <label class="p-1 my-0" for="checkbox">attachments</label> -->
   </div>
 </template>
 
@@ -75,7 +76,7 @@ export default {
       checkFields: [],
       defaultcheckFields: [
         // columns by default before any selection /!\ label needed to display headers
-        { field: "Source", sortable: true, label: "Source", checked: true },
+        { field: "Source", sortable: true, label: "Secteur", checked: true },
         { field: "Title", sortable: true, label: "Titre", checked: true },
         {
           field: "Identifier",
@@ -88,7 +89,7 @@ export default {
       selectedtype: "Artifact", // default type
       // isHidden: true,
       isHiddenArray: [
-        false,
+        true,
         true,
         true,
         true,
