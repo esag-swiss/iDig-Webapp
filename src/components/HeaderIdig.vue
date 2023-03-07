@@ -40,8 +40,8 @@
           style="background: #212529; border: 0px; width: 6em"
           placeholder="Password"
         />
-         <!-- select lang -->
-        
+        <!-- select lang -->
+
         <!-- <select
           class="m-2 text-light"
           v-model="lang"
@@ -75,11 +75,12 @@ export default {
       project: "Amarynthos",
       username: "idig",
       password: "idig",
-      lang: "fr",
       Preferences: Preferences,
       projects: Preferences.projects,
-      langs: ['fr','en','el'],
+      langs: ["fr", "en", "el"],
+      lang: "fr",
       isActive: false,
+      allTrenches: [], // a nettoyer
     };
   },
   components: {
@@ -90,7 +91,7 @@ export default {
     if (localStorage.lang) {
       this.lang = localStorage.lang;
     }
-        if (localStorage.IdigServer) {
+    if (localStorage.IdigServer) {
       this.server = localStorage.IdigServer;
     }
     if (localStorage.project) {
@@ -110,7 +111,7 @@ export default {
   },
 
   methods: {
-    Connexion: function () {
+    Connexion() {
       // clean server entry by user
       this.server = this.server.replace("https://", "");
       this.server = this.server.replace("http://", "");
@@ -120,56 +121,105 @@ export default {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        method: "post",
+        method: "get",
         url:
-          "http://" +
-          this.server +
-          ":9000/idig/" +
-          this.project +
-          "/" +
-          this.trenches[0],
+          "http://" + this.server + ":9000/idig/" + this.project + "/trenches",
         auth: {
           username: this.username,
           password: this.password,
         },
-        data: {
-          head: "",
-          surveys: [],
-        },
       })
         .then((response) => {
-          // switch button to green
+          // switch button to green , ajouter if trenches loaded ?
           this.isActive = true;
-          // envoi les trenches du projet au parent
-          this.$emit("all-trenches", this.trenches); // pour lister les trenches à gauche peut etre doublon avec local storage
-
-          // stores  prefences base64 in session storage to allow PUSH
-          sessionStorage.setItem("preferences", response.data.preferences);
-
-          // get preferences in json to access groupes, types, fields etc
-          this.preferences = decodeURIComponent(
-            escape(window.atob(response.data.preferences))
-          ); // escape is deprecated
-          this.preferences = JSON.parse(this.preferences);
-
-          // utilisé par Overlay.vue pour afficher les champs attachés au type d'objet
-          localStorage.setItem("types", JSON.stringify(this.preferences.types));
-          this.$emit("all-types", this.preferences.types);
-
-          // utilisé par FilterFields.vue pour afficher les champs
-          localStorage.setItem("fields", JSON.stringify(this.preferences.fields));
 
           // store to local
-          localStorage.setItem("lang", this.lang);
           localStorage.setItem("IdigServer", this.server);
           localStorage.setItem("project", this.project);
           localStorage.setItem("username", this.username);
           localStorage.setItem("password", this.password);
+          localStorage.setItem("lang", this.lang);
           localStorage.setItem(
             "trenches",
-            JSON.stringify(this.Preferences[this.project])
+            JSON.stringify(
+              response.data.filter(
+                (item) => item !== "refs" && item !== "objects"
+              )
+            )
           );
 
+          // envoi les trenches du projet au parent
+          this.$emit(
+            "all-trenches",
+            response.data.filter(
+              (item) => item !== "refs" && item !== "objects"
+            )
+          ); // pour lister les trenches à gauche peut etre doublon avec local storage
+          this.allTrenches = response.data.filter(
+            (item) => item !== "refs" && item !== "objects"
+          );
+
+          // une fois la liste des trenches établie va chercher les pref de la première trenche
+          axios({
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            method: "post",
+            url:
+              "http://" +
+              this.server +
+              ":9000/idig/" +
+              this.project +
+              "/" +
+              this.allTrenches[0],
+            auth: {
+              username: this.username,
+              password: this.password,
+            },
+            data: {
+              head: "",
+              surveys: [],
+            },
+          })
+            .then((response) => {
+              // stores  prefences base64 in session storage to allow PUSH
+              sessionStorage.setItem("preferences", response.data.preferences);
+
+              // get preferences in json to access groupes, types, fields etc
+              this.preferences = decodeURIComponent(
+                escape(window.atob(response.data.preferences))
+              ); // escape is deprecated
+              this.preferences = JSON.parse(this.preferences);
+
+              // utilisé par Overlay.vue pour afficher les champs attachés au type d'objet
+              localStorage.setItem(
+                "types",
+                JSON.stringify(this.preferences.types)
+              );
+              sessionStorage.setItem(
+                "types",
+                JSON.stringify(this.preferences.types)
+              );
+              this.$emit("all-types", this.preferences.types);
+
+              // utilisé par FilterFields.vue pour afficher les champs
+              localStorage.setItem(
+                "fields",
+                JSON.stringify(this.preferences.fields)
+              );
+            })
+            .catch((error) => {
+              this.isActive = false;
+              if (error.response.status == 401) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                alert(error.response.data + "or project"); // idig server retourne 401 si le endpoint n'est pas bon
+                console.log(error.response.status);
+                console.log(error.response.headers);
+              } else {
+                alert("server not reachable");
+              }
+            });
         })
         .catch((error) => {
           this.isActive = false;
@@ -180,7 +230,82 @@ export default {
             console.log(error.response.status);
             console.log(error.response.headers);
           } else {
-            alert("server not reachable");
+            // alert("server not reachable");
+            axios({
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              method: "post",
+              url:
+                "http://" +
+                this.server +
+                ":9000/idig/" +
+                this.project +
+                "/" +
+                this.trenches[0],
+              auth: {
+                username: this.username,
+                password: this.password,
+              },
+              data: {
+                head: "",
+                surveys: [],
+              },
+            })
+              .then((response) => {
+                // switch button to green
+                this.isActive = true;
+                // envoi les trenches du projet au parent
+                this.$emit("all-trenches", this.trenches); // pour lister les trenches à gauche peut etre doublon avec local storage
+
+                // stores  prefences base64 in session storage to allow PUSH
+                sessionStorage.setItem(
+                  "preferences",
+                  response.data.preferences
+                );
+
+                // get preferences in json to access groupes, types, fields etc
+                this.preferences = decodeURIComponent(
+                  escape(window.atob(response.data.preferences))
+                ); // escape is deprecated
+                this.preferences = JSON.parse(this.preferences);
+
+                // utilisé par Overlay.vue pour afficher les champs attachés au type d'objet
+                localStorage.setItem(
+                  "types",
+                  JSON.stringify(this.preferences.types)
+                );
+                this.$emit("all-types", this.preferences.types);
+
+                // utilisé par FilterFields.vue pour afficher les champs
+                localStorage.setItem(
+                  "fields",
+                  JSON.stringify(this.preferences.fields)
+                );
+
+                // store to local
+                localStorage.setItem("lang", this.lang);
+                localStorage.setItem("IdigServer", this.server);
+                localStorage.setItem("project", this.project);
+                localStorage.setItem("username", this.username);
+                localStorage.setItem("password", this.password);
+                localStorage.setItem(
+                  "trenches",
+                  JSON.stringify(this.Preferences[this.project])
+                );
+              })
+              .catch((error) => {
+                this.isActive = false;
+                if (error.response.status == 401) {
+                  // The request was made and the server responded with a status code
+                  // that falls out of the range of 2xx
+                  alert(error.response.data + "or project"); // idig server retourne 401 si le endpoint n'est pas bon
+                  console.log(error.response.status);
+                  console.log(error.response.headers);
+                } else {
+                  alert("server not reachable");
+                }
+              });
           }
         });
     },
