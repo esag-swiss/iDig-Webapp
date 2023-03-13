@@ -6,7 +6,7 @@
     @input="filteredList()"
   />
   <div class="p-1 m-1 bg-light border border-grey rounded">
-    <h3>Secteurs</h3>
+    <h3 @click="downloadTrenches()">Secteurs</h3>
     <ul v-for="(n, index) in groupedTrenches" :key="n" class="list-group">
       <li
         class="list-group-item accordion"
@@ -33,6 +33,8 @@
 
 <script>
 import axios from "axios";
+import { json2geojson } from "@/assets/json2geojson";
+import { geojson } from "@/assets/json2geojson";
 
 export default {
   props: {
@@ -71,15 +73,48 @@ export default {
   },
 
   computed: {
-    first5Trenches() { // new array of 5 substring
+    first5Trenches() {
+      // new array of 5 substring
       return this.allTrenches.map((x) => x.substr(0, 5));
     },
-    groupedTrenches() { // groups and send reverse order
+    groupedTrenches() {
+      // groups and send reverse order
       return [...new Set(this.first5Trenches)].sort().reverse();
+    },
+    geojson() {
+      return geojson;
     },
   },
 
   methods: {
+    downloadTrenches: function () {
+      const data = JSON.stringify(this.arr);
+      const blob = new Blob([data], { type: "text/plain" });
+      const e = document.createEvent("MouseEvents"),
+        a = document.createElement("a");
+      a.download = "trenches.geojson";
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
+      e.initEvent(
+        "click",
+        true,
+        false,
+        window,
+        0,
+        0,
+        0,
+        0,
+        0,
+        false,
+        false,
+        false,
+        false,
+        0,
+        null
+      );
+      a.dispatchEvent(e);
+    },
+
     addSelectedTrench: function () {
       this.arr = [];
       // this.trenchesData = {},
@@ -120,6 +155,7 @@ export default {
         });
       });
       this.$emit("selected-trench", this.arr);
+      json2geojson(this.arr);
     },
     filteredList() {
       let champ = this.search;
@@ -132,13 +168,16 @@ export default {
         this.arrtoEmit = this.arrtoEmit.filter(function (x) {
           return x[champ[0]].toLowerCase().includes(champ[1].toLowerCase());
         });
-        // search in all proprties 
+        // search in all proprties
       } else {
-        this.arrtoEmit = this.arr.filter((o) =>
+        this.arrtoEmit = this.arr.filter(
+          (
+            o // array d'objets
+          ) =>
             Object.keys(o).some((k) =>
               o[k].toLowerCase().includes(this.search.toLowerCase())
             )
-          );
+        );
       }
 
       this.$emit("selected-trench", this.arrtoEmit);
