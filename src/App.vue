@@ -43,12 +43,12 @@
 </template>
 
 <script>
-import AccessIdig from "./components/AccessIdig.vue";
-import HeaderIdig from "./components/HeaderIdig.vue";
-import FilterFields from "./components/FilterFields.vue";
-import DynaTable from "./components/DynaTable.vue";
-import preferencesData from "./data/Preferences.json";
-import Data from "./data/AMA21-S24.json"; //Default data
+import AccessIdig from "@/components/AccessIdig.vue";
+import HeaderIdig from "@/components/HeaderIdig.vue";
+import FilterFields from "@/components/FilterFields.vue";
+import DynaTable from "@/components/DynaTable.vue";
+import preferencesData from "@/data/Preferences.json";
+import Data from "@/data/AMA21-S24.json"; //Default data
 
 export default {
   name: "App",

@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import preferencesData from "../data/Preferences.json";
+import preferencesData from "@/data/Preferences.json";
 
 export default {
   data() {

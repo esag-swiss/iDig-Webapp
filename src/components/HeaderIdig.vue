@@ -65,8 +65,8 @@
 </template>
 <script>
 import axios from "axios";
-import Burger from "../components/Burger.vue";
-import Preferences from "../data/Preferences.json";
+import Burger from "@/components/Burger.vue";
+import Preferences from "@/data/Preferences.json";
 
 export default {
   data() {

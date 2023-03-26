@@ -33,8 +33,8 @@
 
 <script>
 import { defineComponent, reactive, ref, computed, toRef } from "vue";
-import TableLite from "../components/TableLite.vue";
-import OverLay from "../components/OverLay.vue";
+import TableLite from "@/components/TableLite.vue";
+import OverLay from "@/components/OverLay.vue";
 import axios from "axios";
 
 export default defineComponent({

@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import trenchData from "../data/AMA21-S24.json";
-import preferencesData from "../data/AMA21-S24.Preferences.json";
+import trenchData from "@/data/AMA21-S24.json";
+import preferencesData from "@/data/AMA21-S24.Preferences.json";
 
 export default {
   data() {
