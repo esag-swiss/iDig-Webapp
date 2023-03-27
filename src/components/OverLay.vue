@@ -31,10 +31,10 @@
       </div>
 
       <!--Formulaire-->
-
+      <!-- espace de travail finds 3254 ; Material  3450-->
       <ul v-for="group in groups" :key="group" class="list-group">
         <li
-          v-if="group.labels.hasOwnProperty('fr')"
+          v-if="group.hasOwnProperty('labels')"
           class="list-group-item accordion"
         >
           <!-- attention gérer les langues -->
@@ -50,18 +50,104 @@
           :key="field"
           class="row align-items-start border-bottom my-1"
         >
-          <div v-if="selectedRow" class="col-md-3">{{ field.field }}</div>
-          <input
-            v-if="trenchtoUpdate != ''"
-            type="text"
-            v-model="
-              trenchtoUpdate.filter((x) => {
-                return x.IdentifierUUID.includes(selectedRow.IdentifierUUID);
-              })[0][field.field]
-            "
-            class="col-md-9 p-0 pl-1"
-            style="border: none"
-          />
+          <!-- Nom du Champ : A METTRE EN FR  -->
+          <p class="col-md-3">{{ field.field }}</p>
+          <!-- valeur du Champ : mille cases  -->
+
+          <!-- 0  Champ existe dans fields  -->
+          <div class="col-md-9 p-0 pl-1" v-if="fieldExist(field.field) != 0">
+            <!-- 1  Champ == type  -->
+            <div class="col-md-12 p-0 pl-1" v-if="field.field == 'Type'">
+              <select class="col-md-12" style="border: none">
+                <option value="selectedRow.type">{{ selectedRow.Type }}</option>
+                <option v-for="type in allTypes" :key="type" :value="type.type">
+                  {{ type.type }}
+                </option>
+              </select>
+            </div>
+
+            <!-- 1  Champ date -->
+            <p
+              v-else-if="field.field == 'DateEarliest'"
+              class="col-md-12 p-0 pl-1"
+              style="border: none"
+            >
+              {{
+                Date(
+                  trenchtoUpdate.filter((x) => {
+                    return x.IdentifierUUID == selectedRow.IdentifierUUID;
+                  })[0][field.field]
+                )
+              }}
+            </p>
+            <!-- 1  Champ != type NOR date  -->
+
+            <div v-else>
+              <!-- 2 has property valuelist  -->
+              <div v-if="fieldType(field.field).hasOwnProperty('valuelist')">
+                <!-- 3 valuelist n'est pas vide  -->
+                <div
+                  v-if="fieldType(field.field).valuelist.length > 0"
+                  class="col-md-12 p-0 pl-1"
+                >
+                  <!-- 4 if multivalue  -->
+                  <select class="col-md-12 p-0 pl-1" style="border: none">
+                    <option value="selectedRow.type">
+                      {{ selectedRow[field.field] }}
+                    </option>
+
+                    <option v-for="type in valuelist" :key="type" :value="type">
+                      {{ type }}
+                    </option>
+
+                    <option></option>
+                  </select>
+                </div>
+                <!-- valuelist empty : exemple titre, doit se générer sur les exemples dans le même type -->
+
+                <!-- pour l'instant n'affiche que la value -->
+
+                <input
+                  v-else
+                  type="text"
+                  v-model="
+                    trenchtoUpdate.filter((x) => {
+                      return x.IdentifierUUID == selectedRow.IdentifierUUID;
+                    })[0][field.field]
+                  "
+                  class="col-md-12 p-0 pl-1"
+                  style="border: none"
+                />
+              </div>
+              <textarea
+                v-else-if="fieldType(field.field).hasOwnProperty('multiline')"
+                class="col-md-12 p-0 pl-1"
+                style="border: none"
+                v-model="
+                  trenchtoUpdate.filter((x) => {
+                    return x.IdentifierUUID == selectedRow.IdentifierUUID;
+                  })[0][field.field]
+                "
+              ></textarea>
+
+              <!-- cas basique champ avec properties field et label -->
+              <input
+                v-else
+                type="text"
+                v-model="
+                  trenchtoUpdate.filter((x) => {
+                    return x.IdentifierUUID == selectedRow.IdentifierUUID;
+                  })[0][field.field]
+                "
+                class="col-md-12 p-0 pl-1"
+                style="border: none"
+              />
+            </div>
+          </div>
+          <!-- 0 le champ n'est pas dans pref.fields -->
+          <div v-else class="col-md-9 p-0 pl-1">
+            Not listed as field, will be displayed in a further component
+          </div>
         </div>
       </ul>
     </div>
@@ -88,12 +174,39 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      temp: ["papi", "prout", "truc"],
+      field: "Material",
+    };
   },
   computed: {
+    AAA() {
+      // attention fields ne liste pas tous les champs
+      return JSON.parse(localStorage.fields).filter((x) => x.field == "Type");
+    },
+
+    AAAA() {
+      return Object.hasOwn(this.AAA, "valuelist");
+    },
+
+    valuelist() {
+      return JSON.parse(localStorage.fields)[33].valuelist;
+    },
+
+    selectedTrench() {
+      if (this.selectedRow) {
+        var array = Object.entries(JSON.parse(sessionStorage.trenchesData)); //object into array
+        return array.filter((x) =>
+          x[1].some((k) =>
+            k.IdentifierUUID.includes(this.selectedRow.IdentifierUUID)
+          )
+        )[0][0];
+      } else return "";
+    },
+
     trenchtoUpdate() {
       if (this.selectedRow) {
-        return JSON.parse(sessionStorage.trenchesData)[this.selectedRow.Source];
+        return JSON.parse(sessionStorage.trenchesData)[this.selectedTrench];
       } else return "";
     },
     groups() {
@@ -107,19 +220,21 @@ export default {
     },
   },
   methods: {
+    fieldExist(field) {
+      // attention comme fields ne liste pas tous les champs on verifie si il existe
+      return JSON.parse(localStorage.fields).filter((x) => x.field == field)
+        .length;
+    },
+
+    fieldType(field) {
+      // attention fields ne liste pas tous les champs
+      return JSON.parse(localStorage.fields).filter((x) => x.field == field)[0];
+    },
+
     setUserPreferences() {
       // alert("to use for user preferences settings")
     },
     pushSurvey() {
-      console.log(this.selectedRow.Title);
-      console.log(
-        JSON.parse(sessionStorage.trenchesData)[this.selectedRow.Source].filter(
-          (x) => {
-            return x.IdentifierUUID.includes(this.selectedRow.IdentifierUUID);
-          }
-        )[0]
-      );
-      console.log(this.selectedRow);
       axios({
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -131,15 +246,13 @@ export default {
           ":9000/idig/" +
           localStorage.project +
           "/" +
-          this.selectedRow.Source,
+          this.selectedTrench,
         auth: {
           username: localStorage.username,
           password: localStorage.password,
         },
         data: {
-          head: JSON.parse(sessionStorage.trenchesVersion)[
-            this.selectedRow.Source
-          ],
+          head: JSON.parse(sessionStorage.trenchesVersion)[this.selectedTrench],
           device: "webapp",
           surveys: this.trenchtoUpdate,
           preferences: sessionStorage.preferences,
@@ -165,10 +278,10 @@ export default {
 </script>
 <style scoped>
 .overlaywrapper {
-  position: fixed;
-  top: 5%;
-  left: 5%;
-  width: 90%;
+  position: absolute;
+  top: -5%;
+  left: -10%;
+  width: 100%;
   height: auto;
   background: rgba(0, 0, 0, 0.7);
   z-index: 9999;
