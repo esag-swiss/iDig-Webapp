@@ -49,8 +49,10 @@
                     :class="{
                       'vtl-sortable': col.sortable,
                       'vtl-both': col.sortable,
-                      'vtl-asc': setting.order === col.field && setting.sort === 'asc',
-                      'vtl-desc': setting.order === col.field && setting.sort === 'desc',
+                      'vtl-asc':
+                        setting.order === col.field && setting.sort === 'asc',
+                      'vtl-desc':
+                        setting.order === col.field && setting.sort === 'desc',
                     }"
                     @click="col.sortable ? doSort(col.field) : false"
                   >
@@ -65,7 +67,11 @@
                   v-for="(row, i) in localRows"
                   :key="i"
                   class="vtl-tbody-tr"
-                  :class="typeof rowClasses === 'function' ? rowClasses(row) : rowClasses"
+                  :class="
+                    typeof rowClasses === 'function'
+                      ? rowClasses(row)
+                      : rowClasses
+                  "
                   @click="$emit('row-clicked', row)"
                 >
                   <td v-if="hasCheckbox" class="vtl-tbody-td">
@@ -105,7 +111,11 @@
                   v-for="(row, i) in rows"
                   :key="i"
                   class="vtl-tbody-tr"
-                  :class="typeof rowClasses === 'function' ? rowClasses(row) : rowClasses"
+                  :class="
+                    typeof rowClasses === 'function'
+                      ? rowClasses(row)
+                      : rowClasses
+                  "
                   @click="$emit('row-clicked', row)"
                 >
                   <td v-if="hasCheckbox" class="vtl-tbody-td">
@@ -149,13 +159,23 @@
           <div class="vtl-paging-info col-sm-12 col-md-4">
             <div role="status" aria-live="polite">
               {{
-                stringFormat(messages.pagingInfo, setting.offset, setting.limit, total)
+                stringFormat(
+                  messages.pagingInfo,
+                  setting.offset,
+                  setting.limit,
+                  total
+                )
               }}
             </div>
           </div>
           <div class="vtl-paging-change-div col-sm-12 col-md-4">
-            <span class="vtl-paging-count-label">{{ messages.pageSizeChangeLabel }}</span>
-            <select class="vtl-paging-count-dropdown" v-model="setting.pageSize">
+            <span class="vtl-paging-count-label">{{
+              messages.pageSizeChangeLabel
+            }}</span>
+            <select
+              class="vtl-paging-count-dropdown"
+              v-model="setting.pageSize"
+            >
               <option
                 v-for="pageOption in pageOptions"
                 :value="pageOption.value"
@@ -164,9 +184,15 @@
                 {{ pageOption.text }}
               </option>
             </select>
-            <span class="vtl-paging-page-label">{{ messages.gotoPageLabel }}</span>
+            <span class="vtl-paging-page-label">{{
+              messages.gotoPageLabel
+            }}</span>
             <select class="vtl-paging-page-dropdown" v-model="setting.page">
-              <option v-for="n in setting.maxPage" :key="n" :value="parseInt(n)">
+              <option
+                v-for="n in setting.maxPage"
+                :key="n"
+                :value="parseInt(n)"
+              >
                 {{ n }}
               </option>
             </select>
@@ -711,7 +737,8 @@ export default defineComponent({
     // Call 「is-finished」 Method
     const callIsFinished = () => {
       if (localTable.value) {
-        let localElement = localTable.value.getElementsByClassName("is-rows-el");
+        let localElement =
+          localTable.value.getElementsByClassName("is-rows-el");
         emit("is-finished", localElement);
       }
       emit("get-now-page", setting.page);

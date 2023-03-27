@@ -1,6 +1,10 @@
 <template>
   <!-- header -->
-  <header-idig @toggle-menu="toggleMenu" @all-trenches="setallTrench" @all-types="setallTypes" >
+  <header-idig
+    @toggle-menu="toggleMenu"
+    @all-trenches="setallTrench"
+    @all-types="setallTypes"
+  >
   </header-idig>
 
   <div class="container-fluid">
@@ -10,7 +14,6 @@
         <div class="sticky-top">
           <access-idig
             @selected-trench="selectedTrench"
-
             :all-trenches="allTrench"
           >
           </access-idig>
@@ -32,7 +35,6 @@
         <dyna-table
           :selected-data="selectedData"
           :checked-fields="checkedFields"
-
           :selected-type="selectedFilter"
           :all-types="allTypes"
         >
@@ -103,7 +105,8 @@ export default {
       this.isHidden = !this.isHidden;
     },
     // reçoit des enfants
-    setallTrench(allTrenches) { // recoit toutes les trenches de HeaderIdig
+    setallTrench(allTrenches) {
+      // recoit toutes les trenches de HeaderIdig
       this.allTrench = allTrenches;
     },
     setallTypes(types) {

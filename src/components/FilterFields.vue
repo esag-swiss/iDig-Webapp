@@ -185,7 +185,6 @@ export default {
       this.$emit("check-fields", this.addsortabletrue);
     },
     checkfields() {
-
       // reçoit du @change et renvoie au parent
       this.$emit("check-fields", this.addsortabletrue);
     },

@@ -196,9 +196,7 @@
         "el": "στρωμ. ενότητα",
         "en": "context"
       },
-      "valuelist": [
-        
-      ]
+      "valuelist": []
     },
     {
       "field": "Contributor",
@@ -208,9 +206,7 @@
       },
       "multitype": true,
       "multivalue": true,
-      "valuelist": [
-        
-      ]
+      "valuelist": []
     },
     {
       "field": "CoverageEarliest",
@@ -241,9 +237,7 @@
         "en": "chron."
       },
       "multitype": true,
-      "valuelist": [
-        
-      ]
+      "valuelist": []
     },
     {
       "field": "Creator",
@@ -252,9 +246,7 @@
         "en": "supervisor"
       },
       "multitype": true,
-      "valuelist": [
-        
-      ]
+      "valuelist": []
     },
     {
       "field": "DateEarliest",
@@ -277,9 +269,7 @@
         "en": "deposit"
       },
       "multitype": true,
-      "valuelist": [
-        
-      ]
+      "valuelist": []
     },
     {
       "field": "Description",
@@ -332,9 +322,7 @@
         "en": "looking"
       },
       "multitype": true,
-      "valuelist": [
-        
-      ]
+      "valuelist": []
     },
     {
       "field": "LotContexts",
@@ -370,12 +358,7 @@
         "el": "θέση αποθήκευσης",
         "en": "storage"
       },
-      "valuelist": [
-        "Sack",
-        "Tin",
-        "Box",
-        "Envelope"
-      ]
+      "valuelist": ["Sack", "Tin", "Box", "Envelope"]
     },
     {
       "field": "Material",
@@ -507,9 +490,7 @@
         "el": "τίτλος",
         "en": "title"
       },
-      "valuelist": [
-        
-      ]
+      "valuelist": []
     },
     {
       "field": "Type",
@@ -525,9 +506,7 @@
         "en": "subtype"
       },
       "multitype": true,
-      "valuelist": [
-        
-      ]
+      "valuelist": []
     }
   ],
   "types": [
@@ -1152,9 +1131,7 @@
           "fields": [
             {
               "field": "Category",
-              "valuelist": [
-                
-              ]
+              "valuelist": []
             },
             {
               "field": "Deposit"
@@ -1409,9 +1386,7 @@
           "fields": [
             {
               "field": "Category",
-              "valuelist": [
-                
-              ]
+              "valuelist": []
             },
             {
               "field": "Deposit"
@@ -1567,9 +1542,7 @@
           "fields": [
             {
               "field": "Category",
-              "valuelist": [
-                
-              ]
+              "valuelist": []
             }
           ],
           "group": "Fields",
