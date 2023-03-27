@@ -1,29 +1,29 @@
 <template>
   <!-- header -->
-  <header-idig
+  <HeaderIdig
     @toggle-menu="toggleMenu"
     @all-trenches="setallTrench"
     @all-types="setallTypes"
   >
-  </header-idig>
+  </HeaderIdig>
 
   <div class="container-fluid">
     <div class="row flex-xl-nowrap">
       <!-- SIDEBAR -->
-      <div class="p-1 col-md-2" v-bind:style="{ display: computedDisplay }">
+      <div class="p-1 col-md-2" :style="{ display: computedDisplay }">
         <div class="sticky-top">
-          <access-idig
+          <AccessIdig
+            :allTrenches="allTrench"
             @selected-trench="selectedTrench"
-            :all-trenches="allTrench"
           >
-          </access-idig>
+          </AccessIdig>
 
-          <filter-fields
+          <FilterFields
+            :selectedData="selectedData"
             @check-fields="checkFields"
             @selected-type="selectedType"
-            :selected-data="selectedData"
           >
-          </filter-fields>
+          </FilterFields>
         </div>
       </div>
 
@@ -32,13 +32,13 @@
         class="p-1"
         :class="{ 'col-md-10': isHidden, 'col-md-12': !isHidden }"
       >
-        <dyna-table
-          :selected-data="selectedData"
-          :checked-fields="checkedFields"
-          :selected-type="selectedFilter"
-          :all-types="allTypes"
+        <DynaTable
+          :selectedData="selectedData"
+          :checkedFields="checkedFields"
+          :selectedType="selectedFilter"
+          :allTypes="allTypes"
         >
-        </dyna-table>
+        </DynaTable>
       </div>
     </div>
   </div>

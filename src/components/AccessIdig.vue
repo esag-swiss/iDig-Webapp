@@ -1,7 +1,7 @@
 <template>
   <input
-    class="m-0 form-control input-sm"
     v-model="search"
+    class="m-0 form-control input-sm"
     placeholder="Search..."
     @input="filteredList()"
   />
@@ -19,10 +19,10 @@
         <div v-for="trench in allTrenches" :key="trench">
           <li
             v-if="trench.includes(n)"
-            @change="addSelectedTrench()"
             class="mt-1"
+            @change="addSelectedTrench()"
           >
-            <input type="checkbox" v-model="checkedTrenches" :value="trench" />
+            <input v-model="checkedTrenches" type="checkbox" :value="trench" />
             <label class="px-1 m-0" for="checkbox">{{ trench }}</label>
           </li>
         </div>

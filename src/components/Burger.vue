@@ -2,8 +2,8 @@
   <div
     id="burger"
     :class="{ active: isBurgerActive }"
-    @click.prevent="toggle"
     class="navbar-brand"
+    @click.prevent="toggle"
   >
     <slot>
       <button type="button" class="burger-button" title="Menu">
@@ -16,10 +16,10 @@
 </template>
 <script>
 export default {
+  name: "BurgerNav",
   data: () => ({
     isBurgerActive: true,
   }),
-  name: "Burger-nav",
   methods: {
     toggle() {
       this.isBurgerActive = !this.isBurgerActive;

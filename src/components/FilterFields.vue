@@ -9,8 +9,8 @@
 
     <!-- dropdown for types -->
     <select
-      class="form-control"
       v-model="selectedtype"
+      class="form-control"
       @change="changeSelectedType"
     >
       <option v-for="type in types" :key="type" :value="type.type">
@@ -43,10 +43,10 @@
       <div v-if="!isHiddenArray[index]">
         <div v-for="field in group.fields" :key="field" class="m-0">
           <input
-            type="checkbox"
             v-model="checkFields"
-            @change="checkfields()"
+            type="checkbox"
             :value="field"
+            @change="checkfields()"
           />
           <label class="pl-1 m-0" for="checkbox">{{
             labels(field.field)
@@ -69,6 +69,14 @@
 import preferencesData from "@/data/Preferences.json";
 
 export default {
+  props: {
+    selectedData: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  emits: ["checkFields", "selectedType"],
   data() {
     return {
       fields: preferencesData.fields,
@@ -105,12 +113,6 @@ export default {
       lang: "fr", // for later dev
       img_url: "http://thacer.archaiodata.com/ThaCER.svg", // test images
     };
-  },
-  props: {
-    selectedData: {
-      type: Object,
-      required: true,
-    },
   },
   computed: {
     // liste les groupes pour l'accordéon
@@ -262,9 +264,7 @@ export default {
         this.$emit("check-fields", this.checkFields);
       }
     },
-  },
-
-  emits: ["checkFields", "selectedType"], // si je ne mets pas cette ligne j'ai un message Extraneous non-emits event listeners (checkFields) were passed to component but could not be automatically inherited
+  }, // si je ne mets pas cette ligne j'ai un message Extraneous non-emits event listeners (checkFields) were passed to component but could not be automatically inherited
 };
 </script>
 

@@ -18,18 +18,18 @@ import trenchData from "@/data/AMA21-S24.json";
 import preferencesData from "@/data/AMA21-S24.Preferences.json";
 
 export default {
+  props: {
+    selectedFilter: {
+      type: String,
+      required: false,
+    },
+  },
   data() {
     return {
       trenchdata: trenchData,
       // headers: preferencesData.fields,
       fields: preferencesData.types,
     };
-  },
-  props: {
-    selectedFilter: {
-      type: String,
-      required: false,
-    },
   },
   computed: {
     filteredField() {

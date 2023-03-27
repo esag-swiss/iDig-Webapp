@@ -55,9 +55,9 @@
           <!-- valeur du Champ : mille cases  -->
 
           <!-- 0  Champ existe dans fields  -->
-          <div class="col-md-9 p-0 pl-1" v-if="fieldExist(field.field) != 0">
+          <div v-if="fieldExist(field.field) != 0" class="col-md-9 p-0 pl-1">
             <!-- 1  Champ == type  -->
-            <div class="col-md-12 p-0 pl-1" v-if="field.field == 'Type'">
+            <div v-if="field.field == 'Type'" class="col-md-12 p-0 pl-1">
               <select class="col-md-12" style="border: none">
                 <option value="selectedRow.type">{{ selectedRow.Type }}</option>
                 <option v-for="type in allTypes" :key="type" :value="type.type">
@@ -109,36 +109,36 @@
 
                 <input
                   v-else
-                  type="text"
                   v-model="
                     trenchtoUpdate.filter((x) => {
                       return x.IdentifierUUID == selectedRow.IdentifierUUID;
                     })[0][field.field]
                   "
+                  type="text"
                   class="col-md-12 p-0 pl-1"
                   style="border: none"
                 />
               </div>
               <textarea
                 v-else-if="fieldType(field.field).hasOwnProperty('multiline')"
-                class="col-md-12 p-0 pl-1"
-                style="border: none"
                 v-model="
                   trenchtoUpdate.filter((x) => {
                     return x.IdentifierUUID == selectedRow.IdentifierUUID;
                   })[0][field.field]
                 "
+                class="col-md-12 p-0 pl-1"
+                style="border: none"
               ></textarea>
 
               <!-- cas basique champ avec properties field et label -->
               <input
                 v-else
-                type="text"
                 v-model="
                   trenchtoUpdate.filter((x) => {
                     return x.IdentifierUUID == selectedRow.IdentifierUUID;
                   })[0][field.field]
                 "
+                type="text"
                 class="col-md-12 p-0 pl-1"
                 style="border: none"
               />
@@ -158,7 +158,7 @@
 import axios from "axios";
 
 export default {
-  name: "over-lay",
+  name: "OverLay",
   props: {
     selectedRow: {
       type: Object,
@@ -201,13 +201,13 @@ export default {
             k.IdentifierUUID.includes(this.selectedRow.IdentifierUUID)
           )
         )[0][0];
-      } else return "";
+      } else {return "";}
     },
 
     trenchtoUpdate() {
       if (this.selectedRow) {
         return JSON.parse(sessionStorage.trenchesData)[this.selectedTrench];
-      } else return "";
+      } else {return "";}
     },
     groups() {
       if (localStorage.types) {

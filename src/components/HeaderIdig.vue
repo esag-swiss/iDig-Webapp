@@ -11,15 +11,15 @@
         <!-- select server -->
         <div class="navbar-text text-light p-2">server:</div>
         <input
-          class="my-2 text-light"
           v-model="server"
+          class="my-2 text-light"
           style="background: #212529; border: 0px; width: 7em"
         />
         <!-- select project -->
         <a class="navbar-text text-light p-2">project:</a>
         <select
-          class="m-2 text-light"
           v-model="project"
+          class="m-2 text-light"
           style="background: #212529; border: 0px; height: 26px"
         >
           <option v-for="project in projects" :key="project" :value="project">
@@ -29,14 +29,14 @@
         <!-- select user -->
         <a class="navbar-text text-light p-2">user:</a>
         <input
-          class="m-2 text-light"
           v-model="username"
+          class="m-2 text-light"
           style="background: #212529; border: 0px; width: 6em"
         />
         <input
+          v-model="password"
           type="password"
           class="m-2 text-light"
-          v-model="password"
           style="background: #212529; border: 0px; width: 6em"
           placeholder="Password"
         />
@@ -69,6 +69,9 @@ import Burger from "@/components/Burger.vue";
 import Preferences from "@/data/Preferences.json";
 
 export default {
+  components: {
+    Burger,
+  },
   data() {
     return {
       server: "localhost",
@@ -83,8 +86,10 @@ export default {
       allTrenches: [], // a nettoyer
     };
   },
-  components: {
-    Burger,
+  computed: {
+    trenches() {
+      return this.Preferences[this.project];
+    },
   },
   // charge les préférences de connexion si elles existent
   mounted() {
@@ -103,11 +108,6 @@ export default {
     if (localStorage.project) {
       this.password = localStorage.password;
     }
-  },
-  computed: {
-    trenches() {
-      return this.Preferences[this.project];
-    },
   },
 
   methods: {

@@ -18,12 +18,12 @@
 import axios from "axios";
 
 export default {
+  props: {},
   data() {
     return {
       image: "http://thacer.archaiodata.com/ThaCER.svg",
     };
   },
-  props: {},
   methods: {
     getImageBlob(url) {
       // var url = "ΒΓ (407,291,447,318).png?checksum=2022-05-12T12:30:42Z";
