@@ -76,7 +76,7 @@ export default {
     },
   },
 
-  emits: ["checkFields", "selectedType"],
+  emits: ["checkFields", "selectedType", "selected-type", "check-fields"],
   data() {
     return {
       fields: preferencesData.fields,

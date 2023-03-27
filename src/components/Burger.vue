@@ -17,6 +17,7 @@
 <script>
 export default {
   name: "BurgerNav",
+  emits: ["toggle-menu"],
   data: () => ({
     isBurgerActive: true,
   }),

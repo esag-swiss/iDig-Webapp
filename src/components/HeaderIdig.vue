@@ -72,6 +72,7 @@ export default {
   components: {
     Burger,
   },
+  emits: ["all-types", "all-trenches", "toggle-menu"],
   data() {
     return {
       server: "localhost",

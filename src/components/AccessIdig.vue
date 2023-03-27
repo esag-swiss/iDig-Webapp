@@ -43,6 +43,7 @@ export default {
       required: true,
     },
   },
+  emits: ["selected-trench"],
   data() {
     return {
       search: "",
