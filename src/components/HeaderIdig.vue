@@ -247,10 +247,10 @@ export default {
                 username: this.username,
                 password: this.password,
               },
-              data: {
+              data: JSON.stringify({
                 head: "",
                 surveys: [],
-              },
+              }),
             })
               .then((response) => {
                 // switch button to green
