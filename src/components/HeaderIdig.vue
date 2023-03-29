@@ -138,15 +138,6 @@ export default {
             this.lang
           );
 
-          localStorage.setItem(
-            "trenches",
-            JSON.stringify(
-              response.data.filter(
-                (item) => item !== "refs" && item !== "objects"
-              )
-            )
-          );
-
           // envoi les trenches du projet au parent
           this.$emit(
             "all-trenches",
@@ -288,10 +279,6 @@ export default {
                   this.username,
                   this.password,
                   this.lang
-                );
-                localStorage.setItem(
-                  "trenches",
-                  JSON.stringify(this.Preferences[this.project])
                 );
               })
               .catch((error) => {
