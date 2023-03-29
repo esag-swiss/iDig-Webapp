@@ -123,7 +123,7 @@ export default {
       this.checkedTrenches.forEach((trench) => {
         var session_url =
           "http://" +
-          localStorage.IdigServer +
+          localStorage.server +
           ":9000/idig/" +
           localStorage.project +
           "/" +
