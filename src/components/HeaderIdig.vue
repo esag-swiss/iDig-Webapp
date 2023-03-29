@@ -272,7 +272,6 @@ export default {
                   "fields",
                   JSON.stringify(this.preferences.fields)
                 );
-
                 storePersistentUserSettings(
                   this.server,
                   this.project,
