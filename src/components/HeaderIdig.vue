@@ -67,6 +67,10 @@
 import axios from "axios";
 import Burger from "@/components/Burger.vue";
 import Preferences from "@/data/Preferences.json";
+import {
+  storePersistentUserSettings,
+  getPersistentUserSettingsOrEmptyStrings,
+} from "@/services/PersistentUserSettings";
 
 export default {
   components: {
@@ -94,21 +98,13 @@ export default {
   },
   // charge les préférences de connexion si elles existent
   mounted() {
-    if (localStorage.lang) {
-      this.lang = localStorage.lang;
-    }
-    if (localStorage.IdigServer) {
-      this.server = localStorage.IdigServer;
-    }
-    if (localStorage.project) {
-      this.project = localStorage.project;
-    }
-    if (localStorage.IdigServer) {
-      this.username = localStorage.username;
-    }
-    if (localStorage.project) {
-      this.password = localStorage.password;
-    }
+    const { lang, server, project, username, password } =
+      getPersistentUserSettingsOrEmptyStrings();
+    this.lang = lang;
+    this.server = server;
+    this.project = project;
+    this.username = username;
+    this.password = password;
   },
 
   methods: {
@@ -135,11 +131,14 @@ export default {
           this.isActive = true;
 
           // store to local
-          localStorage.setItem("IdigServer", this.server);
-          localStorage.setItem("project", this.project);
-          localStorage.setItem("username", this.username);
-          localStorage.setItem("password", this.password);
-          localStorage.setItem("lang", this.lang);
+          storePersistentUserSettings(
+            this.server,
+            this.project,
+            this.username,
+            this.password,
+            this.lang
+          );
+
           localStorage.setItem(
             "trenches",
             JSON.stringify(
@@ -285,11 +284,13 @@ export default {
                 );
 
                 // store to local
-                localStorage.setItem("lang", this.lang);
-                localStorage.setItem("IdigServer", this.server);
-                localStorage.setItem("project", this.project);
-                localStorage.setItem("username", this.username);
-                localStorage.setItem("password", this.password);
+                storePersistentUserSettings(
+                  this.server,
+                  this.project,
+                  this.username,
+                  this.password,
+                  this.lang
+                );
                 localStorage.setItem(
                   "trenches",
                   JSON.stringify(this.Preferences[this.project])
