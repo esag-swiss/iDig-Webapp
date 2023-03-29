@@ -1,24 +1,24 @@
 <template>
-  <div class="overlayframe" @click="removeLOverlay()" v-show="overlay"></div>
-  <over-lay
-    :all-types="allTypes"
-    :selected-type="selectedType"
-    :selected-row="selectedRow"
+  <div v-show="overlay" class="overlayframe" @click="removeLOverlay()"></div>
+  <OverLay
     v-show="overlay"
+    :allTypes="allTypes"
+    :selectedType="selectedType"
+    :selectedRow="selectedRow"
   >
-  </over-lay>
+  </OverLay>
   <!-- old search method -->
   <!-- <input class="m-2" v-model="searchTerm" /> -->
 
   <!-- Work in progress bouton pour afficher les images des attachments -->
   <!-- <button type="button" @click="getImage">Image</button> -->
-  <table-lite
-    :has-checkbox="false"
-    :is-loading="table.isLoading"
-    :is-re-search="table.isReSearch"
+  <TableLite
+    :hasCheckbox="false"
+    :isLoading="table.isLoading"
+    :isReSearch="table.isReSearch"
     :columns="table.columns"
     :rows="table.rows"
-    :is-static-mode="true"
+    :isStaticMode="true"
     :rowClasses="table.rowClasses"
     :total="table.totalRecordCount"
     :sortable="table.sortable"
@@ -26,19 +26,19 @@
     @is-finished="tableLoadingFinish"
     @return-checked-rows="updateCheckedRows"
     @row-clicked="rowClicked"
-  ></table-lite>
+  ></TableLite>
   <!-- Work in progress image test du bouton pour afficher les images des attachments -->
   <!-- <img id="image" src="http://thacer.archaiodata.com/ThaCER.svg" alt="test" width="280" /> -->
 </template>
 
 <script>
 import { defineComponent, reactive, ref, computed, toRef } from "vue";
-import TableLite from "../components/TableLite.vue";
-import OverLay from "../components/OverLay.vue";
+import TableLite from "@/components/TableLite.vue";
+import OverLay from "@/components/OverLay.vue";
 import axios from "axios";
 
 export default defineComponent({
-  name: "Dyna-Table",
+  name: "DynaTable",
   components: { TableLite, OverLay },
   props: {
     selectedData: {
@@ -60,16 +60,6 @@ export default defineComponent({
     allTypes: {
       type: Object,
       required: false,
-    },
-  },
-  data() {
-    return {
-      // selectedRow: 'prout',
-    };
-  },
-  methods: {
-    removeLOverlay() {
-      this.overlay = false;
     },
   },
   setup(props) {
@@ -185,6 +175,16 @@ export default defineComponent({
 
       selectedRow,
     };
+  },
+  data() {
+    return {
+      // selectedRow: 'prout',
+    };
+  },
+  methods: {
+    removeLOverlay() {
+      this.overlay = false;
+    },
   },
 });
 </script>

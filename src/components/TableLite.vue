@@ -1,6 +1,6 @@
 <template>
   <div class="vtl vtl-card">
-    <div class="vtl-card-title" v-if="title">{{ title }}</div>
+    <div v-if="title" class="vtl-card-title">{{ title }}</div>
     <div class="vtl-card-body">
       <div class="vtl-row">
         <div
@@ -16,25 +16,25 @@
             </div>
           </div>
           <table
-            class="vtl-table vtl-table-hover vtl-table-bordered vtl-table-responsive vtl-table-responsive-sm rounded"
             ref="localTable"
+            class="vtl-table vtl-table-hover vtl-table-bordered vtl-table-responsive vtl-table-responsive-sm rounded"
           >
             <thead class="vtl-thead">
               <tr class="vtl-thead-tr">
                 <th v-if="hasCheckbox" class="vtl-thead-th vtl-checkbox-th">
                   <div>
                     <input
+                      v-model="setting.isCheckAll"
                       type="checkbox"
                       class="vtl-thead-checkbox"
-                      v-model="setting.isCheckAll"
                     />
                   </div>
                 </th>
                 <th
                   v-for="(col, index) in columns"
+                  :key="index"
                   class="vtl-thead-th"
                   :class="col.headerClasses"
-                  :key="index"
                   :style="
                     Object.assign(
                       {
@@ -49,8 +49,10 @@
                     :class="{
                       'vtl-sortable': col.sortable,
                       'vtl-both': col.sortable,
-                      'vtl-asc': setting.order === col.field && setting.sort === 'asc',
-                      'vtl-desc': setting.order === col.field && setting.sort === 'desc',
+                      'vtl-asc':
+                        setting.order === col.field && setting.sort === 'asc',
+                      'vtl-desc':
+                        setting.order === col.field && setting.sort === 'desc',
                     }"
                     @click="col.sortable ? doSort(col.field) : false"
                   >
@@ -65,19 +67,23 @@
                   v-for="(row, i) in localRows"
                   :key="i"
                   class="vtl-tbody-tr"
-                  :class="typeof rowClasses === 'function' ? rowClasses(row) : rowClasses"
+                  :class="
+                    typeof rowClasses === 'function'
+                      ? rowClasses(row)
+                      : rowClasses
+                  "
                   @click="$emit('row-clicked', row)"
                 >
                   <td v-if="hasCheckbox" class="vtl-tbody-td">
                     <div>
                       <input
-                        type="checkbox"
-                        class="vtl-tbody-checkbox"
                         :ref="
                           (el) => {
                             rowCheckbox[i] = el;
                           }
                         "
+                        type="checkbox"
+                        class="vtl-tbody-checkbox"
                         :value="row[setting.keyColumn]"
                         @click="checked"
                       />
@@ -105,19 +111,23 @@
                   v-for="(row, i) in rows"
                   :key="i"
                   class="vtl-tbody-tr"
-                  :class="typeof rowClasses === 'function' ? rowClasses(row) : rowClasses"
+                  :class="
+                    typeof rowClasses === 'function'
+                      ? rowClasses(row)
+                      : rowClasses
+                  "
                   @click="$emit('row-clicked', row)"
                 >
                   <td v-if="hasCheckbox" class="vtl-tbody-td">
                     <div>
                       <input
-                        type="checkbox"
-                        class="vtl-tbody-checkbox"
                         :ref="
                           (el) => {
                             rowCheckbox[i] = el;
                           }
                         "
+                        type="checkbox"
+                        class="vtl-tbody-checkbox"
                         :value="row[setting.keyColumn]"
                         @click="checked"
                       />
@@ -144,29 +154,45 @@
           </table>
         </div>
       </div>
-      <div class="vtl-paging vtl-row" v-if="rows.length > 0">
+      <div v-if="rows.length > 0" class="vtl-paging vtl-row">
         <template v-if="!setting.isHidePaging">
           <div class="vtl-paging-info col-sm-12 col-md-4">
             <div role="status" aria-live="polite">
               {{
-                stringFormat(messages.pagingInfo, setting.offset, setting.limit, total)
+                stringFormat(
+                  messages.pagingInfo,
+                  setting.offset,
+                  setting.limit,
+                  total
+                )
               }}
             </div>
           </div>
           <div class="vtl-paging-change-div col-sm-12 col-md-4">
-            <span class="vtl-paging-count-label">{{ messages.pageSizeChangeLabel }}</span>
-            <select class="vtl-paging-count-dropdown" v-model="setting.pageSize">
+            <span class="vtl-paging-count-label">{{
+              messages.pageSizeChangeLabel
+            }}</span>
+            <select
+              v-model="setting.pageSize"
+              class="vtl-paging-count-dropdown"
+            >
               <option
                 v-for="pageOption in pageOptions"
-                :value="pageOption.value"
                 :key="pageOption.value"
+                :value="pageOption.value"
               >
                 {{ pageOption.text }}
               </option>
             </select>
-            <span class="vtl-paging-page-label">{{ messages.gotoPageLabel }}</span>
-            <select class="vtl-paging-page-dropdown" v-model="setting.page">
-              <option v-for="n in setting.maxPage" :key="n" :value="parseInt(n)">
+            <span class="vtl-paging-page-label">{{
+              messages.gotoPageLabel
+            }}</span>
+            <select v-model="setting.page" class="vtl-paging-page-dropdown">
+              <option
+                v-for="n in setting.maxPage"
+                :key="n"
+                :value="parseInt(n)"
+              >
                 {{ n }}
               </option>
             </select>
@@ -203,9 +229,9 @@
                   </a>
                 </li>
                 <li
-                  class="vtl-paging-pagination-page-li vtl-paging-pagination-page-li-number page-item"
                   v-for="n in setting.paging"
                   :key="n"
+                  class="vtl-paging-pagination-page-li vtl-paging-pagination-page-li-number page-item"
                   :class="{ disabled: setting.page === n }"
                 >
                   <a
@@ -248,7 +274,7 @@
           </div>
         </template>
       </div>
-      <div class="vtl-row" v-else>
+      <div v-else class="vtl-row">
         <div class="vtl-empty-msg col-sm-12 text-center">
           {{ messages.noDataAvailable }}
         </div>
@@ -269,14 +295,7 @@ import {
   onMounted,
 } from "vue";
 export default defineComponent({
-  name: "my-table",
-  emits: [
-    "return-checked-rows",
-    "do-search",
-    "is-finished",
-    "get-now-page",
-    "row-clicked",
-  ],
+  name: "MyTable",
   props: {
     // 是否讀取中 (is data loading)
     isLoading: {
@@ -400,6 +419,13 @@ export default defineComponent({
       ],
     },
   },
+  emits: [
+    "return-checked-rows",
+    "do-search",
+    "is-finished",
+    "get-now-page",
+    "row-clicked",
+  ],
   setup(props, { emit, slots }) {
     let localTable = ref(null);
     // 檢查下拉選單中是否包含預設一頁顯示筆數 (Validate dropdown's values have page-size value or not)
@@ -711,7 +737,8 @@ export default defineComponent({
     // Call 「is-finished」 Method
     const callIsFinished = () => {
       if (localTable.value) {
-        let localElement = localTable.value.getElementsByClassName("is-rows-el");
+        let localElement =
+          localTable.value.getElementsByClassName("is-rows-el");
         emit("is-finished", localElement);
       }
       emit("get-now-page", setting.page);
