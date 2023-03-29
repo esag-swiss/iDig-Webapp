@@ -130,7 +130,6 @@ export default {
           // switch button to green , ajouter if trenches loaded ?
           this.isActive = true;
 
-          // store to local
           storePersistentUserSettings(
             this.server,
             this.project,
@@ -283,7 +282,6 @@ export default {
                   JSON.stringify(this.preferences.fields)
                 );
 
-                // store to local
                 storePersistentUserSettings(
                   this.server,
                   this.project,
