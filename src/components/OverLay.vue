@@ -201,13 +201,17 @@ export default {
             k.IdentifierUUID.includes(this.selectedRow.IdentifierUUID)
           )
         )[0][0];
-      } else {return "";}
+      } else {
+        return "";
+      }
     },
 
     trenchtoUpdate() {
       if (this.selectedRow) {
         return JSON.parse(sessionStorage.trenchesData)[this.selectedTrench];
-      } else {return "";}
+      } else {
+        return "";
+      }
     },
     groups() {
       if (localStorage.types) {
@@ -242,7 +246,7 @@ export default {
         method: "post",
         url:
           "http://" +
-          localStorage.IdigServer +
+          localStorage.server +
           ":9000/idig/" +
           localStorage.project +
           "/" +
