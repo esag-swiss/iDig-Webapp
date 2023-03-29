@@ -251,12 +251,12 @@ export default {
           username: localStorage.username,
           password: localStorage.password,
         },
-        data: {
+        data: JSON.stringify({
           head: JSON.parse(sessionStorage.trenchesVersion)[this.selectedTrench],
           device: "webapp",
           surveys: this.trenchtoUpdate,
           preferences: sessionStorage.preferences,
-        },
+        }),
       })
         .then(() => {
           // alert("connection valide");

@@ -177,10 +177,10 @@ export default {
               username: this.username,
               password: this.password,
             },
-            data: {
+            data: JSON.stringify({
               head: "",
               surveys: [],
-            },
+            }),
           })
             .then((response) => {
               // stores  prefences base64 in session storage to allow PUSH
