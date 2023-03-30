@@ -26,6 +26,8 @@ function handleError(error) {
     `response.data: ${error?.response?.data}\r\r` +
     `response.statusText: ${error?.response?.statusText}\r`;
   alert(alertMessage);
+
+  throw new Error(error);
 }
 
 export function fetchAllTrenches(username, password, server, project) {

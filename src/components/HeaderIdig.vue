@@ -124,39 +124,43 @@ export default {
           this.password,
           this.server,
           this.project
-        ).then((response) => {
-          storePersistentUserSettings(
-            this.server,
-            this.project,
-            this.username,
-            this.password,
-            this.lang
-          );
+        )
+          .then((response) => {
+            storePersistentUserSettings(
+              this.server,
+              this.project,
+              this.username,
+              this.password,
+              this.lang
+            );
 
-          this.manageResponseForFetchAllTrenches(response);
+            this.manageResponseForFetchAllTrenches(response);
 
-          fetchTrench(this.allTrenches[0]).then((response) => {
-            // switch button to green , ajouter if trenches loaded ?
-            this.isActive = true;
+            fetchTrench(this.allTrenches[0]).then((response) => {
+              // switch button to green , ajouter if trenches loaded ?
+              this.isActive = true;
 
-            this.manageResponseForFetchTrench(response);
-          });
-        });
+              this.manageResponseForFetchTrench(response);
+            });
+          })
+          .catch(() => {});
       } else {
         // old_server
-        fetchTrench(this.trenches[0]).then((response) => {
-          this.isActive = true;
+        fetchTrench(this.trenches[0])
+          .then((response) => {
+            this.isActive = true;
 
-          storePersistentUserSettings(
-            this.server,
-            this.project,
-            this.username,
-            this.password,
-            this.lang
-          );
+            storePersistentUserSettings(
+              this.server,
+              this.project,
+              this.username,
+              this.password,
+              this.lang
+            );
 
-          this.manageResponseForFetchTrench(response);
-        });
+            this.manageResponseForFetchTrench(response);
+          })
+          .catch(() => {});
       }
     },
     manageResponseForFetchAllTrenches(response) {
