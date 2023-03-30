@@ -25,7 +25,7 @@ export function fetchAllTrenches(username, password, server, project) {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     method: "get",
-    url: "//" + server + ":9000/idig/" + project + "/trenches",
+    url: `//${server}:9000/idig/${project}/trenches`,
     auth: {
       username,
       password,
@@ -53,7 +53,7 @@ export function fetchTrench(trench) {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     method: "post",
-    url: "//" + server + ":9000/idig/" + project + "/" + trench,
+    url: `//${server}:9000/idig/${project}/${trench}`,
     auth: {
       username,
       password,
