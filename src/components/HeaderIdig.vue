@@ -139,25 +139,22 @@ export default {
             this.isActive = true;
 
             this.manageResponseForFetchTrench(response);
-          })
-          .catch(() => {});
+          });
       } else {
         // old_server
-        fetchTrench(this.trenches[0])
-          .then((response) => {
-            this.isActive = true;
+        fetchTrench(this.trenches[0]).then((response) => {
+          this.isActive = true;
 
-            storePersistentUserSettings(
-              this.server,
-              this.project,
-              this.username,
-              this.password,
-              this.lang
-            );
+          storePersistentUserSettings(
+            this.server,
+            this.project,
+            this.username,
+            this.password,
+            this.lang
+          );
 
-            this.manageResponseForFetchTrench(response);
-          })
-          .catch(() => {});
+          this.manageResponseForFetchTrench(response);
+        });
       }
     },
     manageResponseForFetchAllTrenches(response) {
