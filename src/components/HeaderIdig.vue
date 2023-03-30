@@ -71,11 +71,7 @@ import {
   storePersistentUserSettings,
   getPersistentUserSettingsOrEmptyStrings,
 } from "@/services/PersistentUserSettings";
-import {
-  cleanServerUserEntry,
-  fetchAllTrenches,
-  fetchTrench,
-} from "@/services/ApiClient";
+import { fetchAllTrenches, fetchTrench } from "@/services/ApiClient";
 
 export default {
   components: {
