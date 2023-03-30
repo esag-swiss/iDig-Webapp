@@ -11,13 +11,6 @@ function getConnectionCredentials() {
   return { server, project, username, password };
 }
 
-export function cleanServerUserEntry(serverUserEntry) {
-  return serverUserEntry
-    .replace("https://", "")
-    .replace("http://", "")
-    .replace(":9000", "");
-}
-
 function handleError(error) {
   console.error(error);
 

@@ -113,7 +113,7 @@ export default {
   },
   methods: {
     connect() {
-      this.server = cleanServerUserEntry(this.server);
+      this.server = this.cleanServerUserEntry(this.server);
 
       const devMode = "new_server";
       // const devMode = "old_server";
@@ -191,6 +191,12 @@ export default {
 
       // utilisé par FilterFields.vue pour afficher les champs
       localStorage.setItem("fields", JSON.stringify(this.preferences.fields));
+    },
+    cleanServerUserEntry(serverUserEntry) {
+      return serverUserEntry
+        .replace("https://", "")
+        .replace("http://", "")
+        .replace(":9000", "");
     },
     toggleMenu() {
       this.isBurgerActive = !this.isBurgerActive;
