@@ -136,43 +136,10 @@ export default {
             this.lang
           );
 
-          // envoi les trenches du projet au parent
-          this.$emit(
-            "all-trenches",
-            response.data.filter(
-              (item) => item !== "refs" && item !== "objects"
-            )
-          ); // pour lister les trenches à gauche peut etre doublon avec local storage
-          this.allTrenches = response.data.filter(
-            (item) => item !== "refs" && item !== "objects"
-          );
+          this.manageResponseForFetchAllTrenches(response);
 
           fetchTrench(this.allTrenches[0]).then((response) => {
-            // stores  prefences base64 in session storage to allow PUSH
-            sessionStorage.setItem("preferences", response.data.preferences);
-
-            // get preferences in json to access groupes, types, fields etc
-            this.preferences = decodeURIComponent(
-              escape(window.atob(response.data.preferences))
-            ); // escape is deprecated
-            this.preferences = JSON.parse(this.preferences);
-
-            // utilisé par Overlay.vue pour afficher les champs attachés au type d'objet
-            localStorage.setItem(
-              "types",
-              JSON.stringify(this.preferences.types)
-            );
-            sessionStorage.setItem(
-              "types",
-              JSON.stringify(this.preferences.types)
-            );
-            this.$emit("all-types", this.preferences.types);
-
-            // utilisé par FilterFields.vue pour afficher les champs
-            localStorage.setItem(
-              "fields",
-              JSON.stringify(this.preferences.fields)
-            );
+            this.manageResponseForFetchTrench(response);
           });
         });
       } else {
@@ -188,30 +155,37 @@ export default {
             this.lang
           );
 
-          // stores  prefences base64 in session storage to allow PUSH
-          sessionStorage.setItem("preferences", response.data.preferences);
-
-          // get preferences in json to access groupes, types, fields etc
-          this.preferences = decodeURIComponent(
-            escape(window.atob(response.data.preferences))
-          ); // escape is deprecated
-          this.preferences = JSON.parse(this.preferences);
-
-          // utilisé par Overlay.vue pour afficher les champs attachés au type d'objet
-          localStorage.setItem("types", JSON.stringify(this.preferences.types));
-          sessionStorage.setItem(
-            "types",
-            JSON.stringify(this.preferences.types)
-          );
-          this.$emit("all-types", this.preferences.types);
-
-          // utilisé par FilterFields.vue pour afficher les champs
-          localStorage.setItem(
-            "fields",
-            JSON.stringify(this.preferences.fields)
-          );
+          this.manageResponseForFetchTrench(response);
         });
       }
+    },
+    manageResponseForFetchAllTrenches(response) {
+      // envoi les trenches du projet au parent
+      this.$emit(
+        "all-trenches",
+        response.data.filter((item) => item !== "refs" && item !== "objects")
+      ); // pour lister les trenches à gauche peut etre doublon avec local storage
+      this.allTrenches = response.data.filter(
+        (item) => item !== "refs" && item !== "objects"
+      );
+    },
+    manageResponseForFetchTrench(response) {
+      // stores  prefences base64 in session storage to allow PUSH
+      sessionStorage.setItem("preferences", response.data.preferences);
+
+      // get preferences in json to access groupes, types, fields etc
+      this.preferences = decodeURIComponent(
+        escape(window.atob(response.data.preferences))
+      ); // escape is deprecated
+      this.preferences = JSON.parse(this.preferences);
+
+      // utilisé par Overlay.vue pour afficher les champs attachés au type d'objet
+      localStorage.setItem("types", JSON.stringify(this.preferences.types));
+      sessionStorage.setItem("types", JSON.stringify(this.preferences.types));
+      this.$emit("all-types", this.preferences.types);
+
+      // utilisé par FilterFields.vue pour afficher les champs
+      localStorage.setItem("fields", JSON.stringify(this.preferences.fields));
     },
     toggleMenu() {
       this.isBurgerActive = !this.isBurgerActive;
