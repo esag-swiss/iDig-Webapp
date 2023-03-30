@@ -18,6 +18,16 @@ export function cleanServerUserEntry(serverUserEntry) {
     .replace(":9000", "");
 }
 
+function handleError(error) {
+  console.error(error);
+
+  let alertMessage =
+    `message: ${error?.message}\r\r` +
+    `response.data: ${error?.response?.data}\r\r` +
+    `response.statusText: ${error?.response?.statusText}\r`;
+  alert(alertMessage);
+}
+
 export function fetchAllTrenches(username, password, server, project) {
   console.log("spinner on");
   return axios({
