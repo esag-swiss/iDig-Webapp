@@ -59,9 +59,25 @@ export function fetchSurvey(trench) {
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "get",
-    url: `//${server}aa:9000/idig/${project}/${trench}/surveys`,
+    url: `//${server}:9000/idig/${project}/${trench}/surveys`,
     auth: { username, password },
     data: JSON.stringify({}),
+  })
+    .catch((error) => handleError(error))
+    .finally(() => console.log("spinner off"));
+}
+
+export function updateTrenchItem(trench, head, surveys, preferences) {
+  console.log("spinner on");
+
+  const { server, project, username, password } = getConnectionCredentials();
+
+  return axios({
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    method: "post",
+    url: `//${server}:9000/idig/${project}/${trench}`,
+    auth: { username, password },
+    data: JSON.stringify({ head, device: "webapp", surveys, preferences }),
   })
     .catch((error) => handleError(error))
     .finally(() => console.log("spinner off"));
