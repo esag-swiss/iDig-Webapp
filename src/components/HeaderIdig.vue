@@ -136,12 +136,13 @@ export default {
 
             this.manageResponseForFetchAllTrenches(response);
 
-            fetchTrench(this.allTrenches[0]).then((response) => {
-              // switch button to green , ajouter if trenches loaded ?
-              this.isActive = true;
+            return fetchTrench(this.allTrenches[0]);
+          })
+          .then((response) => {
+            // switch button to green , ajouter if trenches loaded ?
+            this.isActive = true;
 
-              this.manageResponseForFetchTrench(response);
-            });
+            this.manageResponseForFetchTrench(response);
           })
           .catch(() => {});
       } else {
