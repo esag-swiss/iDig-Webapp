@@ -1,5 +1,12 @@
 import axios from "axios";
 
+export function cleanerServerUserEntry(serverUserEntry) {
+  return serverUserEntry
+    .replace("https://", "")
+    .replace("http://", "")
+    .replace(":9000", "");
+}
+
 export function fetchTrenches(username, password, server, project) {
   console.log("spinner on");
   return axios({

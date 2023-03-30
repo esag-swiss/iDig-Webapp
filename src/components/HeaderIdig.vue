@@ -71,6 +71,7 @@ import {
   storePersistentUserSettings,
   getPersistentUserSettingsOrEmptyStrings,
 } from "@/services/PersistentUserSettings";
+import { cleanerServerUserEntry, fetchTrenches } from "@/services/ApiClient";
 
 export default {
   components: {
@@ -109,10 +110,7 @@ export default {
 
   methods: {
     Connexion() {
-      // clean server entry by user
-      this.server = this.server.replace("https://", "");
-      this.server = this.server.replace("http://", "");
-      this.server = this.server.replace(":9000", "");
+      this.server = cleanerServerUserEntry(this.server);
 
       fetchTrenches(this.username, this.password, this.server, this.project)
         .then((response) => {
