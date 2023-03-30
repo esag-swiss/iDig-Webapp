@@ -71,7 +71,11 @@ import {
   storePersistentUserSettings,
   getPersistentUserSettingsOrEmptyStrings,
 } from "@/services/PersistentUserSettings";
-import { cleanerServerUserEntry, fetchTrenches } from "@/services/ApiClient";
+import {
+  cleanServerUserEntry,
+  fetchAllTrenches,
+  fetchTrench,
+} from "@/services/ApiClient";
 
 export default {
   components: {
@@ -110,9 +114,9 @@ export default {
 
   methods: {
     Connexion() {
-      this.server = cleanerServerUserEntry(this.server);
+      this.server = cleanServerUserEntry(this.server);
 
-      fetchTrenches(this.username, this.password, this.server, this.project)
+      fetchAllTrenches(this.username, this.password, this.server, this.project)
         .then((response) => {
           // switch button to green , ajouter if trenches loaded ?
           this.isActive = true;
@@ -136,28 +140,7 @@ export default {
             (item) => item !== "refs" && item !== "objects"
           );
 
-          // une fois la liste des trenches établie va chercher les pref de la première trenche
-          axios({
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            method: "post",
-            url:
-              "http://" +
-              this.server +
-              ":9000/idig/" +
-              this.project +
-              "/" +
-              this.allTrenches[0],
-            auth: {
-              username: this.username,
-              password: this.password,
-            },
-            data: JSON.stringify({
-              head: "",
-              surveys: [],
-            }),
-          })
+          fetchTrench(this.allTrenches[0])
             .then((response) => {
               // stores  prefences base64 in session storage to allow PUSH
               sessionStorage.setItem("preferences", response.data.preferences);
