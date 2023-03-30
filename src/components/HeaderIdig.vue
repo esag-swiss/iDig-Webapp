@@ -113,19 +113,8 @@ export default {
       this.server = this.server.replace("https://", "");
       this.server = this.server.replace("http://", "");
       this.server = this.server.replace(":9000", "");
-      // retrieve preferences from server if connection settings valid
-      axios({
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        method: "get",
-        url:
-          "http://" + this.server + ":9000/idig/" + this.project + "/trenches",
-        auth: {
-          username: this.username,
-          password: this.password,
-        },
-      })
+
+      fetchTrenches(this.username, this.password, this.server, this.project)
         .then((response) => {
           // switch button to green , ajouter if trenches loaded ?
           this.isActive = true;
