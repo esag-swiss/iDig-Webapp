@@ -31,25 +31,12 @@ function handleError(error) {
 export function fetchAllTrenches(username, password, server, project) {
   console.log("spinner on");
   return axios({
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "get",
     url: `//${server}:9000/idig/${project}/trenches`,
-    auth: {
-      username,
-      password,
-    },
+    auth: { username, password },
   })
-    .catch((error) => {
-      console.error(error);
-
-      let alertMessage =
-        `message: ${error?.message}\r\r` +
-        `response.data: ${error?.response?.data}\r\r` +
-        `response.statusText: ${error?.response?.statusText}\r`;
-      alert(alertMessage);
-    })
+    .catch((error) => handleError(error))
     .finally(() => console.log("spinner off"));
 }
 
@@ -59,28 +46,12 @@ export function fetchTrench(trench) {
   const { server, project, username, password } = getConnectionCredentials();
 
   return axios({
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "post",
     url: `//${server}:9000/idig/${project}/${trench}`,
-    auth: {
-      username,
-      password,
-    },
-    data: JSON.stringify({
-      head: "",
-      surveys: [],
-    }),
+    auth: { username, password },
+    data: JSON.stringify({ head: "", surveys: [] }),
   })
-    .catch((error) => {
-      console.error(error);
-
-      let alertMessage =
-        `message: ${error?.message}\r\r` +
-        `response.data: ${error?.response?.data}\r\r` +
-        `response.statusText: ${error?.response?.statusText}\r`;
-      alert(alertMessage);
-    })
+    .catch((error) => handleError(error))
     .finally(() => console.log("spinner off"));
 }
