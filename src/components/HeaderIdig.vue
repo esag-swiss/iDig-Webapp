@@ -55,7 +55,7 @@
           type="button"
           class="btn btn-outline-secondary my-0 my-sm-0 m-2 p-0"
           :class="{ isConnected: isActive }"
-          @click="Connexion()"
+          @click="connect()"
         >
           connexion
         </button>
@@ -111,13 +111,13 @@ export default {
     this.username = username;
     this.password = password;
   },
-
   methods: {
-    Connexion() {
+    connect() {
       this.server = cleanServerUserEntry(this.server);
 
       const devMode = "new_server";
       // const devMode = "old_server";
+
       if (devMode === "new_server") {
         fetchAllTrenches(
           this.username,
@@ -125,9 +125,6 @@ export default {
           this.server,
           this.project
         ).then((response) => {
-          // switch button to green , ajouter if trenches loaded ?
-          this.isActive = true;
-
           storePersistentUserSettings(
             this.server,
             this.project,
@@ -139,6 +136,9 @@ export default {
           this.manageResponseForFetchAllTrenches(response);
 
           fetchTrench(this.allTrenches[0]).then((response) => {
+            // switch button to green , ajouter if trenches loaded ?
+            this.isActive = true;
+
             this.manageResponseForFetchTrench(response);
           });
         });
