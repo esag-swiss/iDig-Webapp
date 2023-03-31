@@ -32,9 +32,9 @@
 </template>
 
 <script>
-import axios from "axios";
 import { json2geojson } from "@/assets/json2geojson";
 import { geojson } from "@/assets/json2geojson";
+import { fetchSurvey } from "@/services/ApiClient";
 
 export default {
   props: {
@@ -121,24 +121,7 @@ export default {
       // this.trenchesData = {},
       //   this.trenchesVersion = {},
       this.checkedTrenches.forEach((trench) => {
-        var session_url =
-          "http://" +
-          localStorage.server +
-          ":9000/idig/" +
-          localStorage.project +
-          "/" +
-          trench +
-          "/surveys";
-        axios({
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          method: "get",
-          url: session_url,
-          auth: {
-            username: localStorage.username,
-            password: localStorage.password,
-          },
-          data: {},
-        }).then((response) => {
+        fetchSurvey(trench).then((response) => {
           // pour emit des surveys
           Array.prototype.push.apply(this.arr, response.data.surveys);
 

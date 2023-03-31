@@ -55,7 +55,7 @@
           type="button"
           class="btn btn-outline-secondary my-0 my-sm-0 m-2 p-0"
           :class="{ isConnected: isActive }"
-          @click="Connexion()"
+          @click="connect()"
         >
           connexion
         </button>
@@ -71,6 +71,7 @@ import {
   storePersistentUserSettings,
   getPersistentUserSettingsOrEmptyStrings,
 } from "@/services/PersistentUserSettings";
+import { fetchAllTrenches, fetchTrench } from "@/services/ApiClient";
 
 export default {
   components: {
@@ -106,28 +107,42 @@ export default {
     this.username = username;
     this.password = password;
   },
-
   methods: {
-    Connexion() {
-      // clean server entry by user
-      this.server = this.server.replace("https://", "");
-      this.server = this.server.replace("http://", "");
-      this.server = this.server.replace(":9000", "");
-      // retrieve preferences from server if connection settings valid
-      axios({
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        method: "get",
-        url:
-          "http://" + this.server + ":9000/idig/" + this.project + "/trenches",
-        auth: {
-          username: this.username,
-          password: this.password,
-        },
-      })
-        .then((response) => {
-          // switch button to green , ajouter if trenches loaded ?
+    connect() {
+      this.server = this.cleanServerUserEntry(this.server);
+
+      const devMode = "new_server";
+      // const devMode = "old_server";
+
+      if (devMode === "new_server") {
+        fetchAllTrenches(
+          this.username,
+          this.password,
+          this.server,
+          this.project
+        )
+          .then((response) => {
+            storePersistentUserSettings(
+              this.server,
+              this.project,
+              this.username,
+              this.password,
+              this.lang
+            );
+
+            this.manageResponseForFetchAllTrenches(response);
+
+            return fetchTrench(this.allTrenches[0]);
+          })
+          .then((response) => {
+            // switch button to green , ajouter if trenches loaded ?
+            this.isActive = true;
+
+            this.manageResponseForFetchTrench(response);
+          });
+      } else {
+        // old_server
+        fetchTrench(this.trenches[0]).then((response) => {
           this.isActive = true;
 
           storePersistentUserSettings(
@@ -138,164 +153,44 @@ export default {
             this.lang
           );
 
-          // envoi les trenches du projet au parent
-          this.$emit(
-            "all-trenches",
-            response.data.filter(
-              (item) => item !== "refs" && item !== "objects"
-            )
-          ); // pour lister les trenches à gauche peut etre doublon avec local storage
-          this.allTrenches = response.data.filter(
-            (item) => item !== "refs" && item !== "objects"
-          );
-
-          // une fois la liste des trenches établie va chercher les pref de la première trenche
-          axios({
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            method: "post",
-            url:
-              "http://" +
-              this.server +
-              ":9000/idig/" +
-              this.project +
-              "/" +
-              this.allTrenches[0],
-            auth: {
-              username: this.username,
-              password: this.password,
-            },
-            data: JSON.stringify({
-              head: "",
-              surveys: [],
-            }),
-          })
-            .then((response) => {
-              // stores  prefences base64 in session storage to allow PUSH
-              sessionStorage.setItem("preferences", response.data.preferences);
-
-              // get preferences in json to access groupes, types, fields etc
-              this.preferences = decodeURIComponent(
-                escape(window.atob(response.data.preferences))
-              ); // escape is deprecated
-              this.preferences = JSON.parse(this.preferences);
-
-              // utilisé par Overlay.vue pour afficher les champs attachés au type d'objet
-              localStorage.setItem(
-                "types",
-                JSON.stringify(this.preferences.types)
-              );
-              sessionStorage.setItem(
-                "types",
-                JSON.stringify(this.preferences.types)
-              );
-              this.$emit("all-types", this.preferences.types);
-
-              // utilisé par FilterFields.vue pour afficher les champs
-              localStorage.setItem(
-                "fields",
-                JSON.stringify(this.preferences.fields)
-              );
-            })
-            .catch((error) => {
-              this.isActive = false;
-              if (error.response.status == 401) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                alert(error.response.data + "or project"); // idig server retourne 401 si le endpoint n'est pas bon
-                console.log(error.response.status);
-                console.log(error.response.headers);
-              } else {
-                alert("server not reachable");
-              }
-            });
-        })
-        .catch((error) => {
-          this.isActive = false;
-          if (error.response.status == 401) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            alert(error.response.data + "or project"); // idig server retourne 401 si le endpoint n'est pas bon
-            console.log(error.response.status);
-            console.log(error.response.headers);
-          } else {
-            // alert("server not reachable");
-            axios({
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-              },
-              method: "post",
-              url:
-                "http://" +
-                this.server +
-                ":9000/idig/" +
-                this.project +
-                "/" +
-                this.trenches[0],
-              auth: {
-                username: this.username,
-                password: this.password,
-              },
-              data: JSON.stringify({
-                head: "",
-                surveys: [],
-              }),
-            })
-              .then((response) => {
-                // switch button to green
-                this.isActive = true;
-                // envoi les trenches du projet au parent
-                this.$emit("all-trenches", this.trenches); // pour lister les trenches à gauche peut etre doublon avec local storage
-
-                // stores  prefences base64 in session storage to allow PUSH
-                sessionStorage.setItem(
-                  "preferences",
-                  response.data.preferences
-                );
-
-                // get preferences in json to access groupes, types, fields etc
-                this.preferences = decodeURIComponent(
-                  escape(window.atob(response.data.preferences))
-                ); // escape is deprecated
-                this.preferences = JSON.parse(this.preferences);
-
-                // utilisé par Overlay.vue pour afficher les champs attachés au type d'objet
-                localStorage.setItem(
-                  "types",
-                  JSON.stringify(this.preferences.types)
-                );
-                this.$emit("all-types", this.preferences.types);
-
-                // utilisé par FilterFields.vue pour afficher les champs
-                localStorage.setItem(
-                  "fields",
-                  JSON.stringify(this.preferences.fields)
-                );
-                storePersistentUserSettings(
-                  this.server,
-                  this.project,
-                  this.username,
-                  this.password,
-                  this.lang
-                );
-              })
-              .catch((error) => {
-                this.isActive = false;
-                if (error.response.status == 401) {
-                  // The request was made and the server responded with a status code
-                  // that falls out of the range of 2xx
-                  alert(error.response.data + "or project"); // idig server retourne 401 si le endpoint n'est pas bon
-                  console.log(error.response.status);
-                  console.log(error.response.headers);
-                } else {
-                  alert("server not reachable");
-                }
-              });
-          }
+          this.manageResponseForFetchTrench(response);
         });
+      }
     },
+    manageResponseForFetchAllTrenches(response) {
+      // envoi les trenches du projet au parent
+      this.$emit(
+        "all-trenches",
+        response.data.filter((item) => item !== "refs" && item !== "objects")
+      ); // pour lister les trenches à gauche peut etre doublon avec local storage
+      this.allTrenches = response.data.filter(
+        (item) => item !== "refs" && item !== "objects"
+      );
+    },
+    manageResponseForFetchTrench(response) {
+      // stores  prefences base64 in session storage to allow PUSH
+      sessionStorage.setItem("preferences", response.data.preferences);
 
+      // get preferences in json to access groupes, types, fields etc
+      this.preferences = decodeURIComponent(
+        escape(window.atob(response.data.preferences))
+      ); // escape is deprecated
+      this.preferences = JSON.parse(this.preferences);
+
+      // utilisé par Overlay.vue pour afficher les champs attachés au type d'objet
+      localStorage.setItem("types", JSON.stringify(this.preferences.types));
+      sessionStorage.setItem("types", JSON.stringify(this.preferences.types));
+      this.$emit("all-types", this.preferences.types);
+
+      // utilisé par FilterFields.vue pour afficher les champs
+      localStorage.setItem("fields", JSON.stringify(this.preferences.fields));
+    },
+    cleanServerUserEntry(serverUserEntry) {
+      return serverUserEntry
+        .replace("https://", "")
+        .replace("http://", "")
+        .replace(":9000", "");
+    },
     toggleMenu() {
       this.isBurgerActive = !this.isBurgerActive;
       this.$emit("toggle-menu");

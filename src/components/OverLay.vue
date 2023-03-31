@@ -155,7 +155,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import { updateTrenchItem } from "@/services/ApiClient";
 
 export default {
   name: "OverLay",
@@ -239,43 +239,18 @@ export default {
       // alert("to use for user preferences settings")
     },
     pushSurvey() {
-      axios({
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        method: "post",
-        url:
-          "http://" +
-          localStorage.server +
-          ":9000/idig/" +
-          localStorage.project +
-          "/" +
-          this.selectedTrench,
-        auth: {
-          username: localStorage.username,
-          password: localStorage.password,
-        },
-        data: JSON.stringify({
-          head: JSON.parse(sessionStorage.trenchesVersion)[this.selectedTrench],
-          device: "webapp",
-          surveys: this.trenchtoUpdate,
-          preferences: sessionStorage.preferences,
-        }),
-      })
-        .then(() => {
-          // alert("connection valide");
-        })
-        .catch((error) => {
-          if (error.response.status == 401) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            alert(error.response.data + "or project"); // idig server retourne 401 si le endpoint n'est pas bon
-            console.log(error.response.status);
-            console.log(error.response.headers);
-          } else {
-            alert("server not reachable");
-          }
-        });
+      const head = JSON.parse(sessionStorage.trenchesVersion)[
+        this.selectedTrench
+      ];
+      const surveys = this.trenchtoUpdate;
+      const preferences = sessionStorage.preferences;
+
+      updateTrenchItem(this.selectedTrench, head, surveys, preferences).then(
+        () => {
+          // TODO: tell the user it was saved
+          console.log("saved!");
+        }
+      );
     },
   },
 };
