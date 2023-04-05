@@ -79,8 +79,8 @@ export default {
 
   emits: ["checkFields", "selectedType", "selected-type", "check-fields"],
   setup() {
-    const { allTypes } = useDataState();
-    return { allTypes };
+    const { allTypes, allFields } = useDataState();
+    return { allTypes, allFields };
   },
   data() {
     return {
@@ -136,8 +136,8 @@ export default {
 
     // liste tous les fields afin ensuite d'établi la liste des labels correspondants
     allfields() {
-      if (localStorage.fields) {
-        return JSON.parse(localStorage.fields).map(({ field }) => {
+      if (this.allFields) {
+        return JSON.parse(this.allFields).map(({ field }) => {
           return field;
         });
       } else {
@@ -148,8 +148,8 @@ export default {
     },
 
     alllabels() {
-      if (localStorage.fields) {
-        return JSON.parse(localStorage.fields).map((field) => {
+      if (this.allFields) {
+        return JSON.parse(this.allFields).map((field) => {
           if (Object.prototype.hasOwnProperty.call(field, "labels")) {
             return field.labels[localStorage.lang];
           } else {

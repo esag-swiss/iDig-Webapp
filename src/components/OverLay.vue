@@ -171,8 +171,8 @@ export default {
     },
   },
   setup() {
-    const { allTypes } = useDataState();
-    return { allTypes };
+    const { allTypes, allFields } = useDataState();
+    return { allTypes, allFields };
   },
   data() {
     return {
@@ -183,7 +183,7 @@ export default {
   computed: {
     AAA() {
       // attention fields ne liste pas tous les champs
-      return JSON.parse(localStorage.fields).filter((x) => x.field == "Type");
+      return JSON.parse(this.allFields).filter((x) => x.field == "Type");
     },
 
     AAAA() {
@@ -191,7 +191,7 @@ export default {
     },
 
     valuelist() {
-      return JSON.parse(localStorage.fields)[33].valuelist;
+      return JSON.parse(this.allFields)[33].valuelist;
     },
 
     selectedTrench() {
@@ -227,13 +227,12 @@ export default {
   methods: {
     fieldExist(field) {
       // attention comme fields ne liste pas tous les champs on verifie si il existe
-      return JSON.parse(localStorage.fields).filter((x) => x.field == field)
-        .length;
+      return JSON.parse(this.allFields).filter((x) => x.field == field).length;
     },
 
     fieldType(field) {
       // attention fields ne liste pas tous les champs
-      return JSON.parse(localStorage.fields).filter((x) => x.field == field)[0];
+      return JSON.parse(this.allFields).filter((x) => x.field == field)[0];
     },
 
     setUserPreferences() {

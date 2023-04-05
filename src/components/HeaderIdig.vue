@@ -81,8 +81,16 @@ export default {
   emits: ["toggle-menu"],
   setup() {
     const { setAppState, appState } = useAppState();
-    const { setAllTrenches, setAllTypes, firstTrench } = useDataState();
-    return { setAppState, appState, setAllTrenches, setAllTypes, firstTrench };
+    const { setAllTrenches, setAllTypes, setAllFields, firstTrench } =
+      useDataState();
+    return {
+      setAppState,
+      appState,
+      setAllTrenches,
+      setAllTypes,
+      setAllFields,
+      firstTrench,
+    };
   },
   data() {
     return {
@@ -154,8 +162,7 @@ export default {
 
       this.setAllTypes(JSON.stringify(this.preferences.types));
 
-      // utilisé par FilterFields.vue pour afficher les champs
-      localStorage.setItem("fields", JSON.stringify(this.preferences.fields));
+      this.setAllFields(JSON.stringify(this.preferences.fields));
     },
     cleanServerUserEntry(serverUserEntry) {
       return serverUserEntry
