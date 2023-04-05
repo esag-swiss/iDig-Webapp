@@ -72,15 +72,17 @@ import {
 } from "@/services/PersistentUserSettings";
 import { fetchAllTrenches, fetchTrench } from "@/services/ApiClient";
 import { useAppState } from "@/services/useAppState";
+import { useDataState } from "@/services/useDataState";
 
 export default {
   components: {
     Burger,
   },
-  emits: ["all-types", "all-trenches", "toggle-menu"],
+  emits: ["all-types", "toggle-menu"],
   setup() {
     const { setAppState, appState } = useAppState();
-    return { setAppState, appState };
+    const { setAllTrenches, firstTrench } = useDataState();
+    return { setAppState, appState, setAllTrenches, firstTrench };
   },
   data() {
     return {
@@ -89,7 +91,6 @@ export default {
       langs: ["fr", "en", "el"],
       lang: "fr",
       isActive: false,
-      allTrenches: [], // a nettoyer
     };
   },
   computed: {
@@ -117,7 +118,7 @@ export default {
 
             this.manageResponseForFetchAllTrenches(response);
 
-            return fetchTrench(this.allTrenches[0]);
+            return fetchTrench(this.firstTrench);
           })
           .then((response) => {
             // switch button to green , ajouter if trenches loaded ?
@@ -127,7 +128,7 @@ export default {
           });
       } else {
         // old_server
-        fetchTrench(this.trenches[0]).then((response) => {
+        fetchTrench(this.firstTrench).then((response) => {
           this.isActive = true;
 
           storePersistentUserSettings();
@@ -137,13 +138,8 @@ export default {
       }
     },
     manageResponseForFetchAllTrenches(response) {
-      // envoi les trenches du projet au parent
-      this.$emit(
-        "all-trenches",
+      this.setAllTrenches(
         response.data.filter((item) => item !== "refs" && item !== "objects")
-      ); // pour lister les trenches à gauche peut etre doublon avec local storage
-      this.allTrenches = response.data.filter(
-        (item) => item !== "refs" && item !== "objects"
       );
     },
     manageResponseForFetchTrench(response) {
