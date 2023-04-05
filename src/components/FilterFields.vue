@@ -124,7 +124,7 @@ export default {
     // info : la liste des fields par groupe se trouvent dans types.groups.fields
     groups() {
       if (this.allTypes) {
-        return JSON.parse(this.allTypes).filter((x) => {
+        return this.allTypes.filter((x) => {
           return x.type.includes(this.selectedtype);
         })[0].groups;
       } else {
@@ -137,7 +137,7 @@ export default {
     // liste tous les fields afin ensuite d'établi la liste des labels correspondants
     allfields() {
       if (this.allFields) {
-        return JSON.parse(this.allFields).map(({ field }) => {
+        return this.allFields.map(({ field }) => {
           return field;
         });
       } else {
@@ -149,7 +149,7 @@ export default {
 
     alllabels() {
       if (this.allFields) {
-        return JSON.parse(this.allFields).map((field) => {
+        return this.allFields.map((field) => {
           if (Object.prototype.hasOwnProperty.call(field, "labels")) {
             return field.labels[localStorage.lang];
           } else {

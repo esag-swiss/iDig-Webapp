@@ -160,9 +160,9 @@ export default {
       ); // escape is deprecated
       this.preferences = JSON.parse(this.preferences);
 
-      this.setAllTypes(JSON.stringify(this.preferences.types));
+      this.setAllTypes(this.preferences.types);
 
-      this.setAllFields(JSON.stringify(this.preferences.fields));
+      this.setAllFields(this.preferences.fields);
     },
     cleanServerUserEntry(serverUserEntry) {
       return serverUserEntry

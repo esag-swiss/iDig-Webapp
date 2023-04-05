@@ -183,7 +183,7 @@ export default {
   computed: {
     AAA() {
       // attention fields ne liste pas tous les champs
-      return JSON.parse(this.allFields).filter((x) => x.field == "Type");
+      return this.allFields.filter((x) => x.field == "Type");
     },
 
     AAAA() {
@@ -191,7 +191,7 @@ export default {
     },
 
     valuelist() {
-      return JSON.parse(this.allFields)[33].valuelist;
+      return this.allFields[33].valuelist;
     },
 
     selectedTrench() {
@@ -216,7 +216,7 @@ export default {
     },
     groups() {
       if (this.allTypes) {
-        return JSON.parse(this.allTypes).filter((x) => {
+        return this.allTypes.filter((x) => {
           return x.type.includes(this.selectedType);
         })[0].groups;
       } else {
@@ -227,12 +227,12 @@ export default {
   methods: {
     fieldExist(field) {
       // attention comme fields ne liste pas tous les champs on verifie si il existe
-      return JSON.parse(this.allFields).filter((x) => x.field == field).length;
+      return this.allFields.filter((x) => x.field == field).length;
     },
 
     fieldType(field) {
       // attention fields ne liste pas tous les champs
-      return JSON.parse(this.allFields).filter((x) => x.field == field)[0];
+      return this.allFields.filter((x) => x.field == field)[0];
     },
 
     setUserPreferences() {
