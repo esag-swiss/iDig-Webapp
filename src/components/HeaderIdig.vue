@@ -8,40 +8,40 @@
         <div class="navbar-brand pr-3" href="#">iDig webapp</div>
       </ul>
       <form class="form-inline my-2 my-lg-0">
-        <!-- select server -->
         <div class="navbar-text text-light p-2">server:</div>
         <input
-          v-model="server"
+          :value="appState.server"
           class="my-2 text-light"
           style="background: #212529; border: 0px; width: 7em"
+          @input="(event) => setAppState('server', event.target.value)"
         />
-        <!-- select project -->
         <a class="navbar-text text-light p-2">project:</a>
         <select
-          v-model="project"
+          :value="appState.project"
           class="m-2 text-light"
           style="background: #212529; border: 0px; height: 26px"
+          @input="(event) => setAppState('project', event.target.value)"
         >
           <option v-for="project in projects" :key="project" :value="project">
             {{ project }}
           </option>
         </select>
-        <!-- select user -->
         <a class="navbar-text text-light p-2">user:</a>
         <input
-          v-model="username"
+          :value="appState.username"
           class="m-2 text-light"
           style="background: #212529; border: 0px; width: 6em"
+          @input="(event) => setAppState('username', event.target.value)"
         />
         <input
-          v-model="password"
+          :value="appState.password"
           type="password"
           class="m-2 text-light"
           style="background: #212529; border: 0px; width: 6em"
           placeholder="Password"
+          @input="(event) => setAppState('password', event.target.value)"
         />
         <!-- select lang -->
-
         <!-- <select
           class="m-2 text-light"
           v-model="lang"
@@ -64,26 +64,26 @@
   </nav>
 </template>
 <script>
-import axios from "axios";
 import Burger from "@/components/Burger.vue";
 import Preferences from "@/data/Preferences.json";
 import {
   storePersistentUserSettings,
-  getPersistentUserSettingsOrEmptyStrings,
+  loadPersistentUserSettingsOrEmptyStrings,
 } from "@/services/PersistentUserSettings";
 import { fetchAllTrenches, fetchTrench } from "@/services/ApiClient";
+import { useAppState } from "@/services/useAppState";
 
 export default {
   components: {
     Burger,
   },
   emits: ["all-types", "all-trenches", "toggle-menu"],
+  setup() {
+    const { setAppState, appState } = useAppState();
+    return { setAppState, appState };
+  },
   data() {
     return {
-      server: "localhost",
-      project: "Amarynthos",
-      username: "idig",
-      password: "idig",
       Preferences: Preferences,
       projects: Preferences.projects,
       langs: ["fr", "en", "el"],
@@ -97,38 +97,23 @@ export default {
       return this.Preferences[this.project];
     },
   },
-  // charge les préférences de connexion si elles existent
   mounted() {
-    const { lang, server, project, username, password } =
-      getPersistentUserSettingsOrEmptyStrings();
-    this.lang = lang;
-    this.server = server;
-    this.project = project;
-    this.username = username;
-    this.password = password;
+    loadPersistentUserSettingsOrEmptyStrings();
   },
   methods: {
     connect() {
-      this.server = this.cleanServerUserEntry(this.server);
+      this.setAppState(
+        "server",
+        this.cleanServerUserEntry(this.appState.server)
+      );
 
       const devMode = "new_server";
       // const devMode = "old_server";
 
       if (devMode === "new_server") {
-        fetchAllTrenches(
-          this.username,
-          this.password,
-          this.server,
-          this.project
-        )
+        fetchAllTrenches()
           .then((response) => {
-            storePersistentUserSettings(
-              this.server,
-              this.project,
-              this.username,
-              this.password,
-              this.lang
-            );
+            storePersistentUserSettings();
 
             this.manageResponseForFetchAllTrenches(response);
 
@@ -145,13 +130,7 @@ export default {
         fetchTrench(this.trenches[0]).then((response) => {
           this.isActive = true;
 
-          storePersistentUserSettings(
-            this.server,
-            this.project,
-            this.username,
-            this.password,
-            this.lang
-          );
+          storePersistentUserSettings();
 
           this.manageResponseForFetchTrench(response);
         });

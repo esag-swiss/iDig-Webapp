@@ -1,14 +1,16 @@
 import axios from "axios";
-import { getPersistentUserSettingsOrEmptyStrings } from "@/services/PersistentUserSettings";
+import { useAppState } from "@/services/useAppState";
 
-// TODO: Here we temporarily, we use the persistentUserSettings. But these are meant to be used
-// only to save preferences between sessions. We'll certainly use a centralised storage in the future.
-// (Warning: the code, as it is here, could lead to strange behaviors when working on 2 tabs)
 function getConnectionCredentials() {
-  const { server, project, username, password } =
-    getPersistentUserSettingsOrEmptyStrings();
+  const { appState } = useAppState();
+  const appStateUnwrapped = appState.value;
 
-  return { server, project, username, password };
+  return {
+    server: appStateUnwrapped.server,
+    project: appStateUnwrapped.project,
+    username: appStateUnwrapped.username,
+    password: appStateUnwrapped.password,
+  };
 }
 
 function handleError(error) {
@@ -23,8 +25,11 @@ function handleError(error) {
   throw new Error(error);
 }
 
-export function fetchAllTrenches(username, password, server, project) {
+export function fetchAllTrenches() {
   console.log("spinner on");
+
+  const { server, project, username, password } = getConnectionCredentials();
+
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "get",
