@@ -1,6 +1,6 @@
 <template>
   <!-- header -->
-  <HeaderIdig @toggle-menu="toggleMenu" @all-types="setallTypes"> </HeaderIdig>
+  <HeaderIdig @toggle-menu="toggleMenu"> </HeaderIdig>
 
   <div class="container-fluid">
     <div class="row flex-xl-nowrap">
@@ -27,7 +27,6 @@
           :selectedData="selectedData"
           :checkedFields="checkedFields"
           :selectedType="selectedFilter"
-          :allTypes="allTypes"
         >
         </DynaTable>
       </div>
@@ -70,7 +69,6 @@ export default {
           label: "Identifiant",
         },
       ],
-      allTypes: [],
     };
   },
   computed: {
@@ -92,9 +90,6 @@ export default {
         this.display = "none";
       }
       this.isHidden = !this.isHidden;
-    },
-    setallTypes(types) {
-      this.allTypes = types;
     },
     selectedTrench(trench) {
       this.trenchData = trench;

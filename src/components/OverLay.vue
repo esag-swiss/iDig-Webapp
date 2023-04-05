@@ -156,6 +156,7 @@
 
 <script>
 import { updateTrenchItem } from "@/services/ApiClient";
+import { useDataState } from "@/services/useDataState";
 
 export default {
   name: "OverLay",
@@ -164,14 +165,14 @@ export default {
       type: Object,
       required: false,
     },
-    allTypes: {
-      type: Object,
-      required: false,
-    },
     selectedType: {
       type: String,
       required: false,
     },
+  },
+  setup() {
+    const { allTypes } = useDataState();
+    return { allTypes };
   },
   data() {
     return {
@@ -214,8 +215,8 @@ export default {
       }
     },
     groups() {
-      if (localStorage.types) {
-        return JSON.parse(localStorage.types).filter((x) => {
+      if (this.allTypes) {
+        return JSON.parse(this.allTypes).filter((x) => {
           return x.type.includes(this.selectedType);
         })[0].groups;
       } else {

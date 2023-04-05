@@ -2,7 +2,6 @@
   <div v-show="overlay" class="overlayframe" @click="removeLOverlay()"></div>
   <OverLay
     v-show="overlay"
-    :allTypes="allTypes"
     :selectedType="selectedType"
     :selectedRow="selectedRow"
   >
@@ -55,10 +54,6 @@ export default defineComponent({
     // },
     selectedType: {
       type: String,
-      required: false,
-    },
-    allTypes: {
-      type: Object,
       required: false,
     },
   },

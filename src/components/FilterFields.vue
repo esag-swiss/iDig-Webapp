@@ -67,6 +67,7 @@
 
 <script>
 import preferencesData from "@/data/Preferences.json";
+import { useDataState } from "@/services/useDataState";
 
 export default {
   props: {
@@ -77,6 +78,10 @@ export default {
   },
 
   emits: ["checkFields", "selectedType", "selected-type", "check-fields"],
+  setup() {
+    const { allTypes } = useDataState();
+    return { allTypes };
+  },
   data() {
     return {
       fields: preferencesData.fields,
@@ -118,8 +123,8 @@ export default {
     // liste les groupes pour l'accordéon
     // info : la liste des fields par groupe se trouvent dans types.groups.fields
     groups() {
-      if (localStorage.types) {
-        return JSON.parse(localStorage.types).filter((x) => {
+      if (this.allTypes) {
+        return JSON.parse(this.allTypes).filter((x) => {
           return x.type.includes(this.selectedtype);
         })[0].groups;
       } else {

@@ -78,11 +78,11 @@ export default {
   components: {
     Burger,
   },
-  emits: ["all-types", "toggle-menu"],
+  emits: ["toggle-menu"],
   setup() {
     const { setAppState, appState } = useAppState();
-    const { setAllTrenches, firstTrench } = useDataState();
-    return { setAppState, appState, setAllTrenches, firstTrench };
+    const { setAllTrenches, setAllTypes, firstTrench } = useDataState();
+    return { setAppState, appState, setAllTrenches, setAllTypes, firstTrench };
   },
   data() {
     return {
@@ -152,10 +152,7 @@ export default {
       ); // escape is deprecated
       this.preferences = JSON.parse(this.preferences);
 
-      // utilisé par Overlay.vue pour afficher les champs attachés au type d'objet
-      localStorage.setItem("types", JSON.stringify(this.preferences.types));
-      sessionStorage.setItem("types", JSON.stringify(this.preferences.types));
-      this.$emit("all-types", this.preferences.types);
+      this.setAllTypes(JSON.stringify(this.preferences.types));
 
       // utilisé par FilterFields.vue pour afficher les champs
       localStorage.setItem("fields", JSON.stringify(this.preferences.fields));
