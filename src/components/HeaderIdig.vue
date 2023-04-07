@@ -69,7 +69,6 @@
 </template>
 <script>
 import Burger from "@/components/Burger.vue";
-import localPreferences from "@/data/Preferences.json";
 import {
   storePersistentUserSettings,
   loadPersistentUserSettingsOrEmptyStrings,
@@ -104,14 +103,10 @@ export default {
   },
   data() {
     return {
-      localProjectList: localPreferences.projects,
+      firstTrenchForLocalDev: { Amarynthos: "AMA21-S24", Agora: "ΒΓ 2013" },
+      localProjectList: ["Amarynthos", "Agora"],
       isActive: false,
     };
-  },
-  computed: {
-    trenches() {
-      return this.Preferences[this.project];
-    },
   },
   mounted() {
     loadPersistentUserSettingsOrEmptyStrings();
@@ -143,7 +138,9 @@ export default {
           });
       } else {
         // old_server
-        fetchPreferences(this.firstTrench).then((response) => {
+        fetchPreferences(
+          this.firstTrenchForLocalDev[this.appState.project]
+        ).then((response) => {
           this.isActive = true;
 
           storePersistentUserSettings();
