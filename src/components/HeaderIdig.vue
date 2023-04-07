@@ -146,9 +146,7 @@ export default {
       }
     },
     manageResponseForFetchAllTrenches(response) {
-      this.setAllTrenches(
-        response.data.filter((item) => item !== "refs" && item !== "objects")
-      );
+      this.setAllTrenches(response.data);
     },
     manageResponseForFetchTrench(response) {
       // stores  prefences base64 in session storage to allow PUSH
