@@ -70,7 +70,7 @@ export default {
       setAllTrenches,
       setAllTypes,
       setAllFields,
-      setFetchedPreferencesBase64,
+      setPreferencesBase64,
       firstTrench,
     } = useDataState();
     return {
@@ -80,7 +80,7 @@ export default {
       setAllTypes,
       setAllFields,
       firstTrench,
-      setFetchedPreferencesBase64,
+      setPreferencesBase64,
     };
   },
   data() {
@@ -135,7 +135,7 @@ export default {
     },
     manageResponseForFetchPreferences(response) {
       // Store preferences in base64 format, because it will be necessary to resend them when modifying an item
-      this.setFetchedPreferencesBase64(response.data.preferences);
+      this.setPreferencesBase64(response.data.preferences);
 
       const preferences = JSON.parse(
         decodeURIComponent(escape(window.atob(response.data.preferences)))
