@@ -139,7 +139,7 @@ export default {
             // switch button to green , ajouter if trenches loaded ?
             this.isActive = true;
 
-            this.manageResponseForFetchTrench(response);
+            this.manageResponseForFetchPreferences(response);
           });
       } else {
         // old_server
@@ -148,14 +148,14 @@ export default {
 
           storePersistentUserSettings();
 
-          this.manageResponseForFetchTrench(response);
+          this.manageResponseForFetchPreferences(response);
         });
       }
     },
     manageResponseForFetchAllTrenches(response) {
       this.setAllTrenches(response.data);
     },
-    manageResponseForFetchTrench(response) {
+    manageResponseForFetchPreferences(response) {
       // Store preferences in base64 format, because it will be necessary to resend them when modifying an item
       this.setFetchedPreferencesBase64(response.data.preferences);
 
