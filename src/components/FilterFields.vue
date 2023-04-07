@@ -137,6 +137,7 @@ export default {
 
     // liste tous les fields afin ensuite d'établi la liste des labels correspondants
     allfields() {
+      // TODO: warning ! There is global allFields, and this local allfields
       if (this.allFields) {
         return this.allFields.map(({ field }) => {
           return field;
