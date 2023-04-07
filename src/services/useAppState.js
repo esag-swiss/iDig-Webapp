@@ -5,6 +5,7 @@ const appState = reactive({
   password: "",
   server: "",
   project: "",
+  lang: "fr",
 });
 
 export const useAppState = () => {
