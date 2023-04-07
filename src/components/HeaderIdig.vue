@@ -16,20 +16,12 @@
           @input="(event) => setAppState('server', event.target.value)"
         />
         <a class="navbar-text text-light p-2">project:</a>
-        <select
+        <input
           :value="appState.project"
           class="m-2 text-light"
           style="background: #212529; border: 0px; height: 26px"
           @input="(event) => setAppState('project', event.target.value)"
-        >
-          <option
-            v-for="project in localProjectList"
-            :key="project"
-            :value="project"
-          >
-            {{ project }}
-          </option>
-        </select>
+        />
         <a class="navbar-text text-light p-2">user:</a>
         <input
           :value="appState.username"
@@ -45,16 +37,6 @@
           placeholder="Password"
           @input="(event) => setAppState('password', event.target.value)"
         />
-        <!-- select lang -->
-        <!-- <select
-          class="m-2 text-light"
-          v-model="lang"
-          style="background: #212529; border: 0px; height: 26px"
-        >
-          <option v-for="lang in langs" :key="lang" :value="lang">
-            {{ lang }}
-          </option>
-        </select> -->
         <button
           type="button"
           class="btn btn-outline-secondary my-0 my-sm-0 m-2 p-0"
@@ -104,7 +86,6 @@ export default {
   data() {
     return {
       firstTrenchForLocalDev: { Amarynthos: "AMA21-S24", Agora: "ΒΓ 2013" },
-      localProjectList: ["Amarynthos", "Agora"],
       isActive: false,
     };
   },
