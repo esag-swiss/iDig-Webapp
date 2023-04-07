@@ -68,6 +68,7 @@
 <script>
 import preferencesData from "@/data/Preferences.json";
 import { useDataState } from "@/services/useDataState";
+import { useAppState } from "@/services/useAppState";
 
 export default {
   props: {
@@ -80,7 +81,8 @@ export default {
   emits: ["checkFields", "selectedType", "selected-type", "check-fields"],
   setup() {
     const { allTypes, allFields } = useDataState();
-    return { allTypes, allFields };
+    const { appState } = useAppState();
+    return { allTypes, allFields, appState };
   },
   data() {
     return {
@@ -115,7 +117,6 @@ export default {
         true,
         true,
       ],
-      lang: "fr", // for later dev
       img_url: "http://thacer.archaiodata.com/ThaCER.svg", // test images
     };
   },
@@ -151,7 +152,7 @@ export default {
       if (this.allFields) {
         return this.allFields.map((field) => {
           if (Object.prototype.hasOwnProperty.call(field, "labels")) {
-            return field.labels[localStorage.lang];
+            return field.labels[this.appState.lang];
           } else {
             return field.field;
           }
