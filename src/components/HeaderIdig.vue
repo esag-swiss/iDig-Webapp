@@ -85,8 +85,13 @@ export default {
   emits: ["toggle-menu"],
   setup() {
     const { setAppState, appState } = useAppState();
-    const { setAllTrenches, setAllTypes, setAllFields, firstTrench } =
-      useDataState();
+    const {
+      setAllTrenches,
+      setAllTypes,
+      setAllFields,
+      setFetchedPreferencesBase64,
+      firstTrench,
+    } = useDataState();
     return {
       setAppState,
       appState,
@@ -94,6 +99,7 @@ export default {
       setAllTypes,
       setAllFields,
       firstTrench,
+      setFetchedPreferencesBase64,
     };
   },
   data() {
@@ -150,18 +156,14 @@ export default {
       this.setAllTrenches(response.data);
     },
     manageResponseForFetchTrench(response) {
-      // stores  prefences base64 in session storage to allow PUSH
-      sessionStorage.setItem("preferences", response.data.preferences);
+      // Store preferences in base64 format, because it will be necessary to resend them when modifying an item
+      this.setFetchedPreferencesBase64(response.data.preferences);
 
-      // get preferences in json to access groupes, types, fields etc
-      this.preferences = decodeURIComponent(
-        escape(window.atob(response.data.preferences))
-      ); // escape is deprecated
-      this.preferences = JSON.parse(this.preferences);
-
-      this.setAllTypes(this.preferences.types);
-
-      this.setAllFields(this.preferences.fields);
+      const preferences = JSON.parse(
+        decodeURIComponent(escape(window.atob(response.data.preferences)))
+      );
+      this.setAllTypes(preferences.types);
+      this.setAllFields(preferences.fields);
     },
     cleanServerUserEntry(serverUserEntry) {
       return serverUserEntry

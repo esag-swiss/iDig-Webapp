@@ -72,7 +72,7 @@ export function fetchSurvey(trench) {
     .finally(() => console.log("spinner off"));
 }
 
-export function updateTrenchItem(trench, head, surveys, preferences) {
+export function updateTrenchItem(trench, head, surveys, preferencesBase64) {
   console.log("spinner on");
 
   const { server, project, username, password } = getConnectionCredentials();
@@ -82,7 +82,12 @@ export function updateTrenchItem(trench, head, surveys, preferences) {
     method: "post",
     url: `//${server}:9000/idig/${project}/${trench}`,
     auth: { username, password },
-    data: JSON.stringify({ head, device: "webapp", surveys, preferences }),
+    data: JSON.stringify({
+      head,
+      device: "webapp",
+      surveys,
+      preferencesBase64,
+    }),
   })
     .catch((error) => handleError(error))
     .finally(() => console.log("spinner off"));

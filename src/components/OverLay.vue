@@ -171,8 +171,8 @@ export default {
     },
   },
   setup() {
-    const { allTypes, allFields } = useDataState();
-    return { allTypes, allFields };
+    const { allTypes, allFields, fetchedPreferencesBase64 } = useDataState();
+    return { allTypes, allFields, fetchedPreferencesBase64 };
   },
   data() {
     return {
@@ -243,7 +243,7 @@ export default {
         this.selectedTrench
       ];
       const surveys = this.trenchtoUpdate;
-      const preferences = sessionStorage.preferences;
+      const preferences = this.fetchedPreferencesBase64;
 
       updateTrenchItem(this.selectedTrench, head, surveys, preferences).then(
         () => {
