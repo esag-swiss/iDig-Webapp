@@ -40,7 +40,7 @@ export function fetchAllTrenches() {
     .finally(() => console.log("spinner off"));
 }
 
-export function fetchTrench(trench) {
+export function fetchPreferences(trench) {
   console.log("spinner on");
 
   const { server, project, username, password } = getConnectionCredentials();

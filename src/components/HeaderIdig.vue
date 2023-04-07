@@ -70,7 +70,7 @@ import {
   storePersistentUserSettings,
   loadPersistentUserSettingsOrEmptyStrings,
 } from "@/services/PersistentUserSettings";
-import { fetchAllTrenches, fetchTrench } from "@/services/ApiClient";
+import { fetchAllTrenches, fetchPreferences } from "@/services/ApiClient";
 import { useAppState } from "@/services/useAppState";
 import { useDataState } from "@/services/useDataState";
 
@@ -126,7 +126,7 @@ export default {
 
             this.manageResponseForFetchAllTrenches(response);
 
-            return fetchTrench(this.firstTrench);
+            return fetchPreferences(this.firstTrench);
           })
           .then((response) => {
             // switch button to green , ajouter if trenches loaded ?
@@ -136,7 +136,7 @@ export default {
           });
       } else {
         // old_server
-        fetchTrench(this.firstTrench).then((response) => {
+        fetchPreferences(this.firstTrench).then((response) => {
           this.isActive = true;
 
           storePersistentUserSettings();
