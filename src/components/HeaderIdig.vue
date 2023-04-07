@@ -23,7 +23,7 @@
           @input="(event) => setAppState('project', event.target.value)"
         >
           <option
-            v-for="project in localProjectsList"
+            v-for="project in localProjectList"
             :key="project"
             :value="project"
           >
@@ -98,7 +98,7 @@ export default {
   },
   data() {
     return {
-      localProjectsList: localPreferences.projects,
+      localProjectList: localPreferences.projects,
       isActive: false,
     };
   },
