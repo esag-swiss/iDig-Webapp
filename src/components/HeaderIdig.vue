@@ -22,7 +22,11 @@
           style="background: #212529; border: 0px; height: 26px"
           @input="(event) => setAppState('project', event.target.value)"
         >
-          <option v-for="project in projects" :key="project" :value="project">
+          <option
+            v-for="project in localProjectsList"
+            :key="project"
+            :value="project"
+          >
             {{ project }}
           </option>
         </select>
@@ -65,7 +69,7 @@
 </template>
 <script>
 import Burger from "@/components/Burger.vue";
-import Preferences from "@/data/Preferences.json";
+import localPreferences from "@/data/Preferences.json";
 import {
   storePersistentUserSettings,
   loadPersistentUserSettingsOrEmptyStrings,
@@ -94,10 +98,7 @@ export default {
   },
   data() {
     return {
-      Preferences: Preferences,
-      projects: Preferences.projects,
-      langs: ["fr", "en", "el"],
-      lang: "fr",
+      localProjectsList: localPreferences.projects,
       isActive: false,
     };
   },
