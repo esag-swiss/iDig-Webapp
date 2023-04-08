@@ -1,23 +1,20 @@
-export function storePersistentUserSettings(
-  server,
-  project,
-  username,
-  password,
-  lang
-) {
-  localStorage.setItem("server", server);
-  localStorage.setItem("project", project);
-  localStorage.setItem("username", username);
-  localStorage.setItem("password", password);
-  localStorage.setItem("lang", lang);
+import { useAppState } from "@/services/useAppState";
+
+export function storePersistentUserSettings() {
+  const { appState } = useAppState();
+  const appStateUnwrapped = appState.value;
+
+  localStorage.setItem("server", appStateUnwrapped.server);
+  localStorage.setItem("project", appStateUnwrapped.project);
+  localStorage.setItem("username", appStateUnwrapped.username);
+  localStorage.setItem("password", appStateUnwrapped.password);
 }
 
-export function getPersistentUserSettingsOrEmptyStrings() {
-  return {
-    lang: localStorage.lang ?? "",
-    server: localStorage.server ?? "",
-    project: localStorage.project ?? "",
-    username: localStorage.username ?? "",
-    password: localStorage.password ?? "",
-  };
+export function loadPersistentUserSettingsOrEmptyStrings() {
+  const { setAppState } = useAppState();
+
+  setAppState("server", localStorage.server ?? "");
+  setAppState("project", localStorage.project ?? "");
+  setAppState("username", localStorage.username ?? "");
+  setAppState("password", localStorage.password ?? "");
 }

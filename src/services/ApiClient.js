@@ -1,14 +1,16 @@
 import axios from "axios";
-import { getPersistentUserSettingsOrEmptyStrings } from "@/services/PersistentUserSettings";
+import { useAppState } from "@/services/useAppState";
 
-// TODO: Here we temporarily, we use the persistentUserSettings. But these are meant to be used
-// only to save preferences between sessions. We'll certainly use a centralised storage in the future.
-// (Warning: the code, as it is here, could lead to strange behaviors when working on 2 tabs)
 function getConnectionCredentials() {
-  const { server, project, username, password } =
-    getPersistentUserSettingsOrEmptyStrings();
+  const { appState } = useAppState();
+  const appStateUnwrapped = appState.value;
 
-  return { server, project, username, password };
+  return {
+    server: appStateUnwrapped.server,
+    project: appStateUnwrapped.project,
+    username: appStateUnwrapped.username,
+    password: appStateUnwrapped.password,
+  };
 }
 
 function handleError(error) {
@@ -23,8 +25,11 @@ function handleError(error) {
   throw new Error(error);
 }
 
-export function fetchAllTrenches(username, password, server, project) {
+export function fetchAllTrenches() {
   console.log("spinner on");
+
+  const { server, project, username, password } = getConnectionCredentials();
+
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "get",
@@ -35,7 +40,7 @@ export function fetchAllTrenches(username, password, server, project) {
     .finally(() => console.log("spinner off"));
 }
 
-export function fetchTrench(trench) {
+export function fetchPreferences(trench) {
   console.log("spinner on");
 
   const { server, project, username, password } = getConnectionCredentials();
@@ -67,7 +72,7 @@ export function fetchSurvey(trench) {
     .finally(() => console.log("spinner off"));
 }
 
-export function updateTrenchItem(trench, head, surveys, preferences) {
+export function updateTrenchItem(trench, head, surveys, preferencesBase64) {
   console.log("spinner on");
 
   const { server, project, username, password } = getConnectionCredentials();
@@ -77,7 +82,12 @@ export function updateTrenchItem(trench, head, surveys, preferences) {
     method: "post",
     url: `//${server}:9000/idig/${project}/${trench}`,
     auth: { username, password },
-    data: JSON.stringify({ head, device: "webapp", surveys, preferences }),
+    data: JSON.stringify({
+      head,
+      device: "webapp",
+      surveys,
+      preferencesBase64,
+    }),
   })
     .catch((error) => handleError(error))
     .finally(() => console.log("spinner off"));

@@ -67,6 +67,8 @@
 
 <script>
 import preferencesData from "@/data/Preferences.json";
+import { useDataState } from "@/services/useDataState";
+import { useAppState } from "@/services/useAppState";
 
 export default {
   props: {
@@ -77,6 +79,11 @@ export default {
   },
 
   emits: ["checkFields", "selectedType", "selected-type", "check-fields"],
+  setup() {
+    const { allTypes, allFields } = useDataState();
+    const { appState } = useAppState();
+    return { allTypes, allFields, appState };
+  },
   data() {
     return {
       fields: preferencesData.fields,
@@ -110,7 +117,6 @@ export default {
         true,
         true,
       ],
-      lang: "fr", // for later dev
       img_url: "http://thacer.archaiodata.com/ThaCER.svg", // test images
     };
   },
@@ -118,8 +124,8 @@ export default {
     // liste les groupes pour l'accordéon
     // info : la liste des fields par groupe se trouvent dans types.groups.fields
     groups() {
-      if (localStorage.types) {
-        return JSON.parse(localStorage.types).filter((x) => {
+      if (this.allTypes) {
+        return this.allTypes.filter((x) => {
           return x.type.includes(this.selectedtype);
         })[0].groups;
       } else {
@@ -131,8 +137,9 @@ export default {
 
     // liste tous les fields afin ensuite d'établi la liste des labels correspondants
     allfields() {
-      if (localStorage.fields) {
-        return JSON.parse(localStorage.fields).map(({ field }) => {
+      // TODO: warning ! There is global allFields, and this local allfields
+      if (this.allFields) {
+        return this.allFields.map(({ field }) => {
           return field;
         });
       } else {
@@ -143,10 +150,10 @@ export default {
     },
 
     alllabels() {
-      if (localStorage.fields) {
-        return JSON.parse(localStorage.fields).map((field) => {
+      if (this.allFields) {
+        return this.allFields.map((field) => {
           if (Object.prototype.hasOwnProperty.call(field, "labels")) {
-            return field.labels[localStorage.lang];
+            return field.labels[this.appState.lang];
           } else {
             return field.field;
           }

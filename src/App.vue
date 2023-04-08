@@ -1,22 +1,13 @@
 <template>
   <!-- header -->
-  <HeaderIdig
-    @toggle-menu="toggleMenu"
-    @all-trenches="setallTrench"
-    @all-types="setallTypes"
-  >
-  </HeaderIdig>
+  <HeaderIdig @toggle-menu="toggleMenu"> </HeaderIdig>
 
   <div class="container-fluid">
     <div class="row flex-xl-nowrap">
       <!-- SIDEBAR -->
       <div class="p-1 col-md-2" :style="{ display: computedDisplay }">
         <div class="sticky-top">
-          <AccessIdig
-            :allTrenches="allTrench"
-            @selected-trench="selectedTrench"
-          >
-          </AccessIdig>
+          <AccessIdig @selected-trench="selectedTrench"> </AccessIdig>
 
           <FilterFields
             :selectedData="selectedData"
@@ -36,7 +27,6 @@
           :selectedData="selectedData"
           :checkedFields="checkedFields"
           :selectedType="selectedFilter"
-          :allTypes="allTypes"
         >
         </DynaTable>
       </div>
@@ -50,7 +40,7 @@ import HeaderIdig from "@/components/HeaderIdig.vue";
 import FilterFields from "@/components/FilterFields.vue";
 import DynaTable from "@/components/DynaTable.vue";
 import preferencesData from "@/data/Preferences.json";
-import Data from "@/data/AMA21-S24.json"; //Default data
+import Data from "@/data/AMA21-S24.json";
 
 export default {
   name: "App",
@@ -79,9 +69,6 @@ export default {
           label: "Identifiant",
         },
       ],
-      // trenchesversion: {},
-      allTrench: [],
-      allTypes: [],
     };
   },
   computed: {
@@ -103,14 +90,6 @@ export default {
         this.display = "none";
       }
       this.isHidden = !this.isHidden;
-    },
-    // reçoit des enfants
-    setallTrench(allTrenches) {
-      // recoit toutes les trenches de HeaderIdig
-      this.allTrench = allTrenches;
-    },
-    setallTypes(types) {
-      this.allTypes = types;
     },
     selectedTrench(trench) {
       this.trenchData = trench;

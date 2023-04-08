@@ -8,49 +8,35 @@
         <div class="navbar-brand pr-3" href="#">iDig webapp</div>
       </ul>
       <form class="form-inline my-2 my-lg-0">
-        <!-- select server -->
         <div class="navbar-text text-light p-2">server:</div>
         <input
-          v-model="server"
+          :value="appState.server"
           class="my-2 text-light"
           style="background: #212529; border: 0px; width: 7em"
+          @input="(event) => setAppState('server', event.target.value)"
         />
-        <!-- select project -->
         <a class="navbar-text text-light p-2">project:</a>
-        <select
-          v-model="project"
+        <input
+          :value="appState.project"
           class="m-2 text-light"
           style="background: #212529; border: 0px; height: 26px"
-        >
-          <option v-for="project in projects" :key="project" :value="project">
-            {{ project }}
-          </option>
-        </select>
-        <!-- select user -->
+          @input="(event) => setAppState('project', event.target.value)"
+        />
         <a class="navbar-text text-light p-2">user:</a>
         <input
-          v-model="username"
+          :value="appState.username"
           class="m-2 text-light"
           style="background: #212529; border: 0px; width: 6em"
+          @input="(event) => setAppState('username', event.target.value)"
         />
         <input
-          v-model="password"
+          :value="appState.password"
           type="password"
           class="m-2 text-light"
           style="background: #212529; border: 0px; width: 6em"
           placeholder="Password"
+          @input="(event) => setAppState('password', event.target.value)"
         />
-        <!-- select lang -->
-
-        <!-- <select
-          class="m-2 text-light"
-          v-model="lang"
-          style="background: #212529; border: 0px; height: 26px"
-        >
-          <option v-for="lang in langs" :key="lang" :value="lang">
-            {{ lang }}
-          </option>
-        </select> -->
         <button
           type="button"
           class="btn btn-outline-secondary my-0 my-sm-0 m-2 p-0"
@@ -64,126 +50,98 @@
   </nav>
 </template>
 <script>
-import axios from "axios";
 import Burger from "@/components/Burger.vue";
-import Preferences from "@/data/Preferences.json";
 import {
   storePersistentUserSettings,
-  getPersistentUserSettingsOrEmptyStrings,
+  loadPersistentUserSettingsOrEmptyStrings,
 } from "@/services/PersistentUserSettings";
-import { fetchAllTrenches, fetchTrench } from "@/services/ApiClient";
+import { fetchAllTrenches, fetchPreferences } from "@/services/ApiClient";
+import { useAppState } from "@/services/useAppState";
+import { useDataState } from "@/services/useDataState";
 
 export default {
   components: {
     Burger,
   },
-  emits: ["all-types", "all-trenches", "toggle-menu"],
-  data() {
+  emits: ["toggle-menu"],
+  setup() {
+    const { setAppState, appState } = useAppState();
+    const {
+      setAllTrenches,
+      setAllTypes,
+      setAllFields,
+      setPreferencesBase64,
+      firstTrench,
+    } = useDataState();
     return {
-      server: "localhost",
-      project: "Amarynthos",
-      username: "idig",
-      password: "idig",
-      Preferences: Preferences,
-      projects: Preferences.projects,
-      langs: ["fr", "en", "el"],
-      lang: "fr",
-      isActive: false,
-      allTrenches: [], // a nettoyer
+      setAppState,
+      appState,
+      setAllTrenches,
+      setAllTypes,
+      setAllFields,
+      firstTrench,
+      setPreferencesBase64,
     };
   },
-  computed: {
-    trenches() {
-      return this.Preferences[this.project];
-    },
+  data() {
+    return {
+      firstTrenchForLocalDev: { Amarynthos: "AMA21-S24", Agora: "ΒΓ 2013" },
+      isActive: false,
+    };
   },
-  // charge les préférences de connexion si elles existent
   mounted() {
-    const { lang, server, project, username, password } =
-      getPersistentUserSettingsOrEmptyStrings();
-    this.lang = lang;
-    this.server = server;
-    this.project = project;
-    this.username = username;
-    this.password = password;
+    loadPersistentUserSettingsOrEmptyStrings();
   },
   methods: {
     connect() {
-      this.server = this.cleanServerUserEntry(this.server);
+      this.setAppState(
+        "server",
+        this.cleanServerUserEntry(this.appState.server)
+      );
 
       const devMode = "new_server";
       // const devMode = "old_server";
 
       if (devMode === "new_server") {
-        fetchAllTrenches(
-          this.username,
-          this.password,
-          this.server,
-          this.project
-        )
+        fetchAllTrenches()
           .then((response) => {
-            storePersistentUserSettings(
-              this.server,
-              this.project,
-              this.username,
-              this.password,
-              this.lang
-            );
+            storePersistentUserSettings();
 
             this.manageResponseForFetchAllTrenches(response);
 
-            return fetchTrench(this.allTrenches[0]);
+            return fetchPreferences(this.firstTrench);
           })
           .then((response) => {
             // switch button to green , ajouter if trenches loaded ?
             this.isActive = true;
 
-            this.manageResponseForFetchTrench(response);
+            this.manageResponseForFetchPreferences(response);
           });
       } else {
         // old_server
-        fetchTrench(this.trenches[0]).then((response) => {
+        fetchPreferences(
+          this.firstTrenchForLocalDev[this.appState.project]
+        ).then((response) => {
           this.isActive = true;
 
-          storePersistentUserSettings(
-            this.server,
-            this.project,
-            this.username,
-            this.password,
-            this.lang
-          );
+          storePersistentUserSettings();
 
-          this.manageResponseForFetchTrench(response);
+          this.manageResponseForFetchPreferences(response);
         });
       }
     },
     manageResponseForFetchAllTrenches(response) {
-      // envoi les trenches du projet au parent
-      this.$emit(
-        "all-trenches",
-        response.data.filter((item) => item !== "refs" && item !== "objects")
-      ); // pour lister les trenches à gauche peut etre doublon avec local storage
-      this.allTrenches = response.data.filter(
-        (item) => item !== "refs" && item !== "objects"
-      );
+      this.setAllTrenches(response.data);
     },
-    manageResponseForFetchTrench(response) {
-      // stores  prefences base64 in session storage to allow PUSH
-      sessionStorage.setItem("preferences", response.data.preferences);
+    manageResponseForFetchPreferences(response) {
+      // Store preferences in base64 format, because it will be necessary to resend them when modifying an item
+      this.setPreferencesBase64(response.data.preferences);
 
-      // get preferences in json to access groupes, types, fields etc
-      this.preferences = decodeURIComponent(
-        escape(window.atob(response.data.preferences))
-      ); // escape is deprecated
-      this.preferences = JSON.parse(this.preferences);
-
-      // utilisé par Overlay.vue pour afficher les champs attachés au type d'objet
-      localStorage.setItem("types", JSON.stringify(this.preferences.types));
-      sessionStorage.setItem("types", JSON.stringify(this.preferences.types));
-      this.$emit("all-types", this.preferences.types);
-
-      // utilisé par FilterFields.vue pour afficher les champs
-      localStorage.setItem("fields", JSON.stringify(this.preferences.fields));
+      const preferences = JSON.parse(
+        decodeURIComponent(escape(window.atob(response.data.preferences)))
+      );
+      this.setAllTypes(preferences.types);
+      this.setAllFields(preferences.fields);
     },
     cleanServerUserEntry(serverUserEntry) {
       return serverUserEntry

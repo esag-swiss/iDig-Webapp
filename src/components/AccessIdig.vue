@@ -35,15 +35,14 @@
 import { json2geojson } from "@/assets/json2geojson";
 import { geojson } from "@/assets/json2geojson";
 import { fetchSurvey } from "@/services/ApiClient";
+import { useDataState } from "@/services/useDataState";
 
 export default {
-  props: {
-    allTrenches: {
-      type: Object,
-      required: true,
-    },
-  },
   emits: ["selected-trench"],
+  setup() {
+    const { allTrenches } = useDataState();
+    return { allTrenches };
+  },
   data() {
     return {
       search: "",
@@ -76,7 +75,7 @@ export default {
   computed: {
     first5Trenches() {
       // new array of 5 substring
-      return this.allTrenches.map((x) => x.substr(0, 5));
+      return this.allTrenches?.map((x) => x.substr(0, 5));
     },
     groupedTrenches() {
       // groups and send reverse order
