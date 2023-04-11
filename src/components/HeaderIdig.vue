@@ -40,7 +40,7 @@
         <button
           type="button"
           class="btn btn-outline-secondary my-0 my-sm-0 m-2 p-0"
-          :class="{ isConnected: isActive }"
+          :class="{ 'is-loaded': appState.isLoaded }"
           @click="connect()"
         >
           connexion
@@ -86,7 +86,6 @@ export default {
   data() {
     return {
       firstTrenchForLocalDev: { Amarynthos: "AMA21-S24", Agora: "ΒΓ 2013" },
-      isActive: false,
     };
   },
   mounted() {
@@ -106,27 +105,21 @@ export default {
         fetchAllTrenches()
           .then((response) => {
             storePersistentUserSettings();
-
             this.manageResponseForFetchAllTrenches(response);
-
             return fetchPreferences(this.firstTrench);
           })
           .then((response) => {
-            // switch button to green , ajouter if trenches loaded ?
-            this.isActive = true;
-
             this.manageResponseForFetchPreferences(response);
+            this.setAppState("isLoaded", true);
           });
       } else {
         // old_server
         fetchPreferences(
           this.firstTrenchForLocalDev[this.appState.project]
         ).then((response) => {
-          this.isActive = true;
-
           storePersistentUserSettings();
-
           this.manageResponseForFetchPreferences(response);
+          this.setAppState("isLoaded", true);
         });
       }
     },
@@ -157,7 +150,7 @@ export default {
 };
 </script>
 <style>
-.isConnected {
+.is-loaded {
   color: #fff;
   background-color: #28a745;
   border-color: #28a745;
