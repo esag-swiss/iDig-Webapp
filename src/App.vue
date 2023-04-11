@@ -2,7 +2,7 @@
   <!-- header -->
   <HeaderIdig @toggle-menu="toggleMenu"> </HeaderIdig>
 
-  <div class="container-fluid">
+  <div v-if="appState.isLoaded" class="container-fluid">
     <div class="row flex-xl-nowrap">
       <!-- SIDEBAR -->
       <div class="p-1 col-md-2" :style="{ display: computedDisplay }">
@@ -24,13 +24,21 @@
         :class="{ 'col-md-10': isHidden, 'col-md-12': !isHidden }"
       >
         <DynaTable
+          v-if="trenchData !== null"
           :selectedData="selectedData"
           :checkedFields="checkedFields"
           :selectedType="selectedFilter"
         >
         </DynaTable>
+        <div v-else class="d-flex justify-content-center mt-5">
+          Veuillez sélectionner une ou plusieurs tranches
+        </div>
       </div>
     </div>
+  </div>
+
+  <div v-else class="d-flex justify-content-center mt-5">
+    Veuillez vous connecter
   </div>
 </template>
 
@@ -39,8 +47,7 @@ import AccessIdig from "@/components/AccessIdig.vue";
 import HeaderIdig from "@/components/HeaderIdig.vue";
 import FilterFields from "@/components/FilterFields.vue";
 import DynaTable from "@/components/DynaTable.vue";
-import preferencesData from "@/data/Preferences.json";
-import Data from "@/data/AMA21-S24.json";
+import { useAppState } from "@/services/useAppState";
 
 export default {
   name: "App",
@@ -50,13 +57,16 @@ export default {
     DynaTable,
     HeaderIdig,
   },
+  setup() {
+    const { appState } = useAppState();
+    return { appState };
+  },
   data() {
     return {
       isHidden: true,
       display: "block",
       class: true,
-      trenchData: Data, // load default data, will be populate when selecting trenches on AccessIdig componant
-      fields: preferencesData.types,
+      trenchData: null,
       selectedFilter: "Artifact", // type by default
       checkedFields: [
         // columns by default before any selection /!\ label needed to display headers
@@ -73,7 +83,7 @@ export default {
   },
   computed: {
     selectedData() {
-      return this.trenchData.filter((object) => {
+      return this.trenchData?.filter((object) => {
         return object.Type.includes(this.selectedFilter);
       });
     },
