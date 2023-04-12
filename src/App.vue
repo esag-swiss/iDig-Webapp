@@ -1,4 +1,6 @@
 <template>
+  <TheSpinner></TheSpinner>
+
   <!-- header -->
   <HeaderIdig @toggle-menu="toggleMenu"> </HeaderIdig>
 
@@ -41,10 +43,12 @@ import FilterFields from "@/components/FilterFields.vue";
 import DynaTable from "@/components/DynaTable.vue";
 import preferencesData from "@/data/Preferences.json";
 import Data from "@/data/AMA21-S24.json";
+import TheSpinner from "@/components/TheSpinner.vue";
 
 export default {
   name: "App",
   components: {
+    TheSpinner,
     AccessIdig,
     FilterFields,
     DynaTable,
