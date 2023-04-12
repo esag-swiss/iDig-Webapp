@@ -26,7 +26,8 @@ function handleError(error) {
 }
 
 export function fetchAllTrenches() {
-  console.log("spinner on");
+  const { setAppState } = useAppState();
+  setAppState("isLoading", true);
 
   const { server, project, username, password } = getConnectionCredentials();
 
@@ -37,11 +38,12 @@ export function fetchAllTrenches() {
     auth: { username, password },
   })
     .catch((error) => handleError(error))
-    .finally(() => console.log("spinner off"));
+    .finally(() => setAppState("isLoading", false));
 }
 
 export function fetchPreferences(trench) {
-  console.log("spinner on");
+  const { setAppState } = useAppState();
+  setAppState("isLoading", true);
 
   const { server, project, username, password } = getConnectionCredentials();
 
@@ -53,11 +55,12 @@ export function fetchPreferences(trench) {
     data: JSON.stringify({ head: "", surveys: [] }),
   })
     .catch((error) => handleError(error))
-    .finally(() => console.log("spinner off"));
+    .finally(() => setAppState("isLoading", false));
 }
 
 export function fetchSurvey(trench) {
-  console.log("spinner on");
+  const { setAppState } = useAppState();
+  setAppState("isLoading", true);
 
   const { server, project, username, password } = getConnectionCredentials();
 
@@ -69,11 +72,12 @@ export function fetchSurvey(trench) {
     data: JSON.stringify({}),
   })
     .catch((error) => handleError(error))
-    .finally(() => console.log("spinner off"));
+    .finally(() => setAppState("isLoading", false));
 }
 
 export function updateTrenchItem(trench, head, surveys, preferencesBase64) {
-  console.log("spinner on");
+  const { setAppState } = useAppState();
+  setAppState("isLoading", true);
 
   const { server, project, username, password } = getConnectionCredentials();
 
@@ -90,5 +94,5 @@ export function updateTrenchItem(trench, head, surveys, preferencesBase64) {
     }),
   })
     .catch((error) => handleError(error))
-    .finally(() => console.log("spinner off"));
+    .finally(() => setAppState("isLoading", false));
 }
