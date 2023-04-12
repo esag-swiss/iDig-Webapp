@@ -58,6 +58,7 @@ import {
 import { fetchAllTrenches, fetchPreferences } from "@/services/ApiClient";
 import { useAppState } from "@/services/useAppState";
 import { useDataState } from "@/services/useDataState";
+import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
 
 export default {
   components: {
@@ -81,11 +82,6 @@ export default {
       setAllFields,
       firstTrench,
       setPreferencesBase64,
-    };
-  },
-  data() {
-    return {
-      firstTrenchForLocalDev: { Amarynthos: "AMA21-S24", Agora: "ΒΓ 2013" },
     };
   },
   mounted() {
@@ -112,11 +108,17 @@ export default {
             this.manageResponseForFetchPreferences(response);
             this.setAppState("isLoaded", true);
           });
-      } else {
-        // old_server
-        fetchPreferences(
-          this.firstTrenchForLocalDev[this.appState.project]
-        ).then((response) => {
+      }
+
+      if (devMode === "old_server") {
+        const allTrenches = allTrenchesPerProject[this.appState.project];
+        if (!allTrenches) {
+          alert(`Trenches for project ${this.appState.project} not found.`);
+          return;
+        }
+        this.setAllTrenches(allTrenches);
+
+        fetchPreferences(this.firstTrench).then((response) => {
           storePersistentUserSettings();
           this.manageResponseForFetchPreferences(response);
           this.setAppState("isLoaded", true);
