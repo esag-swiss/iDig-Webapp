@@ -33,7 +33,7 @@
         >
         </DynaTable>
         <div v-else class="d-flex justify-content-center mt-5">
-          Veuillez sélectionner une ou plusieurs tranches
+          Veuillez sélectionner au moins un secteur
         </div>
       </div>
     </div>
