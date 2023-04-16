@@ -3,10 +3,11 @@
     v-model="search"
     class="m-0 form-control input-sm"
     placeholder="Search..."
-    @input="filteredList()"
+    @input="filterItem()"
   />
   <div class="p-1 m-1 bg-light border border-grey rounded">
-    <h3 @click="downloadTrenches()">Secteurs</h3>
+    <h3>Secteurs</h3>
+
     <ul v-for="(n, index) in groupedTrenches" :key="n" class="list-group">
       <li
         class="list-group-item accordion"
@@ -20,7 +21,9 @@
           <li
             v-if="trench.includes(n)"
             class="mt-1"
-            @change="addSelectedTrench()"
+            @change="
+              updateCheckall(), updateTrenchesDataWithSelectedTrench(trench)
+            "
           >
             <input v-model="checkedTrenches" type="checkbox" :value="trench" />
             <label class="px-1 m-0" for="checkbox">{{ trench }}</label>
@@ -28,12 +31,17 @@
         </div>
       </div>
     </ul>
+    <!-- Check All -->
+    <input
+      v-model="isCheckAll"
+      type="checkbox"
+      @click="checkAll(), addSelectedTrench()"
+    />
+    Check All
   </div>
 </template>
 
 <script>
-import { json2geojson } from "@/assets/json2geojson";
-import { geojson } from "@/assets/json2geojson";
 import { fetchSurvey } from "@/services/ApiClient";
 import { useDataState } from "@/services/useDataState";
 
@@ -49,6 +57,7 @@ export default {
       checkedTrenches: [], // attention garde en mémoire les trenches cochées lorsque l'on change de projet
       arr: [], // data de toutes les trenches, pourra être remplacé par trenchData
       arrtoEmit: [],
+      isCheckAll: false,
       trenchesData: {},
       trenchesVersion: {},
       isHiddenArray: [
@@ -81,51 +90,75 @@ export default {
       // groups and send reverse order
       return [...new Set(this.first5Trenches)].sort().reverse();
     },
-    geojson() {
-      return geojson;
+    allItems() {
+      let allItem = [];
+      Object.values(this.trenchesData).forEach((data) => {
+        allItem.push(...data);
+      });
+      return allItem;
     },
   },
 
   methods: {
-    downloadTrenches: function () {
-      const data = JSON.stringify(this.arr);
-      const blob = new Blob([data], { type: "text/plain" });
-      const e = document.createEvent("MouseEvents"),
-        a = document.createElement("a");
-      a.download = "trenches.geojson";
-      a.href = window.URL.createObjectURL(blob);
-      a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
-      e.initEvent(
-        "click",
-        true,
-        false,
-        window,
-        0,
-        0,
-        0,
-        0,
-        0,
-        false,
-        false,
-        false,
-        false,
-        0,
-        null
-      );
-      a.dispatchEvent(e);
+    checkAll: function () {
+      this.isCheckAll = !this.isCheckAll;
+      this.checkedTrenches = [];
+      if (this.isCheckAll) {
+        // Check all
+        for (var key in this.allTrenches) {
+          this.checkedTrenches.push(this.allTrenches[key]);
+        }
+      }
+    },
+    updateCheckall: function () {
+      if (this.checkedTrenches.length == this.allTrenches.length) {
+        this.isCheckAll = true;
+      } else {
+        this.isCheckAll = false;
+      }
+    },
+    updateTrenchesDataWithSelectedTrench: function (trench) {
+      if (Object.prototype.hasOwnProperty.call(this.trenchesData, trench)) {
+        delete this.trenchesData[trench];
+        this.$emit("selected-trench", this.allItems);
+      } else {
+        fetchSurvey(trench).then((response) => {
+          // pour emit des surveys
+          // this.arr.push(...response.data.surveys);
+
+          // prepare data to store in session in case of PUSH
+          this.trenchesData[trench] = response.data.surveys;
+          this.trenchesVersion[trench] = response.data.version;
+
+          // store in session in case of PUSH
+          sessionStorage.setItem(
+            "trenchesData",
+            JSON.stringify(this.trenchesData)
+          );
+          sessionStorage.setItem(
+            "trenchesVersion",
+            JSON.stringify(this.trenchesVersion)
+          );
+          if (this.allItems.length === 0) {
+            this.$emit("selected-trench", response.data.surveys);
+          } else {
+            this.$emit("selected-trench", this.allItems);
+          }
+        });
+      }
     },
 
     addSelectedTrench: function () {
       this.arr = [];
-      // this.trenchesData = {},
-      //   this.trenchesVersion = {},
       this.checkedTrenches.forEach((trench) => {
         fetchSurvey(trench).then((response) => {
           // pour emit des surveys
-          Array.prototype.push.apply(this.arr, response.data.surveys);
+          this.arr.push(...response.data.surveys);
 
+          // prepare data to store in session in case of PUSH
           this.trenchesData[trench] = response.data.surveys;
           this.trenchesVersion[trench] = response.data.version;
+
           // store in session in case of PUSH
           sessionStorage.setItem(
             "trenchesData",
@@ -138,14 +171,13 @@ export default {
         });
       });
       this.$emit("selected-trench", this.arr);
-      json2geojson(this.arr);
     },
-    filteredList() {
+    filterItem() {
       let champ = this.search;
       if (champ.includes(":")) {
         champ = champ.split(":");
         // limite d'abord tout les objets ayant la proprieté demandée
-        this.arrtoEmit = this.arr.filter((x) =>
+        this.arrtoEmit = this.allItems.filter((x) =>
           Object.prototype.hasOwnProperty.call(x, champ[0])
         );
         this.arrtoEmit = this.arrtoEmit.filter(function (x) {
@@ -153,7 +185,7 @@ export default {
         });
         // search in all proprties
       } else {
-        this.arrtoEmit = this.arr.filter(
+        this.arrtoEmit = this.allItems.filter(
           (
             o // array d'objets
           ) =>
