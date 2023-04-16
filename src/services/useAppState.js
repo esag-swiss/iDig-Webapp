@@ -1,6 +1,7 @@
 import { reactive, computed } from "vue";
 
 const appState = reactive({
+  isLoading: "",
   username: "",
   password: "",
   server: "",

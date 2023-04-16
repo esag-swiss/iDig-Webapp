@@ -1,4 +1,6 @@
 <template>
+  <TheSpinner></TheSpinner>
+
   <!-- header -->
   <HeaderIdig> </HeaderIdig>
 
@@ -36,7 +38,7 @@
         >
         </DynaTable>
         <div v-else class="d-flex justify-content-center mt-5">
-          Veuillez sélectionner une ou plusieurs tranches
+          Veuillez sélectionner au moins un secteur
         </div>
       </div>
     </div>
@@ -52,17 +54,22 @@ import AccessIdig from "@/components/AccessIdig.vue";
 import HeaderIdig from "@/components/HeaderIdig.vue";
 import FilterFields from "@/components/FilterFields.vue";
 import DynaTable from "@/components/DynaTable.vue";
-import ExportMenu from "@/components/ExportMenu.vue";
 import { useAppState } from "@/services/useAppState";
+import TheSpinner from "@/components/TheSpinner.vue";
 
 export default {
   name: "App",
   components: {
+    TheSpinner,
     AccessIdig,
     FilterFields,
     DynaTable,
     HeaderIdig,
     ExportMenu,
+  },
+  setup() {
+    const { appState } = useAppState();
+    return { appState };
   },
   setup() {
     const { appState } = useAppState();
