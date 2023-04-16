@@ -1,6 +1,6 @@
 <template>
   <!-- header -->
-  <HeaderIdig @toggle-menu="toggleMenu"> </HeaderIdig>
+  <HeaderIdig> </HeaderIdig>
 
   <div v-if="appState.isLoaded" class="container-fluid">
     <div class="row flex-xl-nowrap">
@@ -15,6 +15,11 @@
             @selected-type="selectedType"
           >
           </FilterFields>
+          <ExportMenu
+            :selectedData="selectedData"
+            :selectedType="selectedFilter"
+          >
+          </ExportMenu>
         </div>
       </div>
 
@@ -47,6 +52,7 @@ import AccessIdig from "@/components/AccessIdig.vue";
 import HeaderIdig from "@/components/HeaderIdig.vue";
 import FilterFields from "@/components/FilterFields.vue";
 import DynaTable from "@/components/DynaTable.vue";
+import ExportMenu from "@/components/ExportMenu.vue";
 import { useAppState } from "@/services/useAppState";
 
 export default {
@@ -56,6 +62,7 @@ export default {
     FilterFields,
     DynaTable,
     HeaderIdig,
+    ExportMenu,
   },
   setup() {
     const { appState } = useAppState();
@@ -92,15 +99,6 @@ export default {
     },
   },
   methods: {
-    toggleMenu() {
-      //a simplifier avec :class
-      if (this.display == "none") {
-        this.display = "block";
-      } else {
-        this.display = "none";
-      }
-      this.isHidden = !this.isHidden;
-    },
     selectedTrench(trench) {
       this.trenchData = trench;
     },
