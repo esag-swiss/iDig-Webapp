@@ -36,6 +36,6 @@ export const useDataState = () => {
     allFields: computed(() => dataState.allFields),
     preferencesBase64: computed(() => dataState.preferencesBase64),
     // Getters, transformed stored data:
-    firstTrench: computed(() => dataState?.allTrenches[0]),
+    firstTrench: computed(() => dataState?.allTrenches?.[0]),
   };
 };

@@ -7,6 +7,7 @@ const appState = reactive({
   server: "",
   project: "",
   lang: "fr",
+  isLoaded: false,
 });
 
 export const useAppState = () => {
