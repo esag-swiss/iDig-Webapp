@@ -56,6 +56,7 @@ import FilterFields from "@/components/FilterFields.vue";
 import DynaTable from "@/components/DynaTable.vue";
 import { useAppState } from "@/services/useAppState";
 import TheSpinner from "@/components/TheSpinner.vue";
+import ExportMenu from "@/components/ExportMenu.vue";
 
 export default {
   name: "App",
@@ -66,10 +67,6 @@ export default {
     DynaTable,
     HeaderIdig,
     ExportMenu,
-  },
-  setup() {
-    const { appState } = useAppState();
-    return { appState };
   },
   setup() {
     const { appState } = useAppState();
