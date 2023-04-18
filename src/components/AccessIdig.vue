@@ -122,54 +122,59 @@ export default {
         delete this.trenchesData[trench];
         this.$emit("selected-trench", this.allItems);
       } else {
-        fetchSurvey(trench).then((response) => {
-          // pour emit des surveys
-          // this.arr.push(...response.data.surveys);
+        fetchSurvey(trench)
+          .then((response) => {
+            // pour emit des surveys
+            // this.arr.push(...response.data.surveys);
 
-          // prepare data to store in session in case of PUSH
-          this.trenchesData[trench] = response.data.surveys;
-          this.trenchesVersion[trench] = response.data.version;
+            // prepare data to store in session in case of PUSH
+            this.trenchesData[trench] = response.data.surveys;
+            this.trenchesVersion[trench] = response.data.version;
 
-          // store in session in case of PUSH
-          sessionStorage.setItem(
-            "trenchesData",
-            JSON.stringify(this.trenchesData)
-          );
-          sessionStorage.setItem(
-            "trenchesVersion",
-            JSON.stringify(this.trenchesVersion)
-          );
-          if (this.allItems.length === 0) {
-            this.$emit("selected-trench", response.data.surveys);
-          } else {
-            this.$emit("selected-trench", this.allItems);
-          }
-        });
+            // store in session in case of PUSH
+            sessionStorage.setItem(
+              "trenchesData",
+              JSON.stringify(this.trenchesData)
+            );
+            sessionStorage.setItem(
+              "trenchesVersion",
+              JSON.stringify(this.trenchesVersion)
+            );
+            if (this.allItems.length === 0) {
+              this.$emit("selected-trench", response.data.surveys);
+            } else {
+              this.$emit("selected-trench", this.allItems);
+            }
+          })
+          .catch(() => {});
       }
     },
 
     addSelectedTrench: function () {
       this.arr = [];
       this.checkedTrenches.forEach((trench) => {
-        fetchSurvey(trench).then((response) => {
-          // pour emit des surveys
-          this.arr.push(...response.data.surveys);
+        fetchSurvey(trench)
+          .then((response) => {
+            // pour emit des surveys
+            this.arr.push(...response.data.surveys);
 
-          // prepare data to store in session in case of PUSH
-          this.trenchesData[trench] = response.data.surveys;
-          this.trenchesVersion[trench] = response.data.version;
+            // prepare data to store in session in case of PUSH
+            this.trenchesData[trench] = response.data.surveys;
+            this.trenchesVersion[trench] = response.data.version;
 
-          // store in session in case of PUSH
-          sessionStorage.setItem(
-            "trenchesData",
-            JSON.stringify(this.trenchesData)
-          );
-          sessionStorage.setItem(
-            "trenchesVersion",
-            JSON.stringify(this.trenchesVersion)
-          );
-        });
+            // store in session in case of PUSH
+            sessionStorage.setItem(
+              "trenchesData",
+              JSON.stringify(this.trenchesData)
+            );
+            sessionStorage.setItem(
+              "trenchesVersion",
+              JSON.stringify(this.trenchesVersion)
+            );
+          })
+          .catch(() => {});
       });
+
       this.$emit("selected-trench", this.arr);
     },
     filterItem() {

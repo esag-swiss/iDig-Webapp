@@ -22,7 +22,7 @@ function handleError(error) {
     `response.statusText: ${error?.response?.statusText}\r`;
   alert(alertMessage);
 
-  throw new Error(error);
+  throw error;
 }
 
 export function fetchAllTrenches() {
