@@ -2,7 +2,7 @@
   <TheSpinner></TheSpinner>
 
   <!-- header -->
-  <HeaderIdig @toggle-menu="toggleMenu"> </HeaderIdig>
+  <HeaderIdig> </HeaderIdig>
 
   <div v-if="appState.isLoaded" class="container-fluid">
     <div class="row flex-xl-nowrap">
@@ -17,6 +17,11 @@
             @selected-type="selectedType"
           >
           </FilterFields>
+          <ExportMenu
+            :selectedData="selectedData"
+            :selectedType="selectedFilter"
+          >
+          </ExportMenu>
         </div>
       </div>
 
@@ -51,6 +56,7 @@ import FilterFields from "@/components/FilterFields.vue";
 import DynaTable from "@/components/DynaTable.vue";
 import { useAppState } from "@/services/useAppState";
 import TheSpinner from "@/components/TheSpinner.vue";
+import ExportMenu from "@/components/ExportMenu.vue";
 
 export default {
   name: "App",
@@ -60,6 +66,7 @@ export default {
     FilterFields,
     DynaTable,
     HeaderIdig,
+    ExportMenu,
   },
   setup() {
     const { appState } = useAppState();
@@ -96,15 +103,6 @@ export default {
     },
   },
   methods: {
-    toggleMenu() {
-      //a simplifier avec :class
-      if (this.display == "none") {
-        this.display = "block";
-      } else {
-        this.display = "none";
-      }
-      this.isHidden = !this.isHidden;
-    },
     selectedTrench(trench) {
       this.trenchData = trench;
     },

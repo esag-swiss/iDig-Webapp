@@ -3,7 +3,6 @@
     <!-- Navbar content -->
     <div class="container-fluid">
       <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav pt-2 py-md-0">
-        <Burger @toggle-menu="toggleMenu"></Burger>
         <!-- Title -->
         <div class="navbar-brand pr-3" href="#">iDig webapp</div>
       </ul>
@@ -50,7 +49,6 @@
   </nav>
 </template>
 <script>
-import Burger from "@/components/Burger.vue";
 import {
   storePersistentUserSettings,
   loadPersistentUserSettingsOrEmptyStrings,
@@ -61,10 +59,6 @@ import { useDataState } from "@/services/useDataState";
 import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
 
 export default {
-  components: {
-    Burger,
-  },
-  emits: ["toggle-menu"],
   setup() {
     const { setAppState, appState } = useAppState();
     const {
@@ -94,8 +88,8 @@ export default {
         this.cleanServerUserEntry(this.appState.server)
       );
 
-      const devMode = "new_server";
-      // const devMode = "old_server";
+      // const devMode = "new_server";
+      const devMode = "old_server";
 
       if (devMode === "new_server") {
         fetchAllTrenches()
@@ -143,10 +137,6 @@ export default {
         .replace("https://", "")
         .replace("http://", "")
         .replace(":9000", "");
-    },
-    toggleMenu() {
-      this.isBurgerActive = !this.isBurgerActive;
-      this.$emit("toggle-menu");
     },
   },
 };
