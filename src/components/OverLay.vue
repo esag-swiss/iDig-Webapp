@@ -245,12 +245,12 @@ export default {
       const surveys = this.trenchtoUpdate;
       const preferences = this.preferencesBase64;
 
-      updateTrenchItem(this.selectedTrench, head, surveys, preferences).then(
-        () => {
+      updateTrenchItem(this.selectedTrench, head, surveys, preferences)
+        .then(() => {
           // TODO: tell the user it was saved
           console.log("saved!");
-        }
-      );
+        })
+        .catch(() => {});
     },
   },
 };

@@ -101,7 +101,8 @@ export default {
           .then((response) => {
             this.manageResponseForFetchPreferences(response);
             this.setAppState("isLoaded", true);
-          });
+          })
+          .catch(() => {});
       }
 
       if (devMode === "old_server") {
@@ -112,11 +113,13 @@ export default {
         }
         this.setAllTrenches(allTrenches);
 
-        fetchPreferences(this.firstTrench).then((response) => {
-          storePersistentUserSettings();
-          this.manageResponseForFetchPreferences(response);
-          this.setAppState("isLoaded", true);
-        });
+        fetchPreferences(this.firstTrench)
+          .then((response) => {
+            storePersistentUserSettings();
+            this.manageResponseForFetchPreferences(response);
+            this.setAppState("isLoaded", true);
+          })
+          .catch(() => {});
       }
     },
     manageResponseForFetchAllTrenches(response) {
