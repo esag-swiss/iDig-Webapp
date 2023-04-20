@@ -34,7 +34,7 @@ export function fetchAllTrenches() {
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "get",
-    url: `//${server}:9000/idig/${project}/trenches`,
+    url: `${server}/idig/${project}/trenches`,
     auth: { username, password },
   })
     .catch((error) => handleError(error))
@@ -50,7 +50,7 @@ export function fetchPreferences(trench) {
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "post",
-    url: `//${server}:9000/idig/${project}/${trench}`,
+    url: `${server}/idig/${project}/${trench}`,
     auth: { username, password },
     data: JSON.stringify({ head: "", surveys: [] }),
   })
@@ -67,7 +67,7 @@ export function fetchSurvey(trench) {
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "get",
-    url: `//${server}:9000/idig/${project}/${trench}/surveys`,
+    url: `${server}/idig/${project}/${trench}/surveys`,
     auth: { username, password },
     data: JSON.stringify({}),
   })
@@ -84,7 +84,7 @@ export function updateTrenchItem(trench, head, surveys, preferencesBase64) {
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "post",
-    url: `//${server}:9000/idig/${project}/${trench}`,
+    url: `${server}/idig/${project}/${trench}`,
     auth: { username, password },
     data: JSON.stringify({
       head,
