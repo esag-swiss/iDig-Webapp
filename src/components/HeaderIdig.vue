@@ -10,29 +10,25 @@
         <div class="navbar-text text-light p-2">server:</div>
         <input
           :value="appState.server"
-          class="my-2 text-light"
-          style="background: #212529; border: 0px; width: 7em"
+          class="my-2 text-light input-header"
           @input="(event) => setAppState('server', event.target.value)"
         />
         <a class="navbar-text text-light p-2">project:</a>
         <input
           :value="appState.project"
-          class="m-2 text-light"
-          style="background: #212529; border: 0px; height: 26px"
+          class="m-2 text-light input-header"
           @input="(event) => setAppState('project', event.target.value)"
         />
         <a class="navbar-text text-light p-2">user:</a>
         <input
           :value="appState.username"
-          class="m-2 text-light"
-          style="background: #212529; border: 0px; width: 6em"
+          class="m-2 text-light input-header"
           @input="(event) => setAppState('username', event.target.value)"
         />
         <input
           :value="appState.password"
           type="password"
-          class="m-2 text-light"
-          style="background: #212529; border: 0px; width: 6em"
+          class="m-2 text-light input-header"
           placeholder="Password"
           @input="(event) => setAppState('password', event.target.value)"
         />
@@ -137,9 +133,8 @@ export default {
     },
     cleanServerUserEntry(serverUserEntry) {
       return serverUserEntry
-        .replace("https://", "")
-        .replace("http://", "")
-        .replace(":9000", "");
+        .replace("htps://", "https://")
+        .replace("htp://", "http://");
     },
   },
 };
@@ -149,5 +144,10 @@ export default {
   color: #fff;
   background-color: #28a745;
   border-color: #28a745;
+}
+.input-header {
+  background: #212529;
+  border: 0px;
+  width: 6em;
 }
 </style>
