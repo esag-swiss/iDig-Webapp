@@ -2,7 +2,7 @@
   <TheSpinner></TheSpinner>
 
   <!-- header -->
-  <HeaderIdig> </HeaderIdig>
+  <TheHeader> </TheHeader>
 
   <div v-if="appState.isLoaded" class="container-fluid">
     <div class="row flex-xl-nowrap">
@@ -51,7 +51,7 @@
 
 <script>
 import AccessIdig from "@/components/AccessIdig.vue";
-import HeaderIdig from "@/components/HeaderIdig.vue";
+import TheHeader from "@/components/TheHeader.vue";
 import FilterFields from "@/components/FilterFields.vue";
 import DynaTable from "@/components/DynaTable.vue";
 import { useAppState } from "@/services/useAppState";
@@ -65,7 +65,7 @@ export default {
     AccessIdig,
     FilterFields,
     DynaTable,
-    HeaderIdig,
+    TheHeader,
     ExportMenu,
   },
   setup() {
