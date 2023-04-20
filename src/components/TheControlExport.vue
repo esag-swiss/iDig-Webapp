@@ -9,7 +9,7 @@
 </template>
 <script>
 export default {
-  name: "ExportMenu",
+  name: "TheControlExport",
   props: {
     selectedData: {
       type: Object,

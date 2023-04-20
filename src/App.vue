@@ -9,19 +9,20 @@
       <!-- SIDEBAR -->
       <div class="p-1 col-md-2" :style="{ display: computedDisplay }">
         <div class="sticky-top">
-          <AccessIdig @selected-trench="selectedTrench"> </AccessIdig>
+          <TheControlTrenches @selected-trench="selectedTrench">
+          </TheControlTrenches>
 
-          <FilterFields
+          <TheControlFields
             :selectedData="selectedData"
             @check-fields="checkFields"
             @selected-type="selectedType"
           >
-          </FilterFields>
-          <ExportMenu
+          </TheControlFields>
+          <TheControlExport
             :selectedData="selectedData"
             :selectedType="selectedFilter"
           >
-          </ExportMenu>
+          </TheControlExport>
         </div>
       </div>
 
@@ -50,23 +51,23 @@
 </template>
 
 <script>
-import AccessIdig from "@/components/AccessIdig.vue";
+import TheControlTrenches from "@/components/TheControlTrenches.vue";
 import TheHeader from "@/components/TheHeader.vue";
-import FilterFields from "@/components/FilterFields.vue";
+import TheControlFields from "@/components/TheControlFields.vue";
 import DynaTable from "@/components/DynaTable.vue";
 import { useAppState } from "@/services/useAppState";
 import TheSpinner from "@/components/TheSpinner.vue";
-import ExportMenu from "@/components/ExportMenu.vue";
+import TheControlExport from "@/components/TheControlExport.vue";
 
 export default {
   name: "App",
   components: {
     TheSpinner,
-    AccessIdig,
-    FilterFields,
+    TheControlTrenches,
+    TheControlFields,
     DynaTable,
     TheHeader,
-    ExportMenu,
+    TheControlExport,
   },
   setup() {
     const { appState } = useAppState();

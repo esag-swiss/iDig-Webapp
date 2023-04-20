@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 
 import { mount } from "@vue/test-utils";
-import AccessIdig from "../AccessIdig.vue";
+import TheControlTrenches from "../TheControlTrenches.vue";
 
-describe("AccessIdig", () => {
+describe("TheControlTrenches", () => {
   it("renders properly", () => {
-    const wrapper = mount(AccessIdig, { props: { allTrenches: [] } });
+    const wrapper = mount(TheControlTrenches, { props: { allTrenches: [] } });
     expect(wrapper.text()).toContain("Secteurs");
   });
 });
