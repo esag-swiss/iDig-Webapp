@@ -176,7 +176,7 @@ export default {
       return langKeys;
     },
 
-    // Maintenant on travaille pour faire le tableau des headers dans le format de TableLite
+    // Maintenant on travaille pour faire le tableau des headers dans le format de TheTable
     addsortabletrue() {
       // j'ajoute les propriétés label et sortable: true
       // pas certain que tous les undefined soient gérés

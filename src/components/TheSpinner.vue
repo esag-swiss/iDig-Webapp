@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="appState.isLoading"
-    class="spinner-overlay vh-100 vw-100 position-absolute"
+    class="spinner-TheItem vh-100 vw-100 position-absolute"
   >
     <div class="d-flex justify-content-center align-items-center vh-100">
       <div class="spinner-border text-light" role="status">
@@ -24,7 +24,7 @@ export default {
 </script>
 
 <style scoped>
-.spinner-overlay {
+.spinner-TheItem {
   background-color: rgb(0, 0, 0, 0.85);
   z-index: 10000;
 }

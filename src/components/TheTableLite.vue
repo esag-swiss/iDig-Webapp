@@ -295,7 +295,7 @@ import {
   onMounted,
 } from "vue";
 export default defineComponent({
-  name: "TableLite",
+  name: "TheTable",
   props: {
     // 是否讀取中 (is data loading)
     isLoading: {

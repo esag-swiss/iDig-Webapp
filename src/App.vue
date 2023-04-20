@@ -31,13 +31,13 @@
         class="p-1"
         :class="{ 'col-md-10': isHidden, 'col-md-12': !isHidden }"
       >
-        <DynaTable
+        <TheTable
           v-if="trenchData !== null"
           :selectedData="selectedData"
           :checkedFields="checkedFields"
           :selectedType="selectedFilter"
         >
-        </DynaTable>
+        </TheTable>
         <div v-else class="d-flex justify-content-center mt-5">
           Veuillez sélectionner au moins un secteur
         </div>
@@ -54,7 +54,7 @@
 import TheControlTrenches from "@/components/TheControlTrenches.vue";
 import TheHeader from "@/components/TheHeader.vue";
 import TheControlFields from "@/components/TheControlFields.vue";
-import DynaTable from "@/components/DynaTable.vue";
+import TheTable from "@/components/TheTable.vue";
 import { useAppState } from "@/services/useAppState";
 import TheSpinner from "@/components/TheSpinner.vue";
 import TheControlExport from "@/components/TheControlExport.vue";
@@ -65,7 +65,7 @@ export default {
     TheSpinner,
     TheControlTrenches,
     TheControlFields,
-    DynaTable,
+    TheTable,
     TheHeader,
     TheControlExport,
   },
