@@ -11,7 +11,7 @@
 
   <!-- Work in progress bouton pour afficher les images des attachments -->
   <!-- <button type="button" @click="getImage">Image</button> -->
-  <TheTable
+  <TheTableLite
     :hasCheckbox="false"
     :isLoading="table.isLoading"
     :isReSearch="table.isReSearch"
@@ -25,20 +25,20 @@
     @is-finished="tableLoadingFinish"
     @return-checked-rows="updateCheckedRows"
     @row-clicked="rowClicked"
-  ></TheTable>
+  ></TheTableLite>
   <!-- Work in progress image test du bouton pour afficher les images des attachments -->
   <!-- <img id="image" src="http://thacer.archaiodata.com/ThaCER.svg" alt="test" width="280" /> -->
 </template>
 
 <script>
 import { defineComponent, reactive, ref, computed, toRef } from "vue";
-import TheTable from "@/components/TheTable.vue";
+import TheTableLite from "@/components/TheTableLite.vue";
 import TheItem from "@/components/TheItem.vue";
 import axios from "axios";
 
 export default defineComponent({
   name: "TheTable",
-  components: { TheTable, TheItem },
+  components: { TheTableLite, TheItem },
   props: {
     selectedData: {
       type: Object,
