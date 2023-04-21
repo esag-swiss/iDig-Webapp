@@ -2,26 +2,27 @@
   <TheSpinner></TheSpinner>
 
   <!-- header -->
-  <HeaderIdig> </HeaderIdig>
+  <TheHeader> </TheHeader>
 
   <div v-if="appState.isLoaded" class="container-fluid">
     <div class="row flex-xl-nowrap">
       <!-- SIDEBAR -->
       <div class="p-1 col-md-2" :style="{ display: computedDisplay }">
         <div class="sticky-top">
-          <AccessIdig @selected-trench="selectedTrench"> </AccessIdig>
+          <TheControlTrenches @selected-trench="selectedTrench">
+          </TheControlTrenches>
 
-          <FilterFields
+          <TheControlFields
             :selectedData="selectedData"
             @check-fields="checkFields"
             @selected-type="selectedType"
           >
-          </FilterFields>
-          <ExportMenu
+          </TheControlFields>
+          <TheControlExport
             :selectedData="selectedData"
             :selectedType="selectedFilter"
           >
-          </ExportMenu>
+          </TheControlExport>
         </div>
       </div>
 
@@ -30,13 +31,13 @@
         class="p-1"
         :class="{ 'col-md-10': isHidden, 'col-md-12': !isHidden }"
       >
-        <DynaTable
+        <TheTable
           v-if="trenchData !== null"
           :selectedData="selectedData"
           :checkedFields="checkedFields"
           :selectedType="selectedFilter"
         >
-        </DynaTable>
+        </TheTable>
         <div v-else class="d-flex justify-content-center mt-5">
           Veuillez sélectionner au moins un secteur
         </div>
@@ -50,23 +51,23 @@
 </template>
 
 <script>
-import AccessIdig from "@/components/AccessIdig.vue";
-import HeaderIdig from "@/components/HeaderIdig.vue";
-import FilterFields from "@/components/FilterFields.vue";
-import DynaTable from "@/components/DynaTable.vue";
+import TheControlTrenches from "@/components/TheControlTrenches.vue";
+import TheHeader from "@/components/TheHeader.vue";
+import TheControlFields from "@/components/TheControlFields.vue";
+import TheTable from "@/components/TheTable.vue";
 import { useAppState } from "@/services/useAppState";
 import TheSpinner from "@/components/TheSpinner.vue";
-import ExportMenu from "@/components/ExportMenu.vue";
+import TheControlExport from "@/components/TheControlExport.vue";
 
 export default {
   name: "App",
   components: {
     TheSpinner,
-    AccessIdig,
-    FilterFields,
-    DynaTable,
-    HeaderIdig,
-    ExportMenu,
+    TheControlTrenches,
+    TheControlFields,
+    TheTable,
+    TheHeader,
+    TheControlExport,
   },
   setup() {
     const { appState } = useAppState();

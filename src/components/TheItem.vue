@@ -1,9 +1,9 @@
 <template>
-  <div class="overlaywrapper justify-content-center">
+  <div class="TheItemwrapper justify-content-center">
     <div
       v-if="selectedRow"
-      id="overlay"
-      class="overlay center-block mx-auto p-3"
+      id="TheItem"
+      class="TheItem center-block mx-auto p-3"
     >
       <!--header-->
       <div class="row align-items-start border-bottom mb-2">
@@ -159,7 +159,7 @@ import { updateTrenchItem } from "@/services/ApiClient";
 import { useDataState } from "@/services/useDataState";
 
 export default {
-  name: "OverLay",
+  name: "TheItem",
   props: {
     selectedRow: {
       type: Object,
@@ -256,7 +256,7 @@ export default {
 };
 </script>
 <style scoped>
-.overlaywrapper {
+.TheItemwrapper {
   position: absolute;
   top: -5%;
   left: -10%;
@@ -266,7 +266,7 @@ export default {
   z-index: 9999;
 }
 
-.overlay {
+.TheItem {
   height: auto;
   margin-top: 0%;
   margin-bottom: 0%;

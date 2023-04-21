@@ -1,17 +1,17 @@
 <template>
-  <div v-show="overlay" class="overlayframe" @click="removeLOverlay()"></div>
-  <OverLay
-    v-show="overlay"
+  <div v-show="TheItem" class="TheItemframe" @click="removeLTheItem()"></div>
+  <TheItem
+    v-show="TheItem"
     :selectedType="selectedType"
     :selectedRow="selectedRow"
   >
-  </OverLay>
+  </TheItem>
   <!-- old search method -->
   <!-- <input class="m-2" v-model="searchTerm" /> -->
 
   <!-- Work in progress bouton pour afficher les images des attachments -->
   <!-- <button type="button" @click="getImage">Image</button> -->
-  <TableLite
+  <TheTable
     :hasCheckbox="false"
     :isLoading="table.isLoading"
     :isReSearch="table.isReSearch"
@@ -25,20 +25,20 @@
     @is-finished="tableLoadingFinish"
     @return-checked-rows="updateCheckedRows"
     @row-clicked="rowClicked"
-  ></TableLite>
+  ></TheTable>
   <!-- Work in progress image test du bouton pour afficher les images des attachments -->
   <!-- <img id="image" src="http://thacer.archaiodata.com/ThaCER.svg" alt="test" width="280" /> -->
 </template>
 
 <script>
 import { defineComponent, reactive, ref, computed, toRef } from "vue";
-import TableLite from "@/components/TableLite.vue";
-import OverLay from "@/components/OverLay.vue";
+import TheTable from "@/components/TheTable.vue";
+import TheItem from "@/components/TheItem.vue";
 import axios from "axios";
 
 export default defineComponent({
-  name: "DynaTable",
-  components: { TableLite, OverLay },
+  name: "TheTable",
+  components: { TheTable, TheItem },
   props: {
     selectedData: {
       type: Object,
@@ -116,12 +116,12 @@ export default defineComponent({
     };
 
     // Row clicked event
-    let overlay = ref(false);
+    let TheItem = ref(false);
     let selectedRow = ref();
     const rowClicked = (rowsKey) => {
       // console.log("Row clicked!", rowsKey);
       // Pour modifier une variable réactive, déclaré avec ref(), vous devez utiliser sa propriété .value
-      overlay.value = true;
+      TheItem.value = true;
       selectedRow.value = rowsKey;
     };
 
@@ -166,7 +166,7 @@ export default defineComponent({
       updateCheckedRows,
       tableLoadingFinish,
       getImage,
-      overlay,
+      TheItem,
 
       selectedRow,
     };
@@ -177,8 +177,8 @@ export default defineComponent({
     };
   },
   methods: {
-    removeLOverlay() {
-      this.overlay = false;
+    removeLTheItem() {
+      this.TheItem = false;
     },
   },
 });
@@ -217,7 +217,7 @@ export default defineComponent({
   margin: 0;
 }
 
-#hideoverlay {
+#hideTheItem {
   /* color: white; */
   z-index: 999999999;
   height: 20px;
@@ -226,7 +226,7 @@ export default defineComponent({
   right: 20px;
   background-color: white;
 }
-.overlayframe {
+.TheItemframe {
   position: fixed;
   top: 0;
   left: 0;
@@ -235,7 +235,7 @@ export default defineComponent({
   background: rgba(0, 0, 0, 0.6);
   z-index: 9999;
 }
-.overlayframe:hover {
+.TheItemframe:hover {
   background: rgba(0, 0, 0, 0.5);
 }
 </style>
