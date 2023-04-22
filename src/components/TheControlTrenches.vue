@@ -3,19 +3,19 @@
     v-model="search"
     class="m-0 form-control input-sm"
     placeholder="Search..."
-    @input="filterItem()"
+    @input="filterItems()"
   />
   <div class="p-1 m-1 bg-light border border-grey rounded">
     <h3>Secteurs</h3>
 
-    <ul v-for="(n, index) in groupedTrenches" :key="n" class="list-group">
+    <ul v-for="(n, index) in groupsForTrenches" :key="n" class="list-group">
       <li
         class="list-group-item accordion"
         @click="isHiddenArray[index] = !isHiddenArray[index]"
       >
         {{ n }}
       </li>
-      <!-- liste tenches -->
+      <!-- liste trenches -->
       <div v-if="!isHiddenArray[index]">
         <div v-for="trench in allTrenches" :key="trench">
           <li
@@ -35,7 +35,7 @@
     <input
       v-model="isCheckAll"
       type="checkbox"
-      @click="checkAll(), addSelectedTrench()"
+      @click="toggleCheckAll(), fetchAllTrenchesData()"
     />
     Check All
   </div>
@@ -55,8 +55,8 @@ export default {
     return {
       search: "",
       checkedTrenches: [], // attention garde en mémoire les trenches cochées lorsque l'on change de projet
-      arr: [], // data de toutes les trenches, pourra être remplacé par trenchData
-      arrtoEmit: [],
+      // arr: [], // data de toutes les trenches, pourra être remplacé par trenchData
+      // arrtoEmit: [],
       isCheckAll: false,
       trenchesData: {},
       trenchesVersion: {},
@@ -82,15 +82,13 @@ export default {
   },
 
   computed: {
-    first5Trenches() {
-      // new array of 5 substring
-      return this.allTrenches?.map((x) => x.substr(0, 5));
+    groupsForTrenches() {
+      // create groups by 5 first caracters and send reverse order
+      return [...new Set(this.allTrenches?.map((x) => x.substr(0, 5)))]
+        .sort()
+        .reverse();
     },
-    groupedTrenches() {
-      // groups and send reverse order
-      return [...new Set(this.first5Trenches)].sort().reverse();
-    },
-    allItems() {
+    ItemsAll() {
       let allItem = [];
       Object.values(this.trenchesData).forEach((data) => {
         allItem.push(...data);
@@ -100,7 +98,7 @@ export default {
   },
 
   methods: {
-    checkAll: function () {
+    toggleCheckAll: function () {
       this.isCheckAll = !this.isCheckAll;
       this.checkedTrenches = [];
       if (this.isCheckAll) {
@@ -120,13 +118,10 @@ export default {
     updateTrenchesDataWithSelectedTrench: function (trench) {
       if (Object.prototype.hasOwnProperty.call(this.trenchesData, trench)) {
         delete this.trenchesData[trench];
-        this.$emit("selected-trench", this.allItems);
+        this.$emit("selected-trench", this.ItemsAll);
       } else {
         fetchSurvey(trench)
           .then((response) => {
-            // pour emit des surveys
-            // this.arr.push(...response.data.surveys);
-
             // prepare data to store in session in case of PUSH
             this.trenchesData[trench] = response.data.surveys;
             this.trenchesVersion[trench] = response.data.version;
@@ -140,23 +135,24 @@ export default {
               "trenchesVersion",
               JSON.stringify(this.trenchesVersion)
             );
-            if (this.allItems.length === 0) {
-              this.$emit("selected-trench", response.data.surveys);
-            } else {
-              this.$emit("selected-trench", this.allItems);
-            }
+            this.$emit("selected-trench", this.ItemsAll);
+            // if (this.ItemsAll.length === 0) {
+            //   this.$emit("selected-trench", response.data.surveys);
+            // } else {
+            //   this.$emit("selected-trench", this.ItemsAll);
+            // }
           })
           .catch(() => {});
       }
     },
 
-    addSelectedTrench: function () {
-      this.arr = [];
+    fetchAllTrenchesData: function () {
+      let itemsToEmit = [];
       this.checkedTrenches.forEach((trench) => {
         fetchSurvey(trench)
           .then((response) => {
             // pour emit des surveys
-            this.arr.push(...response.data.surveys);
+            itemsToEmit.push(...response.data.surveys);
 
             // prepare data to store in session in case of PUSH
             this.trenchesData[trench] = response.data.surveys;
@@ -171,26 +167,27 @@ export default {
               "trenchesVersion",
               JSON.stringify(this.trenchesVersion)
             );
+            this.$emit("selected-trench", itemsToEmit);
           })
           .catch(() => {});
       });
-
-      this.$emit("selected-trench", this.arr);
     },
-    filterItem() {
+
+    filterItems() {
       let champ = this.search;
+      let itemsToEmit = [];
       if (champ.includes(":")) {
         champ = champ.split(":");
         // limite d'abord tout les objets ayant la proprieté demandée
-        this.arrtoEmit = this.allItems.filter((x) =>
+        itemsToEmit = this.ItemsAll.filter((x) =>
           Object.prototype.hasOwnProperty.call(x, champ[0])
         );
-        this.arrtoEmit = this.arrtoEmit.filter(function (x) {
+        itemsToEmit = itemsToEmit.filter(function (x) {
           return x[champ[0]].toLowerCase().includes(champ[1].toLowerCase());
         });
-        // search in all proprties
+        // search in all properties
       } else {
-        this.arrtoEmit = this.allItems.filter(
+        itemsToEmit = this.ItemsAll.filter(
           (
             o // array d'objets
           ) =>
@@ -200,14 +197,13 @@ export default {
         );
       }
 
-      this.$emit("selected-trench", this.arrtoEmit);
+      this.$emit("selected-trench", itemsToEmit);
     },
   },
 };
 </script>
-<style>
+<style scoped>
 .form-control {
-  /* height: calc(1em + 0.75rem + 2px); */
   width: 98%;
 }
 </style>
