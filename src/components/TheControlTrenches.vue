@@ -55,11 +55,9 @@ export default {
     return {
       search: "",
       checkedTrenches: [], // attention garde en mémoire les trenches cochées lorsque l'on change de projet
-      // arr: [], // data de toutes les trenches, pourra être remplacé par trenchData
-      // arrtoEmit: [],
       isCheckAll: false,
-      trenchesData: {},
-      trenchesVersion: {},
+      trenchesData: {}, // use store ?
+      trenchesVersion: {}, // use store ?
       isHiddenArray: [
         true,
         true,
@@ -136,11 +134,6 @@ export default {
               JSON.stringify(this.trenchesVersion)
             );
             this.$emit("selected-trench", this.ItemsAll);
-            // if (this.ItemsAll.length === 0) {
-            //   this.$emit("selected-trench", response.data.surveys);
-            // } else {
-            //   this.$emit("selected-trench", this.ItemsAll);
-            // }
           })
           .catch(() => {});
       }
@@ -178,7 +171,7 @@ export default {
       let itemsToEmit = [];
       if (champ.includes(":")) {
         champ = champ.split(":");
-        // limite d'abord tout les objets ayant la proprieté demandée
+        // filter first all objects with requested property
         itemsToEmit = this.ItemsAll.filter((x) =>
           Object.prototype.hasOwnProperty.call(x, champ[0])
         );
