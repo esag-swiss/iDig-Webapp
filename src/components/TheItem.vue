@@ -58,7 +58,7 @@
           <div v-if="fieldExist(field.field) != 0" class="col-md-9 p-0 pl-1">
             <!-- 1  Champ == type  -->
             <div v-if="field.field == 'Type'" class="col-md-12 p-0 pl-1">
-              <select class="col-md-12" style="border: none">
+              <select class="col-md-12 border-none">
                 <option value="selectedRow.type">{{ selectedRow.Type }}</option>
                 <option v-for="type in allTypes" :key="type" :value="type.type">
                   {{ type.type }}
@@ -69,8 +69,7 @@
             <!-- 1  Champ date -->
             <p
               v-else-if="field.field == 'DateEarliest'"
-              class="col-md-12 p-0 pl-1"
-              style="border: none"
+              class="col-md-12 p-0 pl-1 border-none"
             >
               {{
                 Date(
@@ -91,7 +90,7 @@
                   class="col-md-12 p-0 pl-1"
                 >
                   <!-- 4 if multivalue  -->
-                  <select class="col-md-12 p-0 pl-1" style="border: none">
+                  <select class="col-md-12 p-0 pl-1 border-none">
                     <option value="selectedRow.type">
                       {{ selectedRow[field.field] }}
                     </option>
@@ -115,8 +114,7 @@
                     })[0][field.field]
                   "
                   type="text"
-                  class="col-md-12 p-0 pl-1"
-                  style="border: none"
+                  class="col-md-12 p-0 pl-1 border-none"
                 />
               </div>
               <textarea
@@ -126,8 +124,7 @@
                     return x.IdentifierUUID == selectedRow.IdentifierUUID;
                   })[0][field.field]
                 "
-                class="col-md-12 p-0 pl-1"
-                style="border: none"
+                class="col-md-12 p-0 pl-1 border-none"
               ></textarea>
 
               <!-- cas basique champ avec properties field et label -->
@@ -139,8 +136,7 @@
                   })[0][field.field]
                 "
                 type="text"
-                class="col-md-12 p-0 pl-1"
-                style="border: none"
+                class="col-md-12 p-0 pl-1 border-none"
               />
             </div>
           </div>
@@ -163,11 +159,11 @@ export default {
   props: {
     selectedRow: {
       type: Object,
-      required: false,
+      required: true,
     },
     selectedType: {
       type: String,
-      required: false,
+      required: true,
     },
   },
   setup() {
@@ -278,5 +274,8 @@ export default {
 .accordion {
   background-color: #eee;
   cursor: default;
+}
+.border-none {
+  border: none;
 }
 </style>

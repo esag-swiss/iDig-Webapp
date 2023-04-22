@@ -1,16 +1,11 @@
 <template>
   <div v-show="TheItem" class="TheItemframe" @click="removeLTheItem()"></div>
   <TheItem
-    v-show="TheItem"
+    v-if="TheItem"
     :selectedType="selectedType"
     :selectedRow="selectedRow"
   >
   </TheItem>
-  <!-- old search method -->
-  <!-- <input class="m-2" v-model="searchTerm" /> -->
-
-  <!-- Work in progress bouton pour afficher les images des attachments -->
-  <!-- <button type="button" @click="getImage">Image</button> -->
   <TheTableLite
     :hasCheckbox="false"
     :isLoading="table.isLoading"
@@ -26,8 +21,6 @@
     @return-checked-rows="updateCheckedRows"
     @row-clicked="rowClicked"
   ></TheTableLite>
-  <!-- Work in progress image test du bouton pour afficher les images des attachments -->
-  <!-- <img id="image" src="http://thacer.archaiodata.com/ThaCER.svg" alt="test" width="280" /> -->
 </template>
 
 <script>
@@ -48,13 +41,9 @@ export default defineComponent({
       type: Object,
       required: true,
     },
-    // selectedTrenches: {
-    //   type: Object,
-    //   required: false,
-    // },
     selectedType: {
       type: String,
-      required: false,
+      required: true,
     },
   },
   setup(props) {
@@ -89,9 +78,7 @@ export default defineComponent({
       },
     });
 
-    /**
-     * Loading finish event
-     */
+    // Loading finish event
     const tableLoadingFinish = (elements) => {
       table.isLoading = false;
       Array.prototype.forEach.call(elements, function (element) {
@@ -167,14 +154,11 @@ export default defineComponent({
       tableLoadingFinish,
       getImage,
       TheItem,
-
       selectedRow,
     };
   },
   data() {
-    return {
-      // selectedRow: 'prout',
-    };
+    return {};
   },
   methods: {
     removeLTheItem() {

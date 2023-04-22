@@ -16,7 +16,7 @@ export default {
       required: true,
     },
     selectedType: {
-      type: Object,
+      type: String,
       required: true,
     },
   },
