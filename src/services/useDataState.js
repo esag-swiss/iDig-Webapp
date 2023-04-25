@@ -1,13 +1,18 @@
 import { reactive, computed } from "vue";
 
-const dataState = reactive({
+const dataStateDefaultValue = {
   allTrenches: null,
   allTypes: null,
   allFields: null,
   preferencesBase64: null,
-});
+};
+let dataState = reactive({ ...dataStateDefaultValue });
 
 export const useDataState = () => {
+  const resetDataState = () => {
+    dataState = reactive({ ...dataStateDefaultValue });
+  };
+
   const setAllTrenches = (allTrenches) => {
     dataState.allTrenches = allTrenches;
   };
@@ -25,6 +30,7 @@ export const useDataState = () => {
   };
 
   return {
+    resetDataState,
     // Setters:
     setAllTrenches,
     setAllTypes,
