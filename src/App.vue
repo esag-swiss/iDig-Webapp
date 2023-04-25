@@ -96,7 +96,7 @@ export default {
   computed: {
     selectedData() {
       if (this.trenchData) {
-        return this.trenchData?.filter((object) => {
+        return this.trenchData.filter((object) => {
           return object.Type.includes(this.selectedFilter);
         });
       } else {
