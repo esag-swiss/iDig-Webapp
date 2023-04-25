@@ -1,7 +1,11 @@
 <template>
-  <div v-show="TheItem" class="TheItemframe" @click="removeLTheItem()"></div>
+  <div
+    v-show="TheItemExist"
+    class="TheItemframe"
+    @click="removeLTheItem()"
+  ></div>
   <TheItem
-    v-if="TheItem"
+    v-if="TheItemExist"
     :selectedType="selectedType"
     :selectedRow="selectedRow"
   >
@@ -103,12 +107,12 @@ export default defineComponent({
     };
 
     // Row clicked event
-    let TheItem = ref(false);
+    let TheItemExist = ref(false);
     let selectedRow = ref();
     const rowClicked = (rowsKey) => {
       // console.log("Row clicked!", rowsKey);
       // Pour modifier une variable réactive, déclaré avec ref(), vous devez utiliser sa propriété .value
-      TheItem.value = true;
+      TheItemExist.value = true;
       selectedRow.value = rowsKey;
     };
 
@@ -153,7 +157,7 @@ export default defineComponent({
       updateCheckedRows,
       tableLoadingFinish,
       getImage,
-      TheItem,
+      TheItemExist,
       selectedRow,
     };
   },
@@ -162,7 +166,7 @@ export default defineComponent({
   },
   methods: {
     removeLTheItem() {
-      this.TheItem = false;
+      this.TheItemExist = false;
     },
   },
 });
