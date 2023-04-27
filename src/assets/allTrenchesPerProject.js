@@ -1,7 +1,7 @@
 export const allTrenchesPerProject = {
   Agora: ["ΒΓ 2013", "ΒΘ West 2013"],
   Amarynthos: [
-    "AMA21-S24",
+    "AMA22-S28",
     "AMA_Kokalas",
     "AMA07",
     "AMA12",
@@ -75,6 +75,7 @@ export const allTrenchesPerProject = {
     "AMA20-S36",
     "AMA21-S21",
     "AMA21-S22N",
+    "AMA21-S24",
     "AMA21-S28",
     "AMA21-S28O1",
     "AMA21-S28O2",
@@ -87,7 +88,6 @@ export const allTrenchesPerProject = {
     "AMA22-S24C",
     "AMA22-S24E",
     "AMA22-S24N",
-    "AMA22-S28",
     "AMA22-S28O1",
     "AMA22-S28O2",
     "AMA22-S28O3",
@@ -97,5 +97,6 @@ export const allTrenchesPerProject = {
     "AMA22-S37",
     "AMA22-S38",
     "AMA22-S39",
+    "AMA-test",
   ],
 };
