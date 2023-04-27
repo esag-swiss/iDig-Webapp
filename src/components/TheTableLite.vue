@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div class="vtl vtl-card">
     <div v-if="title" class="vtl-card-title">{{ title }}</div>
@@ -12,7 +13,7 @@
         >
           <div v-if="isLoading" class="vtl-loading-mask">
             <div class="vtl-loading-content">
-              <span style="color: white">Loading...</span>
+              <span>Loading...</span>
             </div>
           </div>
           <table
@@ -295,7 +296,7 @@ import {
   onMounted,
 } from "vue";
 export default defineComponent({
-  name: "TheTable",
+  name: "TheTableLite",
   props: {
     // 是否讀取中 (is data loading)
     isLoading: {

@@ -95,9 +95,13 @@ export default {
   },
   computed: {
     selectedData() {
-      return this.trenchData?.filter((object) => {
-        return object.Type.includes(this.selectedFilter);
-      });
+      if (this.trenchData) {
+        return this.trenchData.filter((object) => {
+          return object.Type.includes(this.selectedFilter);
+        });
+      } else {
+        return {};
+      }
     },
     computedDisplay() {
       return this.display;
