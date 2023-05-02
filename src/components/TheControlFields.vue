@@ -1,7 +1,6 @@
 <template>
   <div class="p-1 m-1 bg-light border border-grey rounded">
     <h3
-      class="doigt"
       title="filter table data and show only fields available for the selected type"
     >
       Type
@@ -9,20 +8,18 @@
 
     <!-- dropdown for types -->
     <select
-      v-model="selectedtype"
+      v-model="selectedType"
       class="form-control"
       @change="changeSelectedType"
     >
-      <option v-for="type in types" :key="type" :value="type.type">
+      <option v-for="type in allTypes" :key="type" :value="type.type">
         {{ type.plurals.fr }}
       </option>
     </select>
   </div>
 
   <div class="p-1 m-1 bg-light border border-grey rounded">
-    <h3 class="doigt" title="display only fields for the selected type">
-      Champs
-    </h3>
+    <h3 title="display only fields for the selected type">Champs</h3>
     <!-- liste les groupes pour le type selectionné -->
     <ul v-for="(group, index) in groups" :key="group" class="list-group">
       <li
@@ -54,19 +51,10 @@
         </div>
       </div>
     </ul>
-
-    <!-- lignes commentées work in progress pour visualiser les images
-       <input
-      id="checkboxattachment"
-      type="checkbox"
-      @change="attachmentcolumn(img_url)"
-    /> 
-    <label class="p-1 my-0" for="checkbox">attachments</label> -->
   </div>
 </template>
 
 <script>
-import preferencesData from "@/data/Preferences.json";
 import { useDataState } from "@/services/useDataState";
 import { useAppState } from "@/services/useAppState";
 
@@ -86,8 +74,6 @@ export default {
   },
   data() {
     return {
-      fields: preferencesData.fields,
-      types: preferencesData.types,
       checkFields: [],
       defaultcheckFields: [
         // columns by default before any selection /!\ label needed to display headers
@@ -101,8 +87,7 @@ export default {
           checked: true,
         },
       ],
-      selectedtype: "Artifact", // default type
-      // isHidden: true,
+      selectedType: "Artifact", // default type
       isHiddenArray: [
         true,
         true,
@@ -117,61 +102,36 @@ export default {
         true,
         true,
       ],
-      img_url: "http://thacer.archaiodata.com/ThaCER.svg", // test images
     };
   },
   computed: {
-    // liste les groupes pour l'accordéon
+    // liste les groupes pour l'accordéon des champs
     // info : la liste des fields par groupe se trouvent dans types.groups.fields
+    // on pourrait s'assurer ici que le label de la langue existe toujours pour eviter la methode "labels"
     groups() {
-      if (this.allTypes) {
-        return this.allTypes.filter((x) => {
-          return x.type.includes(this.selectedtype);
-        })[0].groups;
-      } else {
-        return this.types.filter((x) => {
-          return x.type.includes(this.selectedtype);
-        })[0].groups;
-      }
+      return this.allTypes.filter((x) => {
+        return x.type.includes(this.selectedType);
+      })[0].groups;
     },
 
-    // liste tous les fields afin ensuite d'établi la liste des labels correspondants
-    allfields() {
-      // TODO: warning ! There is global allFields, and this local allfields
-      if (this.allFields) {
-        return this.allFields.map(({ field }) => {
-          return field;
-        });
-      } else {
-        return this.fields.map(({ field }) => {
-          return field;
-        });
-      }
-    },
-
-    alllabels() {
-      if (this.allFields) {
-        return this.allFields.map((field) => {
-          if (Object.prototype.hasOwnProperty.call(field, "labels")) {
-            return field.labels[this.appState.lang];
-          } else {
-            return field.field;
-          }
-        });
-      } else {
-        return this.fields.map((field) =>
-          field.labels !== undefined ? field.labels.en : field.field
-        );
-      }
+    allFieldsLabel() {
+      return this.allFields.map((field) => {
+        if (Object.prototype.hasOwnProperty.call(field, "labels")) {
+          return field.labels[this.appState.lang];
+        } else {
+          return field.field;
+        }
+      });
     },
 
     fieldLabel() {
       // calcule les correspondances field : label dans un objet field : label
       // sert pour afficher les labels des check box
+
       var langKeys = {};
       var i;
-      for (i = 0; i < this.alllabels.length; i++) {
-        langKeys[this.allfields[i]] = this.alllabels[i];
+      for (i = 0; i < this.allFields.length; i++) {
+        langKeys[this.allFields[i].field] = this.allFieldsLabel[i];
       }
       return langKeys;
     },
@@ -190,7 +150,7 @@ export default {
     changeSelectedType: function () {
       this.checkFields = this.defaultcheckFields;
       // reçoit du @change et renvoie au parent
-      this.$emit("selected-type", this.selectedtype);
+      this.$emit("selected-type", this.selectedType);
       this.$emit("check-fields", this.addsortabletrue);
     },
     checkfields() {
@@ -205,73 +165,7 @@ export default {
         return Obj;
       }
     },
-
-    // WORK IN PROGRESS
-    // inclure des images
-
-    attachmentcolumn: function (img_url) {
-      var regExp = /[-]/g;
-      // let imgUrl = "";
-      var elm = document.getElementById("checkboxattachment");
-      if (elm.checked == true) {
-        this.addsortabletrue.push({
-          field: "RelationIncludesUUID",
-          sortable: false,
-          label: "Attachment",
-          display: function (row) {
-            if (regExp.test(row.RelationIncludesUUID)) {
-              // return axios({
-              //   headers: {
-              //     "Content-Type": "application/x-www-form-urlencoded",
-              //   },
-              //   method: "get",
-              //   url: "http://localhost:9000/idig/Agora/ΒΓ 2013/attachments/ΒΓ (407,291,447,318).png?checksum=2022-05-12T12:30:42Z",
-              //   responseType: "blob",
-              //   auth: {
-              //     username: "idig",
-              //     password: "idig",
-              //   },
-              //   data: {},
-              // })
-              //   .then((response) => {
-              //     let blob = new Blob([response.data], {
-              //       type: response.headers["content-type"],
-              //     });
-              //      URL.createObjectURL(blob);
-              //   });
-
-              return row.RelationIncludesUUID.split("\n");
-
-              // return this.selectedData.filter((x) => {
-              //   return x.IdentifierUUID.includes("1CF4D560-8E7B-4E94-BBB5-E893E463D1EC");
-              // })[0].Type;
-
-              // return (
-              //   '<img class="dqg img-UID" width="180" id="image" alt="' +
-              //   imgUrl +
-              //   'dfhd" src="' +
-              //   img_url +
-              //   '">'
-              // );
-            } else {
-              // return row.RelationIncludesUUID;
-              return (
-                '<img class="dqg img-UID" width="180" id="image" alt="' +
-                img_url +
-                '" src="' +
-                img_url +
-                '">'
-              );
-            }
-          },
-        });
-        this.$emit("check-fields", this.addsortabletrue);
-      } else {
-        this.addsortabletrue.splice(-1, 1);
-        this.$emit("check-fields", this.checkFields);
-      }
-    },
-  }, // si je ne mets pas cette ligne j'ai un message Extraneous non-emits event listeners (checkFields) were passed to component but could not be automatically inherited
+  },
 };
 </script>
 
@@ -301,11 +195,5 @@ export default {
   background-color: white;
   display: none;
   overflow: hidden;
-}
-.h3 {
-  font-size: 1.2rem;
-}
-.doigt {
-  cursor: pointer;
 }
 </style>
