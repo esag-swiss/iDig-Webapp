@@ -49,7 +49,10 @@ import {
   storePersistentUserSettings,
   loadPersistentUserSettingsOrEmptyStrings,
 } from "@/services/PersistentUserSettings";
-import { fetchAllTrenches, fetchPreferences } from "@/services/ApiClient";
+import {
+  fetchProjectTrenchesNames,
+  fetchPreferences,
+} from "@/services/ApiClient";
 import { useAppState } from "@/services/useAppState";
 import { useDataState } from "@/services/useDataState";
 import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
@@ -58,7 +61,7 @@ export default {
   setup() {
     const { setAppState, appState } = useAppState();
     const {
-      setAllTrenches,
+      setProjectTrenchesNames,
       setAllTypes,
       setAllFields,
       setPreferencesBase64,
@@ -67,7 +70,7 @@ export default {
     return {
       setAppState,
       appState,
-      setAllTrenches,
+      setProjectTrenchesNames,
       setAllTypes,
       setAllFields,
       firstTrench,
@@ -88,7 +91,7 @@ export default {
       const devMode = "old_server";
 
       if (devMode === "new_server") {
-        fetchAllTrenches()
+        fetchProjectTrenchesNames()
           .then((response) => {
             storePersistentUserSettings();
             this.manageResponseForFetchAllTrenches(response);
@@ -102,12 +105,13 @@ export default {
       }
 
       if (devMode === "old_server") {
-        const allTrenches = allTrenchesPerProject[this.appState.project];
-        if (!allTrenches) {
+        const projectTrenchesNames =
+          allTrenchesPerProject[this.appState.project];
+        if (!projectTrenchesNames) {
           alert(`Trenches for project ${this.appState.project} not found.`);
           return;
         }
-        this.setAllTrenches(allTrenches);
+        this.setProjectTrenchesNames(projectTrenchesNames);
 
         fetchPreferences(this.firstTrench)
           .then((response) => {
@@ -119,7 +123,7 @@ export default {
       }
     },
     manageResponseForFetchAllTrenches(response) {
-      this.setAllTrenches(response.data);
+      this.setProjectTrenchesNames(response.data);
     },
     manageResponseForFetchPreferences(response) {
       // Store preferences in base64 format, because it will be necessary to resend them when modifying an item

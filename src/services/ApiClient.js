@@ -25,7 +25,7 @@ function handleError(error) {
   throw error;
 }
 
-export function fetchAllTrenches() {
+export function fetchProjectTrenchesNames() {
   const { setAppState } = useAppState();
   setAppState("isLoading", true);
 

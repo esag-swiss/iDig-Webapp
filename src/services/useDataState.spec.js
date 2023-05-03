@@ -2,25 +2,28 @@ import { describe, it, expect, beforeEach } from "vitest";
 
 import { useDataState } from "./useDataState.js";
 
-describe("setAllTrenches", () => {
+describe("setProjectTrenchesNames", () => {
   beforeEach(() => {
     const { resetDataState } = useDataState();
     resetDataState();
   });
 
   it("initialized with null", () => {
-    const { allTrenches } = useDataState();
+    const { projectTrenchesNames } = useDataState();
 
-    expect(allTrenches.value).toBe(null);
+    expect(projectTrenchesNames.value).toBe(null);
   });
 
   it("set correctly its value", () => {
-    const { setAllTrenches, allTrenches } = useDataState();
+    const { setProjectTrenchesNames, projectTrenchesNames } = useDataState();
     const currentAllTrenches = ["AMA21-S24", "AMA_Kokalas"];
 
-    setAllTrenches(currentAllTrenches);
+    setProjectTrenchesNames(currentAllTrenches);
 
-    expect(allTrenches.value).toStrictEqual(["AMA21-S24", "AMA_Kokalas"]);
+    expect(projectTrenchesNames.value).toStrictEqual([
+      "AMA21-S24",
+      "AMA_Kokalas",
+    ]);
   });
 });
 
@@ -92,25 +95,28 @@ describe("firstTrench", () => {
     resetDataState();
   });
 
-  it("return undefined if allTrenches is not set", () => {
+  it("return undefined if projectTrenchesNames is not set", () => {
     const { firstTrench } = useDataState();
 
     expect(firstTrench.value).toBe(undefined);
   });
 
   it.each([
-    { allTrenches: null, expected: undefined },
-    { allTrenches: [], expected: undefined },
-    { allTrenches: ["AMA21-S24"], expected: "AMA21-S24" },
-    { allTrenches: ["AMA21-S24", "AMA_Kokalas"], expected: "AMA21-S24" },
+    { projectTrenchesNames: null, expected: undefined },
+    { projectTrenchesNames: [], expected: undefined },
+    { projectTrenchesNames: ["AMA21-S24"], expected: "AMA21-S24" },
     {
-      allTrenches: ["AMA21-S24", "AMA_Kokalas", "AMA07"],
+      projectTrenchesNames: ["AMA21-S24", "AMA_Kokalas"],
       expected: "AMA21-S24",
     },
-  ])("return expected value", ({ allTrenches, expected }) => {
-    const { firstTrench, setAllTrenches } = useDataState();
+    {
+      projectTrenchesNames: ["AMA21-S24", "AMA_Kokalas", "AMA07"],
+      expected: "AMA21-S24",
+    },
+  ])("return expected value", ({ projectTrenchesNames, expected }) => {
+    const { firstTrench, setProjectTrenchesNames } = useDataState();
 
-    setAllTrenches(allTrenches);
+    setProjectTrenchesNames(projectTrenchesNames);
 
     expect(firstTrench.value).toBe(expected);
   });

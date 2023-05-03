@@ -1,7 +1,7 @@
 import { reactive, computed } from "vue";
 
 const dataStateDefaultValue = {
-  allTrenches: null,
+  projectTrenchesNames: null,
   allTypes: null,
   allFields: null,
   preferencesBase64: null,
@@ -13,8 +13,8 @@ export const useDataState = () => {
     dataState = reactive({ ...dataStateDefaultValue });
   };
 
-  const setAllTrenches = (allTrenches) => {
-    dataState.allTrenches = allTrenches;
+  const setProjectTrenchesNames = (projectTrenchesNames) => {
+    dataState.projectTrenchesNames = projectTrenchesNames;
   };
 
   const setAllTypes = (allTypes) => {
@@ -32,16 +32,17 @@ export const useDataState = () => {
   return {
     resetDataState,
     // Setters:
-    setAllTrenches,
+    setProjectTrenchesNames,
     setAllTypes,
     setAllFields,
     setPreferencesBase64,
     // Getters, raw stored data:
-    allTrenches: computed(() => dataState.allTrenches),
+
+    projectTrenchesNames: computed(() => dataState.projectTrenchesNames),
     allTypes: computed(() => dataState.allTypes),
     allFields: computed(() => dataState.allFields),
     preferencesBase64: computed(() => dataState.preferencesBase64),
     // Getters, transformed stored data:
-    firstTrench: computed(() => dataState?.allTrenches?.[0]),
+    firstTrench: computed(() => dataState?.projectTrenchesNames?.[0]),
   };
 };
