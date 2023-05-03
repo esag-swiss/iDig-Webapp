@@ -4,7 +4,7 @@ const dataStateDefaultValue = {
   projectTrenchesNames: null,
   projectPreferencesTypes: null,
   projectPreferencesFields: null,
-  preferencesBase64: null,
+  projectPreferencesBase64: null,
 };
 let dataState = reactive({ ...dataStateDefaultValue });
 
@@ -25,8 +25,8 @@ export const useDataState = () => {
     dataState.projectPreferencesFields = projectPreferencesFields;
   };
 
-  const setPreferencesBase64 = (preferencesBase64) => {
-    dataState.preferencesBase64 = preferencesBase64;
+  const setProjectPreferencesBase64 = (projectPreferencesBase64) => {
+    dataState.projectPreferencesBase64 = projectPreferencesBase64;
   };
 
   return {
@@ -35,7 +35,7 @@ export const useDataState = () => {
     setProjectTrenchesNames,
     setProjectPreferencesTypes,
     setProjectPreferencesFields,
-    setPreferencesBase64,
+    setProjectPreferencesBase64,
     // Getters, raw stored data:
 
     projectTrenchesNames: computed(() => dataState.projectTrenchesNames),
@@ -43,7 +43,9 @@ export const useDataState = () => {
     projectPreferencesFields: computed(
       () => dataState.projectPreferencesFields
     ),
-    preferencesBase64: computed(() => dataState.preferencesBase64),
+    projectPreferencesBase64: computed(
+      () => dataState.projectPreferencesBase64
+    ),
     // Getters, transformed stored data:
     firstTrench: computed(() => dataState?.projectTrenchesNames?.[0]),
   };

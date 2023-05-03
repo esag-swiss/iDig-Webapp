@@ -174,12 +174,12 @@ export default {
     const {
       projectPreferencesTypes,
       projectPreferencesFields,
-      preferencesBase64,
+      projectPreferencesBase64,
     } = useDataState();
     return {
       projectPreferencesTypes,
       projectPreferencesFields,
-      preferencesBase64,
+      projectPreferencesBase64,
     };
   },
   data() {
@@ -252,7 +252,7 @@ export default {
         this.selectedTrench
       ];
       const surveys = this.trenchtoUpdate;
-      const preferences = this.preferencesBase64;
+      const preferences = this.projectPreferencesBase64;
 
       updateTrenchItem(this.selectedTrench, head, surveys, preferences)
         .then(() => {

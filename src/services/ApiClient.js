@@ -75,7 +75,12 @@ export function fetchSurvey(trench) {
     .finally(() => setAppState("isLoading", false));
 }
 
-export function updateTrenchItem(trench, head, surveys, preferencesBase64) {
+export function updateTrenchItem(
+  trench,
+  head,
+  surveys,
+  projectPreferencesBase64
+) {
   const { setAppState } = useAppState();
   setAppState("isLoading", true);
 
@@ -90,7 +95,7 @@ export function updateTrenchItem(trench, head, surveys, preferencesBase64) {
       head,
       device: "webapp",
       surveys,
-      preferencesBase64,
+      projectPreferencesBase64,
     }),
   })
     .catch((error) => handleError(error))

@@ -64,7 +64,7 @@ export default {
       setProjectTrenchesNames,
       setProjectPreferencesTypes,
       setProjectPreferencesFields,
-      setPreferencesBase64,
+      setProjectPreferencesBase64,
       firstTrench,
     } = useDataState();
     return {
@@ -74,7 +74,7 @@ export default {
       setProjectPreferencesTypes,
       setProjectPreferencesFields,
       firstTrench,
-      setPreferencesBase64,
+      setProjectPreferencesBase64,
     };
   },
   mounted() {
@@ -127,7 +127,7 @@ export default {
     },
     manageResponseForFetchPreferences(response) {
       // Store preferences in base64 format, because it will be necessary to resend them when modifying an item
-      this.setPreferencesBase64(response.data.preferences);
+      this.setProjectPreferencesBase64(response.data.preferences);
 
       const preferences = JSON.parse(
         decodeURIComponent(escape(window.atob(response.data.preferences)))
