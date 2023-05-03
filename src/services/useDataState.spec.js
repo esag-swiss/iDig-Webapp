@@ -16,9 +16,9 @@ describe("setProjectTrenchesNames", () => {
 
   it("set correctly its value", () => {
     const { setProjectTrenchesNames, projectTrenchesNames } = useDataState();
-    const currentAllTrenches = ["AMA21-S24", "AMA_Kokalas"];
+    const currentProjectTrenchesNames = ["AMA21-S24", "AMA_Kokalas"];
 
-    setProjectTrenchesNames(currentAllTrenches);
+    setProjectTrenchesNames(currentProjectTrenchesNames);
 
     expect(projectTrenchesNames.value).toStrictEqual([
       "AMA21-S24",
@@ -43,7 +43,7 @@ describe("setProjectPreferencesTypes", () => {
     const { setProjectPreferencesTypes, projectPreferencesTypes } =
       useDataState();
 
-    const currentAllTypes = [
+    const currentProjectPreferencesTypes = [
       {
         type: "Context",
         label: "Contexte",
@@ -54,9 +54,11 @@ describe("setProjectPreferencesTypes", () => {
       { type: "Feature" },
     ];
 
-    setProjectPreferencesTypes(currentAllTypes);
+    setProjectPreferencesTypes(currentProjectPreferencesTypes);
 
-    expect(projectPreferencesTypes.value).toStrictEqual(currentAllTypes);
+    expect(projectPreferencesTypes.value).toStrictEqual(
+      currentProjectPreferencesTypes
+    );
   });
 });
 
@@ -76,7 +78,7 @@ describe("setProjectPreferencesFields", () => {
     const { setProjectPreferencesFields, projectPreferencesFields } =
       useDataState();
 
-    const currentAllFields = [
+    const currentProjectPreferencesFields = [
       {
         field: "Category",
         labels: {},
@@ -85,9 +87,11 @@ describe("setProjectPreferencesFields", () => {
       {},
     ];
 
-    setProjectPreferencesFields(currentAllFields);
+    setProjectPreferencesFields(currentProjectPreferencesFields);
 
-    expect(projectPreferencesFields.value).toStrictEqual(currentAllFields);
+    expect(projectPreferencesFields.value).toStrictEqual(
+      currentProjectPreferencesFields
+    );
   });
 });
 
