@@ -72,9 +72,10 @@ export default {
 
   emits: ["checkFields", "selectedType", "selected-type", "check-fields"],
   setup() {
-    const { projectPreferencesTypes, allFields } = useDataState();
+    const { projectPreferencesTypes, projectPreferencesFields } =
+      useDataState();
     const { appState } = useAppState();
-    return { projectPreferencesTypes, allFields, appState };
+    return { projectPreferencesTypes, projectPreferencesFields, appState };
   },
   data() {
     return {
@@ -119,7 +120,7 @@ export default {
     },
 
     allFieldsLabel() {
-      return this.allFields.map((field) => {
+      return this.projectPreferencesFields.map((field) => {
         if (Object.prototype.hasOwnProperty.call(field, "labels")) {
           return field.labels[this.appState.lang];
         } else {
@@ -134,8 +135,9 @@ export default {
 
       var langKeys = {};
       var i;
-      for (i = 0; i < this.allFields.length; i++) {
-        langKeys[this.allFields[i].field] = this.allFieldsLabel[i];
+      for (i = 0; i < this.projectPreferencesFields.length; i++) {
+        langKeys[this.projectPreferencesFields[i].field] =
+          this.allFieldsLabel[i];
       }
       return langKeys;
     },

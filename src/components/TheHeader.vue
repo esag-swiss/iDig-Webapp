@@ -63,7 +63,7 @@ export default {
     const {
       setProjectTrenchesNames,
       setProjectPreferencesTypes,
-      setAllFields,
+      setProjectPreferencesFields,
       setPreferencesBase64,
       firstTrench,
     } = useDataState();
@@ -72,7 +72,7 @@ export default {
       appState,
       setProjectTrenchesNames,
       setProjectPreferencesTypes,
-      setAllFields,
+      setProjectPreferencesFields,
       firstTrench,
       setPreferencesBase64,
     };
@@ -133,7 +133,7 @@ export default {
         decodeURIComponent(escape(window.atob(response.data.preferences)))
       );
       this.setProjectPreferencesTypes(preferences.types);
-      this.setAllFields(preferences.fields);
+      this.setProjectPreferencesFields(preferences.fields);
     },
     cleanServerUserEntry(serverUserEntry) {
       return serverUserEntry

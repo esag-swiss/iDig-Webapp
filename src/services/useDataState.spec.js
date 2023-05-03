@@ -60,20 +60,21 @@ describe("setProjectPreferencesTypes", () => {
   });
 });
 
-describe("setAllFields", () => {
+describe("setProjectPreferencesFields", () => {
   beforeEach(() => {
     const { resetDataState } = useDataState();
     resetDataState();
   });
 
   it("initialized with null", () => {
-    const { allFields } = useDataState();
+    const { projectPreferencesFields } = useDataState();
 
-    expect(allFields.value).toBe(null);
+    expect(projectPreferencesFields.value).toBe(null);
   });
 
   it("set correctly its value", () => {
-    const { setAllFields, allFields } = useDataState();
+    const { setProjectPreferencesFields, projectPreferencesFields } =
+      useDataState();
 
     const currentAllFields = [
       {
@@ -84,9 +85,9 @@ describe("setAllFields", () => {
       {},
     ];
 
-    setAllFields(currentAllFields);
+    setProjectPreferencesFields(currentAllFields);
 
-    expect(allFields.value).toStrictEqual(currentAllFields);
+    expect(projectPreferencesFields.value).toStrictEqual(currentAllFields);
   });
 });
 

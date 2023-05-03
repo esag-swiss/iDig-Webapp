@@ -171,9 +171,16 @@ export default {
     },
   },
   setup() {
-    const { projectPreferencesTypes, allFields, preferencesBase64 } =
-      useDataState();
-    return { projectPreferencesTypes, allFields, preferencesBase64 };
+    const {
+      projectPreferencesTypes,
+      projectPreferencesFields,
+      preferencesBase64,
+    } = useDataState();
+    return {
+      projectPreferencesTypes,
+      projectPreferencesFields,
+      preferencesBase64,
+    };
   },
   data() {
     return {
@@ -184,7 +191,7 @@ export default {
   computed: {
     AAA() {
       // attention fields ne liste pas tous les champs
-      return this.allFields.filter((x) => x.field == "Type");
+      return this.projectPreferencesFields.filter((x) => x.field == "Type");
     },
 
     AAAA() {
@@ -192,7 +199,7 @@ export default {
     },
 
     valuelist() {
-      return this.allFields[33].valuelist;
+      return this.projectPreferencesFields[33].valuelist;
     },
 
     selectedTrench() {
@@ -228,12 +235,13 @@ export default {
   methods: {
     fieldExist(field) {
       // attention comme fields ne liste pas tous les champs on verifie si il existe
-      return this.allFields.filter((x) => x.field == field).length;
+      return this.projectPreferencesFields.filter((x) => x.field == field)
+        .length;
     },
 
     fieldType(field) {
       // attention fields ne liste pas tous les champs
-      return this.allFields.filter((x) => x.field == field)[0];
+      return this.projectPreferencesFields.filter((x) => x.field == field)[0];
     },
 
     setUserPreferences() {

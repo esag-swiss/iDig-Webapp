@@ -3,7 +3,7 @@ import { reactive, computed } from "vue";
 const dataStateDefaultValue = {
   projectTrenchesNames: null,
   projectPreferencesTypes: null,
-  allFields: null,
+  projectPreferencesFields: null,
   preferencesBase64: null,
 };
 let dataState = reactive({ ...dataStateDefaultValue });
@@ -21,8 +21,8 @@ export const useDataState = () => {
     dataState.projectPreferencesTypes = projectPreferencesTypes;
   };
 
-  const setAllFields = (allFields) => {
-    dataState.allFields = allFields;
+  const setProjectPreferencesFields = (projectPreferencesFields) => {
+    dataState.projectPreferencesFields = projectPreferencesFields;
   };
 
   const setPreferencesBase64 = (preferencesBase64) => {
@@ -34,13 +34,15 @@ export const useDataState = () => {
     // Setters:
     setProjectTrenchesNames,
     setProjectPreferencesTypes,
-    setAllFields,
+    setProjectPreferencesFields,
     setPreferencesBase64,
     // Getters, raw stored data:
 
     projectTrenchesNames: computed(() => dataState.projectTrenchesNames),
     projectPreferencesTypes: computed(() => dataState.projectPreferencesTypes),
-    allFields: computed(() => dataState.allFields),
+    projectPreferencesFields: computed(
+      () => dataState.projectPreferencesFields
+    ),
     preferencesBase64: computed(() => dataState.preferencesBase64),
     // Getters, transformed stored data:
     firstTrench: computed(() => dataState?.projectTrenchesNames?.[0]),
