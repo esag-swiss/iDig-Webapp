@@ -67,14 +67,6 @@ import { useDataState } from "@/services/useDataState";
 import { useAppState } from "@/services/useAppState";
 
 export default {
-  // props: {
-  //   filteredTrenchesItems: {
-
-  //     type: Object,
-  //     required: true,
-  //   },
-  // },
-
   emits: ["checkFields", "selectedType", "selected-type", "check-fields"],
   setup() {
     const { projectPreferencesTypes, projectPreferencesFields } =
