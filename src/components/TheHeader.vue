@@ -49,7 +49,10 @@ import {
   storePersistentUserSettings,
   loadPersistentUserSettingsOrEmptyStrings,
 } from "@/services/PersistentUserSettings";
-import { fetchAllTrenches, fetchPreferences } from "@/services/ApiClient";
+import {
+  fetchProjectTrenchesNames,
+  fetchPreferences,
+} from "@/services/ApiClient";
 import { useAppState } from "@/services/useAppState";
 import { useDataState } from "@/services/useDataState";
 import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
@@ -58,20 +61,20 @@ export default {
   setup() {
     const { setAppState, appState } = useAppState();
     const {
-      setAllTrenches,
-      setAllTypes,
-      setAllFields,
-      setPreferencesBase64,
+      setProjectTrenchesNames,
+      setProjectPreferencesTypes,
+      setProjectPreferencesFields,
+      setProjectPreferencesBase64,
       firstTrench,
     } = useDataState();
     return {
       setAppState,
       appState,
-      setAllTrenches,
-      setAllTypes,
-      setAllFields,
+      setProjectTrenchesNames,
+      setProjectPreferencesTypes,
+      setProjectPreferencesFields,
       firstTrench,
-      setPreferencesBase64,
+      setProjectPreferencesBase64,
     };
   },
   mounted() {
@@ -88,7 +91,7 @@ export default {
       const devMode = "old_server";
 
       if (devMode === "new_server") {
-        fetchAllTrenches()
+        fetchProjectTrenchesNames()
           .then((response) => {
             storePersistentUserSettings();
             this.manageResponseForFetchAllTrenches(response);
@@ -102,12 +105,13 @@ export default {
       }
 
       if (devMode === "old_server") {
-        const allTrenches = allTrenchesPerProject[this.appState.project];
-        if (!allTrenches) {
+        const projectTrenchesNames =
+          allTrenchesPerProject[this.appState.project];
+        if (!projectTrenchesNames) {
           alert(`Trenches for project ${this.appState.project} not found.`);
           return;
         }
-        this.setAllTrenches(allTrenches);
+        this.setProjectTrenchesNames(projectTrenchesNames);
 
         fetchPreferences(this.firstTrench)
           .then((response) => {
@@ -119,17 +123,17 @@ export default {
       }
     },
     manageResponseForFetchAllTrenches(response) {
-      this.setAllTrenches(response.data);
+      this.setProjectTrenchesNames(response.data);
     },
     manageResponseForFetchPreferences(response) {
       // Store preferences in base64 format, because it will be necessary to resend them when modifying an item
-      this.setPreferencesBase64(response.data.preferences);
+      this.setProjectPreferencesBase64(response.data.preferences);
 
       const preferences = JSON.parse(
         decodeURIComponent(escape(window.atob(response.data.preferences)))
       );
-      this.setAllTypes(preferences.types);
-      this.setAllFields(preferences.fields);
+      this.setProjectPreferencesTypes(preferences.types);
+      this.setProjectPreferencesFields(preferences.fields);
     },
     cleanServerUserEntry(serverUserEntry) {
       return serverUserEntry

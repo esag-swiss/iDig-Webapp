@@ -1,10 +1,10 @@
 import { reactive, computed } from "vue";
 
 const dataStateDefaultValue = {
-  allTrenches: null,
-  allTypes: null,
-  allFields: null,
-  preferencesBase64: null,
+  projectTrenchesNames: null,
+  projectPreferencesTypes: null,
+  projectPreferencesFields: null,
+  projectPreferencesBase64: null,
 };
 let dataState = reactive({ ...dataStateDefaultValue });
 
@@ -13,35 +13,40 @@ export const useDataState = () => {
     dataState = reactive({ ...dataStateDefaultValue });
   };
 
-  const setAllTrenches = (allTrenches) => {
-    dataState.allTrenches = allTrenches;
+  const setProjectTrenchesNames = (projectTrenchesNames) => {
+    dataState.projectTrenchesNames = projectTrenchesNames;
   };
 
-  const setAllTypes = (allTypes) => {
-    dataState.allTypes = allTypes;
+  const setProjectPreferencesTypes = (projectPreferencesTypes) => {
+    dataState.projectPreferencesTypes = projectPreferencesTypes;
   };
 
-  const setAllFields = (allFields) => {
-    dataState.allFields = allFields;
+  const setProjectPreferencesFields = (projectPreferencesFields) => {
+    dataState.projectPreferencesFields = projectPreferencesFields;
   };
 
-  const setPreferencesBase64 = (preferencesBase64) => {
-    dataState.preferencesBase64 = preferencesBase64;
+  const setProjectPreferencesBase64 = (projectPreferencesBase64) => {
+    dataState.projectPreferencesBase64 = projectPreferencesBase64;
   };
 
   return {
     resetDataState,
     // Setters:
-    setAllTrenches,
-    setAllTypes,
-    setAllFields,
-    setPreferencesBase64,
+    setProjectTrenchesNames,
+    setProjectPreferencesTypes,
+    setProjectPreferencesFields,
+    setProjectPreferencesBase64,
     // Getters, raw stored data:
-    allTrenches: computed(() => dataState.allTrenches),
-    allTypes: computed(() => dataState.allTypes),
-    allFields: computed(() => dataState.allFields),
-    preferencesBase64: computed(() => dataState.preferencesBase64),
+
+    projectTrenchesNames: computed(() => dataState.projectTrenchesNames),
+    projectPreferencesTypes: computed(() => dataState.projectPreferencesTypes),
+    projectPreferencesFields: computed(
+      () => dataState.projectPreferencesFields
+    ),
+    projectPreferencesBase64: computed(
+      () => dataState.projectPreferencesBase64
+    ),
     // Getters, transformed stored data:
-    firstTrench: computed(() => dataState?.allTrenches?.[0]),
+    firstTrench: computed(() => dataState?.projectTrenchesNames?.[0]),
   };
 };

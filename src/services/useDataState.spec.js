@@ -2,44 +2,48 @@ import { describe, it, expect, beforeEach } from "vitest";
 
 import { useDataState } from "./useDataState.js";
 
-describe("setAllTrenches", () => {
+describe("setProjectTrenchesNames", () => {
   beforeEach(() => {
     const { resetDataState } = useDataState();
     resetDataState();
   });
 
   it("initialized with null", () => {
-    const { allTrenches } = useDataState();
+    const { projectTrenchesNames } = useDataState();
 
-    expect(allTrenches.value).toBe(null);
+    expect(projectTrenchesNames.value).toBe(null);
   });
 
   it("set correctly its value", () => {
-    const { setAllTrenches, allTrenches } = useDataState();
-    const currentAllTrenches = ["AMA21-S24", "AMA_Kokalas"];
+    const { setProjectTrenchesNames, projectTrenchesNames } = useDataState();
+    const currentProjectTrenchesNames = ["AMA21-S24", "AMA_Kokalas"];
 
-    setAllTrenches(currentAllTrenches);
+    setProjectTrenchesNames(currentProjectTrenchesNames);
 
-    expect(allTrenches.value).toStrictEqual(["AMA21-S24", "AMA_Kokalas"]);
+    expect(projectTrenchesNames.value).toStrictEqual([
+      "AMA21-S24",
+      "AMA_Kokalas",
+    ]);
   });
 });
 
-describe("setAllTypes", () => {
+describe("setProjectPreferencesTypes", () => {
   beforeEach(() => {
     const { resetDataState } = useDataState();
     resetDataState();
   });
 
   it("initialized with null", () => {
-    const { allTypes } = useDataState();
+    const { projectPreferencesTypes } = useDataState();
 
-    expect(allTypes.value).toBe(null);
+    expect(projectPreferencesTypes.value).toBe(null);
   });
 
   it("set correctly its value", () => {
-    const { setAllTypes, allTypes } = useDataState();
+    const { setProjectPreferencesTypes, projectPreferencesTypes } =
+      useDataState();
 
-    const currentAllTypes = [
+    const currentProjectPreferencesTypes = [
       {
         type: "Context",
         label: "Contexte",
@@ -50,28 +54,31 @@ describe("setAllTypes", () => {
       { type: "Feature" },
     ];
 
-    setAllTypes(currentAllTypes);
+    setProjectPreferencesTypes(currentProjectPreferencesTypes);
 
-    expect(allTypes.value).toStrictEqual(currentAllTypes);
+    expect(projectPreferencesTypes.value).toStrictEqual(
+      currentProjectPreferencesTypes
+    );
   });
 });
 
-describe("setAllFields", () => {
+describe("setProjectPreferencesFields", () => {
   beforeEach(() => {
     const { resetDataState } = useDataState();
     resetDataState();
   });
 
   it("initialized with null", () => {
-    const { allFields } = useDataState();
+    const { projectPreferencesFields } = useDataState();
 
-    expect(allFields.value).toBe(null);
+    expect(projectPreferencesFields.value).toBe(null);
   });
 
   it("set correctly its value", () => {
-    const { setAllFields, allFields } = useDataState();
+    const { setProjectPreferencesFields, projectPreferencesFields } =
+      useDataState();
 
-    const currentAllFields = [
+    const currentProjectPreferencesFields = [
       {
         field: "Category",
         labels: {},
@@ -80,9 +87,11 @@ describe("setAllFields", () => {
       {},
     ];
 
-    setAllFields(currentAllFields);
+    setProjectPreferencesFields(currentProjectPreferencesFields);
 
-    expect(allFields.value).toStrictEqual(currentAllFields);
+    expect(projectPreferencesFields.value).toStrictEqual(
+      currentProjectPreferencesFields
+    );
   });
 });
 
@@ -92,25 +101,28 @@ describe("firstTrench", () => {
     resetDataState();
   });
 
-  it("return undefined if allTrenches is not set", () => {
+  it("return undefined if projectTrenchesNames is not set", () => {
     const { firstTrench } = useDataState();
 
     expect(firstTrench.value).toBe(undefined);
   });
 
   it.each([
-    { allTrenches: null, expected: undefined },
-    { allTrenches: [], expected: undefined },
-    { allTrenches: ["AMA21-S24"], expected: "AMA21-S24" },
-    { allTrenches: ["AMA21-S24", "AMA_Kokalas"], expected: "AMA21-S24" },
+    { projectTrenchesNames: null, expected: undefined },
+    { projectTrenchesNames: [], expected: undefined },
+    { projectTrenchesNames: ["AMA21-S24"], expected: "AMA21-S24" },
     {
-      allTrenches: ["AMA21-S24", "AMA_Kokalas", "AMA07"],
+      projectTrenchesNames: ["AMA21-S24", "AMA_Kokalas"],
       expected: "AMA21-S24",
     },
-  ])("return expected value", ({ allTrenches, expected }) => {
-    const { firstTrench, setAllTrenches } = useDataState();
+    {
+      projectTrenchesNames: ["AMA21-S24", "AMA_Kokalas", "AMA07"],
+      expected: "AMA21-S24",
+    },
+  ])("return expected value", ({ projectTrenchesNames, expected }) => {
+    const { firstTrench, setProjectTrenchesNames } = useDataState();
 
-    setAllTrenches(allTrenches);
+    setProjectTrenchesNames(projectTrenchesNames);
 
     expect(firstTrench.value).toBe(expected);
   });

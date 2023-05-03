@@ -60,7 +60,11 @@
             <div v-if="field.field == 'Type'" class="col-md-12 p-0 pl-1">
               <select class="col-md-12 border-none">
                 <option value="selectedRow.type">{{ selectedRow.Type }}</option>
-                <option v-for="type in allTypes" :key="type" :value="type.type">
+                <option
+                  v-for="type in projectPreferencesTypes"
+                  :key="type"
+                  :value="type.type"
+                >
                   {{ type.type }}
                 </option>
               </select>
@@ -167,8 +171,16 @@ export default {
     },
   },
   setup() {
-    const { allTypes, allFields, preferencesBase64 } = useDataState();
-    return { allTypes, allFields, preferencesBase64 };
+    const {
+      projectPreferencesTypes,
+      projectPreferencesFields,
+      projectPreferencesBase64,
+    } = useDataState();
+    return {
+      projectPreferencesTypes,
+      projectPreferencesFields,
+      projectPreferencesBase64,
+    };
   },
   data() {
     return {
@@ -179,7 +191,7 @@ export default {
   computed: {
     AAA() {
       // attention fields ne liste pas tous les champs
-      return this.allFields.filter((x) => x.field == "Type");
+      return this.projectPreferencesFields.filter((x) => x.field == "Type");
     },
 
     AAAA() {
@@ -187,7 +199,7 @@ export default {
     },
 
     valuelist() {
-      return this.allFields[33].valuelist;
+      return this.projectPreferencesFields[33].valuelist;
     },
 
     selectedTrench() {
@@ -211,24 +223,25 @@ export default {
       }
     },
     groups() {
-      if (this.allTypes) {
-        return this.allTypes.filter((x) => {
+      if (this.projectPreferencesTypes) {
+        return this.projectPreferencesTypes.filter((x) => {
           return x.type.includes(this.selectedType);
         })[0].groups;
       } else {
-        return this.allTypes;
+        return this.projectPreferencesTypes;
       }
     },
   },
   methods: {
     fieldExist(field) {
       // attention comme fields ne liste pas tous les champs on verifie si il existe
-      return this.allFields.filter((x) => x.field == field).length;
+      return this.projectPreferencesFields.filter((x) => x.field == field)
+        .length;
     },
 
     fieldType(field) {
       // attention fields ne liste pas tous les champs
-      return this.allFields.filter((x) => x.field == field)[0];
+      return this.projectPreferencesFields.filter((x) => x.field == field)[0];
     },
 
     setUserPreferences() {
@@ -239,7 +252,7 @@ export default {
         this.selectedTrench
       ];
       const surveys = this.trenchtoUpdate;
-      const preferences = this.preferencesBase64;
+      const preferences = this.projectPreferencesBase64;
 
       updateTrenchItem(this.selectedTrench, head, surveys, preferences)
         .then(() => {

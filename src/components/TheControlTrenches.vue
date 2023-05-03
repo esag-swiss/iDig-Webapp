@@ -17,7 +17,7 @@
       </li>
       <!-- liste trenches -->
       <div v-if="!isHiddenArray[index]">
-        <div v-for="trench in allTrenches" :key="trench">
+        <div v-for="trench in projectTrenchesNames" :key="trench">
           <li
             v-if="trench.includes(n)"
             class="mt-1"
@@ -48,8 +48,8 @@ import { useDataState } from "@/services/useDataState";
 export default {
   emits: ["selected-trench"],
   setup() {
-    const { allTrenches } = useDataState();
-    return { allTrenches };
+    const { projectTrenchesNames } = useDataState();
+    return { projectTrenchesNames };
   },
   data() {
     return {
@@ -82,7 +82,7 @@ export default {
   computed: {
     groupsForTrenches() {
       // create groups by 5 first caracters and send reverse order
-      return [...new Set(this.allTrenches?.map((x) => x.substr(0, 5)))]
+      return [...new Set(this.projectTrenchesNames?.map((x) => x.substr(0, 5)))]
         .sort()
         .reverse();
     },
@@ -101,13 +101,13 @@ export default {
       this.checkedTrenches = [];
       if (this.isCheckAll) {
         // Check all
-        for (var key in this.allTrenches) {
-          this.checkedTrenches.push(this.allTrenches[key]);
+        for (var key in this.projectTrenchesNames) {
+          this.checkedTrenches.push(this.projectTrenchesNames[key]);
         }
       }
     },
     updateCheckall: function () {
-      if (this.checkedTrenches.length == this.allTrenches.length) {
+      if (this.checkedTrenches.length == this.projectTrenchesNames.length) {
         this.isCheckAll = true;
       } else {
         this.isCheckAll = false;

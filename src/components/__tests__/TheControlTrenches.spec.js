@@ -5,7 +5,9 @@ import TheControlTrenches from "../TheControlTrenches.vue";
 
 describe("TheControlTrenches", () => {
   it("renders properly", () => {
-    const wrapper = mount(TheControlTrenches, { props: { allTrenches: [] } });
+    const wrapper = mount(TheControlTrenches, {
+      props: { projectTrenchesNames: [] },
+    });
     expect(wrapper.text()).toContain("Secteurs");
   });
 });
