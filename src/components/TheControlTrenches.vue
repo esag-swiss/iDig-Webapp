@@ -8,7 +8,7 @@
   <div class="p-1 m-1 bg-light border border-grey rounded">
     <h3>Secteurs</h3>
 
-    <ul v-for="(n, index) in groupsForTrenches" :key="n" class="list-group">
+    <ul v-for="(n, index) in accordionLabels" :key="n" class="list-group">
       <li
         class="list-group-item accordion"
         @click="isHiddenArray[index] = !isHiddenArray[index]"
@@ -25,7 +25,11 @@
               updateCheckall(), updateTrenchesDataWithSelectedTrench(trench)
             "
           >
-            <input v-model="checkedTrenches" type="checkbox" :value="trench" />
+            <input
+              v-model="checkedTrenchesNames"
+              type="checkbox"
+              :value="trench"
+            />
             <label class="px-1 m-0" for="checkbox">{{ trench }}</label>
           </li>
         </div>
@@ -54,10 +58,10 @@ export default {
   data() {
     return {
       search: "",
-      checkedTrenches: [], // attention garde en mémoire les trenches cochées lorsque l'on change de projet
+      checkedTrenchesNames: [], // attention garde en mémoire les trenches cochées lorsque l'on change de projet
       isCheckAll: false,
       trenchesData: {}, // use store ?
-      trenchesVersion: {}, // use store ?
+      checkedTrenchesVersions: {}, // use store ?
       isHiddenArray: [
         true,
         true,
@@ -80,13 +84,13 @@ export default {
   },
 
   computed: {
-    groupsForTrenches() {
+    accordionLabels() {
       // create groups by 5 first caracters and send reverse order
       return [...new Set(this.projectTrenchesNames?.map((x) => x.substr(0, 5)))]
         .sort()
         .reverse();
     },
-    ItemsAll() {
+    checkedTrenchesItems() {
       let allItem = [];
       Object.values(this.trenchesData).forEach((data) => {
         allItem.push(...data);
@@ -98,16 +102,18 @@ export default {
   methods: {
     toggleCheckAll: function () {
       this.isCheckAll = !this.isCheckAll;
-      this.checkedTrenches = [];
+      this.checkedTrenchesNames = [];
       if (this.isCheckAll) {
         // Check all
         for (var key in this.projectTrenchesNames) {
-          this.checkedTrenches.push(this.projectTrenchesNames[key]);
+          this.checkedTrenchesNames.push(this.projectTrenchesNames[key]);
         }
       }
     },
     updateCheckall: function () {
-      if (this.checkedTrenches.length == this.projectTrenchesNames.length) {
+      if (
+        this.checkedTrenchesNames.length == this.projectTrenchesNames.length
+      ) {
         this.isCheckAll = true;
       } else {
         this.isCheckAll = false;
@@ -116,13 +122,13 @@ export default {
     updateTrenchesDataWithSelectedTrench: function (trench) {
       if (Object.prototype.hasOwnProperty.call(this.trenchesData, trench)) {
         delete this.trenchesData[trench];
-        this.$emit("selected-trench", this.ItemsAll);
+        this.$emit("selected-trench", this.checkedTrenchesItems);
       } else {
         fetchSurvey(trench)
           .then((response) => {
             // prepare data to store in session in case of PUSH
             this.trenchesData[trench] = response.data.surveys;
-            this.trenchesVersion[trench] = response.data.version;
+            this.checkedTrenchesVersions[trench] = response.data.version;
 
             // store in session in case of PUSH
             sessionStorage.setItem(
@@ -130,10 +136,10 @@ export default {
               JSON.stringify(this.trenchesData)
             );
             sessionStorage.setItem(
-              "trenchesVersion",
-              JSON.stringify(this.trenchesVersion)
+              "checkedTrenchesVersions",
+              JSON.stringify(this.checkedTrenchesVersions)
             );
-            this.$emit("selected-trench", this.ItemsAll);
+            this.$emit("selected-trench", this.checkedTrenchesItems);
           })
           .catch(() => {});
       }
@@ -141,7 +147,7 @@ export default {
 
     fetchAllTrenchesData: function () {
       let itemsToEmit = [];
-      this.checkedTrenches.forEach((trench) => {
+      this.checkedTrenchesNames.forEach((trench) => {
         fetchSurvey(trench)
           .then((response) => {
             // pour emit des surveys
@@ -149,7 +155,7 @@ export default {
 
             // prepare data to store in session in case of PUSH
             this.trenchesData[trench] = response.data.surveys;
-            this.trenchesVersion[trench] = response.data.version;
+            this.checkedTrenchesVersions[trench] = response.data.version;
 
             // store in session in case of PUSH
             sessionStorage.setItem(
@@ -157,8 +163,8 @@ export default {
               JSON.stringify(this.trenchesData)
             );
             sessionStorage.setItem(
-              "trenchesVersion",
-              JSON.stringify(this.trenchesVersion)
+              "checkedTrenchesVersions",
+              JSON.stringify(this.checkedTrenchesVersions)
             );
             this.$emit("selected-trench", itemsToEmit);
           })
@@ -172,7 +178,7 @@ export default {
       if (champ.includes(":")) {
         champ = champ.split(":");
         // filter first all objects with requested property
-        itemsToEmit = this.ItemsAll.filter((x) =>
+        itemsToEmit = this.checkedTrenchesItems.filter((x) =>
           Object.prototype.hasOwnProperty.call(x, champ[0])
         );
         itemsToEmit = itemsToEmit.filter(function (x) {
@@ -180,7 +186,7 @@ export default {
         });
         // search in all properties
       } else {
-        itemsToEmit = this.ItemsAll.filter(
+        itemsToEmit = this.checkedTrenchesItems.filter(
           (
             o // array d'objets
           ) =>

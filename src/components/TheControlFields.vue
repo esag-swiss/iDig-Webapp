@@ -25,7 +25,11 @@
   <div class="p-1 m-1 bg-light border border-grey rounded">
     <h3 title="display only fields for the selected type">Champs</h3>
     <!-- liste les groupes pour le type selectionné -->
-    <ul v-for="(group, index) in groups" :key="group" class="list-group">
+    <ul
+      v-for="(group, index) in groupOfFieldsAccordingToType"
+      :key="group"
+      class="list-group"
+    >
       <li
         v-if="group.hasOwnProperty('labels')"
         class="list-group-item accordion"
@@ -63,12 +67,13 @@ import { useDataState } from "@/services/useDataState";
 import { useAppState } from "@/services/useAppState";
 
 export default {
-  props: {
-    selectedData: {
-      type: Object,
-      required: true,
-    },
-  },
+  // props: {
+  //   filteredTrenchesItems: {
+
+  //     type: Object,
+  //     required: true,
+  //   },
+  // },
 
   emits: ["checkFields", "selectedType", "selected-type", "check-fields"],
   setup() {
@@ -113,7 +118,7 @@ export default {
     // liste les groupes pour l'accordéon des champs
     // info : la liste des fields par groupe se trouvent dans types.groups.fields
     // on pourrait s'assurer ici que le label de la langue existe toujours pour eviter la methode "labels"
-    groups() {
+    groupOfFieldsAccordingToType() {
       return this.projectPreferencesTypes.filter((x) => {
         return x.type.includes(this.selectedType);
       })[0].groups;
@@ -129,7 +134,7 @@ export default {
       });
     },
 
-    fieldLabel() {
+    projectPreferencesTranslatedFieldLabels() {
       // calcule les correspondances field : label dans un objet field : label
       // sert pour afficher les labels des check box
 
@@ -147,7 +152,10 @@ export default {
       // j'ajoute les propriétés label et sortable: true
       // pas certain que tous les undefined soient gérés
       return this.checkFields.map((v) =>
-        Object.assign(v, { label: this.fieldLabel[v.field], sortable: true })
+        Object.assign(v, {
+          label: this.projectPreferencesTranslatedFieldLabels[v.field],
+          sortable: true,
+        })
       );
     },
   },
@@ -165,8 +173,13 @@ export default {
     },
 
     labels: function (Obj) {
-      if (Object.prototype.hasOwnProperty.call(this.fieldLabel, Obj)) {
-        return this.fieldLabel[Obj];
+      if (
+        Object.prototype.hasOwnProperty.call(
+          this.projectPreferencesTranslatedFieldLabels,
+          Obj
+        )
+      ) {
+        return this.projectPreferencesTranslatedFieldLabels[Obj];
       } else {
         return Obj;
       }

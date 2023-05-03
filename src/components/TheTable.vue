@@ -1,13 +1,9 @@
 <template>
-  <div
-    v-show="TheItemExist"
-    class="TheItemframe"
-    @click="removeLTheItem()"
-  ></div>
+  <div v-show="currentItem" class="TheItemframe" @click="clearTheItem()"></div>
   <TheItem
-    v-if="TheItemExist"
+    v-if="currentItem"
     :selectedType="selectedType"
-    :selectedRow="selectedRow"
+    :currentItem="currentItem"
   >
   </TheItem>
   <TheTableLite
@@ -22,7 +18,6 @@
     :sortable="table.sortable"
     :messages="table.messages"
     @is-finished="tableLoadingFinish"
-    @return-checked-rows="updateCheckedRows"
     @row-clicked="rowClicked"
   ></TheTableLite>
 </template>
@@ -37,7 +32,7 @@ export default defineComponent({
   name: "TheTable",
   components: { TheTableLite, TheItem },
   props: {
-    selectedData: {
+    filteredTrenchesItems: {
       type: Object,
       required: true,
     },
@@ -53,7 +48,7 @@ export default defineComponent({
   setup(props) {
     const searchTerm = ref(""); // Search text
     // data utiliser toRef pour ne pas perdre la réactivité lorsque le props est destructuré
-    const data = toRef(props, "selectedData");
+    const data = toRef(props, "filteredTrenchesItems");
     // utiliser toRef pour ne pas perdre la réactivité lorsque le props est destructuré
     const headers = toRef(props, "checkedFields");
 
@@ -101,19 +96,11 @@ export default defineComponent({
       });
     };
 
-    // Row checked event
-    const updateCheckedRows = (rowsKey) => {
-      console.log(rowsKey);
-    };
-
     // Row clicked event
-    let TheItemExist = ref(false);
-    let selectedRow = ref();
+    let currentItem = ref();
     const rowClicked = (rowsKey) => {
-      // console.log("Row clicked!", rowsKey);
       // Pour modifier une variable réactive, déclaré avec ref(), vous devez utiliser sa propriété .value
-      TheItemExist.value = true;
-      selectedRow.value = rowsKey;
+      currentItem.value = rowsKey;
     };
 
     // Work in progress
@@ -154,19 +141,17 @@ export default defineComponent({
       table,
       headers,
       rowClicked,
-      updateCheckedRows,
       tableLoadingFinish,
       getImage,
-      TheItemExist,
-      selectedRow,
+      currentItem,
     };
   },
   data() {
     return {};
   },
   methods: {
-    removeLTheItem() {
-      this.TheItemExist = false;
+    clearTheItem() {
+      this.currentItem = false;
     },
   },
 });
