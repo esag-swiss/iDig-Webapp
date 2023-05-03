@@ -62,7 +62,7 @@ export default {
     const { setAppState, appState } = useAppState();
     const {
       setProjectTrenchesNames,
-      setAllTypes,
+      setProjectPreferencesTypes,
       setAllFields,
       setPreferencesBase64,
       firstTrench,
@@ -71,7 +71,7 @@ export default {
       setAppState,
       appState,
       setProjectTrenchesNames,
-      setAllTypes,
+      setProjectPreferencesTypes,
       setAllFields,
       firstTrench,
       setPreferencesBase64,
@@ -132,7 +132,7 @@ export default {
       const preferences = JSON.parse(
         decodeURIComponent(escape(window.atob(response.data.preferences)))
       );
-      this.setAllTypes(preferences.types);
+      this.setProjectPreferencesTypes(preferences.types);
       this.setAllFields(preferences.fields);
     },
     cleanServerUserEntry(serverUserEntry) {

@@ -12,7 +12,11 @@
       class="form-control"
       @change="changeSelectedType"
     >
-      <option v-for="type in allTypes" :key="type" :value="type.type">
+      <option
+        v-for="type in projectPreferencesTypes"
+        :key="type"
+        :value="type.type"
+      >
         {{ type.plurals.fr }}
       </option>
     </select>
@@ -68,9 +72,9 @@ export default {
 
   emits: ["checkFields", "selectedType", "selected-type", "check-fields"],
   setup() {
-    const { allTypes, allFields } = useDataState();
+    const { projectPreferencesTypes, allFields } = useDataState();
     const { appState } = useAppState();
-    return { allTypes, allFields, appState };
+    return { projectPreferencesTypes, allFields, appState };
   },
   data() {
     return {
@@ -109,7 +113,7 @@ export default {
     // info : la liste des fields par groupe se trouvent dans types.groups.fields
     // on pourrait s'assurer ici que le label de la langue existe toujours pour eviter la methode "labels"
     groups() {
-      return this.allTypes.filter((x) => {
+      return this.projectPreferencesTypes.filter((x) => {
         return x.type.includes(this.selectedType);
       })[0].groups;
     },

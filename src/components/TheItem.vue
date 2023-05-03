@@ -60,7 +60,11 @@
             <div v-if="field.field == 'Type'" class="col-md-12 p-0 pl-1">
               <select class="col-md-12 border-none">
                 <option value="selectedRow.type">{{ selectedRow.Type }}</option>
-                <option v-for="type in allTypes" :key="type" :value="type.type">
+                <option
+                  v-for="type in projectPreferencesTypes"
+                  :key="type"
+                  :value="type.type"
+                >
                   {{ type.type }}
                 </option>
               </select>
@@ -167,8 +171,9 @@ export default {
     },
   },
   setup() {
-    const { allTypes, allFields, preferencesBase64 } = useDataState();
-    return { allTypes, allFields, preferencesBase64 };
+    const { projectPreferencesTypes, allFields, preferencesBase64 } =
+      useDataState();
+    return { projectPreferencesTypes, allFields, preferencesBase64 };
   },
   data() {
     return {
@@ -211,12 +216,12 @@ export default {
       }
     },
     groups() {
-      if (this.allTypes) {
-        return this.allTypes.filter((x) => {
+      if (this.projectPreferencesTypes) {
+        return this.projectPreferencesTypes.filter((x) => {
           return x.type.includes(this.selectedType);
         })[0].groups;
       } else {
-        return this.allTypes;
+        return this.projectPreferencesTypes;
       }
     },
   },

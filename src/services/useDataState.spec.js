@@ -27,20 +27,21 @@ describe("setProjectTrenchesNames", () => {
   });
 });
 
-describe("setAllTypes", () => {
+describe("setProjectPreferencesTypes", () => {
   beforeEach(() => {
     const { resetDataState } = useDataState();
     resetDataState();
   });
 
   it("initialized with null", () => {
-    const { allTypes } = useDataState();
+    const { projectPreferencesTypes } = useDataState();
 
-    expect(allTypes.value).toBe(null);
+    expect(projectPreferencesTypes.value).toBe(null);
   });
 
   it("set correctly its value", () => {
-    const { setAllTypes, allTypes } = useDataState();
+    const { setProjectPreferencesTypes, projectPreferencesTypes } =
+      useDataState();
 
     const currentAllTypes = [
       {
@@ -53,9 +54,9 @@ describe("setAllTypes", () => {
       { type: "Feature" },
     ];
 
-    setAllTypes(currentAllTypes);
+    setProjectPreferencesTypes(currentAllTypes);
 
-    expect(allTypes.value).toStrictEqual(currentAllTypes);
+    expect(projectPreferencesTypes.value).toStrictEqual(currentAllTypes);
   });
 });
 
