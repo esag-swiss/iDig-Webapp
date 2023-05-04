@@ -60,7 +60,7 @@ export default {
       search: "",
       checkedTrenchesNames: [], // attention garde en mémoire les trenches cochées lorsque l'on change de projet
       isCheckAll: false,
-      trenchesData: {}, // use store ?
+      checkedTrenchesData: {}, // use store ?
       checkedTrenchesVersions: {}, // use store ?
       isHiddenArray: [
         true,
@@ -92,7 +92,7 @@ export default {
     },
     checkedTrenchesItems() {
       let allItem = [];
-      Object.values(this.trenchesData).forEach((data) => {
+      Object.values(this.checkedTrenchesData).forEach((data) => {
         allItem.push(...data);
       });
       return allItem;
@@ -120,20 +120,22 @@ export default {
       }
     },
     updateTrenchesDataWithSelectedTrench: function (trench) {
-      if (Object.prototype.hasOwnProperty.call(this.trenchesData, trench)) {
-        delete this.trenchesData[trench];
+      if (
+        Object.prototype.hasOwnProperty.call(this.checkedTrenchesData, trench)
+      ) {
+        delete this.checkedTrenchesData[trench];
         this.$emit("selected-trench", this.checkedTrenchesItems);
       } else {
         fetchSurvey(trench)
           .then((response) => {
             // prepare data to store in session in case of PUSH
-            this.trenchesData[trench] = response.data.surveys;
+            this.checkedTrenchesData[trench] = response.data.surveys;
             this.checkedTrenchesVersions[trench] = response.data.version;
 
             // store in session in case of PUSH
             sessionStorage.setItem(
-              "trenchesData",
-              JSON.stringify(this.trenchesData)
+              "checkedTrenchesData",
+              JSON.stringify(this.checkedTrenchesData)
             );
             sessionStorage.setItem(
               "checkedTrenchesVersions",
@@ -154,13 +156,13 @@ export default {
             itemsToEmit.push(...response.data.surveys);
 
             // prepare data to store in session in case of PUSH
-            this.trenchesData[trench] = response.data.surveys;
+            this.checkedTrenchesData[trench] = response.data.surveys;
             this.checkedTrenchesVersions[trench] = response.data.version;
 
             // store in session in case of PUSH
             sessionStorage.setItem(
-              "trenchesData",
-              JSON.stringify(this.trenchesData)
+              "checkedTrenchesData",
+              JSON.stringify(this.checkedTrenchesData)
             );
             sessionStorage.setItem(
               "checkedTrenchesVersions",

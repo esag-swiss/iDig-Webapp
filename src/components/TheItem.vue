@@ -208,7 +208,9 @@ export default {
 
     selectedTrench() {
       if (this.currentItem) {
-        var array = Object.entries(JSON.parse(sessionStorage.trenchesData)); //object into array
+        var array = Object.entries(
+          JSON.parse(sessionStorage.checkedTrenchesData)
+        ); //object into array
         return array.filter((x) =>
           x[1].some((k) =>
             k.IdentifierUUID.includes(this.currentItem.IdentifierUUID)
@@ -221,7 +223,9 @@ export default {
 
     trenchtoUpdate() {
       if (this.currentItem) {
-        return JSON.parse(sessionStorage.trenchesData)[this.selectedTrench];
+        return JSON.parse(sessionStorage.checkedTrenchesData)[
+          this.selectedTrench
+        ];
       } else {
         return "";
       }
