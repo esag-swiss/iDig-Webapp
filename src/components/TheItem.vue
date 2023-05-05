@@ -1,17 +1,17 @@
 <template>
   <div class="TheItemwrapper justify-content-center">
     <div
-      v-if="selectedRow"
+      v-if="currentItem"
       id="TheItem"
       class="TheItem center-block mx-auto p-3"
     >
       <!--header-->
       <div class="row align-items-start border-bottom mb-2">
         <div class="col text-left">
-          <h3>{{ selectedRow.Type }} {{ selectedRow.Identifier }}</h3>
+          <h3>{{ currentItem.Type }} {{ currentItem.Identifier }}</h3>
         </div>
         <div class="navbar-text py-0">
-          {{ selectedRow.IdentifierUUID }}
+          {{ currentItem.IdentifierUUID }}
         </div>
 
         <button
@@ -32,7 +32,11 @@
 
       <!--Formulaire-->
       <!-- espace de travail finds 3254 ; Material  3450-->
-      <ul v-for="group in groups" :key="group" class="list-group">
+      <ul
+        v-for="group in groupOfFieldsAccordingToType"
+        :key="group"
+        class="list-group"
+      >
         <li
           v-if="group.hasOwnProperty('labels')"
           class="list-group-item accordion"
@@ -59,7 +63,7 @@
             <!-- 1  Champ == type  -->
             <div v-if="field.field == 'Type'" class="col-md-12 p-0 pl-1">
               <select class="col-md-12 border-none">
-                <option value="selectedRow.type">{{ selectedRow.Type }}</option>
+                <option value="currentItem.type">{{ currentItem.Type }}</option>
                 <option
                   v-for="type in projectPreferencesTypes"
                   :key="type"
@@ -78,7 +82,7 @@
               {{
                 Date(
                   trenchtoUpdate.filter((x) => {
-                    return x.IdentifierUUID == selectedRow.IdentifierUUID;
+                    return x.IdentifierUUID == currentItem.IdentifierUUID;
                   })[0][field.field]
                 )
               }}
@@ -95,8 +99,8 @@
                 >
                   <!-- 4 if multivalue  -->
                   <select class="col-md-12 p-0 pl-1 border-none">
-                    <option value="selectedRow.type">
-                      {{ selectedRow[field.field] }}
+                    <option value="currentItem.type">
+                      {{ currentItem[field.field] }}
                     </option>
 
                     <option v-for="type in valuelist" :key="type" :value="type">
@@ -114,7 +118,7 @@
                   v-else
                   v-model="
                     trenchtoUpdate.filter((x) => {
-                      return x.IdentifierUUID == selectedRow.IdentifierUUID;
+                      return x.IdentifierUUID == currentItem.IdentifierUUID;
                     })[0][field.field]
                   "
                   type="text"
@@ -125,7 +129,7 @@
                 v-else-if="fieldType(field.field).hasOwnProperty('multiline')"
                 v-model="
                   trenchtoUpdate.filter((x) => {
-                    return x.IdentifierUUID == selectedRow.IdentifierUUID;
+                    return x.IdentifierUUID == currentItem.IdentifierUUID;
                   })[0][field.field]
                 "
                 class="col-md-12 p-0 pl-1 border-none"
@@ -136,7 +140,7 @@
                 v-else
                 v-model="
                   trenchtoUpdate.filter((x) => {
-                    return x.IdentifierUUID == selectedRow.IdentifierUUID;
+                    return x.IdentifierUUID == currentItem.IdentifierUUID;
                   })[0][field.field]
                 "
                 type="text"
@@ -161,7 +165,7 @@ import { useDataState } from "@/services/useDataState";
 export default {
   name: "TheItem",
   props: {
-    selectedRow: {
+    currentItem: {
       type: Object,
       required: true,
     },
@@ -203,11 +207,13 @@ export default {
     },
 
     selectedTrench() {
-      if (this.selectedRow) {
-        var array = Object.entries(JSON.parse(sessionStorage.trenchesData)); //object into array
+      if (this.currentItem) {
+        var array = Object.entries(
+          JSON.parse(sessionStorage.checkedTrenchesData)
+        ); //object into array
         return array.filter((x) =>
           x[1].some((k) =>
-            k.IdentifierUUID.includes(this.selectedRow.IdentifierUUID)
+            k.IdentifierUUID.includes(this.currentItem.IdentifierUUID)
           )
         )[0][0];
       } else {
@@ -216,13 +222,15 @@ export default {
     },
 
     trenchtoUpdate() {
-      if (this.selectedRow) {
-        return JSON.parse(sessionStorage.trenchesData)[this.selectedTrench];
+      if (this.currentItem) {
+        return JSON.parse(sessionStorage.checkedTrenchesData)[
+          this.selectedTrench
+        ];
       } else {
         return "";
       }
     },
-    groups() {
+    groupOfFieldsAccordingToType() {
       if (this.projectPreferencesTypes) {
         return this.projectPreferencesTypes.filter((x) => {
           return x.type.includes(this.selectedType);
@@ -248,7 +256,7 @@ export default {
       // alert("to use for user preferences settings")
     },
     pushSurvey() {
-      const head = JSON.parse(sessionStorage.trenchesVersion)[
+      const head = JSON.parse(sessionStorage.checkedTrenchesVersions)[
         this.selectedTrench
       ];
       const surveys = this.trenchtoUpdate;

@@ -11,7 +11,7 @@
 export default {
   name: "TheControlExport",
   props: {
-    selectedData: {
+    filteredTrenchesItems: {
       type: Object,
       required: true,
     },
@@ -30,7 +30,7 @@ export default {
   methods: {
     exportFile: function () {
       if (this.fileType === "tab") {
-        const items = this.selectedData;
+        const items = this.filteredTrenchesItems;
         const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
         const header = Object.keys(items[0]);
         this.fileData = [
@@ -42,7 +42,7 @@ export default {
           ),
         ].join("\r\n");
       } else {
-        this.fileData = JSON.stringify(this.selectedData); // les items filtrés des trenches et type selectionnées
+        this.fileData = JSON.stringify(this.filteredTrenchesItems); // les items filtrés des trenches et type selectionnées
       }
 
       const blob = new Blob([this.fileData], { type: "text/plain" });

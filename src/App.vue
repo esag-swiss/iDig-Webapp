@@ -13,13 +13,12 @@
           </TheControlTrenches>
 
           <TheControlFields
-            :selectedData="selectedData"
             @check-fields="checkFields"
             @selected-type="selectedType"
           >
           </TheControlFields>
           <TheControlExport
-            :selectedData="selectedData"
+            :filteredTrenchesItems="filteredTrenchesItems"
             :selectedType="selectedFilter"
           >
           </TheControlExport>
@@ -32,8 +31,8 @@
         :class="{ 'col-md-10': isHidden, 'col-md-12': !isHidden }"
       >
         <TheTable
-          v-if="trenchData !== null"
-          :selectedData="selectedData"
+          v-if="checkedTrenchesData !== null"
+          :filteredTrenchesItems="filteredTrenchesItems"
           :checkedFields="checkedFields"
           :selectedType="selectedFilter"
         >
@@ -78,7 +77,7 @@ export default {
       isHidden: true,
       display: "block",
       class: true,
-      trenchData: null,
+      checkedTrenchesData: null,
       selectedFilter: "Artifact", // type by default
       checkedFields: [
         // columns by default before any selection /!\ label needed to display headers
@@ -94,9 +93,9 @@ export default {
     };
   },
   computed: {
-    selectedData() {
-      if (this.trenchData) {
-        return this.trenchData.filter((object) => {
+    filteredTrenchesItems() {
+      if (this.checkedTrenchesData) {
+        return this.checkedTrenchesData.filter((object) => {
           return object.Type.includes(this.selectedFilter);
         });
       } else {
@@ -109,7 +108,7 @@ export default {
   },
   methods: {
     selectedTrench(trench) {
-      this.trenchData = trench;
+      this.checkedTrenchesData = trench;
     },
     selectedType(type) {
       this.selectedFilter = type;
