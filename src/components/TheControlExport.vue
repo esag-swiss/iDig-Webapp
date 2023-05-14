@@ -1,24 +1,25 @@
 <template>
-  <select v-model="fileType" class="form-control">
-    <option v-for="type in fileTypes" :key="type" :value="type">
-      {{ type }}
-    </option>
-  </select>
-  <q-btn push color="primary" label="download" @click="exportFile" />
-  {{ selectedType }}
+  <div class="container-fluid">
+    <q-btn push color="primary" label="download" @click="exportFile" />
+    <select v-model="fileType" class="mx-2">
+      <option v-for="type in fileTypes" :key="type" :value="type">
+        {{ type }}
+      </option>
+    </select>
+  </div>
 </template>
 <script>
+import { useDataState } from "@/services/useDataState";
+
 export default {
   name: "TheControlExport",
-  props: {
-    filteredTrenchesItems: {
-      type: Object,
-      required: true,
-    },
-    selectedType: {
-      type: String,
-      required: true,
-    },
+  setup() {
+    const { filteredTrenchesItemsStore, selectedType } = useDataState();
+
+    return {
+      filteredTrenchesItemsStore,
+      selectedType,
+    };
   },
   data() {
     return {
@@ -30,7 +31,7 @@ export default {
   methods: {
     exportFile: function () {
       if (this.fileType === "tab") {
-        const items = this.filteredTrenchesItems;
+        const items = this.filteredTrenchesItemsStore;
         const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
         const header = Object.keys(items[0]);
         this.fileData = [
@@ -42,7 +43,7 @@ export default {
           ),
         ].join("\r\n");
       } else {
-        this.fileData = JSON.stringify(this.filteredTrenchesItems); // les items filtrés des trenches et type selectionnées
+        this.fileData = JSON.stringify(this.filteredTrenchesItemsStore); // les items filtrés des trenches et type selectionnées
       }
 
       const blob = new Blob([this.fileData], { type: "text/plain" });

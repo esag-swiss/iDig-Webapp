@@ -8,9 +8,14 @@
 
     <!-- dropdown for types -->
     <select
-      v-model="selectedType"
+      :value="selectedType"
       class="form-control"
-      @change="changeSelectedType"
+      @change="
+        (event) => {
+          changeSelectedType();
+          setSelectedType(event.target.value);
+        }
+      "
     >
       <option
         v-for="type in projectPreferencesTypes"
@@ -69,10 +74,21 @@ import { useAppState } from "@/services/useAppState";
 export default {
   emits: ["checkFields", "selectedType", "selected-type", "check-fields"],
   setup() {
-    const { projectPreferencesTypes, projectPreferencesFields } =
-      useDataState();
+    const {
+      projectPreferencesTypes,
+      projectPreferencesFields,
+      selectedType,
+      setSelectedType,
+    } = useDataState();
     const { appState } = useAppState();
-    return { projectPreferencesTypes, projectPreferencesFields, appState };
+
+    return {
+      projectPreferencesTypes,
+      projectPreferencesFields,
+      selectedType,
+      setSelectedType,
+      appState,
+    };
   },
   data() {
     return {
@@ -89,7 +105,6 @@ export default {
           checked: true,
         },
       ],
-      selectedType: "Artifact", // default type
       isHiddenArray: [
         true,
         true,
