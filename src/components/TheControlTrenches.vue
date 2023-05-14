@@ -52,8 +52,16 @@ import { useDataState } from "@/services/useDataState";
 export default {
   emits: ["selected-trench"],
   setup() {
-    const { projectTrenchesNames } = useDataState();
-    return { projectTrenchesNames };
+    const {
+      projectTrenchesNames,
+      setFilteredTrenchesItemsStore,
+      selectedType,
+    } = useDataState();
+    return {
+      projectTrenchesNames,
+      setFilteredTrenchesItemsStore,
+      selectedType,
+    };
   },
   data() {
     return {
@@ -120,6 +128,7 @@ export default {
       }
     },
     updateTrenchesDataWithSelectedTrench: function (trench) {
+      let itemsToEmitStore = [];
       if (
         Object.prototype.hasOwnProperty.call(this.checkedTrenchesData, trench)
       ) {
@@ -142,6 +151,11 @@ export default {
               JSON.stringify(this.checkedTrenchesVersions)
             );
             this.$emit("selected-trench", this.checkedTrenchesItems);
+
+            itemsToEmitStore = this.checkedTrenchesItems.filter((object) => {
+              return object.Type.includes(this.selectedType);
+            });
+            this.setFilteredTrenchesItemsStore(itemsToEmitStore);
           })
           .catch(() => {});
       }
@@ -149,6 +163,8 @@ export default {
 
     fetchAllTrenchesData: function () {
       let itemsToEmit = [];
+      let itemsToEmitStore = [];
+
       this.checkedTrenchesNames.forEach((trench) => {
         fetchSurvey(trench)
           .then((response) => {
@@ -169,6 +185,11 @@ export default {
               JSON.stringify(this.checkedTrenchesVersions)
             );
             this.$emit("selected-trench", itemsToEmit);
+
+            itemsToEmitStore = itemsToEmit.filter((object) => {
+              return object.Type.includes(this.selectedType);
+            });
+            this.setFilteredTrenchesItemsStore(itemsToEmitStore);
           })
           .catch(() => {});
       });
@@ -177,6 +198,8 @@ export default {
     filterItems() {
       let champ = this.search;
       let itemsToEmit = [];
+      let itemsToEmitStore = [];
+
       if (champ.includes(":")) {
         champ = champ.split(":");
         // filter first all objects with requested property
@@ -199,6 +222,11 @@ export default {
       }
 
       this.$emit("selected-trench", itemsToEmit);
+
+      itemsToEmitStore = itemsToEmit.filter((object) => {
+        return object.Type.includes(this.selectedType);
+      });
+      this.setFilteredTrenchesItemsStore(itemsToEmitStore);
     },
   },
 };
