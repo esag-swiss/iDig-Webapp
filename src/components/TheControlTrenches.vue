@@ -17,10 +17,14 @@
       </li>
       <!-- liste trenches -->
       <div v-if="!isHiddenArray[index]">
-        <div v-for="trench in projectTrenchesNames" :key="trench">
+        <ul
+          v-for="trench in projectTrenchesNames"
+          :key="trench"
+          class="list-group"
+        >
           <li
             v-if="trench.includes(n)"
-            class="mt-1"
+            class="list-group-item accordion"
             @change="
               updateCheckall(), updateTrenchesDataWithSelectedTrench(trench)
             "
@@ -32,7 +36,7 @@
             />
             <label class="px-1 m-0" for="checkbox">{{ trench }}</label>
           </li>
-        </div>
+        </ul>
       </div>
     </ul>
     <!-- Check All -->
@@ -106,6 +110,18 @@ export default {
       return allItem;
     },
   },
+  watch: {
+    // whenever question changes, this function will run
+    selectedType(newType) {
+      let tempItems = [];
+      tempItems = this.checkedTrenchesItems.filter((object) => {
+        return object.Type.includes(newType);
+      });
+      this.setFilteredTrenchesItemsStore(tempItems);
+
+      console.log(tempItems);
+    },
+  },
 
   methods: {
     toggleCheckAll: function () {
@@ -128,7 +144,6 @@ export default {
       }
     },
     updateTrenchesDataWithSelectedTrench: function (trench) {
-      let itemsToEmitStore = [];
       if (
         Object.prototype.hasOwnProperty.call(this.checkedTrenchesData, trench)
       ) {
@@ -152,6 +167,7 @@ export default {
             );
             this.$emit("selected-trench", this.checkedTrenchesItems);
 
+            let itemsToEmitStore = [];
             itemsToEmitStore = this.checkedTrenchesItems.filter((object) => {
               return object.Type.includes(this.selectedType);
             });
