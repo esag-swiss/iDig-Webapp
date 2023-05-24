@@ -77,6 +77,8 @@ export default {
     const {
       projectPreferencesTypes,
       projectPreferencesFields,
+      setFilteredTrenchesItemsStore,
+      filteredTrenchesItemsStore,
       selectedType,
       setSelectedType,
     } = useDataState();
@@ -85,6 +87,8 @@ export default {
     return {
       projectPreferencesTypes,
       projectPreferencesFields,
+      setFilteredTrenchesItemsStore,
+      filteredTrenchesItemsStore,
       selectedType,
       setSelectedType,
       appState,
@@ -170,12 +174,10 @@ export default {
   methods: {
     changeSelectedType: function () {
       this.checkFields = this.defaultcheckFields;
-      // reçoit du @change et renvoie au parent
-      this.$emit("selected-type", this.selectedType);
       this.$emit("check-fields", this.addsortabletrue);
     },
+
     checkfields() {
-      // reçoit du @change et renvoie au parent
       this.$emit("check-fields", this.addsortabletrue);
     },
 
@@ -213,13 +215,5 @@ export default {
 .active,
 .accordion:hover {
   background-color: #ccc;
-}
-
-/* Style the accordion panel. Note: hidden by default */
-.panel {
-  padding: 0 18px;
-  background-color: white;
-  display: none;
-  overflow: hidden;
 }
 </style>
