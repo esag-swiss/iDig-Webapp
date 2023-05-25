@@ -34,7 +34,7 @@
         />
         <button
           type="button"
-          class="btn btn-outline-secondary my-0 my-sm-0 m-2 p-0"
+          class="btn btn-outline-secondary m-2 px-1 py-0"
           :class="{ 'is-loaded': appState.isLoaded }"
           @click="connect()"
         >
@@ -146,8 +146,8 @@ export default {
 <style>
 .is-loaded {
   color: #fff;
-  background-color: #28a745;
-  border-color: #28a745;
+  background-color: #26a69a;
+  border-color: #26a69a;
 }
 .input-header {
   background: #212529;

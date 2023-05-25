@@ -1,11 +1,25 @@
 <template>
-  <div class="container-fluid">
-    <q-btn push color="primary" label="download" @click="exportFile" />
-    <select v-model="fileType" class="mx-2">
-      <option v-for="type in fileTypes" :key="type" :value="type">
-        {{ type }}
-      </option>
-    </select>
+  <div class="container-fluid px-1 q-gutter-sm">
+    <q-btn
+      align="left"
+      padding="xs"
+      color="secondary"
+      label="json"
+      @click="exportFile"
+      ><q-tooltip class="bg-accent"
+        >download items as json file</q-tooltip
+      ></q-btn
+    >
+    <q-btn
+      align="left"
+      padding="xs"
+      color="secondary"
+      label=".tab"
+      @click="exportFile('tab')"
+      ><q-tooltip class="bg-accent"
+        >download items as .tab file</q-tooltip
+      ></q-btn
+    >
   </div>
 </template>
 <script>
@@ -23,14 +37,12 @@ export default {
   },
   data() {
     return {
-      fileTypes: ["tab", "json"],
-      fileType: "tab",
       fileData: "",
     };
   },
   methods: {
-    exportFile: function () {
-      if (this.fileType === "tab") {
+    exportFile: function (fileType) {
+      if (fileType == "tab") {
         const items = this.filteredTrenchesItemsStore;
         const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
         const header = Object.keys(items[0]);
