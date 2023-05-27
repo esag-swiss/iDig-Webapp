@@ -118,8 +118,6 @@ export default {
         return object.Type.includes(newType);
       });
       this.setFilteredTrenchesItemsStore(tempItems);
-
-      console.log(tempItems);
     },
   },
 
@@ -178,6 +176,7 @@ export default {
     },
 
     fetchAllTrenchesData: function () {
+      // also used to reload after saving from TheItem
       let itemsToEmit = [];
       let itemsToEmitStore = [];
 
