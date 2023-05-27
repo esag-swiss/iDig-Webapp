@@ -152,6 +152,7 @@ export default defineComponent({
   methods: {
     clearTheItem() {
       this.currentItem = false;
+      this.$parent.reload();
     },
   },
 });

@@ -9,7 +9,10 @@
       <!-- SIDEBAR -->
       <div class="p-1 col-md-2">
         <div class="sticky-top">
-          <TheControlTrenches @selected-trench="selectedTrench">
+          <TheControlTrenches
+            ref="controlTrenches"
+            @selected-trench="selectedTrench"
+          >
           </TheControlTrenches>
 
           <TheControlFields @check-fields="checkFields"> </TheControlFields>
@@ -97,6 +100,9 @@ export default {
     },
     checkFields(emited) {
       this.checkedFields = emited;
+    },
+    reload() {
+      this.$refs.controlTrenches.fetchAllTrenchesData();
     },
   },
 };
