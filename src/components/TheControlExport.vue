@@ -1,14 +1,13 @@
 <template>
   <div class="container-fluid px-1 q-gutter-sm">
+    <h3>Export</h3>
     <q-btn
       align="left"
       padding="xs"
       color="secondary"
       label="json"
       @click="exportFile"
-      ><q-tooltip class="bg-accent"
-        >download items as json file</q-tooltip
-      ></q-btn
+      ><q-tooltip class="bg-accent">items as json file</q-tooltip></q-btn
     >
     <q-btn
       align="left"
@@ -16,9 +15,7 @@
       color="secondary"
       label=".tab"
       @click="exportFile('tab')"
-      ><q-tooltip class="bg-accent"
-        >download items as .tab file</q-tooltip
-      ></q-btn
+      ><q-tooltip class="bg-accent">items as .tab file</q-tooltip></q-btn
     >
   </div>
 </template>

@@ -1,11 +1,11 @@
 <template>
   <input
     v-model="search"
-    class="m-0 form-control input-sm"
+    class="form-control form-control-sm"
     placeholder="Search..."
     @input="filterItems()"
   />
-  <div class="p-1 m-1 bg-light border border-grey rounded">
+  <div name="secteurs" class="p-1 m-1 bg-light border-0">
     <h3>Secteurs</h3>
 
     <ul v-for="(n, index) in accordionLabels" :key="n" class="list-group">
@@ -246,8 +246,4 @@ export default {
   },
 };
 </script>
-<style scoped>
-.form-control {
-  width: 98%;
-}
-</style>
+<style scoped></style>

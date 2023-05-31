@@ -4,9 +4,9 @@
     <div class="container-fluid">
       <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav pt-2 py-md-0">
         <!-- Title -->
-        <div class="navbar-brand pr-3" href="#">iDig webapp</div>
+        <div class="navbar-brand" href="#">iDig webapp</div>
       </ul>
-      <form class="form-inline my-2 my-lg-0">
+      <form class="form-inline my-0">
         <div class="navbar-text text-light p-2">server:</div>
         <input
           :value="appState.server"
