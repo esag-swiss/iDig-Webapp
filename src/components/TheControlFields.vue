@@ -1,33 +1,32 @@
 <template>
-  <div class="p-1 m-1 bg-light border border-grey rounded">
+  <div class="p-1 m-1 border-0">
     <h3
       title="filter table data and show only fields available for the selected type"
     >
       Type
     </h3>
-
-    <!-- dropdown for types -->
-    <select
-      :value="selectedType"
-      class="form-control"
-      @change="
-        (event) => {
-          changeSelectedType();
-          setSelectedType(event.target.value);
-        }
-      "
-    >
-      <option
-        v-for="type in projectPreferencesTypes"
-        :key="type"
-        :value="type.type"
-      >
-        {{ type.plurals.fr }}
-      </option>
-    </select>
   </div>
+  <!-- dropdown for types -->
+  <select
+    :value="selectedType"
+    class="form-control form-control-sm"
+    @change="
+      (event) => {
+        changeSelectedType();
+        setSelectedType(event.target.value);
+      }
+    "
+  >
+    <option
+      v-for="type in projectPreferencesTypes"
+      :key="type"
+      :value="type.type"
+    >
+      {{ type.plurals.fr }}
+    </option>
+  </select>
 
-  <div class="p-1 m-1 bg-light border border-grey rounded">
+  <div class="p-1 m-1 border-0">
     <h3 title="display only fields for the selected type">Champs</h3>
     <!-- liste les groupes pour le type selectionné -->
     <ul
@@ -200,7 +199,6 @@ export default {
 <style>
 /* Style the buttons that are used to open and close the accordion panel */
 .accordion {
-  background-color: #eee;
   cursor: pointer;
   color: #444;
   padding: 0.1rem;
@@ -215,5 +213,9 @@ export default {
 .active,
 .accordion:hover {
   background-color: #ccc;
+  /* font-weight: bold; */
+}
+.list-group-item {
+  background-color: #f8f9fa;
 }
 </style>
