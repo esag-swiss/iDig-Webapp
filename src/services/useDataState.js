@@ -6,6 +6,7 @@ const dataStateDefaultValue = {
   projectPreferencesFields: null,
   projectPreferencesBase64: null,
   selectedType: "Artifact",
+  checkedTrenchesItems: null,
   filteredTrenchesItemsStore: null,
   tableColumns: [
     // columns by default before any selection /!\ label needed to display headers
@@ -45,7 +46,9 @@ export const useDataState = () => {
   const setSelectedType = (selectedType) => {
     dataState.selectedType = selectedType;
   };
-
+  const setCheckedTrenchesItems = (checkedTrenchesItems) => {
+    dataState.checkedTrenchesItems = checkedTrenchesItems;
+  };
   const setFilteredTrenchesItemsStore = (filteredTrenchesItemsStore) => {
     dataState.filteredTrenchesItemsStore = filteredTrenchesItemsStore;
   };
@@ -61,6 +64,7 @@ export const useDataState = () => {
     setProjectPreferencesFields,
     setProjectPreferencesBase64,
     setSelectedType,
+    setCheckedTrenchesItems,
     setFilteredTrenchesItemsStore,
     settableColumns,
 
@@ -73,6 +77,7 @@ export const useDataState = () => {
     projectPreferencesBase64: computed(
       () => dataState.projectPreferencesBase64
     ),
+    checkedTrenchesItems: computed(() => dataState.checkedTrenchesItems),
     selectedType: computed(() => dataState.selectedType),
     filteredTrenchesItemsStore: computed(
       () => dataState.filteredTrenchesItemsStore

@@ -6,7 +6,7 @@
       padding="xs"
       color="secondary"
       label="json"
-      @click="exportFile"
+      @click="exportFile('json')"
       ><q-tooltip class="bg-accent">items as json file</q-tooltip></q-btn
     >
     <q-btn
@@ -17,17 +17,28 @@
       @click="exportFile('tab')"
       ><q-tooltip class="bg-accent">items as .tab file</q-tooltip></q-btn
     >
+    <q-btn
+      align="left"
+      padding="xs"
+      color="secondary"
+      label="Geojson"
+      @click="exportFile('geojson')"
+      ><q-tooltip class="bg-accent">trenches as Geojson</q-tooltip></q-btn
+    >
   </div>
 </template>
 <script>
 import { useDataState } from "@/services/useDataState";
+import { geoSerializedToGeojson } from "@/services/json2geojson";
 
 export default {
   name: "TheControlExport",
   setup() {
-    const { filteredTrenchesItemsStore, selectedType } = useDataState();
+    const { checkedTrenchesItems, filteredTrenchesItemsStore, selectedType } =
+      useDataState();
 
     return {
+      checkedTrenchesItems,
       filteredTrenchesItemsStore,
       selectedType,
     };
@@ -35,11 +46,14 @@ export default {
   data() {
     return {
       fileData: "",
+      fileName: "",
     };
   },
+  computed: {},
   methods: {
     exportFile: function (fileType) {
-      if (fileType == "tab") {
+      if (fileType === "tab") {
+        this.fileName = this.selectedType;
         const items = this.filteredTrenchesItemsStore;
         const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
         const header = Object.keys(items[0]);
@@ -51,14 +65,20 @@ export default {
               .join("\t")
           ),
         ].join("\r\n");
-      } else {
+      } else if (fileType === "json") {
+        this.fileName = this.selectedType;
         this.fileData = JSON.stringify(this.filteredTrenchesItemsStore); // les items filtrés des trenches et type selectionnées
+      } else if (fileType === "geojson") {
+        this.fileName = "Trenches";
+        this.fileData = JSON.stringify(
+          geoSerializedToGeojson(this.checkedTrenchesItems)
+        ); // tous les items des trenches selectionnées
       }
 
       const blob = new Blob([this.fileData], { type: "text/plain" });
       const e = document.createEvent("MouseEvents"),
         a = document.createElement("a");
-      a.download = this.selectedType + "." + this.fileType;
+      a.download = this.fileName + "." + fileType;
       a.href = window.URL.createObjectURL(blob);
       a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
       e.initEvent(
