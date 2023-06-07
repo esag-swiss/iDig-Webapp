@@ -58,11 +58,13 @@ export default {
   setup() {
     const {
       projectTrenchesNames,
+      setCheckedTrenchesItems,
       setFilteredTrenchesItemsStore,
       selectedType,
     } = useDataState();
     return {
       projectTrenchesNames,
+      setCheckedTrenchesItems,
       setFilteredTrenchesItemsStore,
       selectedType,
     };
@@ -164,6 +166,7 @@ export default {
               JSON.stringify(this.checkedTrenchesVersions)
             );
             this.$emit("selected-trench", this.checkedTrenchesItems);
+            this.setCheckedTrenchesItems(this.checkedTrenchesItems);
 
             let itemsToEmitStore = [];
             itemsToEmitStore = this.checkedTrenchesItems.filter((object) => {
