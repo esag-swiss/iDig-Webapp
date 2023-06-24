@@ -129,9 +129,19 @@ export default {
       // Store preferences in base64 format, because it will be necessary to resend them when modifying an item
       this.setProjectPreferencesBase64(response.data.preferences);
 
-      const preferences = JSON.parse(
-        decodeURIComponent(escape(window.atob(response.data.preferences)))
+      let preferences = decodeURIComponent(
+        escape(window.atob(response.data.preferences))
       );
+
+      try {
+        preferences = JSON.parse(preferences);
+      } catch (e) {
+        console.error(e);
+        preferences = JSON.parse(
+          preferences.replace(/},\n\t\t\t\t\t\t}/g, "}}")
+        );
+      }
+
       this.setProjectPreferencesTypes(preferences.types);
       this.setProjectPreferencesFields(preferences.fields);
     },
