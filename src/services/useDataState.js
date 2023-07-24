@@ -9,15 +9,8 @@ const dataStateDefaultValue = {
   checkedTrenchesItems: null,
   filteredTrenchesItemsStore: null,
   tableColumns: [
-    // columns by default before any selection /!\ label needed to display headers
-    { field: "Source", sortable: true, label: "Secteur" },
-    { field: "Title", sortable: true, label: "Titre" },
-    {
-      field: "Identifier",
-      isKey: true,
-      sortable: true,
-      label: "Identifiant",
-    },
+    // columns by default before any selection /!\ label are needed to display headers in TheTableLite
+    { field: "IdentifierUUID", sortable: true, label: "UUID", isKey: true },
   ],
 };
 let dataState = reactive({ ...dataStateDefaultValue });

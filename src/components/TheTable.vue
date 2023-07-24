@@ -1,11 +1,7 @@
 <template>
   <div v-show="currentItem" class="TheItemframe" @click="clearTheItem()"></div>
-  <TheItem
-    v-if="currentItem"
-    :selectedType="selectedType"
-    :currentItem="currentItem"
-  >
-  </TheItem>
+  <TheItem v-if="currentItem" :currentItem="currentItem"> </TheItem>
+  <TheTableQuasar> </TheTableQuasar>
   <TheTableLite
     :hasCheckbox="false"
     :isLoading="table.isLoading"
@@ -25,43 +21,29 @@
 <script>
 import { defineComponent, reactive, ref, computed, toRef } from "vue";
 import TheTableLite from "@/components/TheTableLite.vue";
+import TheTableQuasar from "@/components/TheTableQuasar.vue";
 import TheItem from "@/components/TheItem.vue";
 import axios from "axios";
+import { useDataState } from "@/services/useDataState";
 
 export default defineComponent({
   name: "TheTable",
-  components: { TheTableLite, TheItem },
+  components: { TheTableLite, TheItem, TheTableQuasar },
   props: {
     filteredTrenchesItems: {
       type: Object,
       required: true,
     },
-    checkedFields: {
-      type: Object,
-      required: true,
-    },
-    selectedType: {
-      type: String,
-      required: true,
-    },
   },
   setup(props) {
-    const searchTerm = ref(""); // Search text
+    const { tableColumns } = useDataState();
     // data utiliser toRef pour ne pas perdre la réactivité lorsque le props est destructuré
     const data = toRef(props, "filteredTrenchesItems");
-    // utiliser toRef pour ne pas perdre la réactivité lorsque le props est destructuré
-    const headers = toRef(props, "checkedFields");
 
     // Table config
     const table = reactive({
-      columns: headers,
-      rows: computed(() => {
-        return data.value.filter(
-          (x) =>
-            x.Type.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-            x.Identifier.toLowerCase().includes(searchTerm.value.toLowerCase())
-        );
-      }),
+      columns: tableColumns,
+      rows: data,
       messages: {
         pagingInfo: "{0}-{1} / {2}",
         pageSizeChangeLabel: "item/page",
@@ -137,13 +119,12 @@ export default defineComponent({
     };
 
     return {
-      searchTerm,
       table,
-      headers,
       rowClicked,
       tableLoadingFinish,
       getImage,
       currentItem,
+      tableColumns,
     };
   },
   data() {

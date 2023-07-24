@@ -15,7 +15,7 @@
           >
           </TheControlTrenches>
 
-          <TheControlFields @check-fields="checkFields"> </TheControlFields>
+          <TheControlFields> </TheControlFields>
           <TheControlExport :filteredTrenchesItems="filteredTrenchesItems">
           </TheControlExport>
         </div>
@@ -26,8 +26,6 @@
         <TheTable
           v-if="checkedTrenchesData !== null"
           :filteredTrenchesItems="filteredTrenchesItems"
-          :checkedFields="checkedFields"
-          :selectedType="selectedType"
         >
         </TheTable>
         <div v-else class="d-flex justify-content-center mt-5">
@@ -69,17 +67,6 @@ export default {
   data() {
     return {
       checkedTrenchesData: null,
-      checkedFields: [
-        // columns by default before any selection /!\ label needed to display headers
-        { field: "Source", sortable: true, label: "Secteur" },
-        { field: "Title", sortable: true, label: "Titre" },
-        {
-          field: "Identifier",
-          isKey: true,
-          sortable: true,
-          label: "Identifiant",
-        },
-      ],
     };
   },
   computed: {
@@ -96,9 +83,6 @@ export default {
   methods: {
     selectedTrench(trench) {
       this.checkedTrenchesData = trench;
-    },
-    checkFields(emited) {
-      this.checkedFields = emited;
     },
     reload() {
       this.$refs.controlTrenches.fetchAllTrenchesData();

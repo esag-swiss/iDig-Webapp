@@ -35,27 +35,21 @@
       class="list-group"
     >
       <li
-        v-if="group.hasOwnProperty('labels')"
         class="list-group-item accordion"
         @click="isHiddenArray[index] = !isHiddenArray[index]"
       >
-        {{ group.labels.fr }}
+        {{ group.labels ? group.labels.fr : group.group }}
       </li>
-      <li
-        v-else
-        class="list-group-item accordion"
-        @click="isHiddenArray[index] = !isHiddenArray[index]"
-      >
-        {{ group.group }}
-      </li>
+
       <!-- liste les champs pour chaque groupe -->
       <div v-if="!isHiddenArray[index]">
-        <div v-for="field in group.fields" :key="field" class="m-0">
+        <div v-for="(field, i) in group.fields" :key="i" class="m-0">
           <input
-            v-model="checkFields"
+            v-model="checkedFields"
             type="checkbox"
             :value="field"
-            @change="checkfields()"
+            checked
+            @change="setColumns()"
           />
           <label class="pl-1 m-0" for="checkbox">{{
             labels(field.field)
@@ -71,7 +65,7 @@ import { useDataState } from "@/services/useDataState";
 import { useAppState } from "@/services/useAppState";
 
 export default {
-  emits: ["checkFields", "selectedType", "selected-type", "check-fields"],
+  // emits: ["checkedFields", "selectedType", "selected-type", "check-fields"],
   setup() {
     const {
       projectPreferencesTypes,
@@ -80,6 +74,7 @@ export default {
       filteredTrenchesItemsStore,
       selectedType,
       setSelectedType,
+      settableColumns,
     } = useDataState();
     const { appState } = useAppState();
 
@@ -90,26 +85,15 @@ export default {
       filteredTrenchesItemsStore,
       selectedType,
       setSelectedType,
+      settableColumns,
       appState,
     };
   },
   data() {
     return {
-      checkFields: [],
-      defaultcheckFields: [
-        // columns by default before any selection /!\ label needed to display headers
-        { field: "Source", sortable: true, label: "Secteur", checked: true },
-        { field: "Title", sortable: true, label: "Titre", checked: true },
-        {
-          field: "Identifier",
-          isKey: true,
-          sortable: true,
-          label: "Identifiant",
-          checked: true,
-        },
-      ],
+      checkedFields: [],
       isHiddenArray: [
-        true,
+        false,
         true,
         true,
         true,
@@ -125,12 +109,10 @@ export default {
     };
   },
   computed: {
-    // liste les groupes pour l'accordéon des champs
-    // info : la liste des fields par groupe se trouvent dans types.groups.fields
-    // on pourrait s'assurer ici que le label de la langue existe toujours pour eviter la methode "labels"
+    // liste les groupes pour l'accordéon des champs.
     groupOfFieldsAccordingToType() {
       return this.projectPreferencesTypes.filter((x) => {
-        return x.type.includes(this.selectedType);
+        return x.type.includes("Context");
       })[0].groups;
     },
 
@@ -146,8 +128,7 @@ export default {
 
     projectPreferencesTranslatedFieldLabels() {
       // calcule les correspondances field : label dans un objet field : label
-      // sert pour afficher les labels des check box
-
+      // sert pour afficher les labels des checkbox
       var langKeys = {};
       var i;
       for (i = 0; i < this.projectPreferencesFields.length; i++) {
@@ -158,10 +139,9 @@ export default {
     },
 
     // Maintenant on travaille pour faire le tableau des headers dans le format de TheTable
-    addsortabletrue() {
-      // j'ajoute les propriétés label et sortable: true
-      // pas certain que tous les undefined soient gérés
-      return this.checkFields.map((v) =>
+    checkedFieldsSortableTrue() {
+      // j'ajoute les propriétés label et sortable: true. pas certain que tous les undefined soient gérés
+      return this.checkedFields.map((v) =>
         Object.assign(v, {
           label: this.projectPreferencesTranslatedFieldLabels[v.field],
           sortable: true,
@@ -172,25 +152,20 @@ export default {
 
   methods: {
     changeSelectedType: function () {
-      this.checkFields = this.defaultcheckFields;
-      this.$emit("check-fields", this.addsortabletrue);
+      this.checkedFields = [];
+      this.settableColumns([
+        { field: "IdentifierUUID", sortable: true, label: "UUID", isKey: true },
+      ]);
     },
 
-    checkfields() {
-      this.$emit("check-fields", this.addsortabletrue);
+    setColumns() {
+      this.settableColumns(this.checkedFieldsSortableTrue);
     },
 
     labels: function (Obj) {
-      if (
-        Object.prototype.hasOwnProperty.call(
-          this.projectPreferencesTranslatedFieldLabels,
-          Obj
-        )
-      ) {
-        return this.projectPreferencesTranslatedFieldLabels[Obj];
-      } else {
-        return Obj;
-      }
+      return this.projectPreferencesTranslatedFieldLabels[Obj]
+        ? this.projectPreferencesTranslatedFieldLabels[Obj]
+        : Obj;
     },
   },
 };
