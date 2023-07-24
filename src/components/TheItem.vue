@@ -169,21 +169,19 @@ export default {
       type: Object,
       required: true,
     },
-    selectedType: {
-      type: String,
-      required: true,
-    },
   },
   setup() {
     const {
       projectPreferencesTypes,
       projectPreferencesFields,
       projectPreferencesBase64,
+      selectedType,
     } = useDataState();
     return {
       projectPreferencesTypes,
       projectPreferencesFields,
       projectPreferencesBase64,
+      selectedType,
     };
   },
   data() {
