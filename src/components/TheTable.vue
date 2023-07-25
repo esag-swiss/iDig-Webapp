@@ -1,7 +1,7 @@
 <template>
   <div v-show="currentItem" class="TheItemframe" @click="clearTheItem()"></div>
   <TheItem v-if="currentItem" :currentItem="currentItem"> </TheItem>
-  <TheTableQuasar> </TheTableQuasar>
+  <TheTableQuasar></TheTableQuasar>
   <TheTableLite
     :hasCheckbox="false"
     :isLoading="table.isLoading"
@@ -21,14 +21,13 @@
 <script>
 import { defineComponent, reactive, ref, computed, toRef } from "vue";
 import TheTableLite from "@/components/TheTableLite.vue";
-import TheTableQuasar from "@/components/TheTableQuasar.vue";
 import TheItem from "@/components/TheItem.vue";
 import axios from "axios";
 import { useDataState } from "@/services/useDataState";
 
 export default defineComponent({
   name: "TheTable",
-  components: { TheTableLite, TheItem, TheTableQuasar },
+  components: { TheTableLite, TheItem },
   props: {
     filteredTrenchesItems: {
       type: Object,
