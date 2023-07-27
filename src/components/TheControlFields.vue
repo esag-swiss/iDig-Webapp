@@ -12,7 +12,7 @@
     class="form-control form-control-sm"
     @change="
       (event) => {
-        changeSelectedType();
+        updateCheckedFields(event.target.value);
         setSelectedType(event.target.value);
       }
     "
@@ -65,7 +65,6 @@ import { useDataState } from "@/services/useDataState";
 import { useAppState } from "@/services/useAppState";
 
 export default {
-  // emits: ["checkedFields", "selectedType", "selected-type", "check-fields"],
   setup() {
     const {
       projectPreferencesTypes,
@@ -92,6 +91,7 @@ export default {
   data() {
     return {
       checkedFields: [],
+      defaultColumns: {},
       isHiddenArray: [
         false,
         true,
@@ -109,10 +109,10 @@ export default {
     };
   },
   computed: {
-    // liste les groupes pour l'accordéon des champs.
+    // liste les groupes pour l'accordéon des champs en fonction du Type
     groupOfFieldsAccordingToType() {
       return this.projectPreferencesTypes.filter((x) => {
-        return x.type.includes("Context");
+        return x.type.includes(this.selectedType);
       })[0].groups;
     },
 
@@ -145,21 +145,37 @@ export default {
         Object.assign(v, {
           label: this.projectPreferencesTranslatedFieldLabels[v.field],
           sortable: true,
+          checked: true,
         })
       );
     },
   },
-
+  // mounted() {
+  //   this.update("Artifact");
+  //   alert("mount");
+  // },
   methods: {
-    changeSelectedType: function () {
-      this.checkedFields = [];
-      this.settableColumns([
-        { field: "IdentifierUUID", sortable: true, label: "UUID", isKey: true },
-      ]);
+    updateCheckedFields(type) {
+      if (localStorage.defaultTableColumns) {
+        if (JSON.parse(localStorage.defaultTableColumns)[type]) {
+          this.checkedFields = JSON.parse(localStorage.defaultTableColumns)[
+            type
+          ];
+        } else {
+          this.checkedFields = [];
+        }
+      }
+      this.settableColumns(this.checkedFields);
     },
 
     setColumns() {
       this.settableColumns(this.checkedFieldsSortableTrue);
+
+      this.defaultColumns[this.selectedType] = this.checkedFieldsSortableTrue;
+      localStorage.setItem(
+        "defaultTableColumns",
+        JSON.stringify(this.defaultColumns)
+      );
     },
 
     labels: function (Obj) {
