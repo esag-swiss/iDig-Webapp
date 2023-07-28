@@ -22,7 +22,7 @@
       :key="type"
       :value="type.type"
     >
-      {{ type.plurals.fr }}
+      {{ type.plurals.fr ? type.plurals.fr : type.plurals.en }}
     </option>
   </select>
 
@@ -150,10 +150,6 @@ export default {
       );
     },
   },
-  // mounted() {
-  //   this.update("Artifact");
-  //   alert("mount");
-  // },
   methods: {
     updateCheckedFields(type) {
       if (localStorage.defaultTableColumns) {
