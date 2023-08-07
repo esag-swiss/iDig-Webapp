@@ -61,32 +61,11 @@
 </template>
 
 <script>
-import { useDataState } from "@/services/useDataState";
-import { mapState } from "pinia";
+import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
+import { useDataStore } from "@/stores/data";
 
 export default {
-  setup() {
-    const {
-      projectPreferencesTypes,
-      projectPreferencesFields,
-      setFilteredTrenchesItemsStore,
-      filteredTrenchesItemsStore,
-      selectedType,
-      setSelectedType,
-      settableColumns,
-    } = useDataState();
-
-    return {
-      projectPreferencesTypes,
-      projectPreferencesFields,
-      setFilteredTrenchesItemsStore,
-      filteredTrenchesItemsStore,
-      selectedType,
-      setSelectedType,
-      settableColumns,
-    };
-  },
   data() {
     return {
       checkedFields: [],
@@ -109,6 +88,12 @@ export default {
   },
   computed: {
     ...mapState(useAppStore, ["lang"]),
+    ...mapState(useDataStore, [
+      "projectPreferencesTypes",
+      "projectPreferencesFields",
+      "filteredTrenchesItemsStore",
+      "selectedType",
+    ]),
     // liste les groupes pour l'accordéon des champs en fonction du Type
     groupOfFieldsAccordingToType() {
       return this.projectPreferencesTypes.filter((x) => {
@@ -151,6 +136,11 @@ export default {
     },
   },
   methods: {
+    ...mapActions(useDataStore, [
+      "setFilteredTrenchesItemsStore",
+      "setSelectedType",
+      "setTableColumns",
+    ]),
     updateCheckedFields(type) {
       if (localStorage.defaultTableColumns) {
         if (JSON.parse(localStorage.defaultTableColumns)[type]) {
@@ -161,11 +151,11 @@ export default {
           this.checkedFields = [];
         }
       }
-      this.settableColumns(this.checkedFields);
+      this.setTableColumns(this.checkedFields);
     },
 
     setColumns() {
-      this.settableColumns(this.checkedFieldsSortableTrue);
+      this.setTableColumns(this.checkedFieldsSortableTrue);
 
       this.defaultColumns[this.selectedType] = this.checkedFieldsSortableTrue;
       localStorage.setItem(

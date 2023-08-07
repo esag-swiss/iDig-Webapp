@@ -44,11 +44,11 @@ import TheControlTrenches from "@/components/TheControlTrenches.vue";
 import TheHeader from "@/components/TheHeader.vue";
 import TheControlFields from "@/components/TheControlFields.vue";
 import TheTable from "@/components/TheTable.vue";
-import { useDataState } from "@/services/useDataState";
 import TheSpinner from "@/components/TheSpinner.vue";
 import TheControlExport from "@/components/TheControlExport.vue";
 import { mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
+import { useDataStore } from "@/stores/data";
 
 export default {
   name: "App",
@@ -60,10 +60,6 @@ export default {
     TheHeader,
     TheControlExport,
   },
-  setup() {
-    const { selectedType } = useDataState();
-    return { selectedType };
-  },
   data() {
     return {
       checkedTrenchesData: null,
@@ -71,6 +67,7 @@ export default {
   },
   computed: {
     ...mapState(useAppStore, ["isLoaded"]),
+    ...mapState(useDataStore, ["selectedType"]),
     filteredTrenchesItems() {
       if (this.checkedTrenchesData) {
         return this.checkedTrenchesData.filter((object) => {

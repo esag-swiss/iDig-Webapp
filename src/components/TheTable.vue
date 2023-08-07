@@ -23,7 +23,7 @@ import { defineComponent, reactive, ref, computed, toRef } from "vue";
 import TheTableLite from "@/components/TheTableLite.vue";
 import TheItem from "@/components/TheItem.vue";
 import axios from "axios";
-import { useDataState } from "@/services/useDataState";
+import { useDataStore } from "@/stores/data";
 
 export default defineComponent({
   name: "TheTable",
@@ -35,9 +35,10 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { tableColumns } = useDataState();
     // data utiliser toRef pour ne pas perdre la réactivité lorsque le props est destructuré
     const data = toRef(props, "filteredTrenchesItems");
+
+    const { tableColumns } = useDataStore(); // useDataStore inside setup
 
     // Table config
     const table = reactive({
@@ -123,7 +124,6 @@ export default defineComponent({
       tableLoadingFinish,
       getImage,
       currentItem,
-      tableColumns,
     };
   },
   data() {

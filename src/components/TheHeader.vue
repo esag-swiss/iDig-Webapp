@@ -53,28 +53,12 @@ import {
   fetchProjectTrenchesNames,
   fetchPreferences,
 } from "@/services/ApiClient";
-import { useDataState } from "@/services/useDataState";
 import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
+import { useDataStore } from "@/stores/data";
 
 export default {
-  setup() {
-    const {
-      setProjectTrenchesNames,
-      setProjectPreferencesTypes,
-      setProjectPreferencesFields,
-      setProjectPreferencesBase64,
-      firstTrench,
-    } = useDataState();
-    return {
-      setProjectTrenchesNames,
-      setProjectPreferencesTypes,
-      setProjectPreferencesFields,
-      firstTrench,
-      setProjectPreferencesBase64,
-    };
-  },
   computed: {
     ...mapState(useAppStore, [
       "server",
@@ -83,6 +67,7 @@ export default {
       "password",
       "isLoaded",
     ]),
+    ...mapState(useDataStore, ["firstTrench"]),
   },
   mounted() {
     loadPersistentUserSettingsOrEmptyStrings();
@@ -94,6 +79,12 @@ export default {
       "setProject",
       "setUsername",
       "setPassword",
+    ]),
+    ...mapActions(useDataStore, [
+      "setProjectTrenchesNames",
+      "setProjectPreferencesTypes",
+      "setProjectPreferencesFields",
+      "setProjectPreferencesBase64",
     ]),
     connect() {
       this.setServer(this.cleanServerUserEntry(this.server));
