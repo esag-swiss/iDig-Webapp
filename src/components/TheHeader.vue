@@ -9,33 +9,33 @@
       <form class="form-inline my-0">
         <div class="navbar-text text-light p-2">server:</div>
         <input
-          :value="appState.server"
+          :value="server"
           class="my-2 text-light input-header"
-          @input="(event) => setAppState('server', event.target.value)"
+          @input="(event) => setServer(event.target.value)"
         />
         <a class="navbar-text text-light p-2">project:</a>
         <input
-          :value="appState.project"
+          :value="project"
           class="m-2 text-light input-header"
-          @input="(event) => setAppState('project', event.target.value)"
+          @input="(event) => setProject(event.target.value)"
         />
         <a class="navbar-text text-light p-2">user:</a>
         <input
-          :value="appState.username"
+          :value="username"
           class="m-2 text-light input-header"
-          @input="(event) => setAppState('username', event.target.value)"
+          @input="(event) => setUsername(event.target.value)"
         />
         <input
-          :value="appState.password"
+          :value="password"
           type="password"
           class="m-2 text-light input-header"
           placeholder="Password"
-          @input="(event) => setAppState('password', event.target.value)"
+          @input="(event) => setPassword(event.target.value)"
         />
         <button
           type="button"
           class="btn btn-outline-secondary m-2 px-1 py-0"
-          :class="{ 'is-loaded': appState.isLoaded }"
+          :class="{ 'is-loaded': isLoaded }"
           @click="connect()"
         >
           connexion
@@ -53,13 +53,13 @@ import {
   fetchProjectTrenchesNames,
   fetchPreferences,
 } from "@/services/ApiClient";
-import { useAppState } from "@/services/useAppState";
 import { useDataState } from "@/services/useDataState";
 import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
+import { mapActions, mapState } from "pinia";
+import { useAppStore } from "@/stores/app";
 
 export default {
   setup() {
-    const { setAppState, appState } = useAppState();
     const {
       setProjectTrenchesNames,
       setProjectPreferencesTypes,
@@ -68,8 +68,6 @@ export default {
       firstTrench,
     } = useDataState();
     return {
-      setAppState,
-      appState,
       setProjectTrenchesNames,
       setProjectPreferencesTypes,
       setProjectPreferencesFields,
@@ -77,15 +75,28 @@ export default {
       setProjectPreferencesBase64,
     };
   },
+  computed: {
+    ...mapState(useAppStore, [
+      "server",
+      "project",
+      "username",
+      "password",
+      "isLoaded",
+    ]),
+  },
   mounted() {
     loadPersistentUserSettingsOrEmptyStrings();
   },
   methods: {
+    ...mapActions(useAppStore, [
+      "setIsLoaded",
+      "setServer",
+      "setProject",
+      "setUsername",
+      "setPassword",
+    ]),
     connect() {
-      this.setAppState(
-        "server",
-        this.cleanServerUserEntry(this.appState.server)
-      );
+      this.setServer(this.cleanServerUserEntry(this.server));
 
       // const devMode = "new_server";
       const devMode = "old_server";
@@ -99,16 +110,15 @@ export default {
           })
           .then((response) => {
             this.manageResponseForFetchPreferences(response);
-            this.setAppState("isLoaded", true);
+            this.setIsLoaded(true);
           })
           .catch(() => {});
       }
 
       if (devMode === "old_server") {
-        const projectTrenchesNames =
-          allTrenchesPerProject[this.appState.project];
+        const projectTrenchesNames = allTrenchesPerProject[this.project];
         if (!projectTrenchesNames) {
-          alert(`Trenches for project ${this.appState.project} not found.`);
+          alert(`Trenches for project ${this.project} not found.`);
           return;
         }
         this.setProjectTrenchesNames(projectTrenchesNames);
@@ -117,7 +127,7 @@ export default {
           .then((response) => {
             storePersistentUserSettings();
             this.manageResponseForFetchPreferences(response);
-            this.setAppState("isLoaded", true);
+            this.setIsLoaded(true);
           })
           .catch(() => {});
       }

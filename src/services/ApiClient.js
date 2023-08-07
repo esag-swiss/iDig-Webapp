@@ -1,21 +1,7 @@
 import axios from "axios";
-import { useAppState } from "@/services/useAppState";
-
-function getConnectionCredentials() {
-  const { appState } = useAppState();
-  const appStateUnwrapped = appState.value;
-
-  return {
-    server: appStateUnwrapped.server,
-    project: appStateUnwrapped.project,
-    username: appStateUnwrapped.username,
-    password: appStateUnwrapped.password,
-  };
-}
+import { useAppStore } from "@/stores/app";
 
 function handleError(error) {
-  console.error(error);
-
   let alertMessage =
     `message: ${error?.message}\r\r` +
     `response.data: ${error?.response?.data}\r\r` +
@@ -26,10 +12,8 @@ function handleError(error) {
 }
 
 export function fetchProjectTrenchesNames() {
-  const { setAppState } = useAppState();
-  setAppState("isLoading", true);
-
-  const { server, project, username, password } = getConnectionCredentials();
+  const { server, project, username, password, setIsLoading } = useAppStore();
+  setIsLoading(true);
 
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -38,14 +22,12 @@ export function fetchProjectTrenchesNames() {
     auth: { username, password },
   })
     .catch((error) => handleError(error))
-    .finally(() => setAppState("isLoading", false));
+    .finally(() => setIsLoading(false));
 }
 
 export function fetchPreferences(trench) {
-  const { setAppState } = useAppState();
-  setAppState("isLoading", true);
-
-  const { server, project, username, password } = getConnectionCredentials();
+  const { server, project, username, password, setIsLoading } = useAppStore();
+  setIsLoading(true);
 
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -55,14 +37,12 @@ export function fetchPreferences(trench) {
     data: JSON.stringify({ head: "", surveys: [] }),
   })
     .catch((error) => handleError(error))
-    .finally(() => setAppState("isLoading", false));
+    .finally(() => setIsLoading(false));
 }
 
 export function fetchSurvey(trench) {
-  const { setAppState } = useAppState();
-  setAppState("isLoading", true);
-
-  const { server, project, username, password } = getConnectionCredentials();
+  const { server, project, username, password, setIsLoading } = useAppStore();
+  setIsLoading(true);
 
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -72,7 +52,7 @@ export function fetchSurvey(trench) {
     data: JSON.stringify({}),
   })
     .catch((error) => handleError(error))
-    .finally(() => setAppState("isLoading", false));
+    .finally(() => setIsLoading(false));
 }
 
 export function updateTrenchItem(
@@ -81,10 +61,8 @@ export function updateTrenchItem(
   surveys,
   projectPreferencesBase64
 ) {
-  const { setAppState } = useAppState();
-  setAppState("isLoading", true);
-
-  const { server, project, username, password } = getConnectionCredentials();
+  const { server, project, username, password, setIsLoading } = useAppStore();
+  setIsLoading(true);
 
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -99,5 +77,5 @@ export function updateTrenchItem(
     }),
   })
     .catch((error) => handleError(error))
-    .finally(() => setAppState("isLoading", false));
+    .finally(() => setIsLoading(false));
 }

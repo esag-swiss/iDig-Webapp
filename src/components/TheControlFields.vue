@@ -62,7 +62,8 @@
 
 <script>
 import { useDataState } from "@/services/useDataState";
-import { useAppState } from "@/services/useAppState";
+import { mapState } from "pinia";
+import { useAppStore } from "@/stores/app";
 
 export default {
   setup() {
@@ -75,7 +76,6 @@ export default {
       setSelectedType,
       settableColumns,
     } = useDataState();
-    const { appState } = useAppState();
 
     return {
       projectPreferencesTypes,
@@ -85,7 +85,6 @@ export default {
       selectedType,
       setSelectedType,
       settableColumns,
-      appState,
     };
   },
   data() {
@@ -109,6 +108,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(useAppStore, ["lang"]),
     // liste les groupes pour l'accordéon des champs en fonction du Type
     groupOfFieldsAccordingToType() {
       return this.projectPreferencesTypes.filter((x) => {
@@ -119,7 +119,7 @@ export default {
     allFieldsLabel() {
       return this.projectPreferencesFields.map((field) => {
         if (Object.prototype.hasOwnProperty.call(field, "labels")) {
-          return field.labels[this.appState.lang];
+          return field.labels[this.lang];
         } else {
           return field.field;
         }
