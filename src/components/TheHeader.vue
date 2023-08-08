@@ -45,10 +45,7 @@
   </nav>
 </template>
 <script>
-import {
-  storePersistentUserSettings,
-  loadPersistentUserSettingsOrEmptyStrings,
-} from "@/services/PersistentUserSettings";
+import { storePersistentUserSettings } from "@/services/PersistentUserSettings";
 import {
   fetchProjectTrenchesNames,
   fetchPreferences,
@@ -68,9 +65,6 @@ export default {
       "isLoaded",
     ]),
     ...mapState(useDataStore, ["firstTrench"]),
-  },
-  mounted() {
-    loadPersistentUserSettingsOrEmptyStrings();
   },
   methods: {
     ...mapActions(useAppStore, [
