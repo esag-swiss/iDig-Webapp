@@ -28,28 +28,25 @@
   </div>
 </template>
 <script>
-import { useDataState } from "@/services/useDataState";
 import { geoSerializedToGeojson } from "@/services/json2geojson";
+import { mapState } from "pinia";
+import { useDataStore } from "@/stores/data";
 
 export default {
   name: "TheControlExport",
-  setup() {
-    const { checkedTrenchesItems, filteredTrenchesItemsStore, selectedType } =
-      useDataState();
-
-    return {
-      checkedTrenchesItems,
-      filteredTrenchesItemsStore,
-      selectedType,
-    };
-  },
   data() {
     return {
       fileData: "",
       fileName: "",
     };
   },
-  computed: {},
+  computed: {
+    ...mapState(useDataStore, [
+      "checkedTrenchesItems",
+      "filteredTrenchesItemsStore",
+      "selectedType",
+    ]),
+  },
   methods: {
     exportFile: function (fileType) {
       if (fileType === "tab") {

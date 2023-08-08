@@ -5,7 +5,7 @@
   <TheHeader class="sticky-top"></TheHeader>
 
   <div class="container-fluid">
-    <div v-if="appState.isLoaded" class="row">
+    <div v-if="isLoaded" class="row">
       <!-- SIDEBAR -->
       <nav class="col-md-2 d-none d-md-block bg-light sidebar">
         <div class="sidebar-sticky hidescrollbar p-1">
@@ -44,10 +44,11 @@ import TheControlTrenches from "@/components/TheControlTrenches.vue";
 import TheHeader from "@/components/TheHeader.vue";
 import TheControlFields from "@/components/TheControlFields.vue";
 import TheTable from "@/components/TheTable.vue";
-import { useAppState } from "@/services/useAppState";
-import { useDataState } from "@/services/useDataState";
 import TheSpinner from "@/components/TheSpinner.vue";
 import TheControlExport from "@/components/TheControlExport.vue";
+import { mapState } from "pinia";
+import { useAppStore } from "@/stores/app";
+import { useDataStore } from "@/stores/data";
 
 export default {
   name: "App",
@@ -59,17 +60,14 @@ export default {
     TheHeader,
     TheControlExport,
   },
-  setup() {
-    const { appState } = useAppState();
-    const { selectedType } = useDataState();
-    return { appState, selectedType };
-  },
   data() {
     return {
       checkedTrenchesData: null,
     };
   },
   computed: {
+    ...mapState(useAppStore, ["isLoaded"]),
+    ...mapState(useDataStore, ["selectedType"]),
     filteredTrenchesItems() {
       if (this.checkedTrenchesData) {
         return this.checkedTrenchesData.filter((object) => {

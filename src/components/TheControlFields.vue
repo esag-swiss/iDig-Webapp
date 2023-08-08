@@ -61,33 +61,11 @@
 </template>
 
 <script>
-import { useDataState } from "@/services/useDataState";
-import { useAppState } from "@/services/useAppState";
+import { mapActions, mapState } from "pinia";
+import { useAppStore } from "@/stores/app";
+import { useDataStore } from "@/stores/data";
 
 export default {
-  setup() {
-    const {
-      projectPreferencesTypes,
-      projectPreferencesFields,
-      setFilteredTrenchesItemsStore,
-      filteredTrenchesItemsStore,
-      selectedType,
-      setSelectedType,
-      settableColumns,
-    } = useDataState();
-    const { appState } = useAppState();
-
-    return {
-      projectPreferencesTypes,
-      projectPreferencesFields,
-      setFilteredTrenchesItemsStore,
-      filteredTrenchesItemsStore,
-      selectedType,
-      setSelectedType,
-      settableColumns,
-      appState,
-    };
-  },
   data() {
     return {
       checkedFields: [],
@@ -109,6 +87,13 @@ export default {
     };
   },
   computed: {
+    ...mapState(useAppStore, ["lang"]),
+    ...mapState(useDataStore, [
+      "projectPreferencesTypes",
+      "projectPreferencesFields",
+      "filteredTrenchesItemsStore",
+      "selectedType",
+    ]),
     // liste les groupes pour l'accordéon des champs en fonction du Type
     groupOfFieldsAccordingToType() {
       return this.projectPreferencesTypes.filter((x) => {
@@ -119,7 +104,7 @@ export default {
     allFieldsLabel() {
       return this.projectPreferencesFields.map((field) => {
         if (Object.prototype.hasOwnProperty.call(field, "labels")) {
-          return field.labels[this.appState.lang];
+          return field.labels[this.lang];
         } else {
           return field.field;
         }
@@ -151,6 +136,11 @@ export default {
     },
   },
   methods: {
+    ...mapActions(useDataStore, [
+      "setFilteredTrenchesItemsStore",
+      "setSelectedType",
+      "setTableColumns",
+    ]),
     updateCheckedFields(type) {
       if (localStorage.defaultTableColumns) {
         if (JSON.parse(localStorage.defaultTableColumns)[type]) {
@@ -161,11 +151,11 @@ export default {
           this.checkedFields = [];
         }
       }
-      this.settableColumns(this.checkedFields);
+      this.setTableColumns(this.checkedFields);
     },
 
     setColumns() {
-      this.settableColumns(this.checkedFieldsSortableTrue);
+      this.setTableColumns(this.checkedFieldsSortableTrue);
 
       this.defaultColumns[this.selectedType] = this.checkedFieldsSortableTrue;
       localStorage.setItem(
