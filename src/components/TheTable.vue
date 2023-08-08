@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { defineComponent, reactive, ref, computed, toRef } from "vue";
+import { defineComponent, reactive, ref, computed, toRef, watch } from "vue";
 import TheTableLite from "@/components/TheTableLite.vue";
 import TheItem from "@/components/TheItem.vue";
 import axios from "axios";
@@ -38,11 +38,20 @@ export default defineComponent({
     // data utiliser toRef pour ne pas perdre la réactivité lorsque le props est destructuré
     const data = toRef(props, "filteredTrenchesItems");
 
-    const { tableColumns } = useDataStore(); // useDataStore inside setup
+    // make pinia's tableColumns reactive inside the table object :
+    const dataStore = useDataStore();
+    const initialColumns = dataStore.tableColumns;
+    const columns = ref(initialColumns);
+    watch(
+      () => dataStore.tableColumns,
+      (newColumns) => {
+        table.columns = newColumns;
+      }
+    );
 
     // Table config
     const table = reactive({
-      columns: tableColumns,
+      columns: columns,
       rows: data,
       messages: {
         pagingInfo: "{0}-{1} / {2}",
