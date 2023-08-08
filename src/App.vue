@@ -31,6 +31,7 @@
         <div v-else class="d-flex justify-content-center mt-5">
           Veuillez sélectionner au moins un secteur
         </div>
+        <TheMap v-if="checkedTrenchesData !== null"></TheMap>
       </div>
     </div>
     <div v-else class="d-flex justify-content-center mt-5">
@@ -48,6 +49,7 @@ import { useAppState } from "@/services/useAppState";
 import { useDataState } from "@/services/useDataState";
 import TheSpinner from "@/components/TheSpinner.vue";
 import TheControlExport from "@/components/TheControlExport.vue";
+import TheMap from "@/components/TheMap.vue";
 
 export default {
   name: "App",
@@ -58,6 +60,7 @@ export default {
     TheTable,
     TheHeader,
     TheControlExport,
+    TheMap,
   },
   setup() {
     const { appState } = useAppState();
@@ -106,7 +109,7 @@ export default {
  */
 
 .sidebar {
-  position: fixed;
+  /* position: fixed; */
   top: 0;
   bottom: 0;
   left: 0;

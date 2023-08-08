@@ -1,7 +1,6 @@
 <template>
   <div v-show="currentItem" class="TheItemframe" @click="clearTheItem()"></div>
   <TheItem v-if="currentItem" :currentItem="currentItem"> </TheItem>
-  <TheTableQuasar></TheTableQuasar>
   <TheTableLite
     :hasCheckbox="false"
     :isLoading="table.isLoading"
