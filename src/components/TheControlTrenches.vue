@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { fetchSurvey } from "@/services/ApiClient";
+import { apiFetchSurvey } from "@/services/ApiClient";
 import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 
@@ -142,7 +142,7 @@ export default {
         delete this.checkedTrenchesData[trench];
         this.$emit("selected-trench", this.checkedTrenchesItems);
       } else {
-        fetchSurvey(trench)
+        apiFetchSurvey(trench)
           .then((response) => {
             // prepare data to store in session in case of PUSH
             this.checkedTrenchesData[trench] = response.data.surveys;
@@ -176,7 +176,7 @@ export default {
       let itemsToEmitStore = [];
 
       this.checkedTrenchesNames.forEach((trench) => {
-        fetchSurvey(trench)
+        apiFetchSurvey(trench)
           .then((response) => {
             // pour emit des surveys
             itemsToEmit.push(...response.data.surveys);

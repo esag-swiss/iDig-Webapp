@@ -46,11 +46,6 @@
 </template>
 <script>
 import { storePersistentUserSettings } from "@/services/PersistentUserSettings";
-import {
-  fetchProjectTrenchesNames,
-  fetchPreferences,
-} from "@/services/ApiClient";
-import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";

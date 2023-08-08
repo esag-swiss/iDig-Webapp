@@ -159,7 +159,7 @@
 </template>
 
 <script>
-import { updateTrenchItem } from "@/services/ApiClient";
+import { apiUpdateTrenchItem } from "@/services/ApiClient";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 
@@ -253,7 +253,7 @@ export default {
       const surveys = this.trenchtoUpdate;
       const preferences = this.projectPreferencesBase64;
 
-      updateTrenchItem(this.selectedTrench, head, surveys, preferences)
+      apiUpdateTrenchItem(this.selectedTrench, head, surveys, preferences)
         .then(() => {
           // TODO: tell the user it was saved
           console.log("saved!");

@@ -11,7 +11,7 @@ function handleError(error) {
   throw error;
 }
 
-export function fetchProjectTrenchesNames() {
+export function apiFetchProjectTrenchesNames() {
   const { server, project, username, password, setIsLoading } = useAppStore();
   setIsLoading(true);
 
