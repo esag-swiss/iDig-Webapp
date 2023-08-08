@@ -71,73 +71,38 @@ export default {
     ]),
     ...mapActions(useDataStore, [
       "setProjectTrenchesNames",
-      "setProjectPreferencesCrs",
       "setProjectPreferencesTypes",
       "setProjectPreferencesFields",
       "setProjectPreferencesBase64",
+      "fetchPreferences",
+      "fetchProjectTrenchesNames",
+      "fetchProjectTrenchesNamesFromFile",
     ]),
-    connect() {
+    async connect() {
       this.setServer(this.cleanServerUserEntry(this.server));
 
       // const devMode = "new_server";
       const devMode = "old_server";
 
       if (devMode === "new_server") {
-        fetchProjectTrenchesNames()
-          .then((response) => {
-            storePersistentUserSettings();
-            this.manageResponseForFetchAllTrenches(response);
-            return fetchPreferences(this.firstTrench);
-          })
-          .then((response) => {
-            this.manageResponseForFetchPreferences(response);
-            this.setIsLoaded(true);
-          })
-          .catch(() => {});
+        try {
+          await this.fetchProjectTrenchesNames();
+          await this.fetchPreferences(this.firstTrench);
+          storePersistentUserSettings();
+        } catch (e) {
+          /* empty */
+        }
       }
 
       if (devMode === "old_server") {
-        const projectTrenchesNames = allTrenchesPerProject[this.project];
-        if (!projectTrenchesNames) {
-          alert(`Trenches for project ${this.project} not found.`);
-          return;
+        try {
+          this.fetchProjectTrenchesNamesFromFile();
+          await this.fetchPreferences(this.firstTrench);
+          storePersistentUserSettings();
+        } catch (e) {
+          /* empty */
         }
-        this.setProjectTrenchesNames(projectTrenchesNames);
-
-        fetchPreferences(this.firstTrench)
-          .then((response) => {
-            storePersistentUserSettings();
-            this.manageResponseForFetchPreferences(response);
-            this.setIsLoaded(true);
-          })
-          .catch(() => {});
       }
-    },
-    manageResponseForFetchAllTrenches(response) {
-      this.setProjectTrenchesNames(response.data);
-    },
-    manageResponseForFetchPreferences(response) {
-      // Store preferences in base64 format, because it will be necessary to resend them when modifying an item
-      this.setProjectPreferencesBase64(response.data.preferences);
-
-      let preferences = decodeURIComponent(
-        escape(window.atob(response.data.preferences))
-      );
-
-      try {
-        preferences = JSON.parse(preferences);
-      } catch (e) {
-        console.error(e);
-        preferences = JSON.parse(
-          preferences.replace(/},\n\t\t\t\t\t\t}/g, "}}") //to handle one case of invalid json file that occured at least once
-        );
-      }
-
-      if (preferences.crs) {
-        this.setProjectPreferencesCrs(preferences.crs);
-      }
-      this.setProjectPreferencesTypes(preferences.types);
-      this.setProjectPreferencesFields(preferences.fields);
     },
     cleanServerUserEntry(serverUserEntry) {
       return serverUserEntry

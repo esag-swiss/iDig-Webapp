@@ -1,4 +1,10 @@
 import { defineStore } from "pinia";
+import {
+  apiFetchPreferences,
+  apiFetchProjectTrenchesNames,
+} from "@/services/ApiClient";
+import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
+import { useAppStore } from "@/stores/app";
 
 export const useDataStore = defineStore("data", {
   state: () => ({
@@ -21,6 +27,50 @@ export const useDataStore = defineStore("data", {
   },
 
   actions: {
+    // ACTIONS TO FETCH FROM API AND SET :
+    async fetchProjectTrenchesNames() {
+      return apiFetchProjectTrenchesNames().then((response) => {
+        this.setProjectTrenchesNames(response.data);
+      });
+    },
+
+    fetchProjectTrenchesNamesFromFile() {
+      const { project } = useAppStore();
+      const projectTrenchesNames = allTrenchesPerProject[project];
+      if (!projectTrenchesNames) {
+        alert(`Trenches for project ${project} not found.`);
+        throw Error(`Trenches for project ${project} not found.`);
+      }
+      this.setProjectTrenchesNames(projectTrenchesNames);
+    },
+
+    async fetchPreferences(trench) {
+      return apiFetchPreferences(trench).then((response) => {
+        // Store preferences in base64 format, because it will be necessary to resend them when modifying an item
+        this.setProjectPreferencesBase64(response.data.preferences);
+
+        let preferences = decodeURIComponent(
+          escape(window.atob(response.data.preferences))
+        );
+
+        try {
+          preferences = JSON.parse(preferences);
+        } catch (e) {
+          console.error(e);
+          preferences = JSON.parse(
+            preferences.replace(/},\n\t\t\t\t\t\t}/g, "}}")
+          );
+        }
+
+        this.setProjectPreferencesTypes(preferences.types);
+        this.setProjectPreferencesFields(preferences.fields);
+
+        const { setIsLoaded } = useAppStore();
+        setIsLoaded(true);
+      });
+    },
+
+    // ACTIONS : STATES SETTERS :
     setProjectTrenchesNames(projectTrenchesNames) {
       this.projectTrenchesNames = projectTrenchesNames;
     },
