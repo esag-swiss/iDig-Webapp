@@ -8,12 +8,13 @@ import { useAppStore } from "@/stores/app";
 
 export const useDataStore = defineStore("data", {
   state: () => ({
-    projectTrenchesNames: null,
-    projectPreferencesCRS: "WGS84",
     projectPreferencesTypes: null,
     projectPreferencesFields: null,
     projectPreferencesBase64: null,
     selectedType: "Artifact",
+    projectTrenchesNames: null,
+    checkedTrenchesNames: [], // todo: null by default?
+    checkedTrenchesData: {}, // todo: null by default?
     checkedTrenchesItems: null,
     filteredTrenchesItemsStore: null,
     tableColumns: [
@@ -71,13 +72,6 @@ export const useDataStore = defineStore("data", {
     },
 
     // ACTIONS : STATES SETTERS :
-    setProjectTrenchesNames(projectTrenchesNames) {
-      this.projectTrenchesNames = projectTrenchesNames;
-    },
-
-    setProjectPreferencesCrs(projectPreferencesCRS) {
-      this.projectPreferencesCRS = projectPreferencesCRS;
-    },
 
     setProjectPreferencesTypes(projectPreferencesTypes) {
       this.projectPreferencesTypes = projectPreferencesTypes;
@@ -93,6 +87,10 @@ export const useDataStore = defineStore("data", {
 
     setSelectedType(selectedType) {
       this.selectedType = selectedType;
+    },
+
+    setProjectTrenchesNames(projectTrenchesNames) {
+      this.projectTrenchesNames = projectTrenchesNames;
     },
 
     setCheckedTrenchesItems(checkedTrenchesItems) {

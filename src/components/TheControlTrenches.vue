@@ -51,7 +51,7 @@
 
 <script>
 import { apiFetchSurvey } from "@/services/ApiClient";
-import { mapActions, mapState } from "pinia";
+import { mapActions, mapState, mapWritableState } from "pinia";
 import { useDataStore } from "@/stores/data";
 
 export default {
@@ -59,9 +59,7 @@ export default {
   data() {
     return {
       search: "",
-      checkedTrenchesNames: [], // attention garde en mémoire les trenches cochées lorsque l'on change de projet
       isCheckAll: false,
-      checkedTrenchesData: {}, // use store ?
       checkedTrenchesVersions: {}, // use store ?
       isDisplayedArray: [],
     };
@@ -69,6 +67,10 @@ export default {
 
   computed: {
     ...mapState(useDataStore, ["projectTrenchesNames"]),
+    ...mapWritableState(useDataStore, [
+      "checkedTrenchesNames",
+      "checkedTrenchesData",
+    ]), // TODO : no writable state if possible
     accordionLabels() {
       // create groups by 5 first caracters and send reverse order
       return [...new Set(this.projectTrenchesNames?.map((x) => x.substr(0, 5)))]
