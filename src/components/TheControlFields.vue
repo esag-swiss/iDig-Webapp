@@ -35,14 +35,14 @@
       class="list-group"
     >
       <li
-        class="list-group-item accordion"
-        @click="isHiddenArray[index] = !isHiddenArray[index]"
+        class="list-group-item accordion text-bold"
+        @click="isDisplayedArray[index] = !isDisplayedArray[index]"
       >
         {{ group.labels ? group.labels.fr : group.group }}
       </li>
 
       <!-- liste les champs pour chaque groupe -->
-      <div v-if="!isHiddenArray[index]">
+      <div v-if="isDisplayedArray[index]">
         <div v-for="(field, i) in group.fields" :key="i" class="m-0">
           <input
             v-model="checkedFields"
@@ -70,20 +70,7 @@ export default {
     return {
       checkedFields: [],
       defaultColumns: {},
-      isHiddenArray: [
-        false,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-      ],
+      isDisplayedArray: [true],
     };
   },
   computed: {

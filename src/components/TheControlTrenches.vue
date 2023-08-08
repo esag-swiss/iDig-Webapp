@@ -10,13 +10,13 @@
 
     <ul v-for="(n, index) in accordionLabels" :key="n" class="list-group">
       <li
-        class="list-group-item accordion"
-        @click="isHiddenArray[index] = !isHiddenArray[index]"
+        class="list-group-item accordion text-bold"
+        @click="isDisplayedArray[index] = !isDisplayedArray[index]"
       >
         {{ n }}
       </li>
       <!-- liste trenches -->
-      <div v-if="!isHiddenArray[index]">
+      <div v-if="isDisplayedArray[index]">
         <ul
           v-for="trench in projectTrenchesNames"
           :key="trench"
@@ -63,24 +63,7 @@ export default {
       isCheckAll: false,
       checkedTrenchesData: {}, // use store ?
       checkedTrenchesVersions: {}, // use store ?
-      isHiddenArray: [
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-      ],
+      isDisplayedArray: [],
     };
   },
 
