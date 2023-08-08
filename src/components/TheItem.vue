@@ -160,7 +160,8 @@
 
 <script>
 import { updateTrenchItem } from "@/services/ApiClient";
-import { useDataState } from "@/services/useDataState";
+import { mapState } from "pinia";
+import { useDataStore } from "@/stores/data";
 
 export default {
   name: "TheItem",
@@ -170,20 +171,6 @@ export default {
       required: true,
     },
   },
-  setup() {
-    const {
-      projectPreferencesTypes,
-      projectPreferencesFields,
-      projectPreferencesBase64,
-      selectedType,
-    } = useDataState();
-    return {
-      projectPreferencesTypes,
-      projectPreferencesFields,
-      projectPreferencesBase64,
-      selectedType,
-    };
-  },
   data() {
     return {
       temp: ["papi", "prout", "truc"],
@@ -191,6 +178,12 @@ export default {
     };
   },
   computed: {
+    ...mapState(useDataStore, [
+      "projectPreferencesTypes",
+      "projectPreferencesFields",
+      "projectPreferencesBase64",
+      "selectedType",
+    ]),
     AAA() {
       // attention fields ne liste pas tous les champs
       return this.projectPreferencesFields.filter((x) => x.field == "Type");

@@ -51,24 +51,11 @@
 
 <script>
 import { fetchSurvey } from "@/services/ApiClient";
-import { useDataState } from "@/services/useDataState";
+import { mapActions, mapState } from "pinia";
+import { useDataStore } from "@/stores/data";
 
 export default {
   emits: ["selected-trench"],
-  setup() {
-    const {
-      projectTrenchesNames,
-      setCheckedTrenchesItems,
-      setFilteredTrenchesItemsStore,
-      selectedType,
-    } = useDataState();
-    return {
-      projectTrenchesNames,
-      setCheckedTrenchesItems,
-      setFilteredTrenchesItemsStore,
-      selectedType,
-    };
-  },
   data() {
     return {
       search: "",
@@ -98,6 +85,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useDataStore, ["projectTrenchesNames"]),
     accordionLabels() {
       // create groups by 5 first caracters and send reverse order
       return [...new Set(this.projectTrenchesNames?.map((x) => x.substr(0, 5)))]
@@ -122,8 +110,12 @@ export default {
       this.setFilteredTrenchesItemsStore(tempItems);
     },
   },
-
   methods: {
+    ...mapActions(useDataStore, [
+      "setCheckedTrenchesItems",
+      "setFilteredTrenchesItemsStore",
+      "selectedType",
+    ]),
     toggleCheckAll: function () {
       this.isCheckAll = !this.isCheckAll;
       this.checkedTrenchesNames = [];

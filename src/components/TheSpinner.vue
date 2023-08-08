@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="appState.isLoading"
-    class="spinner-TheItem vh-100 vw-100 position-absolute"
-  >
+  <div v-if="isLoading" class="spinner-TheItem vh-100 vw-100 position-absolute">
     <div class="d-flex justify-content-center align-items-center vh-100">
       <div class="spinner-border text-light" role="status">
         <span class="sr-only">Loading...</span>
@@ -12,13 +9,13 @@
 </template>
 
 <script>
-import { useAppState } from "@/services/useAppState";
+import { mapState } from "pinia";
+import { useAppStore } from "@/stores/app";
 
 export default {
   name: "TheSpinner",
-  setup() {
-    const { appState } = useAppState();
-    return { appState };
+  computed: {
+    ...mapState(useAppStore, ["isLoading"]),
   },
 };
 </script>
