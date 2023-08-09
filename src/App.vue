@@ -31,6 +31,7 @@
         <div v-else class="d-flex justify-content-center mt-5">
           Veuillez sélectionner au moins un secteur
         </div>
+        <TheMap v-if="checkedTrenchesData !== null"></TheMap>
       </div>
     </div>
     <div v-else class="d-flex justify-content-center mt-5">
@@ -46,6 +47,7 @@ import TheControlFields from "@/components/TheControlFields.vue";
 import TheTable from "@/components/TheTable.vue";
 import TheSpinner from "@/components/TheSpinner.vue";
 import TheControlExport from "@/components/TheControlExport.vue";
+import TheMap from "@/components/TheMap.vue";
 import { mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
@@ -59,6 +61,7 @@ export default {
     TheTable,
     TheHeader,
     TheControlExport,
+    TheMap,
   },
   data() {
     return {
@@ -104,7 +107,6 @@ export default {
  */
 
 .sidebar {
-  position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
