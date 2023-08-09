@@ -27,21 +27,50 @@ export default {
     checkedTrenchesItems: function () {
       this.layer.clearLayers();
       var geojsonMarkerOptions = {
-        radius: 8,
-        fillColor: "#ff7800",
-        color: "#000",
-        weight: 0.5,
-        opacity: 0.5,
-        fillOpacity: 0.4,
+        radius: 10,
+        fillColor: "grey",
+        color: "grey",
+        weight: 2,
+        opacity: 0.2,
+        fillOpacity: 0.2,
       };
       var layerStyle = {
         fillColor: "grey",
-        color: "grey",
-        weight: 1,
-        opacity: 0.5,
+        fillOpacity: 0.2,
+        weight: 2,
+        opacity: 0.2,
       };
       this.layer = L.geoJSON(this.fileData, {
-        style: layerStyle,
+        onEachFeature: this.onEachFeature,
+        style: function (feature) {
+          switch (feature.properties.type) {
+            case "Context":
+              return {
+                color: "#f6ceb7",
+                fillOpacity: 0.1,
+                weight: 1,
+                opacity: 0.1,
+              };
+
+            case "Feature":
+              return {
+                color: "#ecc6d3",
+                fillOpacity: 0.2,
+                weight: 2,
+                opacity: 0.2,
+              };
+            case "Artifact":
+              return {
+                color: "#7ebcff",
+                fillOpacity: 0.2,
+                weight: 2,
+                opacity: 0.2,
+              };
+
+            default:
+              return layerStyle;
+          }
+        },
         pointToLayer: function (feature, latlng) {
           return L.circleMarker(latlng, geojsonMarkerOptions);
         },
@@ -57,7 +86,7 @@ export default {
     }).setView([38.387439747787127, 23.909183519017891], 19);
 
     L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
-      maxZoom: 22,
+      maxZoom: 25,
       maxNativeZoom: 19,
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -69,27 +98,55 @@ export default {
 
     var geojsonMarkerOptions = {
       radius: 8,
-      fillColor: "#ff7800",
-      color: "#000",
-      weight: 0.5,
-      opacity: 0.5,
-      fillOpacity: 0.4,
+      fillColor: "grey",
+      color: "grey",
+      weight: 2,
+      opacity: 0.2,
+      fillOpacity: 0.2,
     };
     var layerStyle = {
       fillColor: "grey",
-      color: "grey",
-      weight: 1,
-      opacity: 0.5,
+      fillOpacity: 0.2,
+      weight: 2,
+      opacity: 0.2,
     };
     this.layer = L.geoJSON(this.fileData, {
       onEachFeature: this.onEachFeature,
-      style: layerStyle,
+      style: function (feature) {
+        switch (feature.properties.type) {
+          case "Context":
+            return {
+              color: "#f6ceb7",
+              fillOpacity: 0.2,
+              weight: 2,
+              opacity: 0.2,
+            };
+
+          case "Feature":
+            return {
+              color: "#ecc6d3",
+              fillOpacity: 0.2,
+              weight: 2,
+              opacity: 0.2,
+            };
+          case "Artifact":
+            return {
+              color: "#7ebcff",
+              fillOpacity: 0.2,
+              weight: 2,
+              opacity: 0.2,
+            };
+
+          default:
+            return layerStyle;
+        }
+      },
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, geojsonMarkerOptions);
       },
     });
     this.layer.addTo(this.map);
-    // this.map.fitBounds(this.layer.getBounds());  Doesn't work because some feature got 0,0 coordinates
+    this.map.fitBounds(this.layer.getBounds()); // Doesn't work because some feature got 0,0 coordinates
   },
   onBeforeUnmount() {
     if (this.map) {
@@ -98,9 +155,11 @@ export default {
   },
   methods: {
     onEachFeature(feature, layer) {
-      // does this feature have a property named popupContent?
+      // does this feature have a property named id ?
       if (feature.properties && feature.properties.id) {
-        layer.bindPopup(feature.properties.id);
+        layer.bindPopup(
+          feature.properties.id + "<br>" + feature.properties.title
+        );
       }
     },
   },
