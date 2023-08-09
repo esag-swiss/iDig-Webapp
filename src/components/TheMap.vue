@@ -5,19 +5,12 @@
 <script>
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { useDataState } from "@/services/useDataState";
 import { geoSerializedToGeojson } from "@/services/json2geojson";
+import { mapState } from "pinia";
+import { useDataStore } from "@/stores/data";
 
 export default {
   name: "TheMap",
-  setup() {
-    const { checkedTrenchesItems, filteredTrenchesItemsStore } = useDataState();
-
-    return {
-      checkedTrenchesItems,
-      filteredTrenchesItemsStore,
-    };
-  },
   data() {
     return {
       map: null,
@@ -25,6 +18,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(useDataStore, ["checkedTrenchesItems"]),
     fileData() {
       return geoSerializedToGeojson(this.checkedTrenchesItems);
     },
