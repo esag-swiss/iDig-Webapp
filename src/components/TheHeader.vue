@@ -76,6 +76,7 @@ export default {
     ]),
     ...mapActions(useDataStore, [
       "setProjectTrenchesNames",
+      "setProjectPreferencesCrs",
       "setProjectPreferencesTypes",
       "setProjectPreferencesFields",
       "setProjectPreferencesBase64",
@@ -133,10 +134,14 @@ export default {
       } catch (e) {
         console.error(e);
         preferences = JSON.parse(
-          preferences.replace(/},\n\t\t\t\t\t\t}/g, "}}")
+          preferences.replace(/},\n\t\t\t\t\t\t}/g, "}}") //to handle one case of invalid json file that occured at least once
         );
       }
 
+      if (preferences.crs) {
+        // it seems not all project prefences got this property
+        this.setProjectPreferencesCrs(preferences.crs);
+      }
       this.setProjectPreferencesTypes(preferences.types);
       this.setProjectPreferencesFields(preferences.fields);
     },

@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 export const useDataStore = defineStore("data", {
   state: () => ({
     projectTrenchesNames: null,
+    projectPreferencesCRS: "WGS84",
     projectPreferencesTypes: null,
     projectPreferencesFields: null,
     projectPreferencesBase64: null,
@@ -22,6 +23,10 @@ export const useDataStore = defineStore("data", {
   actions: {
     setProjectTrenchesNames(projectTrenchesNames) {
       this.projectTrenchesNames = projectTrenchesNames;
+    },
+
+    setProjectPreferencesCrs(projectPreferencesCRS) {
+      this.projectPreferencesCRS = projectPreferencesCRS;
     },
 
     setProjectPreferencesTypes(projectPreferencesTypes) {
