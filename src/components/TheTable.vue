@@ -28,7 +28,7 @@ export default defineComponent({
   name: "TheTable",
   components: { TheTableLite, TheItem },
   setup() {
-    // make pinia's tableColumns and checkedTrenchesItemsSelectedType reactive inside the table object :
+    // make pinia's tableColumns and checkedTrenchesItemsSelectedTypeAndSearched reactive inside the table object :
     const dataStore = useDataStore();
     const tableColumns = ref(dataStore.tableColumns);
     watch(
@@ -37,11 +37,11 @@ export default defineComponent({
         table.columns = newColumns;
       }
     );
-    const checkedTrenchesItemsSelectedType = ref(
-      dataStore.checkedTrenchesItemsSelectedType
+    const checkedTrenchesItemsSelectedTypeAndSearched = ref(
+      dataStore.checkedTrenchesItemsSelectedTypeAndSearched
     );
     watch(
-      () => dataStore.checkedTrenchesItemsSelectedType,
+      () => dataStore.checkedTrenchesItemsSelectedTypeAndSearched,
       (newItems) => {
         table.rows = newItems;
       }
@@ -50,7 +50,7 @@ export default defineComponent({
     // Table config
     const table = reactive({
       columns: tableColumns,
-      rows: checkedTrenchesItemsSelectedType,
+      rows: checkedTrenchesItemsSelectedTypeAndSearched,
       messages: {
         pagingInfo: "{0}-{1} / {2}",
         pageSizeChangeLabel: "item/page",

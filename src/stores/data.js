@@ -16,6 +16,7 @@ export const useDataStore = defineStore("data", {
     checkedTrenchesData: {},
     checkedTrenchesNames: [],
     checkedTrenchesItems: [],
+    searchText: "",
     tableColumns: [
       // columns by default before any selection /!\ label are needed to display headers in TheTableLite
       { field: "IdentifierUUID", sortable: true, label: "UUID", isKey: true },
@@ -26,10 +27,47 @@ export const useDataStore = defineStore("data", {
     firstTrench(state) {
       return state.projectTrenchesNames?.[0];
     },
+
     checkedTrenchesItemsSelectedType(state) {
       return state.checkedTrenchesItems.filter((item) =>
         item.Type.includes(state.selectedType)
       );
+    },
+
+    checkedTrenchesItemsSelectedTypeAndSearched(state) {
+      // Early exit if no search text provided
+      if (state.searchText === "") {
+        return state.checkedTrenchesItemsSelectedType;
+      }
+
+      // If the search text contains a colon, then we filter by property, otherwise, we search all properties
+      return state.searchText.includes(":")
+        ? filterByProperty(state)
+        : filterAllProperties(state);
+
+      // Filter items based on a specific property mentioned before the colon in the searchText
+      // Warning !! It is currently filtering only to the english name, which may not be the table displayed name
+      function filterByProperty(state) {
+        const [property, value] = state.searchText.split(":");
+
+        // First, filter items that have the requested property
+        return state.checkedTrenchesItemsSelectedType
+          .filter((item) => property in item) //item.hasOwnProperty(property))
+          .filter((item) =>
+            item[property].toLowerCase().includes(value.toLowerCase())
+          );
+      }
+
+      // Filter items by checking all properties for the searchText
+      function filterAllProperties(state) {
+        const searchText = state.searchText.toLowerCase();
+
+        return state.checkedTrenchesItemsSelectedType.filter((item) =>
+          Object.values(item).some((val) =>
+            String(val).toLowerCase().includes(searchText)
+          )
+        );
+      }
     },
   },
 
@@ -104,6 +142,10 @@ export const useDataStore = defineStore("data", {
 
     setTableColumns(tableColumns) {
       this.tableColumns = tableColumns;
+    },
+
+    setSearchText(searchText) {
+      this.searchText = searchText;
     },
   },
 });

@@ -9,8 +9,8 @@
       <!-- SIDEBAR -->
       <nav class="col-md-2 d-none d-md-block bg-light sidebar">
         <div class="sidebar-sticky hidescrollbar p-1">
+          <TheControlSearch></TheControlSearch>
           <TheControlTrenches ref="controlTrenches"> </TheControlTrenches>
-
           <TheControlFields> </TheControlFields>
           <TheControlExport> </TheControlExport>
         </div>
@@ -44,10 +44,12 @@ import TheMap from "@/components/TheMap.vue";
 import { mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
+import TheControlSearch from "@/components/TheControlSearch.vue";
 
 export default {
   name: "App",
   components: {
+    TheControlSearch,
     TheSpinner,
     TheControlTrenches,
     TheControlFields,

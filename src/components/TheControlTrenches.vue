@@ -1,10 +1,4 @@
 <template>
-  <input
-    v-model="search"
-    class="form-control form-control-sm"
-    placeholder="Search..."
-    @input="filterItems()"
-  />
   <div name="secteurs" class="p-1 m-1 bg-light border-0">
     <h3>Secteurs</h3>
 
@@ -57,7 +51,6 @@ import { useDataStore } from "@/stores/data";
 export default {
   data() {
     return {
-      search: "",
       isCheckAll: false,
       checkedTrenchesVersions: {}, // use store ?
       isDisplayedArray: [],
@@ -153,35 +146,6 @@ export default {
           .catch(() => {});
       });
     },
-
-    ////////////
-    filterItems() {
-      let champ = this.search;
-      let itemsToEmit = [];
-      let itemsToEmitStore = [];
-
-      if (champ.includes(":")) {
-        champ = champ.split(":");
-        // filter first all objects with requested property
-        itemsToEmit = this.checkedTrenchesItems.filter((x) =>
-          Object.prototype.hasOwnProperty.call(x, champ[0])
-        );
-        itemsToEmit = itemsToEmit.filter(function (x) {
-          return x[champ[0]].toLowerCase().includes(champ[1].toLowerCase());
-        });
-        // search in all properties
-      } else {
-        itemsToEmit = this.checkedTrenchesItems.filter(
-          (
-            o // array d'objets
-          ) =>
-            Object.keys(o).some((k) =>
-              o[k].toLowerCase().includes(this.search.toLowerCase())
-            )
-        );
-      }
-    },
-    ///////
   },
 };
 </script>
