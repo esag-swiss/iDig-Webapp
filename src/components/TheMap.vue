@@ -92,6 +92,16 @@ export default {
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.map);
 
+    // WMS layer from Dipylon. To be used in dev only for not overload their server
+    // L.tileLayer
+    //   .wms("http://116.202.128.162:83/geoserver/wms?SERVICE=WMS?", {
+    //     layers: "amarynthos:AMA22_complete_GGRS87",
+    //     attribution: "ESAG",
+    //     transparent: true,
+    //     maxZoom: 25,
+    //   })
+    //   .addTo(this.map);
+
     // use a mix of renderers
     var customPane = this.map.createPane("customPane");
     customPane.style.zIndex = 399; // put just behind the standard overlay pane which is at 400
@@ -146,7 +156,7 @@ export default {
       },
     });
     this.layer.addTo(this.map);
-    this.map.fitBounds(this.layer.getBounds()); // Doesn't work because some feature got 0,0 coordinates
+    this.map.fitBounds(this.layer.getBounds());
   },
   onBeforeUnmount() {
     if (this.map) {

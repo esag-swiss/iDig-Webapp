@@ -70,7 +70,7 @@ export function geoSerializedToGeojson(json) {
             type: geoType,
             coordinates: polyStrings,
           },
-          // As properties we only send back the Identifier
+          // As properties we only send back few fields to produce a lighter output
           properties: {
             id: json[i].Identifier,
             type: json[i].Type,

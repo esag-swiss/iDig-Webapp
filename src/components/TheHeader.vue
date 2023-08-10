@@ -139,7 +139,6 @@ export default {
       }
 
       if (preferences.crs) {
-        // it seems not all project prefences got this property
         this.setProjectPreferencesCrs(preferences.crs);
       }
       this.setProjectPreferencesTypes(preferences.types);
