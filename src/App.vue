@@ -16,18 +16,13 @@
           </TheControlTrenches>
 
           <TheControlFields> </TheControlFields>
-          <TheControlExport :filteredTrenchesItems="filteredTrenchesItems">
-          </TheControlExport>
+          <TheControlExport> </TheControlExport>
         </div>
       </nav>
 
       <!-- MAIN FRAME The map or tab goes here -->
       <div class="col-md-10 ml-sm-auto col-lg-10 pt-3 px-4">
-        <TheTable
-          v-if="checkedTrenchesData !== null"
-          :filteredTrenchesItems="filteredTrenchesItems"
-        >
-        </TheTable>
+        <TheTable v-if="checkedTrenchesData !== null"> </TheTable>
         <div v-else class="d-flex justify-content-center mt-5">
           Veuillez sélectionner au moins un secteur
         </div>
@@ -71,15 +66,6 @@ export default {
   computed: {
     ...mapState(useAppStore, ["isLoaded"]),
     ...mapState(useDataStore, ["selectedType"]),
-    filteredTrenchesItems() {
-      if (this.checkedTrenchesData) {
-        return this.checkedTrenchesData.filter((object) => {
-          return object.Type.includes(this.selectedType);
-        });
-      } else {
-        return {};
-      }
-    },
   },
   methods: {
     selectedTrench(trench) {
