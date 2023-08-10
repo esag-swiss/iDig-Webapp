@@ -18,7 +18,8 @@
 
       <!-- MAIN FRAME The map and tab goes here -->
       <div class="col-md-10 ml-sm-auto col-lg-10 pt-3 px-4">
-        <TheTable v-if="filteredTrenchesItems.length > 0"> </TheTable>
+        <TheTable v-if="checkedTrenchesItemsSelectedType.length > 0">
+        </TheTable>
         <div v-else class="d-flex justify-content-center mt-5">
           Veuillez sélectionner au moins un secteur
         </div>
@@ -57,7 +58,7 @@ export default {
   },
   computed: {
     ...mapState(useAppStore, ["isLoaded"]),
-    ...mapState(useDataStore, ["filteredTrenchesItems"]),
+    ...mapState(useDataStore, ["checkedTrenchesItemsSelectedType"]),
   },
   methods: {
     reload() {

@@ -26,7 +26,7 @@ export const useDataStore = defineStore("data", {
     firstTrench(state) {
       return state.projectTrenchesNames?.[0];
     },
-    filteredTrenchesItems(state) {
+    checkedTrenchesItemsSelectedType(state) {
       return state.checkedTrenchesItems.filter((item) =>
         item.Type.includes(state.selectedType)
       );
