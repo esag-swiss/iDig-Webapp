@@ -55,7 +55,6 @@ import { mapActions, mapState, mapWritableState } from "pinia";
 import { useDataStore } from "@/stores/data";
 
 export default {
-  emits: ["selected-trench"],
   data() {
     return {
       search: "",
@@ -125,7 +124,6 @@ export default {
         Object.prototype.hasOwnProperty.call(this.checkedTrenchesData, trench)
       ) {
         delete this.checkedTrenchesData[trench];
-        this.$emit("selected-trench", this.checkedTrenchesItems);
       } else {
         apiFetchSurvey(trench)
           .then((response) => {
@@ -142,7 +140,6 @@ export default {
               "checkedTrenchesVersions",
               JSON.stringify(this.checkedTrenchesVersions)
             );
-            this.$emit("selected-trench", this.checkedTrenchesItems);
             this.setCheckedTrenchesItems(this.checkedTrenchesItems);
 
             let itemsToEmitStore = [];
@@ -179,7 +176,6 @@ export default {
               "checkedTrenchesVersions",
               JSON.stringify(this.checkedTrenchesVersions)
             );
-            this.$emit("selected-trench", itemsToEmit);
 
             itemsToEmitStore = itemsToEmit.filter((object) => {
               return object.Type.includes(this.selectedType);
@@ -215,8 +211,6 @@ export default {
             )
         );
       }
-
-      this.$emit("selected-trench", itemsToEmit);
 
       itemsToEmitStore = itemsToEmit.filter((object) => {
         return object.Type.includes(this.selectedType);

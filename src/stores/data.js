@@ -12,14 +12,11 @@ export const useDataStore = defineStore("data", {
     projectPreferencesFields: null,
     projectPreferencesBase64: null,
     projectTrenchesNames: null,
-    checkedTrenchesNames: [], // todo: null by default?
-    checkedTrenchesData: {}, // todo: null by default?
-    checkedTrenchesItems: null,
-    filteredTrenchesItemsStore: null,
     selectedType: "Artifact",
-    checkedTrenchesNames: [],
     checkedTrenchesData: {},
+    checkedTrenchesNames: [],
     checkedTrenchesItems: [],
+    filteredTrenchesItemsStore: null, // TODO a virer
     tableColumns: [
       // columns by default before any selection /!\ label are needed to display headers in TheTableLite
       { field: "IdentifierUUID", sortable: true, label: "UUID", isKey: true },
@@ -31,16 +28,9 @@ export const useDataStore = defineStore("data", {
       return state.projectTrenchesNames?.[0];
     },
     filteredTrenchesItems(state) {
-      // ATTENTION: filtered by type, not by search
-      if (state.checkedTrenchesItems) {
-        return state.checkedTrenchesItems.filter((item) => {
-          console.log(item.Type);
-          console.log(item.Type.includes(state.selectedType));
-          return item.Type.includes(state.selectedType);
-        });
-      } else {
-        return {};
-      }
+      return state.checkedTrenchesItems.filter((item) =>
+        item.Type.includes(state.selectedType)
+      );
     },
   },
 
