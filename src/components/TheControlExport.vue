@@ -43,7 +43,7 @@ export default {
   computed: {
     ...mapState(useDataStore, [
       "checkedTrenchesItems",
-      "filteredTrenchesItemsStore",
+      "filteredTrenchesItems",
       "selectedType",
     ]),
   },
@@ -51,7 +51,7 @@ export default {
     exportFile: function (fileType) {
       if (fileType === "tab") {
         this.fileName = this.selectedType;
-        const items = this.filteredTrenchesItemsStore;
+        const items = this.filteredTrenchesItems;
         const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
         const header = Object.keys(items[0]);
         this.fileData = [
@@ -64,7 +64,7 @@ export default {
         ].join("\r\n");
       } else if (fileType === "json") {
         this.fileName = this.selectedType;
-        this.fileData = JSON.stringify(this.filteredTrenchesItemsStore); // les items filtrés des trenches et type selectionnées
+        this.fileData = JSON.stringify(this.filteredTrenchesItems); // les items filtrés des trenches et type selectionnées
       } else if (fileType === "geojson") {
         this.fileName = "Trenches";
         this.fileData = JSON.stringify(

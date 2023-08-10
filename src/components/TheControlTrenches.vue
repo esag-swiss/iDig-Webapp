@@ -84,22 +84,8 @@ export default {
       return allItem;
     },
   },
-  watch: {
-    // whenever question changes, this function will run
-    selectedType(newType) {
-      let tempItems = [];
-      tempItems = this.checkedTrenchesItems.filter((object) => {
-        return object.Type.includes(newType);
-      });
-      this.setFilteredTrenchesItemsStore(tempItems);
-    },
-  },
   methods: {
-    ...mapActions(useDataStore, [
-      "setCheckedTrenchesItems",
-      "setFilteredTrenchesItemsStore",
-      "selectedType",
-    ]),
+    ...mapActions(useDataStore, ["setCheckedTrenchesItems", "selectedType"]),
     toggleCheckAll: function () {
       this.isCheckAll = !this.isCheckAll;
       this.checkedTrenchesNames = [];
@@ -141,28 +127,15 @@ export default {
               JSON.stringify(this.checkedTrenchesVersions)
             );
             this.setCheckedTrenchesItems(this.checkedTrenchesItems);
-
-            let itemsToEmitStore = [];
-            itemsToEmitStore = this.checkedTrenchesItems.filter((object) => {
-              return object.Type.includes(this.selectedType);
-            });
-            this.setFilteredTrenchesItemsStore(itemsToEmitStore);
           })
           .catch(() => {});
       }
     },
 
     fetchAllTrenchesData: function () {
-      // also used to reload after saving from TheItem
-      let itemsToEmit = [];
-      let itemsToEmitStore = [];
-
       this.checkedTrenchesNames.forEach((trench) => {
         apiFetchSurvey(trench)
           .then((response) => {
-            // pour emit des surveys
-            itemsToEmit.push(...response.data.surveys);
-
             // prepare data to store in session in case of PUSH
             this.checkedTrenchesData[trench] = response.data.surveys;
             this.checkedTrenchesVersions[trench] = response.data.version;
@@ -176,16 +149,12 @@ export default {
               "checkedTrenchesVersions",
               JSON.stringify(this.checkedTrenchesVersions)
             );
-
-            itemsToEmitStore = itemsToEmit.filter((object) => {
-              return object.Type.includes(this.selectedType);
-            });
-            this.setFilteredTrenchesItemsStore(itemsToEmitStore);
           })
           .catch(() => {});
       });
     },
 
+    ////////////
     filterItems() {
       let champ = this.search;
       let itemsToEmit = [];
@@ -211,12 +180,8 @@ export default {
             )
         );
       }
-
-      itemsToEmitStore = itemsToEmit.filter((object) => {
-        return object.Type.includes(this.selectedType);
-      });
-      this.setFilteredTrenchesItemsStore(itemsToEmitStore);
     },
+    ///////
   },
 };
 </script>

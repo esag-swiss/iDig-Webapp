@@ -78,7 +78,6 @@ export default {
     ...mapState(useDataStore, [
       "projectPreferencesTypes",
       "projectPreferencesFields",
-      "filteredTrenchesItemsStore",
       "selectedType",
     ]),
     // liste les groupes pour l'accordéon des champs en fonction du Type
@@ -123,11 +122,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useDataStore, [
-      "setFilteredTrenchesItemsStore",
-      "setSelectedType",
-      "setTableColumns",
-    ]),
+    ...mapActions(useDataStore, ["setSelectedType", "setTableColumns"]),
     updateCheckedFields(type) {
       if (localStorage.defaultTableColumns) {
         if (JSON.parse(localStorage.defaultTableColumns)[type]) {

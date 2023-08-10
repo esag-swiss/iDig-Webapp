@@ -16,7 +16,6 @@ export const useDataStore = defineStore("data", {
     checkedTrenchesData: {},
     checkedTrenchesNames: [],
     checkedTrenchesItems: [],
-    filteredTrenchesItemsStore: null, // TODO a virer
     tableColumns: [
       // columns by default before any selection /!\ label are needed to display headers in TheTableLite
       { field: "IdentifierUUID", sortable: true, label: "UUID", isKey: true },
@@ -101,10 +100,6 @@ export const useDataStore = defineStore("data", {
 
     setCheckedTrenchesItems(checkedTrenchesItems) {
       this.checkedTrenchesItems = checkedTrenchesItems;
-    },
-
-    setFilteredTrenchesItemsStore(filteredTrenchesItemsStore) {
-      this.filteredTrenchesItemsStore = filteredTrenchesItemsStore;
     },
 
     setTableColumns(tableColumns) {
