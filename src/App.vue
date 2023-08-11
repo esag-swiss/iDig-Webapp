@@ -24,7 +24,7 @@
           Veuillez sélectionner au moins un secteur
         </div>
         <hr />
-        <TheMap></TheMap>
+        <TheMap v-if="checkedTrenchesItemsSelectedType.length > 0"></TheMap>
       </div>
     </div>
     <div v-else class="d-flex justify-content-center mt-5">

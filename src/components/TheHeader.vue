@@ -71,6 +71,7 @@ export default {
     ]),
     ...mapActions(useDataStore, [
       "setProjectTrenchesNames",
+      "setProjectPreferencesCrs",
       "setProjectPreferencesTypes",
       "setProjectPreferencesFields",
       "setProjectPreferencesBase64",

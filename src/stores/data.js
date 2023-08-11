@@ -8,6 +8,7 @@ import { useAppStore } from "@/stores/app";
 
 export const useDataStore = defineStore("data", {
   state: () => ({
+    projectPreferencesCRS: "WGS84",
     projectPreferencesTypes: null,
     projectPreferencesFields: null,
     projectPreferencesBase64: null,
@@ -102,11 +103,15 @@ export const useDataStore = defineStore("data", {
           preferences = JSON.parse(preferences);
         } catch (e) {
           console.error(e);
+          //to handle one case of invalid json file that occured at least once :
           preferences = JSON.parse(
             preferences.replace(/},\n\t\t\t\t\t\t}/g, "}}")
           );
         }
 
+        if (preferences.crs) {
+          this.setProjectPreferencesCrs(preferences.crs);
+        }
         this.setProjectPreferencesTypes(preferences.types);
         this.setProjectPreferencesFields(preferences.fields);
 
@@ -118,6 +123,10 @@ export const useDataStore = defineStore("data", {
     // ACTIONS : STATES SETTERS :
     setProjectPreferencesTypes(projectPreferencesTypes) {
       this.projectPreferencesTypes = projectPreferencesTypes;
+    },
+
+    setProjectPreferencesCrs(projectPreferencesCRS) {
+      this.projectPreferencesCRS = projectPreferencesCRS;
     },
 
     setProjectPreferencesFields(projectPreferencesFields) {
