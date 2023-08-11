@@ -255,8 +255,7 @@ export default {
 
       apiUpdateTrenchItem(this.selectedTrench, head, surveys, preferences)
         .then(() => {
-          // TODO: tell the user it was saved
-          console.log("saved!");
+          alert("The item was saved");
         })
         .catch(() => {});
     },

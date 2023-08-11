@@ -82,8 +82,8 @@ export default {
     async connect() {
       this.setServer(this.cleanServerUserEntry(this.server));
 
-      const devMode = "new_server";
-      // const devMode = "old_server"; TODO reput on new
+      // const devMode = "new_server";
+      const devMode = "old_server";
 
       if (devMode === "new_server") {
         try {
