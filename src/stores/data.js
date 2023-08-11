@@ -180,6 +180,14 @@ export const useDataStore = defineStore("data", {
       this.projectTrenchesNames = projectTrenchesNames;
     },
 
+    setCheckedTrenchesData(checkedTrenchesData) {
+      this.checkedTrenchesData = checkedTrenchesData;
+    },
+
+    setCheckedTrenchesNames(checkedTrenchesNames) {
+      this.checkedTrenchesNames = checkedTrenchesNames;
+    },
+
     setTableColumns(tableColumns) {
       this.tableColumns = tableColumns;
     },

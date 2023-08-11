@@ -61,10 +61,7 @@ export default {
   },
   computed: {
     ...mapState(useDataStore, ["projectTrenchesNames", "checkedTrenchesItems"]),
-    ...mapWritableState(useDataStore, [
-      "checkedTrenchesNames",
-      "checkedTrenchesData",
-    ]), // TODO : no writable state if possible
+    ...mapWritableState(useDataStore, ["checkedTrenchesNames"]), // mapWritableState for v-model only
     accordionLabels() {
       // create groups by 5 first caracters and send reverse order
       return [...new Set(this.projectTrenchesNames?.map((x) => x.substr(0, 5)))]
@@ -85,18 +82,22 @@ export default {
 
       // Solution temporaire brutale. Il faudra comparer les longueurs de newValue et oldValue,
       // et ne faire que le necessaire
-      this.checkedTrenchesData = {};
+      this.setCheckedTrenchesData({});
       this.updateCheckedTrenchesData();
     },
   },
   methods: {
-    ...mapActions(useDataStore, ["selectedType", "updateCheckedTrenchesData"]),
+    ...mapActions(useDataStore, [
+      "setCheckedTrenchesData",
+      "setCheckedTrenchesNames",
+      "updateCheckedTrenchesData",
+    ]),
     toggleCheckAll: function () {
       // When the user click on check all
       if (this.areAllChecked) {
-        this.checkedTrenchesNames = [];
+        this.setCheckedTrenchesNames([]);
       } else {
-        this.checkedTrenchesNames = [...this.projectTrenchesNames];
+        this.setCheckedTrenchesNames([...this.projectTrenchesNames]);
       }
     },
   },
