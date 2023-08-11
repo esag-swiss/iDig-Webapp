@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import {
   apiFetchPreferences,
   apiFetchProjectTrenchesNames,
+  apiFetchSurvey,
 } from "@/services/ApiClient";
 import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
 import { useAppStore } from "@/stores/app";
@@ -14,9 +15,8 @@ export const useDataStore = defineStore("data", {
     projectPreferencesBase64: null,
     projectTrenchesNames: null,
     selectedType: "Artifact",
-    checkedTrenchesData: {},
     checkedTrenchesNames: [],
-    checkedTrenchesItems: [],
+    checkedTrenchesData: {},
     searchText: "",
     tableColumns: [
       // columns by default before any selection /!\ label are needed to display headers in TheTableLite
@@ -28,6 +28,14 @@ export const useDataStore = defineStore("data", {
     firstTrench(state) {
       return state.projectTrenchesNames?.[0];
     },
+
+    checkedTrenchesItems(state) {
+      let allItem = [];
+      Object.values(state.checkedTrenchesData).forEach((data) => {
+        allItem.push(...data);
+      });
+      return allItem;
+    }, // Todo simplifier?
 
     checkedTrenchesItemsSelectedType(state) {
       return state.checkedTrenchesItems.filter((item) =>
@@ -120,6 +128,33 @@ export const useDataStore = defineStore("data", {
       });
     },
 
+    updateCheckedTrenchesData: function () {
+      this.checkedTrenchesNames.forEach((trenchName) => {
+        apiFetchSurvey(trenchName)
+          .then((response) => {
+            // prepare data to store in session in case of PUSH
+            let checkedTrenchesVersions = {}; // use store ?
+            checkedTrenchesVersions[trenchName] = response.data.version;
+            this.checkedTrenchesData[trenchName] = response.data.surveys;
+
+            // store in session in case of PUSH
+            sessionStorage.setItem(
+              "checkedTrenchesData",
+              JSON.stringify(this.checkedTrenchesData)
+            );
+            sessionStorage.setItem(
+              "checkedTrenchesVersions",
+              JSON.stringify(checkedTrenchesVersions)
+            );
+          })
+          .catch(() => {
+            this.checkedTrenchesNames = this.checkedTrenchesNames.filter(
+              (name) => name !== trenchName
+            );
+          });
+      });
+    },
+
     // ACTIONS : STATES SETTERS :
     setProjectPreferencesTypes(projectPreferencesTypes) {
       this.projectPreferencesTypes = projectPreferencesTypes;
@@ -143,10 +178,6 @@ export const useDataStore = defineStore("data", {
 
     setProjectTrenchesNames(projectTrenchesNames) {
       this.projectTrenchesNames = projectTrenchesNames;
-    },
-
-    setCheckedTrenchesItems(checkedTrenchesItems) {
-      this.checkedTrenchesItems = checkedTrenchesItems;
     },
 
     setTableColumns(tableColumns) {
