@@ -1,4 +1,6 @@
 import { convertToEPSG4326 } from "@/services/coordinateUtils";
+import { useDataStore } from "@/stores/data";
+
 var geojson = {
   type: "FeatureCollection",
   name: "trenches",
@@ -61,20 +63,29 @@ export function geoSerializedToGeojson(json) {
       }
 
       // END of cases
-      geojson.features.push({
-        type: "Feature",
-        geometry: {
-          type: geoType,
-          coordinates: polyStrings,
-        },
-        // As properties we only send back the Identifier
-        properties: { id: json[i].Identifier },
-      });
+      if (polyStrings !== null) {
+        geojson.features.push({
+          type: "Feature",
+          geometry: {
+            type: geoType,
+            coordinates: polyStrings,
+          },
+          // As properties we only send back few fields to produce a lighter output
+          properties: {
+            id: json[i].Identifier,
+            type: json[i].Type,
+            title: json[i].Title,
+          },
+        });
+      } else {
+        console.log("coord err IdentifierUUID  : " + json[i].Identifier);
+      }
     }
   }
   return geojson;
 }
 
+// Convert coordinates from iDig format to geojson position in EPSG4326
 // Geojson position is the fundamental geometry construct
 function CoverageSerializedXYZToGeojsonPosition(XYZ) {
   let coordinates = XYZ.split("\n");
@@ -88,11 +99,12 @@ function CoverageSerializedXYZToGeojsonPosition(XYZ) {
     }
     return v;
   }, []);
-  // if coords valid convert else default 0
+  // convert coords if valid else apply null and will handle at next step
+  const { projectPreferencesCRS } = useDataStore();
   if (coordinates.length > 1) {
-    coordinates = convertToEPSG4326(coordinates).coords;
+    coordinates = convertToEPSG4326(coordinates, projectPreferencesCRS).coords;
   } else {
-    coordinates = [0, 0, 0];
+    coordinates = null;
   }
   return coordinates;
 }
