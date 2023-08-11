@@ -52,7 +52,7 @@ export const useDataStore = defineStore("data", {
 
         // First, filter items that have the requested property
         return state.checkedTrenchesItemsSelectedType
-          .filter((item) => property in item) //item.hasOwnProperty(property))
+          .filter((item) => property in item)
           .filter((item) =>
             item[property].toLowerCase().includes(value.toLowerCase())
           );

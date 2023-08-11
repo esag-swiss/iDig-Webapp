@@ -2,44 +2,51 @@
   <div name="secteurs" class="p-1 m-1 bg-light border-0">
     <h3>Secteurs</h3>
 
-    <ul v-for="(n, index) in accordionLabels" :key="n" class="list-group">
+    <ul
+      v-for="(trenchGroupName, index) in accordionLabels"
+      :key="trenchGroupName"
+      class="list-group"
+    >
       <li
         class="list-group-item accordion text-bold"
         @click="isDisplayedArray[index] = !isDisplayedArray[index]"
       >
-        {{ n }}
+        {{ trenchGroupName }}
       </li>
       <!-- liste trenches -->
       <div v-if="isDisplayedArray[index]">
         <ul
-          v-for="trench in projectTrenchesNames"
-          :key="trench"
+          v-for="trenchName in projectTrenchesNames"
+          :key="trenchName"
           class="list-group"
         >
           <li
-            v-if="trench.includes(n)"
+            v-if="trenchName.includes(trenchGroupName)"
             class="list-group-item accordion"
-            @change="
-              updateCheckall(), updateTrenchesDataWithSelectedTrench(trench)
-            "
+            @change="updateTrenchesDataWithSelectedTrench(trenchName)"
           >
             <input
               v-model="checkedTrenchesNames"
               type="checkbox"
-              :value="trench"
+              :value="trenchName"
             />
-            <label class="px-1 m-0" for="checkbox">{{ trench }}</label>
+            <label class="px-1 m-0 text-bold" for="checkbox">{{
+              trenchName
+            }}</label>
           </li>
         </ul>
       </div>
     </ul>
+
     <!-- Check All -->
-    <input
-      v-model="isCheckAll"
-      type="checkbox"
-      @click="toggleCheckAll(), fetchAllTrenchesData()"
-    />
-    Check All
+    <div>
+      <input
+        :checked="areAllChecked"
+        type="checkbox"
+        @click="toggleCheckAll(), fetchAllTrenchesData()"
+      />
+      <label class="px-1 m-0 text-bold" for="checkbox"> Check All </label>
+    </div>
   </div>
 </template>
 
@@ -51,7 +58,6 @@ import { useDataStore } from "@/stores/data";
 export default {
   data() {
     return {
-      isCheckAll: false,
       checkedTrenchesVersions: {}, // use store ?
       isDisplayedArray: [],
     };
@@ -76,26 +82,20 @@ export default {
       });
       return allItem;
     },
+    areAllChecked() {
+      return (
+        this.checkedTrenchesNames.length === this.projectTrenchesNames.length
+      );
+    },
   },
   methods: {
     ...mapActions(useDataStore, ["setCheckedTrenchesItems", "selectedType"]),
     toggleCheckAll: function () {
-      this.isCheckAll = !this.isCheckAll;
-      this.checkedTrenchesNames = [];
-      if (this.isCheckAll) {
-        // Check all
-        for (var key in this.projectTrenchesNames) {
-          this.checkedTrenchesNames.push(this.projectTrenchesNames[key]);
-        }
-      }
-    },
-    updateCheckall: function () {
-      if (
-        this.checkedTrenchesNames.length == this.projectTrenchesNames.length
-      ) {
-        this.isCheckAll = true;
+      // When the user click on check all
+      if (this.areAllChecked) {
+        this.checkedTrenchesNames = [];
       } else {
-        this.isCheckAll = false;
+        this.checkedTrenchesNames = [...this.projectTrenchesNames];
       }
     },
     updateTrenchesDataWithSelectedTrench: function (trench) {

@@ -64,7 +64,7 @@ export default {
         ].join("\r\n");
       } else if (fileType === "json") {
         this.fileName = this.selectedType;
-        this.fileData = JSON.stringify(this.checkedTrenchesItemsSelectedType); // les items filtrés des trenches et type selectionnées
+        this.fileData = JSON.stringify(this.checkedTrenchesItemsSelectedType);
       } else if (fileType === "geojson") {
         this.fileName = "Trenches";
         this.fileData = JSON.stringify(
