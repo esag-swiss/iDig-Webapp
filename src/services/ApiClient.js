@@ -1,17 +1,15 @@
 import axios from "axios";
 import { useAppStore } from "@/stores/app";
 
-function handleError(error) {
+function displayError(error) {
   let alertMessage =
     `message: ${error?.message}\r\r` +
     `response.data: ${error?.response?.data}\r\r` +
     `response.statusText: ${error?.response?.statusText}\r`;
   alert(alertMessage);
-
-  throw error;
 }
 
-export function fetchProjectTrenchesNames() {
+export function apiFetchProjectTrenchesNames() {
   const { server, project, username, password, setIsLoading } = useAppStore();
   setIsLoading(true);
 
@@ -21,11 +19,14 @@ export function fetchProjectTrenchesNames() {
     url: `${server}/idig/${project}/trenches`,
     auth: { username, password },
   })
-    .catch((error) => handleError(error))
+    .catch((error) => {
+      displayError(error);
+      throw error;
+    })
     .finally(() => setIsLoading(false));
 }
 
-export function fetchPreferences(trench) {
+export function apiFetchPreferences(trench) {
   const { server, project, username, password, setIsLoading } = useAppStore();
   setIsLoading(true);
 
@@ -36,11 +37,14 @@ export function fetchPreferences(trench) {
     auth: { username, password },
     data: JSON.stringify({ head: "", surveys: [] }),
   })
-    .catch((error) => handleError(error))
+    .catch((error) => {
+      displayError(error);
+      throw error;
+    })
     .finally(() => setIsLoading(false));
 }
 
-export function fetchSurvey(trench) {
+export function apiFetchSurvey(trench) {
   const { server, project, username, password, setIsLoading } = useAppStore();
   setIsLoading(true);
 
@@ -51,11 +55,14 @@ export function fetchSurvey(trench) {
     auth: { username, password },
     data: JSON.stringify({}),
   })
-    .catch((error) => handleError(error))
+    .catch((error) => {
+      displayError(error);
+      throw error;
+    })
     .finally(() => setIsLoading(false));
 }
 
-export function updateTrenchItem(
+export function apiUpdateTrenchItem(
   trench,
   head,
   surveys,
@@ -76,6 +83,9 @@ export function updateTrenchItem(
       projectPreferencesBase64,
     }),
   })
-    .catch((error) => handleError(error))
+    .catch((error) => {
+      displayError(error);
+      throw error;
+    })
     .finally(() => setIsLoading(false));
 }

@@ -9,29 +9,22 @@
       <!-- SIDEBAR -->
       <nav class="col-md-2 d-none d-md-block bg-light sidebar">
         <div class="sidebar-sticky hidescrollbar p-1">
-          <TheControlTrenches
-            ref="controlTrenches"
-            @selected-trench="selectedTrench"
-          >
-          </TheControlTrenches>
-
+          <TheControlSearch></TheControlSearch>
+          <TheControlTrenches ref="controlTrenches"> </TheControlTrenches>
           <TheControlFields> </TheControlFields>
-          <TheControlExport :filteredTrenchesItems="filteredTrenchesItems">
-          </TheControlExport>
+          <TheControlExport> </TheControlExport>
         </div>
       </nav>
 
-      <!-- MAIN FRAME The map or tab goes here -->
+      <!-- MAIN FRAME The map and tab goes here -->
       <div class="col-md-10 ml-sm-auto col-lg-10 pt-3 px-4">
-        <TheTable
-          v-if="checkedTrenchesData !== null"
-          :filteredTrenchesItems="filteredTrenchesItems"
-        >
+        <TheTable v-if="checkedTrenchesItemsSelectedType.length > 0">
         </TheTable>
         <div v-else class="d-flex justify-content-center mt-5">
           Veuillez sélectionner au moins un secteur
         </div>
-        <TheMap v-if="checkedTrenchesData !== null"></TheMap>
+        <hr />
+        <TheMap v-if="checkedTrenchesItemsSelectedType.length > 0"></TheMap>
       </div>
     </div>
     <div v-else class="d-flex justify-content-center mt-5">
@@ -51,10 +44,12 @@ import TheMap from "@/components/TheMap.vue";
 import { mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
+import TheControlSearch from "@/components/TheControlSearch.vue";
 
 export default {
   name: "App",
   components: {
+    TheControlSearch,
     TheSpinner,
     TheControlTrenches,
     TheControlFields,
@@ -63,28 +58,11 @@ export default {
     TheControlExport,
     TheMap,
   },
-  data() {
-    return {
-      checkedTrenchesData: null,
-    };
-  },
   computed: {
     ...mapState(useAppStore, ["isLoaded"]),
-    ...mapState(useDataStore, ["selectedType"]),
-    filteredTrenchesItems() {
-      if (this.checkedTrenchesData) {
-        return this.checkedTrenchesData.filter((object) => {
-          return object.Type.includes(this.selectedType);
-        });
-      } else {
-        return {};
-      }
-    },
+    ...mapState(useDataStore, ["checkedTrenchesItemsSelectedType"]),
   },
   methods: {
-    selectedTrench(trench) {
-      this.checkedTrenchesData = trench;
-    },
     reload() {
       this.$refs.controlTrenches.fetchAllTrenchesData();
     },
