@@ -25,6 +25,20 @@ export const useDataStore = defineStore("data", {
   }),
 
   getters: {
+    projectPreferencesFieldsWithTranslation(state) {
+      let translatedLabels = state.projectPreferencesFields.map((field) => {
+        return field.labels?.["fr"] ?? field.field;
+      });
+
+      let langKeys = {};
+      for (let field of this.projectPreferencesFields) {
+        langKeys[field.field] =
+          translatedLabels[this.projectPreferencesFields.indexOf(field)];
+      }
+
+      return langKeys;
+    },
+
     firstTrench(state) {
       return state.projectTrenchesNames?.[0];
     },
