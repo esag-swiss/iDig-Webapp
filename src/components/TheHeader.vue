@@ -10,7 +10,8 @@
         <div class="navbar-text text-light p-2">server:</div>
         <input
           :value="server"
-          class="my-2 text-light input-header"
+          placeholder=" url complet "
+          class="my-2 text-light input-header-lg"
           @input="(event) => setServer(event.target.value)"
         />
         <a class="navbar-text text-light p-2">project:</a>
@@ -28,10 +29,23 @@
         <input
           :value="password"
           type="password"
-          class="m-2 text-light input-header"
+          class="m-2 text-light input-header-small"
           placeholder="Password"
           @input="(event) => setPassword(event.target.value)"
         />
+        <select
+          :value="'fr'"
+          type="selectedType"
+          class="m-2 text-light input-header-small"
+          @change="(event) => setLang(event.target.value)"
+        >
+          <option>fr</option>
+          <option>en</option>
+          <option>el</option>
+          <option>it</option>
+          <option>de</option>
+        </select>
+
         <button
           type="button"
           class="btn btn-outline-secondary m-2 px-1 py-0"
@@ -68,6 +82,7 @@ export default {
       "setProject",
       "setUsername",
       "setPassword",
+      "setLang",
     ]),
     ...mapActions(useDataStore, [
       "setProjectTrenchesNames",
@@ -123,5 +138,15 @@ export default {
   background: #212529;
   border: 0px;
   width: 6em;
+}
+.input-header-small {
+  background: #212529;
+  border: 0px;
+  width: 3em;
+}
+.input-header-lg {
+  background: #212529;
+  border: 0px;
+  width: 9em;
 }
 </style>
