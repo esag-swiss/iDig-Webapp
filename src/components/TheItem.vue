@@ -1,12 +1,8 @@
 <template>
   <div class="TheItemwrapper justify-content-center">
-    <div
-      v-if="currentItem"
-      id="TheItem"
-      class="TheItem center-block mx-auto p-3"
-    >
+    <div v-if="currentItem" class="TheItem center-block mx-auto">
       <!--header-->
-      <div class="row align-items-start border-bottom mb-2">
+      <div class="d-flex align-items-start border-bottom p-1">
         <div class="col text-left">
           <h3>{{ currentItem.Type }} {{ currentItem.Identifier }}</h3>
         </div>
@@ -21,48 +17,41 @@
         >
           save
         </button>
-        <button
-          type="button"
-          class="btn btn-outline-secondary my-0 my-sm-0 m-2 py-0"
-          @click="setUserPreferences()"
-        >
-          settings
-        </button>
       </div>
 
       <!--Formulaire-->
-      <!-- espace de travail finds 3254 ; Material  3450-->
+
       <ul
         v-for="group in groupOfFieldsAccordingToType"
         :key="group"
         class="list-group"
       >
-        <li
-          v-if="group.hasOwnProperty('labels')"
-          class="list-group-item accordion"
-        >
-          <!-- attention gérer les langues -->
-          {{ group.labels.fr }}
-        </li>
-        <li v-else class="list-group-item accordion">
-          <!-- attention gérer les langues -->
-          {{ group.group }}
+        <!-- Groups label -->
+        <li class="list-group-item text-uppercase accordion p-2">
+          {{ group.labels ? group.labels[lang] : group.group }}
         </li>
 
         <div
           v-for="field in group.fields"
           :key="field"
-          class="row align-items-start border-bottom my-1"
+          class="d-flex align-items-start border-bottom"
         >
-          <!-- Nom du Champ : A METTRE EN FR  -->
-          <p class="col-md-3">{{ field.field }}</p>
-          <!-- valeur du Champ : mille cases  -->
+          <!-- Display field label. Look first if an alternative label exist for the select item type -->
+          <div class="text-right text-dark border-right p-2 col-md-2">
+            {{
+              field.labels?.[lang] ??
+              projectPreferencesFieldsWithTranslation[field.field] ??
+              field.field
+            }}
+          </div>
+
+          <!-- Fields value : many cases  -->
 
           <!-- 0  Champ existe dans fields  -->
-          <div v-if="fieldExist(field.field) != 0" class="col-md-9 p-0 pl-1">
+          <div v-if="fieldExist(field.field) != 0" class="col-md-10 p-2">
             <!-- 1  Champ == type  -->
-            <div v-if="field.field == 'Type'" class="col-md-12 p-0 pl-1">
-              <select class="col-md-12 border-none">
+            <div v-if="field.field === 'Type'" class="col-md-12 p-0">
+              <select class="col-md-12 border-none p-0">
                 <option value="currentItem.type">{{ currentItem.Type }}</option>
                 <option
                   v-for="type in projectPreferencesTypes"
@@ -75,18 +64,14 @@
             </div>
 
             <!-- 1  Champ date -->
-            <p
-              v-else-if="field.field == 'DateEarliest'"
+            <div
+              v-else-if="
+                field.field === 'DateEarliest' || field.field === 'DateLatest'
+              "
               class="col-md-12 p-0 pl-1 border-none"
             >
-              {{
-                Date(
-                  trenchtoUpdate.filter((x) => {
-                    return x.IdentifierUUID == currentItem.IdentifierUUID;
-                  })[0][field.field]
-                )
-              }}
-            </p>
+              {{ format_date(currentItem.DateEarliest) }}
+            </div>
             <!-- 1  Champ != type NOR date  -->
 
             <div v-else>
@@ -95,10 +80,10 @@
                 <!-- 3 valuelist n'est pas vide  -->
                 <div
                   v-if="fieldType(field.field).valuelist.length > 0"
-                  class="col-md-12 p-0 pl-1"
+                  class="col-md-12 p-0"
                 >
                   <!-- 4 if multivalue  -->
-                  <select class="col-md-12 p-0 pl-1 border-none">
+                  <select class="col-md-12 p-0 border-none">
                     <option value="currentItem.type">
                       {{ currentItem[field.field] }}
                     </option>
@@ -149,7 +134,7 @@
             </div>
           </div>
           <!-- 0 le champ n'est pas dans pref.fields -->
-          <div v-else class="col-md-9 p-0 pl-1">
+          <div v-else class="col-md-10 p-0 pl-1">
             Not listed as field, will be displayed in a further component
           </div>
         </div>
@@ -162,6 +147,8 @@
 import { apiUpdateTrenchItem } from "@/services/ApiClient";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
+import { useAppStore } from "@/stores/app";
+import moment from "moment";
 
 export default {
   name: "TheItem",
@@ -173,7 +160,6 @@ export default {
   },
   data() {
     return {
-      temp: ["papi", "prout", "truc"],
       field: "Material",
     };
   },
@@ -182,16 +168,10 @@ export default {
       "projectPreferencesTypes",
       "projectPreferencesFields",
       "projectPreferencesBase64",
+      "projectPreferencesFieldsWithTranslation",
       "selectedType",
     ]),
-    AAA() {
-      // attention fields ne liste pas tous les champs
-      return this.projectPreferencesFields.filter((x) => x.field == "Type");
-    },
-
-    AAAA() {
-      return Object.hasOwn(this.AAA, "valuelist");
-    },
+    ...mapState(useAppStore, ["lang"]),
 
     valuelist() {
       return this.projectPreferencesFields[33].valuelist;
@@ -232,6 +212,12 @@ export default {
     },
   },
   methods: {
+    format_date(value) {
+      if (value) {
+        let date = moment(value);
+        return date.format("L");
+      }
+    },
     fieldExist(field) {
       // attention comme fields ne liste pas tous les champs on verifie si il existe
       return this.projectPreferencesFields.filter((x) => x.field == field)
@@ -243,9 +229,6 @@ export default {
       return this.projectPreferencesFields.filter((x) => x.field == field)[0];
     },
 
-    setUserPreferences() {
-      // alert("to use for user preferences settings")
-    },
     pushSurvey() {
       const head = JSON.parse(sessionStorage.checkedTrenchesVersions)[
         this.selectedTrench
@@ -265,12 +248,12 @@ export default {
 <style scoped>
 .TheItemwrapper {
   position: absolute;
-  top: -5%;
+  top: -5px;
   left: -10%;
   width: 100%;
   height: auto;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 9999;
+  background: rgb(255, 255, 255);
+  z-index: 1024;
 }
 
 .TheItem {

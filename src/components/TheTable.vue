@@ -180,7 +180,7 @@ export default defineComponent({
 
 #hideTheItem {
   /* color: white; */
-  z-index: 999999999;
+  z-index: 1023;
   height: 20px;
   width: 12px;
   position: absolute;
@@ -194,7 +194,7 @@ export default defineComponent({
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
-  z-index: 9999;
+  z-index: 1022;
 }
 .TheItemframe:hover {
   background: rgba(0, 0, 0, 0.5);
