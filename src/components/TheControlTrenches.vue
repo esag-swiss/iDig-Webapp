@@ -37,14 +37,26 @@
       </div>
     </ul>
 
-    <!-- Check All -->
-    <div>
-      <input
-        :checked="areAllChecked"
-        type="checkbox"
-        @click="toggleCheckAll()"
-      />
-      <label class="px-1 m-0 text-bold" for="checkbox"> Check All </label>
+    <!-- Check All/None -->
+    <div class="q-gutter-sm">
+      <q-btn
+        align="left"
+        padding="xs"
+        color="secondary"
+        :disabled="isNoneChecked"
+        label="None"
+        @click="uncheckAll"
+        ><q-tooltip class="bg-accent">Uncheck all trenches</q-tooltip></q-btn
+      >
+      <q-btn
+        align="left"
+        padding="xs"
+        color="secondary"
+        :disabled="isAllChecked"
+        label="All"
+        @click="checkAll"
+        ><q-tooltip class="bg-accent">Check all trenches</q-tooltip></q-btn
+      >
     </div>
   </div>
 </template>
@@ -68,10 +80,13 @@ export default {
         .sort()
         .reverse();
     },
-    areAllChecked() {
+    isAllChecked() {
       return (
         this.checkedTrenchesNames.length === this.projectTrenchesNames.length
       );
+    },
+    isNoneChecked() {
+      return this.checkedTrenchesNames.length === 0;
     },
   },
   watch: {
@@ -92,13 +107,11 @@ export default {
       "setCheckedTrenchesNames",
       "updateCheckedTrenchesData",
     ]),
-    toggleCheckAll: function () {
-      // When the user click on check all
-      if (this.areAllChecked) {
-        this.setCheckedTrenchesNames([]);
-      } else {
-        this.setCheckedTrenchesNames([...this.projectTrenchesNames]);
-      }
+    checkAll() {
+      this.setCheckedTrenchesNames([...this.projectTrenchesNames]);
+    },
+    uncheckAll() {
+      this.setCheckedTrenchesNames([]);
     },
   },
 };

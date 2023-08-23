@@ -30,7 +30,7 @@
     <h3 title="display only fields for the selected type">Champs</h3>
     <!-- liste les groupes pour le type selectionné -->
     <ul
-      v-for="(group, index) in groupOfFieldsAccordingToType"
+      v-for="(group, index) in groupsOfFieldsAccordingToType"
       :key="group"
       class="list-group"
     >
@@ -82,7 +82,7 @@ export default {
       "selectedType",
     ]),
     // liste les groupes pour l'accordéon des champs en fonction du Type
-    groupOfFieldsAccordingToType() {
+    groupsOfFieldsAccordingToType() {
       return this.projectPreferencesTypes.filter((x) => {
         return x.type.includes(this.selectedType);
       })[0].groups;
