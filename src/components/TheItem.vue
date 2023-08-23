@@ -63,7 +63,7 @@
               </select>
             </div>
 
-            <!-- 1  Champ date -->
+            <!-- 1  Champ == date -->
             <div
               v-else-if="
                 field.field === 'DateEarliest' || field.field === 'DateLatest'
@@ -148,7 +148,7 @@ import { apiUpdateTrenchItem } from "@/services/ApiClient";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
-import moment from "moment";
+import dayjs from "dayjs";
 
 export default {
   name: "TheItem",
@@ -214,8 +214,7 @@ export default {
   methods: {
     format_date(value) {
       if (value) {
-        let date = moment(value);
-        return date.format("L");
+        return dayjs(value).format("DD/MM/YYYY");
       }
     },
     fieldExist(field) {
