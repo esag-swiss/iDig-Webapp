@@ -26,7 +26,7 @@ export default {
 <style scoped>
 .spinner-TheItem {
   background-color: rgb(0, 0, 0, 0.85);
-  z-index: 10000;
+  z-index: 3000;
 }
 
 .spinner-border {

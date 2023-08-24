@@ -1,12 +1,18 @@
 import axios from "axios";
 import { useAppStore } from "@/stores/app";
+import { Notify } from "quasar";
 
 function displayError(error) {
-  let alertMessage =
-    `message: ${error?.message}\r\r` +
-    `response.data: ${error?.response?.data}\r\r` +
-    `response.statusText: ${error?.response?.statusText}\r`;
-  alert(alertMessage);
+  let message =
+    `message: ${error?.message}<br/>` +
+    `response.data: ${error?.response?.data}<br/>` +
+    `response.statusText: ${error?.response?.statusText}<br/>`;
+
+  Notify.create({
+    type: "negative",
+    message,
+    html: true,
+  });
 }
 
 export function apiFetchProjectTrenchesNames() {
@@ -111,6 +117,12 @@ export function apiUpdateTrenchItem(
       projectPreferencesBase64,
     }),
   })
+    .then(() => {
+      Notify.create({
+        type: "positive",
+        message: `The item was saved`,
+      });
+    })
     .catch((error) => {
       displayError(error);
       throw error;
