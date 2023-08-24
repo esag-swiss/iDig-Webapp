@@ -10,9 +10,16 @@ function displayError(error) {
 }
 
 export function apiFetchProjectTrenchesNames() {
-  const { server, project, username, password, setIsLoading } = useAppStore();
-  setIsLoading(true);
+  const {
+    server,
+    project,
+    username,
+    password,
+    incrementLoadingCount,
+    decrementLoadingCount,
+  } = useAppStore();
 
+  incrementLoadingCount();
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "get",
@@ -23,13 +30,20 @@ export function apiFetchProjectTrenchesNames() {
       displayError(error);
       throw error;
     })
-    .finally(() => setIsLoading(false));
+    .finally(() => decrementLoadingCount());
 }
 
 export function apiFetchPreferences(trench) {
-  const { server, project, username, password, setIsLoading } = useAppStore();
-  setIsLoading(true);
+  const {
+    server,
+    project,
+    username,
+    password,
+    incrementLoadingCount,
+    decrementLoadingCount,
+  } = useAppStore();
 
+  incrementLoadingCount();
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "post",
@@ -41,13 +55,20 @@ export function apiFetchPreferences(trench) {
       displayError(error);
       throw error;
     })
-    .finally(() => setIsLoading(false));
+    .finally(() => decrementLoadingCount());
 }
 
 export function apiFetchSurvey(trench) {
-  const { server, project, username, password, setIsLoading } = useAppStore();
-  setIsLoading(true);
+  const {
+    server,
+    project,
+    username,
+    password,
+    incrementLoadingCount,
+    decrementLoadingCount,
+  } = useAppStore();
 
+  incrementLoadingCount();
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "get",
@@ -59,7 +80,7 @@ export function apiFetchSurvey(trench) {
       displayError(error);
       throw error;
     })
-    .finally(() => setIsLoading(false));
+    .finally(() => decrementLoadingCount());
 }
 
 export function apiUpdateTrenchItem(
@@ -68,9 +89,16 @@ export function apiUpdateTrenchItem(
   surveys,
   projectPreferencesBase64
 ) {
-  const { server, project, username, password, setIsLoading } = useAppStore();
-  setIsLoading(true);
+  const {
+    server,
+    project,
+    username,
+    password,
+    incrementLoadingCount,
+    decrementLoadingCount,
+  } = useAppStore();
 
+  incrementLoadingCount();
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "post",
@@ -87,5 +115,5 @@ export function apiUpdateTrenchItem(
       displayError(error);
       throw error;
     })
-    .finally(() => setIsLoading(false));
+    .finally(() => decrementLoadingCount());
 }

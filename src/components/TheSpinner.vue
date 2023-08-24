@@ -1,5 +1,8 @@
 <template>
-  <div v-if="isLoading" class="spinner-TheItem vh-100 vw-100 position-absolute">
+  <div
+    v-if="loadingCount > 0"
+    class="spinner-TheItem vh-100 vw-100 position-absolute"
+  >
     <div class="d-flex justify-content-center align-items-center vh-100">
       <div class="spinner-border text-light" role="status">
         <span class="sr-only">Loading...</span>
@@ -15,7 +18,7 @@ import { useAppStore } from "@/stores/app";
 export default {
   name: "TheSpinner",
   computed: {
-    ...mapState(useAppStore, ["isLoading"]),
+    ...mapState(useAppStore, ["loadingCount"]),
   },
 };
 </script>

@@ -142,8 +142,8 @@ export const useDataStore = defineStore("data", {
       });
     },
 
-    updateCheckedTrenchesData: function () {
-      this.checkedTrenchesNames.forEach((trenchName) => {
+    addCheckedTrenchesData(trenchList) {
+      trenchList.forEach((trenchName) => {
         apiFetchSurvey(trenchName)
           .then((response) => {
             // prepare data to store in session in case of PUSH
@@ -166,6 +166,12 @@ export const useDataStore = defineStore("data", {
               (name) => name !== trenchName
             );
           });
+      });
+    },
+
+    removeCheckedTrenchesData(trenchList) {
+      trenchList.forEach((trenchName) => {
+        delete this.checkedTrenchesData[trenchName];
       });
     },
 
