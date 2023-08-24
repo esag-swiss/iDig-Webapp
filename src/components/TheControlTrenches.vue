@@ -90,22 +90,30 @@ export default {
     },
   },
   watch: {
-    checkedTrenchesNames(newValue, oldValue) {
-      // console.log("old", oldValue);
-      // console.log("new", newValue);
-      // console.log("======");
-
-      // Solution temporaire brutale. Il faudra comparer les longueurs de newValue et oldValue,
-      // et ne faire que le necessaire
-      this.setCheckedTrenchesData({});
-      this.updateCheckedTrenchesData();
+    checkedTrenchesNames(newTrenchList, oldTrenchList) {
+      if (newTrenchList.length > oldTrenchList.length) {
+        const addedTrenches = newTrenchList.filter(
+          (trenchName) => !oldTrenchList.includes(trenchName)
+        );
+        this.addCheckedTrenchesData(addedTrenches);
+      } else if (newTrenchList.length < oldTrenchList.length) {
+        const removedTrenches = oldTrenchList.filter(
+          (trenchName) => !newTrenchList.includes(trenchName)
+        );
+        this.removeCheckedTrenchesData(removedTrenches);
+      } else {
+        console.error(
+          "watch for checkedTrenchesNames was call with new and old value having same length"
+        );
+      }
     },
   },
   methods: {
     ...mapActions(useDataStore, [
       "setCheckedTrenchesData",
       "setCheckedTrenchesNames",
-      "updateCheckedTrenchesData",
+      "addCheckedTrenchesData",
+      "removeCheckedTrenchesData",
     ]),
     checkAll() {
       this.setCheckedTrenchesNames([...this.projectTrenchesNames]);

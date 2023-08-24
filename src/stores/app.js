@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
-    isLoading: false,
+    loadingCount: 0,
     lang: "fr",
     isLoaded: false,
     // Load local storage values for these elements, or empty string if not exist :
@@ -13,9 +13,13 @@ export const useAppStore = defineStore("app", {
   }),
 
   actions: {
-    setIsLoading(value) {
-      this.isLoading = value;
+    incrementLoadingCount() {
+      this.loadingCount += 1;
     },
+    decrementLoadingCount() {
+      this.loadingCount -= 1;
+    },
+
     setUsername(value) {
       this.username = value;
     },
