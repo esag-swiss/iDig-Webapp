@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import { Quasar } from "quasar";
+import { Quasar, Notify } from "quasar";
 import { createPinia } from "pinia";
 
 // Import icon libraries
@@ -24,6 +24,8 @@ const myApp = createApp(App);
 
 myApp.use(pinia);
 myApp.use(Quasar, {
-  plugins: {}, // import Quasar plugins and add here
+  plugins: {
+    Notify,
+  },
 });
 myApp.mount("#app");
