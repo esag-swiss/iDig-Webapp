@@ -12,6 +12,14 @@ proj4.defs([
   ],
   ["EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs"],
   ["WGS84", "+proj=longlat +datum=WGS84 +no_defs"],
+  [
+    "Agora",
+    "+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9996 +x_0=24900 +y_0=-4202575 +datum=GGRS87 +units=m +no_defs ",
+  ],
+  [
+    "AgoraQGIS",
+    "+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9996 +x_0=24757 +y_0=-4202880 +datum=GGRS87 +units=m +no_defs ",
+  ],
 ]);
 
 export function convertToEPSG4326(xyArray, crs) {
