@@ -253,11 +253,7 @@ export default {
       const surveys = this.trenchtoUpdate;
       const preferences = this.projectPreferencesBase64;
 
-      apiUpdateTrenchItem(this.selectedTrench, head, surveys, preferences)
-        .then(() => {
-          alert("The item was saved");
-        })
-        .catch(() => {});
+      apiUpdateTrenchItem(this.selectedTrench, head, surveys, preferences);
     },
   },
 };
@@ -270,7 +266,7 @@ export default {
   width: 100%;
   height: auto;
   background: rgba(0, 0, 0, 0.7);
-  z-index: 9999;
+  z-index: 1024;
 }
 
 .TheItem {

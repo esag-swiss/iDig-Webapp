@@ -89,6 +89,12 @@ export function apiUpdateTrenchItem(
       projectPreferencesBase64,
     }),
   })
+    .then(() => {
+      Notify.create({
+        type: "positive",
+        message: `The item was saved`,
+      });
+    })
     .catch((error) => {
       displayError(error);
       throw error;
