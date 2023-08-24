@@ -26,8 +26,9 @@ export const useDataStore = defineStore("data", {
 
   getters: {
     projectPreferencesFieldsWithTranslation(state) {
+      const { lang } = useAppStore();
       let translatedLabels = state.projectPreferencesFields.map((field) => {
-        return field.labels?.["fr"] ?? field.field;
+        return field.labels?.[lang] ?? field.label ?? field.field;
       });
 
       let langKeys = {};
@@ -133,6 +134,8 @@ export const useDataStore = defineStore("data", {
 
         if (preferences.crs) {
           this.setProjectPreferencesCrs(preferences.crs);
+        } else if (preferences.wgs84cpts) {
+          this.setProjectPreferencesCrs("Agora");
         }
         this.setProjectPreferencesTypes(preferences.types);
         this.setProjectPreferencesFields(preferences.fields);
@@ -142,8 +145,8 @@ export const useDataStore = defineStore("data", {
       });
     },
 
-    updateCheckedTrenchesData: function () {
-      this.checkedTrenchesNames.forEach((trenchName) => {
+    addCheckedTrenchesData(trenchList) {
+      trenchList.forEach((trenchName) => {
         apiFetchSurvey(trenchName)
           .then((response) => {
             // prepare data to store in session in case of PUSH
@@ -166,6 +169,12 @@ export const useDataStore = defineStore("data", {
               (name) => name !== trenchName
             );
           });
+      });
+    },
+
+    removeCheckedTrenchesData(trenchList) {
+      trenchList.forEach((trenchName) => {
+        delete this.checkedTrenchesData[trenchName];
       });
     },
 
