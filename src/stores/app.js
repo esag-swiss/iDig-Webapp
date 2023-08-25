@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 export const useAppStore = defineStore("app", {
   state: () => ({
     loadingCount: 0,
-    lang: "fr",
+    lang: localStorage.lang ?? "fr",
     isLoaded: false,
     // Load local storage values for these elements, or empty string if not exist :
     username: localStorage.username ?? "",

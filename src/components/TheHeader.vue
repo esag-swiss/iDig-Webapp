@@ -34,10 +34,9 @@
           @input="(event) => setPassword(event.target.value)"
         />
         <select
-          :value="'fr'"
-          type="selectedType"
+          :value="lang"
           class="m-2 text-light input-header-small"
-          @change="(event) => setLang(event.target.value)"
+          @change="(event) => changeLang(event.target.value)"
         >
           <option>fr</option>
           <option>en</option>
@@ -59,7 +58,10 @@
   </nav>
 </template>
 <script>
-import { storePersistentUserSettings } from "@/services/PersistentUserSettings";
+import {
+  storePersistentUserConnection,
+  storePersistentUserLang,
+} from "@/services/PersistentUserSettings";
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
@@ -72,6 +74,7 @@ export default {
       "username",
       "password",
       "isLoaded",
+      "lang",
     ]),
     ...mapState(useDataStore, ["firstTrench"]),
   },
@@ -94,6 +97,10 @@ export default {
       "fetchProjectTrenchesNames",
       "fetchProjectTrenchesNamesFromFile",
     ]),
+    changeLang(lang) {
+      this.setLang(lang);
+      storePersistentUserLang();
+    },
     async connect() {
       this.setServer(this.cleanServerUserEntry(this.server));
 
@@ -104,7 +111,7 @@ export default {
         try {
           await this.fetchProjectTrenchesNames();
           await this.fetchPreferences(this.firstTrench);
-          storePersistentUserSettings();
+          storePersistentUserConnection();
         } catch (e) {
           /* empty */
         }
@@ -114,7 +121,7 @@ export default {
         try {
           this.fetchProjectTrenchesNamesFromFile();
           await this.fetchPreferences(this.firstTrench);
-          storePersistentUserSettings();
+          storePersistentUserConnection();
         } catch (e) {
           /* empty */
         }
