@@ -62,7 +62,7 @@
   </nav>
 </template>
 <script>
-import { storePersistentUserConnection } from "@/services/PersistentUserSettings";
+import { lsStoreConnection } from "@/services/PersistentUserSettings";
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
@@ -114,7 +114,7 @@ export default {
         try {
           await this.fetchProjectTrenchesNames();
           await this.fetchPreferences(this.firstTrench);
-          storePersistentUserConnection();
+          lsStoreConnection();
         } catch (e) {
           /* empty */
         }
@@ -124,7 +124,7 @@ export default {
         try {
           this.fetchProjectTrenchesNamesFromFile();
           await this.fetchPreferences(this.firstTrench);
-          storePersistentUserConnection();
+          lsStoreConnection();
         } catch (e) {
           /* empty */
         }
