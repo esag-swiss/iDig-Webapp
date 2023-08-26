@@ -27,6 +27,10 @@ export const useDataStore = defineStore("data", {
   getters: {
     projectPreferencesFieldsWithTranslation(state) {
       const { lang } = useAppStore();
+      if (!state.projectPreferencesFields) {
+        return {};
+      }
+
       let translatedLabels = state.projectPreferencesFields.map((field) => {
         return field.labels?.[lang] ?? field.label ?? field.field;
       });
