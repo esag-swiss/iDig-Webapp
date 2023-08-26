@@ -6,7 +6,21 @@
         <!-- Title -->
         <div class="navbar-brand" href="#">iDig webapp</div>
       </ul>
-      <form class="form-inline my-0">
+
+      <div v-if="isLoaded">
+        <span class="text-white">
+          {{ project }} - {{ username }}@{{ server }}
+        </span>
+        <button
+          type="button"
+          class="btn btn-outline-secondary m-2 px-1 py-0"
+          @click="resetStores"
+        >
+          déconnexion
+        </button>
+      </div>
+
+      <form v-else class="form-inline my-0">
         <div class="navbar-text text-light p-2">server:</div>
         <input
           :value="server"
@@ -47,8 +61,7 @@
 
         <button
           type="button"
-          class="btn btn-outline-secondary m-2 px-1 py-0"
-          :class="{ 'is-loaded': isLoaded }"
+          class="connexion btn btn-outline-secondary m-2 px-1 py-0"
           @click="connect()"
         >
           connexion
@@ -97,6 +110,12 @@ export default {
       "fetchProjectTrenchesNames",
       "fetchProjectTrenchesNamesFromFile",
     ]),
+    resetStores() {
+      const dataStore = useDataStore();
+      dataStore.$reset();
+      const appStore = useAppStore();
+      appStore.$reset();
+    },
     changeLang(lang) {
       this.setLang(lang);
       storePersistentUserLang();
@@ -136,7 +155,7 @@ export default {
 };
 </script>
 <style>
-.is-loaded {
+.connexion {
   color: #fff;
   background-color: #26a69a;
   border-color: #26a69a;
