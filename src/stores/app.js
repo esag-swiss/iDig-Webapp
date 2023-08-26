@@ -5,7 +5,7 @@ import {
   lsLoadProject,
   lsLoadServer,
   lsLoadUsername,
-} from "@/services/PersistentUserSettings";
+} from "@/services/localStorageManager";
 
 export const useAppStore = defineStore("app", {
   state: () => ({

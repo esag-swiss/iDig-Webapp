@@ -62,7 +62,7 @@ import { useDataStore } from "@/stores/data";
 import {
   lsLoadCheckedFieldNames,
   lsStoreCheckedFieldNames,
-} from "@/services/PersistentUserSettings";
+} from "@/services/localStorageManager";
 
 export default {
   data() {

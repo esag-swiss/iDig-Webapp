@@ -62,7 +62,7 @@
   </nav>
 </template>
 <script>
-import { lsStoreConnection } from "@/services/PersistentUserSettings";
+import { lsStoreConnection } from "@/services/localStorageManager";
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
