@@ -14,14 +14,11 @@ export const useDataStore = defineStore("data", {
     projectPreferencesFields: null,
     projectPreferencesBase64: null,
     projectTrenchesNames: null,
-    selectedType: "Artifact",
     checkedTrenchesNames: [],
     checkedTrenchesData: {},
     searchText: "",
-    tableColumns: [
-      // columns by default before any selection /!\ label are needed to display headers in TheTableLite
-      { field: "IdentifierUUID", sortable: true, label: "UUID", isKey: true },
-    ],
+    selectedType: "",
+    checkedFieldNames: [],
   }),
 
   getters: {
@@ -144,6 +141,7 @@ export const useDataStore = defineStore("data", {
         }
         this.setProjectPreferencesTypes(preferences.types);
         this.setProjectPreferencesFields(preferences.fields);
+        this.setSelectedType(preferences.types?.[0]?.type ?? ""); // Default to the first type
 
         const { setIsLoaded } = useAppStore();
         setIsLoaded(true);
@@ -204,6 +202,10 @@ export const useDataStore = defineStore("data", {
       this.selectedType = selectedType;
     },
 
+    setCheckedFieldNames(checkedFieldNames) {
+      this.checkedFieldNames = checkedFieldNames;
+    },
+
     setProjectTrenchesNames(projectTrenchesNames) {
       this.projectTrenchesNames = projectTrenchesNames;
     },
@@ -214,10 +216,6 @@ export const useDataStore = defineStore("data", {
 
     setCheckedTrenchesNames(checkedTrenchesNames) {
       this.checkedTrenchesNames = checkedTrenchesNames;
-    },
-
-    setTableColumns(tableColumns) {
-      this.tableColumns = tableColumns;
     },
 
     setSearchText(searchText) {

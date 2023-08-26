@@ -1,4 +1,5 @@
 <template>
+  <!-- TYPES -->
   <div class="p-1 m-1 border-0">
     <h3
       title="filter table data and show only fields available for the selected type"
@@ -10,12 +11,7 @@
   <select
     :value="selectedType"
     class="form-control form-control-sm"
-    @change="
-      (event) => {
-        updateCheckedFields(event.target.value);
-        setSelectedType(event.target.value);
-      }
-    "
+    @change="(event) => setSelectedType(event.target.value)"
   >
     <option
       v-for="type in projectPreferencesTypes"
@@ -26,9 +22,10 @@
     </option>
   </select>
 
+  <!-- FIELDS -->
   <div class="p-1 m-1 border-0">
     <h3 title="display only fields for the selected type">Champs</h3>
-    <!-- liste les groupes pour le type selectionné -->
+    <!-- liste les groupes pour le type sélectionné -->
     <ul
       v-for="(group, index) in groupsOfFieldsAccordingToType"
       :key="group"
@@ -45,11 +42,9 @@
       <div v-if="isDisplayedArray[index]">
         <div v-for="(field, i) in group.fields" :key="i" class="m-0">
           <input
-            v-model="checkedFields"
+            v-model="checkedFieldNames"
+            :value="field.field"
             type="checkbox"
-            :value="field"
-            checked
-            @change="setColumns()"
           />
           <label class="pl-1 m-0" for="checkbox">{{
             projectPreferencesFieldsWithTranslation[field.field] ?? field.field
@@ -61,14 +56,17 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "pinia";
+import { mapActions, mapState, mapWritableState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
+import {
+  lsLoadCheckedFieldNames,
+  lsStoreCheckedFieldNames,
+} from "@/services/PersistentUserSettings";
 
 export default {
   data() {
     return {
-      checkedFields: [],
       defaultColumns: {},
       isDisplayedArray: [true],
     };
@@ -80,7 +78,9 @@ export default {
       "projectPreferencesFields",
       "projectPreferencesFieldsWithTranslation",
       "selectedType",
+      "setCheckedFieldNames",
     ]),
+    ...mapWritableState(useDataStore, ["checkedFieldNames"]), // mapWritableState for v-model only
     // liste les groupes pour l'accordéon des champs en fonction du Type
     groupsOfFieldsAccordingToType() {
       return this.projectPreferencesTypes.filter((x) => {
@@ -88,38 +88,19 @@ export default {
       })[0].groups;
     },
   },
+  watch: {
+    checkedFieldNames() {
+      lsStoreCheckedFieldNames();
+    },
+    selectedType() {
+      lsLoadCheckedFieldNames();
+    },
+  },
+  mounted() {
+    lsLoadCheckedFieldNames();
+  },
   methods: {
-    ...mapActions(useDataStore, ["setSelectedType", "setTableColumns"]),
-    updateCheckedFields(type) {
-      if (localStorage.defaultTableColumns) {
-        if (JSON.parse(localStorage.defaultTableColumns)[type]) {
-          this.checkedFields = JSON.parse(localStorage.defaultTableColumns)[
-            type
-          ];
-        } else {
-          this.checkedFields = [];
-        }
-      }
-      this.setTableColumns(this.checkedFields);
-    },
-
-    setColumns() {
-      const addSortable = this.checkedFields.map((v) =>
-        Object.assign(v, {
-          label: this.projectPreferencesFieldsWithTranslation[v.field],
-          sortable: true,
-          checked: true,
-        })
-      );
-
-      this.setTableColumns(addSortable);
-
-      this.defaultColumns[this.selectedType] = addSortable;
-      localStorage.setItem(
-        "defaultTableColumns",
-        JSON.stringify(this.defaultColumns)
-      );
-    },
+    ...mapActions(useDataStore, ["setSelectedType"]),
   },
 };
 </script>

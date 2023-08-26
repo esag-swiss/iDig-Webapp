@@ -18,24 +18,46 @@
 </template>
 
 <script>
-import { defineComponent, reactive, ref, computed, watch } from "vue";
+import {
+  defineComponent,
+  reactive,
+  ref,
+  computed,
+  watch,
+  onMounted,
+} from "vue";
 import TheTableLite from "@/components/TheTableLite.vue";
 import TheItem from "@/components/TheItem.vue";
 import { useDataStore } from "@/stores/data";
+import { useAppStore } from "@/stores/app";
 
 export default defineComponent({
   name: "TheTable",
   components: { TheTableLite, TheItem },
   setup() {
-    // make pinia's tableColumns and checkedTrenchesItemsSelectedTypeAndSearched reactive inside the table object :
+    // make table columns and rows reactive inside the table object, with 2 watches :
     const dataStore = useDataStore();
-    const tableColumns = ref(dataStore.tableColumns);
+    const appStore = useAppStore();
+
+    const updateTableColumns = () => {
+      table.columns = dataStore.checkedFieldNames.map((fieldName) => ({
+        field: fieldName,
+        label: dataStore.projectPreferencesFieldsWithTranslation[fieldName],
+        sortable: true,
+        checked: true,
+      }));
+    };
     watch(
-      () => dataStore.tableColumns,
-      (newColumns) => {
-        table.columns = newColumns;
-      }
+      [
+        () => dataStore.checkedFieldNames,
+        () => dataStore.checkedTrenchesNames,
+        () => dataStore.selectedType,
+        () => appStore.lang,
+      ],
+      updateTableColumns
     );
+    onMounted(updateTableColumns);
+
     const checkedTrenchesItemsSelectedTypeAndSearched = ref(
       dataStore.checkedTrenchesItemsSelectedTypeAndSearched
     );
@@ -48,7 +70,7 @@ export default defineComponent({
 
     // Table config
     const table = reactive({
-      columns: tableColumns,
+      columns: [],
       rows: checkedTrenchesItemsSelectedTypeAndSearched,
       messages: {
         pagingInfo: "{0}-{1} / {2}",
