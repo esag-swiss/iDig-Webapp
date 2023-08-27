@@ -21,7 +21,6 @@
 import { defineComponent, reactive, ref, computed, watch } from "vue";
 import TheTableLite from "@/components/TheTableLite.vue";
 import TheItem from "@/components/TheItem.vue";
-import axios from "axios";
 import { useDataStore } from "@/stores/data";
 
 export default defineComponent({
@@ -92,44 +91,10 @@ export default defineComponent({
       currentItem.value = rowsKey;
     };
 
-    // Work in progress
-    // fetch image from server when image button click
-    const getImage = () => {
-      axios({
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        method: "get",
-        url: "http://localhost:9000/idig/Agora/ΒΓ 2013/attachments/ΒΓ (407,291,447,318).png?checksum=2022-05-12T12:30:42Z",
-        responseType: "blob",
-        auth: {
-          username: "idig",
-          password: "idig",
-        },
-        data: {},
-      })
-        .then((response) => {
-          let imageNode = document.getElementById("image");
-          let blob = new Blob([response.data], {
-            type: response.headers["content-type"],
-          });
-          let imgUrl = URL.createObjectURL(blob);
-          imageNode.src = imgUrl;
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          alert(
-            error +
-              "something goes wrong! Maybe image url broken, try another img url."
-          );
-        });
-    };
-
     return {
       table,
       rowClicked,
       tableLoadingFinish,
-      getImage,
       currentItem,
     };
   },
@@ -139,7 +104,7 @@ export default defineComponent({
   methods: {
     clearTheItem() {
       this.currentItem = false;
-      this.$parent.reload();
+      // this.$parent.reload();
     },
   },
 });
