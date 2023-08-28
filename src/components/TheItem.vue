@@ -20,19 +20,22 @@
       </div>
 
       <!--Formulaire-->
+      <!-- Display all fields present in item and listed in Fields  -->
 
       <ul
-        v-for="group in groupOfFieldsAccordingToType"
+        v-for="group in groupsOfFieldsAccordingToItem"
         :key="group"
         class="list-group"
       >
         <!-- Groups label -->
-        <li class="list-group-item text-uppercase accordion p-2">
+        <li class="list-group-item text-uppercase accordion p-2 border-bottom">
           {{ group.labels ? group.labels[lang] : group.group }}
         </li>
 
         <div
-          v-for="field in group.fields"
+          v-for="field in group.fields.filter((item) =>
+            fieldsOfCurrentItem.includes(item.field)
+          )"
           :key="field"
           class="d-flex align-items-start border-bottom"
         >
@@ -48,30 +51,67 @@
           <!-- Fields value : many cases  -->
 
           <!-- 0  Champ existe dans fields  -->
+
           <div v-if="fieldExist(field.field) != 0" class="col-md-10 p-2">
-            <!-- 1  Champ == type  -->
+            <!-- 1  Champ == TYPE  -->
             <div v-if="field.field === 'Type'" class="col-md-12 p-0">
-              <select class="col-md-12 border-none p-0">
-                <option value="currentItem.type">{{ currentItem.Type }}</option>
+              <select
+                v-model="
+                  trenchtoUpdate.filter((x) => {
+                    return x.IdentifierUUID == currentItem.IdentifierUUID;
+                  })[0][field.field]
+                "
+                class="col-md-12 border-none p-0"
+              >
                 <option
                   v-for="type in projectPreferencesTypes"
                   :key="type"
-                  :value="type.type"
+                  class=""
                 >
+                  <!-- TODO gérer les langues -->
                   {{ type.type }}
                 </option>
               </select>
             </div>
 
-            <!-- 1  Champ == date -->
+            <!-- 1  Champ == DATE -->
             <div
               v-else-if="
                 field.field === 'DateEarliest' || field.field === 'DateLatest'
               "
+              class="col-md-12 p-0 border-none"
+            >
+              {{ format_date(currentItem[field.field]) }}
+            </div>
+            <!-- 1  Champ == IMAGE -->
+            <div
+              v-else-if="field.field === 'RelationAttachments'"
               class="col-md-12 p-0 pl-1 border-none"
             >
-              {{ format_date(currentItem.DateEarliest) }}
+              <q-toggle
+                v-model="imageDisplayed"
+                label="Image"
+                @click="toggleImage(currentItem[field.field])"
+              />
+
+              <img id="image" src="" class="img-fluid" />
             </div>
+            <!-- 1  Champ == RightsSidelined -->
+            <div
+              v-else-if="field.field === 'RightsSidelined'"
+              class="col-md-12 p-0 pl-1 border-none"
+            >
+              <input
+                v-model="
+                  trenchtoUpdate.filter((x) => {
+                    return x.IdentifierUUID == currentItem.IdentifierUUID;
+                  })[0]['RightsSidelined']
+                "
+                type="text"
+                class="col-md-12 p-0 border-none"
+              />
+            </div>
+
             <!-- 1  Champ != type NOR date  -->
 
             <div v-else>
@@ -83,20 +123,28 @@
                   class="col-md-12 p-0"
                 >
                   <!-- 4 if multivalue  -->
-                  <select class="col-md-12 p-0 border-none">
-                    <option value="currentItem.type">
-                      {{ currentItem[field.field] }}
-                    </option>
 
-                    <option v-for="type in valuelist" :key="type" :value="type">
-                      {{ type }}
+                  <select
+                    v-model="
+                      trenchtoUpdate.filter((x) => {
+                        return x.IdentifierUUID == currentItem.IdentifierUUID;
+                      })[0][field.field]
+                    "
+                    class="col-md-12 border-none p-0"
+                  >
+                    <option
+                      v-for="value in fieldType(field.field).valuelist"
+                      :key="value"
+                      class=""
+                      :value="value"
+                    >
+                      {{ value }}
                     </option>
 
                     <option></option>
                   </select>
                 </div>
                 <!-- valuelist empty : exemple titre, doit se générer sur les exemples dans le même type -->
-
                 <!-- pour l'instant n'affiche que la value -->
 
                 <input
@@ -107,7 +155,7 @@
                     })[0][field.field]
                   "
                   type="text"
-                  class="col-md-12 p-0 pl-1 border-none"
+                  class="col-md-12 p-0 border-none"
                 />
               </div>
               <textarea
@@ -117,7 +165,7 @@
                     return x.IdentifierUUID == currentItem.IdentifierUUID;
                   })[0][field.field]
                 "
-                class="col-md-12 p-0 pl-1 border-none"
+                class="col-md-12 p-0 border-none"
               ></textarea>
 
               <!-- cas basique champ avec properties field et label -->
@@ -129,13 +177,30 @@
                   })[0][field.field]
                 "
                 type="text"
-                class="col-md-12 p-0 pl-1 border-none"
+                class="col-md-12 p-0 border-none"
               />
             </div>
           </div>
           <!-- 0 le champ n'est pas dans pref.fields -->
-          <div v-else class="col-md-10 p-0 pl-1">
-            Not listed as field, will be displayed in a further component
+          <div v-else>
+            <!-- 1 IMAGE -->
+            <div
+              v-if="field.field == 'RelationAttachments'"
+              class="col-md-12 p-2 border-none"
+            >
+              <div v-if="currentItem[field.field]">
+                <q-toggle
+                  v-model="imageDisplayed"
+                  label="Image"
+                  @click="toggleImage(currentItem[field.field])"
+                />
+                <img id="image" src="" class="img-fluid" />
+              </div>
+              <div v-else>No file attached</div>
+            </div>
+            <div v-else class="col-md-12 p-2 border-none">
+              Not listed as field, will be displayed in a further component
+            </div>
           </div>
         </div>
       </ul>
@@ -144,7 +209,7 @@
 </template>
 
 <script>
-import { apiUpdateTrenchItem } from "@/services/ApiClient";
+import { apiUpdateTrenchItem, apiFetchImage } from "@/services/ApiClient";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
@@ -161,6 +226,7 @@ export default {
   data() {
     return {
       field: "Material",
+      imageDisplayed: false,
     };
   },
   computed: {
@@ -173,8 +239,9 @@ export default {
     ]),
     ...mapState(useAppStore, ["lang"]),
 
-    valuelist() {
-      return this.projectPreferencesFields[33].valuelist;
+    //  array of fields presents in current item
+    fieldsOfCurrentItem() {
+      return Object.getOwnPropertyNames(this.currentItem);
     },
 
     selectedTrench() {
@@ -210,6 +277,23 @@ export default {
         return this.projectPreferencesTypes;
       }
     },
+    groupsOfFieldsAccordingToItem() {
+      if (this.projectPreferencesTypes) {
+        let groups = this.projectPreferencesTypes.filter((x) => {
+          return x.type.includes(this.selectedType);
+        })[0].groups;
+
+        groups = groups.filter((obj) =>
+          obj.fields.some((field) =>
+            this.fieldsOfCurrentItem.includes(field.field)
+          )
+        );
+
+        return groups;
+      } else {
+        return this.projectPreferencesTypes;
+      }
+    },
   },
   methods: {
     format_date(value) {
@@ -236,6 +320,15 @@ export default {
       const preferences = this.projectPreferencesBase64;
 
       apiUpdateTrenchItem(this.selectedTrench, head, surveys, preferences);
+    },
+
+    toggleImage(img) {
+      if (this.imageDisplayed) {
+        apiFetchImage(img, this.selectedTrench);
+      } else {
+        let imageNode = document.getElementById("image");
+        imageNode.src = "";
+      }
     },
   },
 };

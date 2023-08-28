@@ -134,8 +134,9 @@ export const useDataStore = defineStore("data", {
 
         if (preferences.crs) {
           this.setProjectPreferencesCrs(preferences.crs);
-        } else if (preferences.wgs84cpts) {
-          this.setProjectPreferencesCrs("Agora");
+        } else if (preferences.project == "Agora") {
+          // Agora project doesn't have property CRS
+          this.setProjectPreferencesCrs(preferences.project);
         }
         this.setProjectPreferencesTypes(preferences.types);
         this.setProjectPreferencesFields(preferences.fields);

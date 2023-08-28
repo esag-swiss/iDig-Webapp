@@ -4,15 +4,21 @@
   "crs": "Amarynthos",
   "maxdigits": "6.3",
   "_comment": [
-    "For general instructions on iDig, cf. http://idig.tips",
-    "This json file defines the preferences used for all new documents. A Document consists of one or more Items, and an Item consists of one or more Fields. (In database terminology, an item corresponds to a table row, and a field corresponds to a table column. In technical terminology, a document is just an array of dictionaries.)",
-    "You can create document-specific preferences by copying this file and changing the file name so that it matches a document name (e.g. 'Preferences.json' -> 'NameOfDocument.json'). You can customize the item types and fields by editing the lists below. A field name can be any UTF-8 value although internally CamelCase field names are used.",
-    "The format iDig uses for data is based on Dublin Core. To paraphrase Winston Churchill: 'Dublin Core is the worst form of standard, except for all the others.' Therefore the standard 15 Dublin Core elements (see below) should only contain human readable text. All additional fields exported by iDig will begin with one of the Dublin Core prefixes (e.g. DateEarliest). All custom fields you create should begin with different prefixes.",
-    "Fields can have the following properties attached to them: label (the displayed field name), valuelist (either an fixed list of values or an empty list which dynamically creates a list based on what you type), multivalue (allows multiple values from a valuelist to be selected), multitype (creates dynamic values for valuelists from all types), multiline (used for fields with multiple lines like Description), number (the field value should be interpreted as a number), mandatory (a value should always exist in this field), regexp (a regular expression to check field validity).",
+    "The format iDig uses for data is based on Dublin Core. The standard 15 Dublin Core elements (see below) should only contain human readable text. All additional fields exported by iDig will begin with one of the Dublin Core prefixes (e.g. DateEarliest). All custom fields you create should begin with different prefixes.",
+    "------------",
+    "Fields can have the following properties attached to them:",
+    "label (the displayed field name)",
+    "valuelist (either an fixed list of values or an empty list which dynamically creates a list based on what you type)",
+    "multivalue (allows multiple values from a valuelist to be selected)",
+    "multitype (creates dynamic values for valuelists from all types)",
+    "multiline (used for fields with multiple lines like Description)",
+    "number (the field value should be interpreted as a number)",
+    "mandatory (a value should always exist in this field)",
+    "regexp (a regular expression to check field validity).",
     "------------",
     "The following basic fields should consist of human-readable text when used:",
-    "Coverage: The spatial or temporal topic of the resource, the spatial applicability of the resource, or the jurisdiction under which the resource is relevant.",
     "Type: The nature or genre of the resource. (This field is used for the item's type.)",
+    "Coverage: The spatial or temporal topic of the resource, the spatial applicability of the resource, or the jurisdiction under which the resource is relevant.",
     "Identifier: An unambiguous reference to the resource within a given context. (This field is used as the name of an item.)",
     "Title: A name given to the resource. (This field is shown in the item list.)",
     "Creator: An entity primarily responsible for making the resource.",
@@ -78,6 +84,29 @@
     "[RelationCuts:]",
     "[RelationIsCutBy:]"
   ],
+  "iDigfields": [
+    {
+      "field": "RightsSidelined",
+      "labels": {
+        "fr": "Invisible",
+        "en": "Sidelined"
+      },
+      "boolean": true
+    },
+    {
+      "field": "RightsStatus",
+      "labels": {
+        "fr": "Status",
+        "it": "Status",
+        "de": "Status",
+        "en": "Status",
+        "el": "Status"
+      },
+      "valuelist": ["All Done", "Attention"],
+      "multivalue": true
+    }
+  ],
+
   "types": [
     {
       "type": "Context",
