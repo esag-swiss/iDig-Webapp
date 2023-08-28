@@ -6,7 +6,22 @@
         <!-- Title -->
         <div class="navbar-brand" href="#">iDig webapp</div>
       </ul>
-      <form class="form-inline my-0">
+
+      <div v-if="isLoaded">
+        <span class="text-white">
+          {{ project }} - {{ username }}@{{ server }}
+        </span>
+        <TheHeaderLang />
+        <button
+          type="button"
+          class="btn btn-outline-secondary m-2 px-1 py-0"
+          @click="resetStores"
+        >
+          déconnexion
+        </button>
+      </div>
+
+      <form v-else class="form-inline my-0">
         <div class="navbar-text text-light p-2">server:</div>
         <input
           :value="server"
@@ -33,22 +48,11 @@
           placeholder="Password"
           @input="(event) => setPassword(event.target.value)"
         />
-        <select
-          :value="lang"
-          class="m-2 text-light input-header-small"
-          @change="(event) => changeLang(event.target.value)"
-        >
-          <option>fr</option>
-          <option>en</option>
-          <option>el</option>
-          <option>it</option>
-          <option>de</option>
-        </select>
+        <TheHeaderLang />
 
         <button
           type="button"
-          class="btn btn-outline-secondary m-2 px-1 py-0"
-          :class="{ 'is-loaded': isLoaded }"
+          class="connexion btn btn-outline-secondary m-2 px-1 py-0"
           @click="connect()"
         >
           connexion
@@ -58,15 +62,14 @@
   </nav>
 </template>
 <script>
-import {
-  storePersistentUserConnection,
-  storePersistentUserLang,
-} from "@/services/PersistentUserSettings";
+import { storePersistentUserConnection } from "@/services/PersistentUserSettings";
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
+import TheHeaderLang from "@/components/TheHeaderLang.vue";
 
 export default {
+  components: { TheHeaderLang },
   computed: {
     ...mapState(useAppStore, [
       "server",
@@ -74,7 +77,6 @@ export default {
       "username",
       "password",
       "isLoaded",
-      "lang",
     ]),
     ...mapState(useDataStore, ["firstTrench"]),
   },
@@ -85,7 +87,6 @@ export default {
       "setProject",
       "setUsername",
       "setPassword",
-      "setLang",
     ]),
     ...mapActions(useDataStore, [
       "setProjectTrenchesNames",
@@ -97,9 +98,11 @@ export default {
       "fetchProjectTrenchesNames",
       "fetchProjectTrenchesNamesFromFile",
     ]),
-    changeLang(lang) {
-      this.setLang(lang);
-      storePersistentUserLang();
+    resetStores() {
+      const dataStore = useDataStore();
+      dataStore.$reset();
+      const appStore = useAppStore();
+      appStore.$reset();
     },
     async connect() {
       this.setServer(this.cleanServerUserEntry(this.server));
@@ -136,7 +139,7 @@ export default {
 };
 </script>
 <style>
-.is-loaded {
+.connexion {
   color: #fff;
   background-color: #26a69a;
   border-color: #26a69a;
