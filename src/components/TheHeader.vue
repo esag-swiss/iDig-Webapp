@@ -11,6 +11,7 @@
         <span class="text-white">
           {{ project }} - {{ username }}@{{ server }}
         </span>
+        <TheHeaderLang />
         <button
           type="button"
           class="btn btn-outline-secondary m-2 px-1 py-0"
@@ -47,17 +48,7 @@
           placeholder="Password"
           @input="(event) => setPassword(event.target.value)"
         />
-        <select
-          :value="lang"
-          class="m-2 text-light input-header-small"
-          @change="(event) => changeLang(event.target.value)"
-        >
-          <option>fr</option>
-          <option>en</option>
-          <option>el</option>
-          <option>it</option>
-          <option>de</option>
-        </select>
+        <TheHeaderLang />
 
         <button
           type="button"
@@ -71,15 +62,14 @@
   </nav>
 </template>
 <script>
-import {
-  storePersistentUserConnection,
-  storePersistentUserLang,
-} from "@/services/PersistentUserSettings";
+import { storePersistentUserConnection } from "@/services/PersistentUserSettings";
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
+import TheHeaderLang from "@/components/TheHeaderLang.vue";
 
 export default {
+  components: { TheHeaderLang },
   computed: {
     ...mapState(useAppStore, [
       "server",
@@ -87,7 +77,6 @@ export default {
       "username",
       "password",
       "isLoaded",
-      "lang",
     ]),
     ...mapState(useDataStore, ["firstTrench"]),
   },
@@ -98,7 +87,6 @@ export default {
       "setProject",
       "setUsername",
       "setPassword",
-      "setLang",
     ]),
     ...mapActions(useDataStore, [
       "setProjectTrenchesNames",
@@ -115,10 +103,6 @@ export default {
       dataStore.$reset();
       const appStore = useAppStore();
       appStore.$reset();
-    },
-    changeLang(lang) {
-      this.setLang(lang);
-      storePersistentUserLang();
     },
     async connect() {
       this.setServer(this.cleanServerUserEntry(this.server));
