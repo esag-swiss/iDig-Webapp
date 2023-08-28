@@ -46,8 +46,6 @@
               projectPreferencesFieldsWithTranslation[field.field] ??
               field.field
             }}
-            <!-- DEV MODE -->
-            {{ field.field }}
           </div>
 
           <!-- Fields value : many cases  -->
