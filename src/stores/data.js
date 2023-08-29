@@ -17,7 +17,7 @@ export const useDataStore = defineStore("data", {
     checkedTrenchesNames: [],
     checkedTrenchesData: {},
     searchText: "",
-    selectedType: "",
+    selectedType: "Artifact",
     checkedFieldNames: [],
   }),
 
@@ -135,13 +135,12 @@ export const useDataStore = defineStore("data", {
 
         if (preferences.crs) {
           this.setProjectPreferencesCrs(preferences.crs);
-        } else if (preferences.project == "Agora") {
+        } else if (preferences.project === "Agora") {
           // Agora project doesn't have property CRS
           this.setProjectPreferencesCrs(preferences.project);
         }
         this.setProjectPreferencesTypes(preferences.types);
         this.setProjectPreferencesFields(preferences.fields);
-        this.setSelectedType(preferences.types?.[0]?.type ?? ""); // Default to the first type
 
         const { setIsLoaded } = useAppStore();
         setIsLoaded(true);

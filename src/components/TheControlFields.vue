@@ -85,7 +85,7 @@ export default {
     groupsOfFieldsAccordingToType() {
       return this.projectPreferencesTypes.filter((x) => {
         return x.type.includes(this.selectedType);
-      })[0].groups;
+      })[0]?.groups;
     },
   },
   watch: {
