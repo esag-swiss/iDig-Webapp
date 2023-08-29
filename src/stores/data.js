@@ -14,19 +14,20 @@ export const useDataStore = defineStore("data", {
     projectPreferencesFields: null,
     projectPreferencesBase64: null,
     projectTrenchesNames: null,
-    selectedType: "Artifact",
     checkedTrenchesNames: [],
     checkedTrenchesData: {},
     searchText: "",
-    tableColumns: [
-      // columns by default before any selection /!\ label are needed to display headers in TheTableLite
-      { field: "IdentifierUUID", sortable: true, label: "UUID", isKey: true },
-    ],
+    selectedType: "Artifact",
+    checkedFieldNames: [],
   }),
 
   getters: {
     projectPreferencesFieldsWithTranslation(state) {
       const { lang } = useAppStore();
+      if (!state.projectPreferencesFields) {
+        return {};
+      }
+
       let translatedLabels = state.projectPreferencesFields.map((field) => {
         return field.labels?.[lang] ?? field.label ?? field.field;
       });
@@ -134,7 +135,7 @@ export const useDataStore = defineStore("data", {
 
         if (preferences.crs) {
           this.setProjectPreferencesCrs(preferences.crs);
-        } else if (preferences.project == "Agora") {
+        } else if (preferences.project === "Agora") {
           // Agora project doesn't have property CRS
           this.setProjectPreferencesCrs(preferences.project);
         }
@@ -200,6 +201,10 @@ export const useDataStore = defineStore("data", {
       this.selectedType = selectedType;
     },
 
+    setCheckedFieldNames(checkedFieldNames) {
+      this.checkedFieldNames = checkedFieldNames;
+    },
+
     setProjectTrenchesNames(projectTrenchesNames) {
       this.projectTrenchesNames = projectTrenchesNames;
     },
@@ -210,10 +215,6 @@ export const useDataStore = defineStore("data", {
 
     setCheckedTrenchesNames(checkedTrenchesNames) {
       this.checkedTrenchesNames = checkedTrenchesNames;
-    },
-
-    setTableColumns(tableColumns) {
-      this.tableColumns = tableColumns;
     },
 
     setSearchText(searchText) {

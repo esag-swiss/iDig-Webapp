@@ -12,7 +12,7 @@
   </select>
 </template>
 <script>
-import { storePersistentUserLang } from "@/services/PersistentUserSettings";
+import { lsStoreLang } from "@/services/localStorageManager";
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 
@@ -25,7 +25,7 @@ export default {
     ...mapActions(useAppStore, ["setLang"]),
     changeLang(lang) {
       this.setLang(lang);
-      storePersistentUserLang();
+      lsStoreLang();
     },
   },
 };
