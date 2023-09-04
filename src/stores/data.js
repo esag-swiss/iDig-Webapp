@@ -3,6 +3,7 @@ import {
   apiFetchPreferences,
   apiFetchProjectTrenchesNames,
   apiFetchSurvey,
+  displayError,
 } from "@/services/ApiClient";
 import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
 import { useAppStore } from "@/stores/app";
@@ -126,11 +127,15 @@ export const useDataStore = defineStore("data", {
         try {
           preferences = JSON.parse(preferences);
         } catch (e) {
+          displayError(e);
           console.error(e);
-          //to handle one case of invalid json file that occured at least once :
+          //to handle some cases of invalid json file that occured at least once :
           preferences = JSON.parse(
-            preferences.replace(/},\n\t\t\t\t\t\t}/g, "}}")
+            preferences
+              .replace(/},\n\t\t\t\t\t\t}/g, "}}")
+              .replace(/}\s*{/g, "},{")
           );
+          throw e;
         }
 
         if (preferences.crs) {

@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAppStore } from "@/stores/app";
 import { Notify } from "quasar";
 
-function displayError(error) {
+export function displayError(error) {
   let message =
     `message: ${error?.message}<br/>` +
     `response.data: ${error?.response?.data}<br/>` +
