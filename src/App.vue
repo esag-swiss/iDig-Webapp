@@ -10,9 +10,19 @@
       <nav class="col-md-2 d-none d-md-block bg-light sidebar">
         <div class="sidebar-sticky hidescrollbar p-1">
           <TheControlSearch></TheControlSearch>
-          <TheControlTrenches ref="controlTrenches"> </TheControlTrenches>
+          <TheControlTrenches> </TheControlTrenches>
           <TheControlFields> </TheControlFields>
           <TheControlExport> </TheControlExport>
+          <div class="py-2">
+            <q-btn
+              align="left"
+              padding="xs"
+              color="secondary"
+              label="Pdf"
+              @click="generatePDF()"
+              ><q-tooltip class="bg-accent">PDF report</q-tooltip></q-btn
+            >
+          </div>
         </div>
       </nav>
 
@@ -24,6 +34,7 @@
           Veuillez sélectionner au moins un secteur
         </div>
         <hr />
+        <PdfViewer ref="pdfViewer"></PdfViewer>
         <TheMap v-if="checkedTrenchesItemsSelectedType.length > 0"></TheMap>
       </div>
     </div>
@@ -41,6 +52,7 @@ import TheTable from "@/components/TheTable.vue";
 import TheSpinner from "@/components/TheSpinner.vue";
 import TheControlExport from "@/components/TheControlExport.vue";
 import TheMap from "@/components/TheMap.vue";
+import PdfViewer from "@/components/PdfViewer.vue";
 import { mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
@@ -57,15 +69,20 @@ export default {
     TheHeader,
     TheControlExport,
     TheMap,
+    PdfViewer,
   },
   computed: {
     ...mapState(useAppStore, ["isLoaded"]),
     ...mapState(useDataStore, ["checkedTrenchesItemsSelectedType"]),
   },
   methods: {
-    reload() {
-      this.$refs.controlTrenches.fetchAllTrenchesData();
+    generatePDF() {
+      this.$refs.pdfViewer.generatePDF();
     },
+    // dead code
+    // reload() {
+    //   this.$refs.controlTrenches.fetchAllTrenchesData();
+    // },
   },
 };
 </script>
@@ -77,9 +94,7 @@ export default {
   line-height: 1.2;
   margin-bottom: 0rem;
 }
-/*
-* form https://getbootstrap.com/docs/4.0/examples/dashboard/#
-*/
+
 /*
  * Sidebar 
  */
