@@ -24,7 +24,6 @@
           Pas de données sélectionnées
         </div>
         <hr />
-        <ThePdfGenerator ref="ThePdfGenerator"></ThePdfGenerator>
         <TheMap v-if="checkedTrenchesItemsSelectedType.length > 0"></TheMap>
       </div>
     </div>

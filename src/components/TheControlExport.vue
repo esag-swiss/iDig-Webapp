@@ -35,7 +35,7 @@
       ><q-tooltip class="bg-accent">PDF report</q-tooltip></q-btn
     >
   </div>
-  <ThePdfGenerator ef="ThePdfGenerator" class="py-2" r></ThePdfGenerator>
+  <ThePdfGenerator ref="ThePdfGenerator" class="py-2" r></ThePdfGenerator>
 </template>
 <script>
 import { geoSerializedToGeojson } from "@/services/json2geojson";
