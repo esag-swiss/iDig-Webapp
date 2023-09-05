@@ -3,10 +3,10 @@ import {
   apiFetchPreferences,
   apiFetchProjectTrenchesNames,
   apiFetchSurvey,
-  displayError,
 } from "@/services/ApiClient";
 import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
 import { useAppStore } from "@/stores/app";
+import { Notify } from "quasar";
 
 export const useDataStore = defineStore("data", {
   state: () => ({
@@ -127,14 +127,15 @@ export const useDataStore = defineStore("data", {
         try {
           preferences = JSON.parse(preferences);
         } catch (e) {
-          displayError(e);
-          console.error(e);
-          //to handle some cases of invalid json file that occured at least once :
-          preferences = JSON.parse(
-            preferences
-              .replace(/},\n\t\t\t\t\t\t}/g, "}}")
-              .replace(/}\s*{/g, "},{")
-          );
+          let message = `error: default preference file is not a valid json<br/>${e?.message}<br/>`;
+
+          Notify.create({
+            type: "negative",
+            message,
+            html: true,
+            timeout: 10000,
+          });
+
           throw e;
         }
 
