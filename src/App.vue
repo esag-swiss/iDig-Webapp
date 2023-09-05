@@ -13,16 +13,6 @@
           <TheControlTrenches> </TheControlTrenches>
           <TheControlFields> </TheControlFields>
           <TheControlExport> </TheControlExport>
-          <div class="py-2">
-            <q-btn
-              align="left"
-              padding="xs"
-              color="secondary"
-              label="Pdf"
-              @click="generatePDF()"
-              ><q-tooltip class="bg-accent">PDF report</q-tooltip></q-btn
-            >
-          </div>
         </div>
       </nav>
 
@@ -31,10 +21,10 @@
         <TheTable v-if="checkedTrenchesItemsSelectedType.length > 0">
         </TheTable>
         <div v-else class="d-flex justify-content-center mt-5">
-          Veuillez sélectionner au moins un secteur
+          Pas de données sélectionnées
         </div>
         <hr />
-        <PdfViewer ref="pdfViewer"></PdfViewer>
+        <ThePdfGenerator ref="ThePdfGenerator"></ThePdfGenerator>
         <TheMap v-if="checkedTrenchesItemsSelectedType.length > 0"></TheMap>
       </div>
     </div>
@@ -52,7 +42,6 @@ import TheTable from "@/components/TheTable.vue";
 import TheSpinner from "@/components/TheSpinner.vue";
 import TheControlExport from "@/components/TheControlExport.vue";
 import TheMap from "@/components/TheMap.vue";
-import PdfViewer from "@/components/PdfViewer.vue";
 import { mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
@@ -69,20 +58,10 @@ export default {
     TheHeader,
     TheControlExport,
     TheMap,
-    PdfViewer,
   },
   computed: {
     ...mapState(useAppStore, ["isLoaded"]),
     ...mapState(useDataStore, ["checkedTrenchesItemsSelectedType"]),
-  },
-  methods: {
-    generatePDF() {
-      this.$refs.pdfViewer.generatePDF();
-    },
-    // dead code
-    // reload() {
-    //   this.$refs.controlTrenches.fetchAllTrenchesData();
-    // },
   },
 };
 </script>
