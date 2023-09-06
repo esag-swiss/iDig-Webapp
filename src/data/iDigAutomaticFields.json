@@ -1,0 +1,411 @@
+{
+  "crs": "WGS84",
+  "iDigFieldsRules": {
+    "comment": "The format iDig uses for data is based on Dublin Core. The standard 15 Dublin Core elements (see below) should only contain human readable text. All additional fields exported by iDig will begin with one of the Dublin Core prefixes (e.g. DateEarliest). All custom fields you create should begin with different prefixes.",
+    "standardDublinCoreFields": {
+      "Type": "The nature or genre of the resource. (This field is used for the item's type.)",
+      "Coverage": "The spatial or temporal topic of the resource, the spatial applicability of the resource, or the jurisdiction under which the resource is relevant.",
+      "Identifier": "An unambiguous reference to the resource within a given context. (This field is used as the name of an item.)",
+      "Title": "A name given to the resource. (This field is shown in the item list.)",
+      "Creator": " An entity primarily responsible for making the resource.",
+      "Date": " A point or period of time associated with an event in the lifecycle of the resource. (This field is automatically generated based on the current locale and time zone.)",
+      "Description": " An account of the resource.",
+      "Relation": " A related resource. (This field is automatically generated and consists of a list of related items.)",
+      "Format": "The file format, physical medium, or dimensions of the resource. (This field is used for the dimensions of an item).",
+      "Contributor": "An entity responsible for making contributions to the resource.",
+      "Language": " A language of the resource.",
+      "Publisher": "An entity responsible for making the resource available.",
+      "Source": " A related resource from which the described resource is derived. (This field is used for the document name.)",
+      "Subject": " The topic of the resource.",
+      "Rights": " Information about rights held in and over the resource."
+    },
+
+    "iDigFieldsProperties": {
+      "comment": "Fields can have the following properties attached to them:",
+      "properties": {
+        "label": "the displayed field name",
+        "valuelist": "(either an fixed list of values or an empty list which dynamically creates a list based on what you type)",
+        "multivalue": "(allows multiple values from a valuelist to be selected)",
+        "multitype": "(creates dynamic values for valuelists from all types)",
+        "multiline": "(used for fields with multiple lines like Description)",
+        "number": "(the field value should be interpreted as a number)",
+        "mandatory": "(a value should always exist in this field)",
+        "regexp": "(a regular expression to check field validity)."
+      }
+    }
+  },
+  "iDigAutomaticRelationTypes": [
+    "Relation field values are either lists of related item names (default is Coverage+Type+Identifier), or a list of related UUIDs that match the value of the IdentifierUUID field. Relation types can be Spatial (IsBelow, IsAbove, IsNextTo), Temporal (IsBefore, IsAfter, IsCoevalWith), or Hierarchical (BelongsTo, Includes).",
+    "   e.g. RelationIsBelow: a list of related item names below this item",
+    "   e.g. RelationIsBelowUUID: a list of related item UUIDs below this item",
+    "RelationIsAbove:",
+    "RelationIsBelow:",
+    "RelationIsNextTo:",
+    "RelationIsAfter:",
+    "RelationIsBefore:",
+    "RelationIsCoevalWith:",
+    "RelationBelongsTo:",
+    "RelationIncludes:",
+    "[RelationCuts:]",
+    "[RelationIsCutBy:]"
+  ],
+  "automatedFields": [
+    "CoverageXYZ",
+    "CoverageGEO",
+    {
+      "field": "CoverageUTC",
+      "labels": {
+        "en": "date"
+      },
+      "tips": {
+        "en": "a date or date range in lenient UTC format"
+      }
+    },
+    {
+      "field": "DateUTC",
+      "labels": {
+        "en": "date"
+      },
+      "tips": {
+        "en": "the date or date range of the item in UTC format"
+      }
+    },
+    {
+      "field": "FormatImage",
+      "labels": {
+        "en": "image representation"
+      },
+      "tips": {
+        "en": "a path to an image representation"
+      }
+    },
+    "FormatImageTransformXYZ",
+    "FormatImageTransformGEO",
+    {
+      "field": "IdentifierUUID",
+      "labels": {
+        "en": "universally unique identifier"
+      },
+      "tips": {
+        "en": "universally unique identifier"
+      }
+    },
+    "RelationIsAboveUUID",
+    "RelationIsBelowUUID",
+    "RelationIsNextToUUID",
+    "RelationCutsUUID",
+    "RelationIsCutByUUID",
+    "RelationIsAfterUUID",
+    "RelationIsBeforeUUID",
+    "RelationIsCoevalWithUUID",
+    "RelationBelongsToUUID",
+    "RelationIncludesUUID"
+  ],
+  "optionalAutomatedFields": [
+    {
+      "field": "[CoverageEarliest/TemporalEarliest]",
+      "labels": {
+        "fr": "",
+        "en": ""
+      },
+      "tips": {
+        "en": " a date in lenient UTC format (optional month, day, and time, negative years for BC dates)"
+      }
+    },
+    {
+      "field": "[CoverageLatest/TemporalLatest]",
+      "labels": {
+        "fr": "",
+        "en": ""
+      },
+      "tips": {
+        "en": " a date in lenient UTC format"
+      }
+    },
+    {
+      "field": "CoverageSerialized",
+      "labels": {
+        "en": "spatial point data"
+      },
+      "tips": {
+        "en": "raw spatial point data (including fields set by the total station)"
+      }
+    },
+    "CoverageGeoJSON",
+    {
+      "field": "CoverageAltitude",
+      "labels": {
+        "en": "z elevation range"
+      },
+      "tips": {
+        "en": "the z elevation range of the item"
+      }
+    },
+    {
+      "field": "CoverageArea",
+      "labels": {
+        "en": "area"
+      },
+      "tips": {
+        "en": "the area of the item's geometry"
+      }
+    },
+    {
+      "field": "CoverageEnvelope",
+      "labels": {
+        "en": "bounding box"
+      },
+      "tips": {
+        "en": "the bounding box of the item specified as 'Envelope(xmin, xmax, ymax, ymin)'"
+      }
+    },
+    {
+      "field": "CoveragePosition",
+      "labels": {
+        "en": "centroid"
+      },
+      "tips": {
+        "en": "the 2d centroid of the item's geometry"
+      }
+    },
+    {
+      "field": "CoverageStyle",
+      "labels": {
+        "en": "style"
+      },
+      "tips": {
+        "en": "the preferred style of the item when rendered (e.g. point, line, polygon, image, star, circle, etc.)"
+      }
+    },
+    {
+      "field": "[CoverageTiles",
+      "labels": {
+        "en": "folder of tiles"
+      },
+      "tips": {
+        "en": "path to a folder of tiles in 'z/x/y.png' format when this item is used as a background plan"
+      }
+    },
+    {
+      "field": "CoverageUnion",
+      "labels": {
+        "en": "union of spatial data"
+      },
+      "tips": {
+        "en": "the 2d union of all spatial data in WKT format"
+      }
+    },
+    {
+      "field": "CoverageCoordinates",
+      "labels": {
+        "en": "spatial data"
+      },
+      "tips": {
+        "en": "raw spatial data of the item as a list of 'x,y,z;...' point/line/polygon shapes"
+      }
+    },
+    "CoverageSpatialUUID",
+    "CoverageTemporalUUID",
+    {
+      "field": "DateEarliest",
+      "labels": {
+        "en": "start date"
+      },
+      "tips": {
+        "en": "the start date of the item in UTC format"
+      }
+    },
+    {
+      "field": "DateLatest",
+      "labels": {
+        "en": "end date"
+      },
+      "tips": {
+        "en": "the end date of the item in UTC format"
+      }
+    },
+    {
+      "field": "DateTimeZone",
+      "labels": {
+        "en": "time zone name"
+      },
+      "tips": {
+        "en": "the time zone name"
+      }
+    },
+    {
+      "field": "DateModified",
+      "labels": {
+        "en": "modification date"
+      },
+      "tips": {
+        "en": "the modification date of the item in UTC format"
+      }
+    },
+    {
+      "field": "FormatImageHeight",
+      "labels": {
+        "en": "image height"
+      },
+      "tips": {
+        "en": "height of the image"
+      }
+    },
+    {
+      "field": "FormatImageWidth",
+      "labels": {
+        "en": "image width"
+      },
+      "tips": {
+        "en": "width of the image"
+      }
+    },
+    {
+      "field": "[FormatImageAnnotations",
+      "labels": {
+        "en": "annotations"
+      },
+      "tips": {
+        "en": "annotations for the item"
+      }
+    },
+    {
+      "field": "[FormatPDF",
+      "labels": {
+        "en": "PDF representation"
+      },
+      "tips": {
+        "en": "a path to a pdf representation"
+      }
+    },
+    {
+      "field": "RelationAttachments",
+      "labels": {
+        "en": "attachments"
+      },
+      "tips": {
+        "en": "the files attached to the item"
+      }
+    },
+    "RelationURLs",
+    {
+      "field": "RightsLocked",
+      "labels": {
+        "en": "locked"
+      },
+      "tips": {
+        "en": "determines if you can edit the item or not"
+      }
+    },
+    {
+      "field": "RightsSidelined",
+      "labels": {
+        "fr": "Invisible",
+        "en": "Sidelined"
+      },
+      "boolean": true,
+      "tips": {
+        "fr": "Permet de ne pas faire figurer les polygones ou points sur le plan",
+        "it": "Rende invisibili poligoni e punti sulla pianta",
+        "de": "Ermöglicht es, Polygone oder Punkte auf dem Plan auszublenden",
+        "en": "Allows to sideline polygons or points so that they are not displayed on the map, makes items sit in the corner"
+      }
+    },
+    {
+      "field": "RightsTrashed",
+      "labels": {
+        "en": "trashed"
+      },
+      "tips": {
+        "en": "if the item is in the trash or not"
+      }
+    },
+    {
+      "field": "RightsStatus",
+      "labels": {
+        "fr": "Status",
+        "it": "Status",
+        "de": "Status",
+        "en": "Status",
+        "el": "Status"
+      },
+      "valuelist": ["All Done", "Attention"],
+      "multivalue": true,
+      "tips": {
+        "en": "used for filtering and coloring items by status"
+      }
+    }
+  ],
+  "ExtraFields": [
+    {
+      "field": "[CoverageTemporal/Temporal]",
+      "labels": {
+        "fr": "",
+        "en": ""
+      },
+      "tips": {
+        "en": "a human readable date, phase, or period name for the item"
+      }
+    },
+
+    {
+      "field": "CoverageSpatial",
+      "labels": {
+        "en": "location"
+      },
+      "tips": {
+        "en": "a human readable location for the item"
+      }
+    },
+
+    {
+      "field": "CoverageCRS",
+      "labels": {
+        "en": "CRS"
+      },
+      "tips": {
+        "en": "the CRS defined above"
+      }
+    },
+
+    {
+      "field": "CoverageGeometry",
+      "labels": {
+        "en": "spatial data (3D)"
+      },
+      "tips": {
+        "en": "the 3d spatial data of the item as a WKT geometry collection"
+      }
+    },
+
+    {
+      "field": "CoverageTransform",
+      "labels": {
+        "en": "transform"
+      },
+      "tips": {
+        "en": "the transform (world file) for this item's image when used as a background plan"
+      }
+    },
+
+    {
+      "field": "RelationLinks",
+      "labels": {
+        "en": "URLs"
+      },
+      "tips": {
+        "en": "URLs to other representations of the item"
+      }
+    },
+
+    {
+      "field": "Source",
+      "labels": {
+        "en": "source"
+      },
+      "tips": {
+        "en": "Trench"
+      }
+    }
+  ]
+}
