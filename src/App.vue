@@ -10,7 +10,7 @@
       <nav class="col-md-2 d-none d-md-block bg-light sidebar">
         <div class="sidebar-sticky hidescrollbar p-1">
           <TheControlSearch></TheControlSearch>
-          <TheControlTrenches ref="controlTrenches"> </TheControlTrenches>
+          <TheControlTrenches> </TheControlTrenches>
           <TheControlFields> </TheControlFields>
           <TheControlExport> </TheControlExport>
         </div>
@@ -21,7 +21,7 @@
         <TheTable v-if="checkedTrenchesItemsSelectedType.length > 0">
         </TheTable>
         <div v-else class="d-flex justify-content-center mt-5">
-          Veuillez sélectionner au moins un secteur
+          Pas de données sélectionnées
         </div>
         <hr />
         <TheMap v-if="checkedTrenchesItemsSelectedType.length > 0"></TheMap>
@@ -62,11 +62,6 @@ export default {
     ...mapState(useAppStore, ["isLoaded"]),
     ...mapState(useDataStore, ["checkedTrenchesItemsSelectedType"]),
   },
-  methods: {
-    reload() {
-      this.$refs.controlTrenches.fetchAllTrenchesData();
-    },
-  },
 };
 </script>
 
@@ -77,9 +72,7 @@ export default {
   line-height: 1.2;
   margin-bottom: 0rem;
 }
-/*
-* form https://getbootstrap.com/docs/4.0/examples/dashboard/#
-*/
+
 /*
  * Sidebar 
  */

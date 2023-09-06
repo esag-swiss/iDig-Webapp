@@ -25,15 +25,29 @@
       @click="exportFile('geojson')"
       ><q-tooltip class="bg-accent">trenches as Geojson</q-tooltip></q-btn
     >
+
+    <q-btn
+      align="left"
+      padding="xs"
+      color="secondary"
+      label="Pdf"
+      @click="generatePDF()"
+      ><q-tooltip class="bg-accent">PDF report</q-tooltip></q-btn
+    >
   </div>
+  <ThePdfGenerator ref="ThePdfGenerator" class="py-2" r></ThePdfGenerator>
 </template>
 <script>
 import { geoSerializedToGeojson } from "@/services/json2geojson";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
+import ThePdfGenerator from "@/components/ThePdfGenerator.vue";
 
 export default {
   name: "TheControlExport",
+  components: {
+    ThePdfGenerator,
+  },
   data() {
     return {
       fileData: "",
@@ -48,6 +62,9 @@ export default {
     ]),
   },
   methods: {
+    generatePDF() {
+      this.$refs.ThePdfGenerator.generatePDF();
+    },
     exportFile: function (fileType) {
       if (fileType === "tab") {
         this.fileName = this.selectedType;
