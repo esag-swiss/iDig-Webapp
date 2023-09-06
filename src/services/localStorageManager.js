@@ -9,13 +9,13 @@ export function lsStoreConnection() {
   localStorage.setItem("password", password);
 }
 export const lsLoadUsername = () => {
-  return localStorage.getItem("username") ?? "";
+  return localStorage.getItem("username") ?? "idig";
 };
 export const lsLoadPassword = () => {
-  return localStorage.getItem("password") ?? "";
+  return localStorage.getItem("password") ?? "idig";
 };
 export const lsLoadServer = () => {
-  return localStorage.getItem("server") ?? "";
+  return localStorage.getItem("server") ?? "http://212.227.166.78:9000";
 };
 export const lsLoadProject = () => {
   return localStorage.getItem("project") ?? "";

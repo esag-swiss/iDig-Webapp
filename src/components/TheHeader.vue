@@ -22,7 +22,11 @@
       </div>
 
       <form v-else class="form-inline my-0">
-        <div class="navbar-text text-light p-2">server:</div>
+        <div class="navbar-text text-light p-2">
+          server:<q-tooltip class="bg-accent"
+            >enter complet url, with http or https and port number</q-tooltip
+          >
+        </div>
         <input
           :value="server"
           placeholder=" url complet "
@@ -30,11 +34,15 @@
           @input="(event) => setServer(event.target.value)"
         />
         <a class="navbar-text text-light p-2">project:</a>
-        <input
+
+        <select
           :value="project"
           class="m-2 text-light input-header"
-          @input="(event) => setProject(event.target.value)"
-        />
+          @change="(event) => setProject(event.target.value)"
+        >
+          <option>Agora</option>
+          <option>Amarynthos</option>
+        </select>
         <a class="navbar-text text-light p-2">user:</a>
         <input
           :value="username"
@@ -56,6 +64,9 @@
           @click="connect()"
         >
           connexion
+          <q-tooltip class="bg-accent"
+            >test if iDig-server is reachable</q-tooltip
+          >
         </button>
       </form>
     </div>
