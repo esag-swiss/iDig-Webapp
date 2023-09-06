@@ -122,7 +122,7 @@ export default {
 
       doc.save(`${this.project}.pdf`);
       // FOR DEV MODE
-      this.pdfUrl = doc.output("datauristring");
+      // this.pdfUrl = doc.output("datauristring");
     },
   },
 };
