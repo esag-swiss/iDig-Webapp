@@ -36,19 +36,17 @@ export default {
 
     rows() {
       // select only fields present in checkedFieldNames
-      let arr = this.checkedFieldNames;
-      return this.checkedTrenchesItemsSelectedTypeAndSearched.map(function (
-        item
-      ) {
-        var newArr = [];
-        arr.forEach(function (prop) {
+
+      return this.checkedTrenchesItemsSelectedTypeAndSearched.map((item) => {
+        var rows = [];
+        this.checkedFieldNames.forEach(function (prop) {
           if (Object.prototype.hasOwnProperty.call(item, prop)) {
-            newArr.push(item[prop]);
+            rows.push(item[prop]);
           } else {
-            newArr.push("");
+            rows.push("");
           }
         });
-        return newArr;
+        return rows;
       });
     },
   },
@@ -124,7 +122,7 @@ export default {
 
       doc.save(`${this.project}.pdf`);
       // FOR DEV MODE
-      // this.pdfUrl = doc.output("datauristring");
+      this.pdfUrl = doc.output("datauristring");
     },
   },
 };
