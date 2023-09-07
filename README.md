@@ -1,47 +1,32 @@
-# idig
+# iDig Webapp
 
-This template should help get you started developing with Vue 3 in Vite.
+iDig webapp serves to visualize and edit excavation data collected with the iDig app ([iDig Website](https://idig.tips/)). The data is stored on an iDig-server.
 
-## Recommended IDE Setup
+## Connection Details
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+First, input the connection details for the iDig-server. Required fields include:
 
-## Customize configuration
+- Server (complete URL)
+- Project
+- User
+- Password
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+After entering the information, click the 'Connect' button. If the connection is successful, the webapp will:
 
-## Project Setup
+- Retrieve the settings of the first trench in your project
+- Build the user interface based on the project's fields and configurations
 
-```sh
-npm install
-```
+Your settings will be stored locally for future use, unless changed by you.
 
-### Compile and Hot-Reload for Development
+## Trench List Configuration
 
-```sh
-npm run dev
-```
+You may either:
 
-### Compile and Minify for Production
+- Use a combo iDig webapp and iDig-server version that automatically lists trenches
+- Add the list of trenches for your project in the allTrenchesPerProject.js file as an array property under the "YourProject" object
 
-```sh
-npm run build
-```
+Note: The first trench in your array should have up-to-date project preferences, as those will be the only settings used by the iDig webapp.
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+## Demo Version
 
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
-
-### Configuration
-
-First fillin the header with the settings 'server', 'project', 'user' and "password" then click on connexion.
-If connexion is valid settings will be stored localy to be used in the future until change is made by user.
-A list of trenches of your project should be added in file allTrenchesPerProject.js as an array property of "YourProject" object. The first trenche of this array must have project preferneces uptodate since that will be the only preferences use by iDig-webapp.
+A DEMO is available [here](https://idig.archaiodata.com/). It comes pre-configured with two demo projects (Agora, Amarynthos), each with two trenches. You can also connect this demo webapp to your own iDig-server.
