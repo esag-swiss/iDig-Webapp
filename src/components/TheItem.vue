@@ -313,7 +313,7 @@ export default {
     },
 
     pushSurvey() {
-      const head = JSON.parse(sessionStorage.checkedTrenchesVersions)[
+      const head = JSON.parse(sessionStorage.checkedTrenchesVersion)[
         this.selectedTrench
       ];
       const surveys = this.trenchtoUpdate;
