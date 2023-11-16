@@ -17,6 +17,7 @@ export const useDataStore = defineStore("data", {
     projectTrenchesNames: null,
     checkedTrenchesNames: [],
     checkedTrenchesData: {},
+    checkedTrenchesVersion: {},
     searchText: "",
     selectedType: "Artifact",
     checkedFieldNames: [],
@@ -158,8 +159,7 @@ export const useDataStore = defineStore("data", {
         apiFetchSurvey(trenchName)
           .then((response) => {
             // prepare data to store in session in case of PUSH
-            let checkedTrenchesVersions = {}; // use store ?
-            checkedTrenchesVersions[trenchName] = response.data.version;
+            this.checkedTrenchesVersion[trenchName] = response.data.version;
             this.checkedTrenchesData[trenchName] = response.data.surveys;
 
             // store in session in case of PUSH
@@ -168,8 +168,8 @@ export const useDataStore = defineStore("data", {
               JSON.stringify(this.checkedTrenchesData)
             );
             sessionStorage.setItem(
-              "checkedTrenchesVersions",
-              JSON.stringify(checkedTrenchesVersions)
+              "checkedTrenchesVersion",
+              JSON.stringify(this.checkedTrenchesVersion)
             );
           })
           .catch(() => {
@@ -217,6 +217,10 @@ export const useDataStore = defineStore("data", {
 
     setCheckedTrenchesData(checkedTrenchesData) {
       this.checkedTrenchesData = checkedTrenchesData;
+    },
+
+    setCheckedTrenchesVersion(checkedTrenchesVersion) {
+      this.checkedTrenchesVersion = checkedTrenchesVersion;
     },
 
     setCheckedTrenchesNames(checkedTrenchesNames) {
