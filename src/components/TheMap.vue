@@ -36,12 +36,16 @@ export default {
       //   note that Leaflet supports very few coordinate systems: CRS:3857, CRS:3395 and CRS:4326 see also L.CRS.Simple.
     });
 
-    L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
-      maxZoom: 25,
-      maxNativeZoom: 19,
-      attribution:
-        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(this.map);
+    L.tileLayer(
+      "https://tiles.stadiamaps.com/tiles/stamen_toner_background/{z}/{x}/{y}{r}.{ext}",
+      {
+        maxZoom: 25,
+        maxNativeZoom: 19,
+        attribution:
+          '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        ext: "png",
+      }
+    ).addTo(this.map);
 
     // WMS layer from Dipylon. To be used in dev only for not overload their server
     // L.tileLayer
