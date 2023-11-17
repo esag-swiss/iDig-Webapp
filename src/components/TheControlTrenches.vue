@@ -1,41 +1,60 @@
 <template>
   <div name="secteurs" class="p-1 m-1 bg-light border-0">
     <h3>Secteurs</h3>
-
-    <ul
-      v-for="(trenchGroupName, index) in accordionLabels"
-      :key="trenchGroupName"
-      class="list-group"
-    >
-      <li
-        class="list-group-item accordion text-bold"
-        @click="isDisplayedArray[index] = !isDisplayedArray[index]"
+    <div v-if="projectTrenchesNames.length > 10">
+      <ul
+        v-for="(trenchGroupName, index) in accordionLabels"
+        :key="trenchGroupName"
+        class="list-group"
       >
-        {{ trenchGroupName }}
-      </li>
-      <!-- liste trenches -->
-      <div v-if="isDisplayedArray[index]">
-        <ul
-          v-for="trenchName in projectTrenchesNames"
-          :key="trenchName"
-          class="list-group"
+        <li
+          class="list-group-item accordion text-bold"
+          @click="isDisplayedArray[index] = !isDisplayedArray[index]"
         >
-          <li
-            v-if="trenchName.includes(trenchGroupName)"
-            class="list-group-item accordion"
+          {{ trenchGroupName }}
+        </li>
+        <!-- liste trenches -->
+        <div v-if="isDisplayedArray[index]">
+          <ul
+            v-for="trenchName in projectTrenchesNames"
+            :key="trenchName"
+            class="list-group"
           >
-            <input
-              v-model="checkedTrenchesNames"
-              type="checkbox"
-              :value="trenchName"
-            />
-            <label class="px-1 m-0 text-bold" for="checkbox">{{
-              trenchName
-            }}</label>
-          </li>
-        </ul>
-      </div>
-    </ul>
+            <li
+              v-if="trenchName.includes(trenchGroupName)"
+              class="list-group-item accordion"
+            >
+              <input
+                v-model="checkedTrenchesNames"
+                type="checkbox"
+                :value="trenchName"
+              />
+              <label class="px-1 m-0 text-bold" for="checkbox">{{
+                trenchName
+              }}</label>
+            </li>
+          </ul>
+        </div>
+      </ul>
+    </div>
+    <div v-if="projectTrenchesNames.length < 11">
+      <ul
+        v-for="trenchName in projectTrenchesNames"
+        :key="trenchName"
+        class="list-group"
+      >
+        <li class="list-group-item accordion">
+          <input
+            v-model="checkedTrenchesNames"
+            type="checkbox"
+            :value="trenchName"
+          />
+          <label class="px-1 m-0 text-bold" for="checkbox">{{
+            trenchName
+          }}</label>
+        </li>
+      </ul>
+    </div>
 
     <!-- Check All/None -->
     <div class="q-gutter-sm">
