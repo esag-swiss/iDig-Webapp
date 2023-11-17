@@ -1,14 +1,13 @@
 import { convertToEPSG4326 } from "@/services/coordinateUtils";
 import { useDataStore } from "@/stores/data";
 
-var geojson = {
-  type: "FeatureCollection",
-  name: "trenches",
-  features: [],
-};
-
 // "CoverageSerialized" :
 export function geoSerializedToGeojson(json) {
+  let geojson = {
+    type: "FeatureCollection",
+    name: "trenches",
+    features: [],
+  };
   for (var i = 0; i < json.length; i++) {
     if (Object.prototype.hasOwnProperty.call(json[i], "CoverageSerialized")) {
       let geoType = ""; //  list of type used by iDig in field CoverageSerialized  are : Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, and GeometryCollection?
@@ -146,7 +145,7 @@ function hexToDecimal(hex) {
 // to be a valid geojson we need coordinates of polygones to be clockwise
 function makePolyCCW(poly) {
   var sum = 0;
-  for (var i = 0; i < poly.length - 1; i++) {
+  for (let i = 0; i < poly.length - 1; i++) {
     var cur = poly[i],
       next = poly[i + 1];
     sum += (next[0] - cur[0]) * (next[1] + cur[1]);
@@ -155,7 +154,7 @@ function makePolyCCW(poly) {
 }
 function makePolyClockwise(poly) {
   var sum = 0;
-  for (var i = 0; i < poly.length - 1; i++) {
+  for (let i = 0; i < poly.length - 1; i++) {
     sum += (poly[i + 1][0] - poly[i][0]) * (poly[i + 1][1] + poly[i][1]);
   }
   return sum > 0 ? poly.slice().reverse() : poly;
