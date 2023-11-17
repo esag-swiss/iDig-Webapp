@@ -1,14 +1,13 @@
 import { convertToEPSG4326 } from "@/services/coordinateUtils";
 import { useDataStore } from "@/stores/data";
 
-var geojson = {
-  type: "FeatureCollection",
-  name: "trenches",
-  features: [],
-};
-
 // "CoverageSerialized" :
 export function geoSerializedToGeojson(json) {
+  var geojson = {
+    type: "FeatureCollection",
+    name: "trenches",
+    features: [],
+  };
   for (var i = 0; i < json.length; i++) {
     if (Object.prototype.hasOwnProperty.call(json[i], "CoverageSerialized")) {
       let geoType = ""; //  list of type used by iDig in field CoverageSerialized  are : Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, and GeometryCollection?
