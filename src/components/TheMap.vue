@@ -66,7 +66,7 @@ export default {
     },
 
     refreshMap() {
-      var geojsonMarkerOptions = {
+      let geojsonMarkerOptions = {
         radius: 8,
         fillColor: "grey",
         color: "grey",
@@ -74,7 +74,7 @@ export default {
         opacity: 0.2,
         fillOpacity: 0.2,
       };
-      var layerStyle = {
+      let layerStyle = {
         fillColor: "grey",
         fillOpacity: 0.2,
         weight: 2,
