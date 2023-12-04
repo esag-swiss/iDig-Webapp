@@ -20,7 +20,11 @@ export const lsLoadServer = () => {
 export const lsLoadProject = () => {
   return localStorage.getItem("project") ?? "";
 };
-
+export const lsLoadCheckedTrenchesVersion = () => {
+  return localStorage.getItem("localTrenchesVersion")
+    ? JSON.parse(localStorage.getItem("localTrenchesVersion"))
+    : {};
+};
 export function lsStoreLang() {
   const { lang } = useAppStore();
   localStorage.setItem("lang", lang);
