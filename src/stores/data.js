@@ -3,10 +3,17 @@ import {
   apiFetchPreferences,
   apiFetchProjectTrenchesNames,
   apiFetchSurvey,
+  apiFetchTrenchVersion,
 } from "@/services/ApiClient";
 import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
 import { useAppStore } from "@/stores/app";
 import { Notify } from "quasar";
+import { lsLoadCheckedTrenchesVersion } from "@/services/localStorageManager";
+import {
+  openDB,
+  storeDataInIndexedDB,
+  readDataInIndexedDB,
+} from "@/services/indexedDbManager";
 
 export const useDataStore = defineStore("data", {
   state: () => ({
@@ -17,7 +24,7 @@ export const useDataStore = defineStore("data", {
     projectTrenchesNames: null,
     checkedTrenchesNames: [],
     checkedTrenchesData: {},
-    checkedTrenchesVersion: {},
+    checkedTrenchesVersion: lsLoadCheckedTrenchesVersion(),
     searchText: "",
     selectedType: "Artifact",
     checkedFieldNames: [],
@@ -117,67 +124,128 @@ export const useDataStore = defineStore("data", {
     },
 
     async fetchPreferences(trench) {
-      return apiFetchPreferences(trench).then((response) => {
-        // Store preferences in base64 format, because it will be necessary to resend them when modifying an item
-        this.setProjectPreferencesBase64(response.data.preferences);
-
-        let preferences = decodeURIComponent(
-          escape(window.atob(response.data.preferences))
-        );
-
-        try {
+      // first see if localStorage version is defined and if == as server version
+      await apiFetchTrenchVersion(trench).then((response) => {
+        // case version and data present locally
+        if (response.data[0].version == this.checkedTrenchesVersion[trench]) {
+          // TODO comparer directement au local storage?
+          // les données sont présentent en local, on les récupère
+          // TODO setter la variable Pinia store avec localstorage ici est pas ailleurs est-elle la bonne solution ?
+          this.setProjectPreferencesBase64(
+            localStorage.getItem("projectPreferencesBase64")
+          );
+          let preferences = decodeURIComponent(
+            escape(
+              window.atob(localStorage.getItem("projectPreferencesBase64"))
+            )
+          );
           preferences = JSON.parse(preferences);
-        } catch (e) {
-          let message = `error: default preference file is not a valid json<br/>${e?.message}<br/>`;
+          if (preferences.crs) {
+            this.setProjectPreferencesCrs(preferences.crs);
+          } else if (preferences.project === "Agora") {
+            // Agora project doesn't have property CRS
+            this.setProjectPreferencesCrs(preferences.project);
+          }
 
-          Notify.create({
-            type: "negative",
-            message,
-            html: true,
-            timeout: 10000,
+          this.setProjectPreferencesTypes(preferences.types);
+          this.setProjectPreferencesFields(preferences.fields);
+          const { setIsLoaded } = useAppStore();
+          setIsLoaded(true);
+        } else {
+          // if trench version is not present on localStorage fetch it
+          return apiFetchPreferences(trench).then((response) => {
+            // Store preferences in base64 format, because it will be necessary to resend them when modifying an item
+            this.setProjectPreferencesBase64(response.data.preferences);
+            // Store preferences also in localStorage for next session
+            localStorage.setItem(
+              "projectPreferencesBase64",
+              response.data.preferences
+            );
+
+            let preferences = decodeURIComponent(
+              escape(window.atob(response.data.preferences))
+            );
+            try {
+              preferences = JSON.parse(preferences);
+            } catch (e) {
+              let message = `error: default preference file is not a valid json<br/>${e?.message}<br/>`;
+              Notify.create({
+                type: "negative",
+                message,
+                html: true,
+                timeout: 10000,
+              });
+              throw e;
+            }
+            if (preferences.crs) {
+              this.setProjectPreferencesCrs(preferences.crs);
+            } else if (preferences.project === "Agora") {
+              // Agora project doesn't have property CRS
+              this.setProjectPreferencesCrs(preferences.project);
+            }
+            this.setProjectPreferencesTypes(preferences.types);
+            this.setProjectPreferencesFields(preferences.fields);
+
+            const { setIsLoaded } = useAppStore(); // pouirquoi ce n'est pas déclaré au début ?
+            setIsLoaded(true);
           });
-
-          throw e;
         }
-
-        if (preferences.crs) {
-          this.setProjectPreferencesCrs(preferences.crs);
-        } else if (preferences.project === "Agora") {
-          // Agora project doesn't have property CRS
-          this.setProjectPreferencesCrs(preferences.project);
-        }
-        this.setProjectPreferencesTypes(preferences.types);
-        this.setProjectPreferencesFields(preferences.fields);
-
-        const { setIsLoaded } = useAppStore();
-        setIsLoaded(true);
       });
     },
 
     addCheckedTrenchesData(trenchList) {
-      trenchList.forEach((trenchName) => {
-        apiFetchSurvey(trenchName)
-          .then((response) => {
-            // prepare data to store in session in case of PUSH
-            this.checkedTrenchesVersion[trenchName] = response.data.version;
-            this.checkedTrenchesData[trenchName] = response.data.surveys;
+      // Utiliser reduce pour gérer l'ordre d'exécution des promesses, comme foreach mais permet l'async
+      trenchList.reduce(async (previousPromise, trenchName) => {
+        // await previousPromise; // Ensure the previous iteration is complete before starting the next one
 
-            // store in session in case of PUSH
-            sessionStorage.setItem(
-              "checkedTrenchesData",
-              JSON.stringify(this.checkedTrenchesData)
-            );
-            sessionStorage.setItem(
-              "checkedTrenchesVersion",
-              JSON.stringify(this.checkedTrenchesVersion)
-            );
-          })
-          .catch(() => {
-            this.checkedTrenchesNames = this.checkedTrenchesNames.filter(
-              (name) => name !== trenchName
-            );
-          });
-      });
+        try {
+          const response = await apiFetchTrenchVersion(trenchName);
+
+          if (
+            response.data[0].version === this.checkedTrenchesVersion[trenchName]
+          ) {
+            const db = await openDB();
+            const localSurvey = await readDataInIndexedDB(db, trenchName);
+            this.checkedTrenchesData[trenchName] = JSON.parse(localSurvey);
+          } else {
+            await fetchDataAndUpdateStorage(trenchName);
+          }
+        } catch (error) {
+          console.error(`Error processing trench ${trenchName}: ${error}`);
+        }
+      }, Promise.resolve());
+
+      const fetchDataAndUpdateStorage = async (trenchName) => {
+        try {
+          const response = await apiFetchSurvey(trenchName);
+
+          if (!response) {
+            console.error(`Error: Empty response for trench ${trenchName}`);
+            return;
+          }
+
+          this.checkedTrenchesVersion[trenchName] = response.data.version;
+          this.checkedTrenchesData[trenchName] = response.data.surveys;
+
+          // Update localStorage
+          localStorage.setItem(
+            "localTrenchesVersion",
+            JSON.stringify(this.checkedTrenchesVersion)
+          );
+
+          // Update IndexedDB
+          const db = await openDB();
+          await storeDataInIndexedDB(
+            db,
+            trenchName,
+            this.checkedTrenchesData[trenchName]
+          );
+        } catch (error) {
+          console.error(
+            `Error fetching data for trench ${trenchName}: ${error}`
+          );
+        }
+      };
     },
 
     removeCheckedTrenchesData(trenchList) {
