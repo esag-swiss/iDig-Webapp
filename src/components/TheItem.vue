@@ -249,8 +249,8 @@ export default {
     selectedTrench() {
       // return the trench of the selected item
       if (this.currentItem) {
-        var array = Object.entries(this.checkedTrenchesData);
-        return array.filter((x) =>
+        const matchingTrench = Object.entries(this.checkedTrenchesData);
+        return matchingTrench.filter((x) =>
           x[1].some((k) =>
             k.IdentifierUUID.includes(this.currentItem.IdentifierUUID)
           )
