@@ -55,12 +55,8 @@ export const useDataStore = defineStore("data", {
     },
 
     checkedTrenchesItems(state) {
-      let allItem = [];
-      Object.values(state.checkedTrenchesData).forEach((data) => {
-        allItem.push(...data);
-      });
-      return allItem;
-    }, // Todo simplifier?
+      return [].concat(...Object.values(state.checkedTrenchesData));
+    },
 
     checkedTrenchesItemsSelectedType(state) {
       return state.checkedTrenchesItems.filter((item) =>
@@ -130,7 +126,6 @@ export const useDataStore = defineStore("data", {
         if (response.data[0].version == this.checkedTrenchesVersion[trench]) {
           // TODO comparer directement au local storage?
           // les données sont présentent en local, on les récupère
-          // TODO setter la variable Pinia store avec localstorage ici est pas ailleurs est-elle la bonne solution ?
           this.setProjectPreferencesBase64(
             localStorage.getItem("projectPreferencesBase64")
           );
