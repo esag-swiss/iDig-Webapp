@@ -9,7 +9,10 @@ export function geoSerializedToGeojson(json) {
     features: [],
   };
   for (let i = 0; i < json.length; i++) {
-    if (Object.prototype.hasOwnProperty.call(json[i], "CoverageSerialized")) {
+    if (
+      json[i] &&
+      Object.prototype.hasOwnProperty.call(json[i], "CoverageSerialized")
+    ) {
       let geoType = ""; //  list of type used by iDig in field CoverageSerialized  are : Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, and GeometryCollection?
 
       let polyStrings = json[i].CoverageSerialized;

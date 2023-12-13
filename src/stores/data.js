@@ -59,8 +59,8 @@ export const useDataStore = defineStore("data", {
     },
 
     checkedTrenchesItemsSelectedType(state) {
-      return state.checkedTrenchesItems.filter((item) =>
-        item.Type.includes(state.selectedType)
+      return state.checkedTrenchesItems.filter(
+        (item) => item && item.Type && item.Type.includes(state.selectedType)
       );
     },
 
@@ -210,7 +210,9 @@ export const useDataStore = defineStore("data", {
           }
 
           this.checkedTrenchesVersion[trenchName] = response.data.version;
-          this.checkedTrenchesData[trenchName] = response.data.surveys;
+          if (response.data.surveys) {
+            this.checkedTrenchesData[trenchName] = response.data.surveys;
+          }
 
           // Update localStorage
           localStorage.setItem(
