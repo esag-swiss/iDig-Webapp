@@ -38,7 +38,7 @@ export default {
       // select only fields present in checkedFieldNames
 
       return this.checkedTrenchesItemsSelectedTypeAndSearched.map((item) => {
-        var rows = [];
+        let rows = [];
         this.checkedFieldNames.forEach(function (prop) {
           if (Object.prototype.hasOwnProperty.call(item, prop)) {
             rows.push(item[prop]);
@@ -85,10 +85,10 @@ export default {
         align: "left",
         maxWidth: "75",
       });
-      var dimensionsCheckedTrenchesNames = doc.getTextDimensions(
+      let dimensionsCheckedTrenchesNames = doc.getTextDimensions(
         this.checkedTrenchesNames.join(", ")
       );
-      var positionVerticale = 15 + dimensionsCheckedTrenchesNames.h + 8;
+      let positionVerticale = 15 + dimensionsCheckedTrenchesNames.h + 8;
 
       //selected type
       doc

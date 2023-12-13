@@ -38,6 +38,28 @@ export function apiFetchProjectTrenchesNames() {
     })
     .finally(() => decrementLoadingCount());
 }
+export function apiFetchTrenchVersion(trench) {
+  const {
+    server,
+    project,
+    username,
+    password,
+    incrementLoadingCount,
+    decrementLoadingCount,
+  } = useAppStore();
+  incrementLoadingCount();
+  return axios({
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    method: "get",
+    url: `${server}/idig/${project}/${trench}/versions`,
+    auth: { username, password },
+  })
+    .catch((error) => {
+      displayError(error);
+      throw error;
+    })
+    .finally(() => decrementLoadingCount());
+}
 
 export function apiFetchPreferences(trench) {
   const {

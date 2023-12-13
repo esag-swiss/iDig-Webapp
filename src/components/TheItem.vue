@@ -235,6 +235,8 @@ export default {
       "projectPreferencesFields",
       "projectPreferencesBase64",
       "projectPreferencesFieldsWithTranslation",
+      "checkedTrenchesData",
+      "checkedTrenchesVersion",
       "selectedType",
     ]),
     ...mapState(useAppStore, ["lang"]),
@@ -245,11 +247,10 @@ export default {
     },
 
     selectedTrench() {
+      // return the trench of the selected item
       if (this.currentItem) {
-        var array = Object.entries(
-          JSON.parse(sessionStorage.checkedTrenchesData)
-        ); //object into array
-        return array.filter((x) =>
+        const matchingTrench = Object.entries(this.checkedTrenchesData);
+        return matchingTrench.filter((x) =>
           x[1].some((k) =>
             k.IdentifierUUID.includes(this.currentItem.IdentifierUUID)
           )
@@ -261,9 +262,7 @@ export default {
 
     trenchtoUpdate() {
       if (this.currentItem) {
-        return JSON.parse(sessionStorage.checkedTrenchesData)[
-          this.selectedTrench
-        ];
+        return this.checkedTrenchesData[this.selectedTrench];
       } else {
         return "";
       }
@@ -313,9 +312,7 @@ export default {
     },
 
     pushSurvey() {
-      const head = JSON.parse(sessionStorage.checkedTrenchesVersion)[
-        this.selectedTrench
-      ];
+      const head = this.checkedTrenchesVersion[this.selectedTrench];
       const surveys = this.trenchtoUpdate;
       const preferences = this.projectPreferencesBase64;
 
