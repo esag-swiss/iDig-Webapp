@@ -120,36 +120,36 @@ export const useDataStore = defineStore("data", {
     },
 
     async fetchPreferences(trench) {
-      // first see if localStorage version is defined and if == as server version
-      await apiFetchTrenchVersion(trench).then((response) => {
-        // case version and data present locally
-        if (response.data[0].version == this.checkedTrenchesVersion[trench]) {
-          // TODO comparer directement au local storage?
-          // les données sont présentent en local, on les récupère
-          this.setProjectPreferencesBase64(
-            localStorage.getItem("projectPreferencesBase64")
-          );
-          let preferences = decodeURIComponent(
-            escape(
-              window.atob(localStorage.getItem("projectPreferencesBase64"))
-            )
-          );
-          preferences = JSON.parse(preferences);
-          if (preferences.crs) {
-            this.setProjectPreferencesCrs(preferences.crs);
-          } else if (preferences.project === "Agora") {
-            // Agora project doesn't have property CRS
-            this.setProjectPreferencesCrs(preferences.project);
-          }
+      const { setIsLoaded } = useAppStore();
+      const processPreferences = (base64Preferences) => {
+        let preferences = "";
+        try {
+          preferences = JSON.parse(base64Preferences);
+        } catch (e) {
+          let message = `error: default preference file is not a valid json<br/>${e?.message}<br/>`;
+          Notify.create({
+            type: "negative",
+            message,
+            html: true,
+            timeout: 10000,
+          });
+          throw e;
+        }
+        if (preferences.crs) {
+          this.setProjectPreferencesCrs(preferences.crs);
+        } else if (preferences.project === "Agora") {
+          // Agora project doesn't have property CRS
+          this.setProjectPreferencesCrs(preferences.project);
+        }
+        this.setProjectPreferencesTypes(preferences.types);
+        this.setProjectPreferencesFields(preferences.fields);
+      };
 
-          this.setProjectPreferencesTypes(preferences.types);
-          this.setProjectPreferencesFields(preferences.fields);
-          const { setIsLoaded } = useAppStore();
-          setIsLoaded(true);
-        } else {
-          // if trench version is not present on localStorage fetch it
+      await apiFetchTrenchVersion(trench).then((response) => {
+        if (response.data[0].version !== this.checkedTrenchesVersion[trench]) {
+          // case curent version and preferences not present locally = fetch from server
           return apiFetchPreferences(trench).then((response) => {
-            // Store preferences in base64 format, because it will be necessary to resend them when modifying an item
+            // Store locally preferences in case of pushing trenches
             this.setProjectPreferencesBase64(response.data.preferences);
             // Store preferences also in localStorage for next session
             localStorage.setItem(
@@ -160,43 +160,33 @@ export const useDataStore = defineStore("data", {
             let preferences = decodeURIComponent(
               escape(window.atob(response.data.preferences))
             );
-            try {
-              preferences = JSON.parse(preferences);
-            } catch (e) {
-              let message = `error: default preference file is not a valid json<br/>${e?.message}<br/>`;
-              Notify.create({
-                type: "negative",
-                message,
-                html: true,
-                timeout: 10000,
-              });
-              throw e;
-            }
-            if (preferences.crs) {
-              this.setProjectPreferencesCrs(preferences.crs);
-            } else if (preferences.project === "Agora") {
-              // Agora project doesn't have property CRS
-              this.setProjectPreferencesCrs(preferences.project);
-            }
-            this.setProjectPreferencesTypes(preferences.types);
-            this.setProjectPreferencesFields(preferences.fields);
-
-            const { setIsLoaded } = useAppStore(); // pouirquoi ce n'est pas déclaré au début ?
+            processPreferences(preferences);
             setIsLoaded(true);
           });
+        } else {
+          // case curent version and preferences present locally
+          this.setProjectPreferencesBase64(
+            localStorage.getItem("projectPreferencesBase64")
+          );
+          let preferences = decodeURIComponent(
+            escape(
+              window.atob(localStorage.getItem("projectPreferencesBase64"))
+            )
+          );
+
+          processPreferences(preferences);
+          setIsLoaded(true);
         }
       });
     },
 
     addCheckedTrenchesData(trenchList) {
-      // Utiliser reduce pour gérer l'ordre d'exécution des promesses, comme foreach mais permet l'async
-      trenchList.reduce(async (previousPromise, trenchName) => {
-        // await previousPromise; // Ensure the previous iteration is complete before starting the next one
-
+      trenchList.map(async (trenchName) => {
         try {
           const response = await apiFetchTrenchVersion(trenchName);
 
           if (
+            response.data.length >= 1 &&
             response.data[0].version === this.checkedTrenchesVersion[trenchName]
           ) {
             const db = await openDB();
@@ -208,7 +198,7 @@ export const useDataStore = defineStore("data", {
         } catch (error) {
           console.error(`Error processing trench ${trenchName}: ${error}`);
         }
-      }, Promise.resolve());
+      });
 
       const fetchDataAndUpdateStorage = async (trenchName) => {
         try {
