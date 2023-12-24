@@ -5,9 +5,11 @@
       align="left"
       padding="xs"
       color="secondary"
-      label="json"
+      label=".json"
       @click="exportFile('json')"
-      ><q-tooltip class="bg-accent">items as json file</q-tooltip></q-btn
+      ><q-tooltip class="bg-accent"
+        >filtered items as .json file</q-tooltip
+      ></q-btn
     >
     <q-btn
       align="left"
@@ -15,7 +17,19 @@
       color="secondary"
       label=".tab"
       @click="exportFile('tab')"
-      ><q-tooltip class="bg-accent">items as .tab file</q-tooltip></q-btn
+      ><q-tooltip class="bg-accent"
+        >filtered items as .tab file</q-tooltip
+      ></q-btn
+    >
+    <q-btn
+      align="left"
+      padding="xs"
+      color="secondary"
+      label=".Pdf"
+      @click="generatePDF()"
+      ><q-tooltip class="bg-accent"
+        >filtered items as PDF report</q-tooltip
+      ></q-btn
     >
     <q-btn
       align="left"
@@ -23,16 +37,9 @@
       color="secondary"
       label="Geojson"
       @click="exportFile('geojson')"
-      ><q-tooltip class="bg-accent">trenches as Geojson</q-tooltip></q-btn
-    >
-
-    <q-btn
-      align="left"
-      padding="xs"
-      color="secondary"
-      label="Pdf"
-      @click="generatePDF()"
-      ><q-tooltip class="bg-accent">PDF report</q-tooltip></q-btn
+      ><q-tooltip class="bg-accent"
+        >all geolocalized items from selected trenches</q-tooltip
+      ></q-btn
     >
   </div>
   <ThePdfGenerator ref="ThePdfGenerator" class="py-2" r></ThePdfGenerator>
