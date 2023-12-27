@@ -1,7 +1,58 @@
 import { convertToEPSG4326 } from "@/services/coordinateUtils";
 import { useDataStore } from "@/stores/data";
 
-// "CoverageSerialized" :
+function determineGeoType(coverageSerialized) {
+  let GeoTypeArray = "";
+  let level3 = cleanMulti(coverageSerialized);
+  if (level3.length > 1) {
+    GeoTypeArray = "MultiPolygon";
+  } // prevoir aussi MultiLineString
+  else {
+    level3.map((x) =>
+      x.split("\n\n").length < 2
+        ? (GeoTypeArray = "Point")
+        : x.split("\n\n").length < 4
+        ? (GeoTypeArray = "LineString")
+        : (GeoTypeArray = "Polygon")
+    );
+  }
+  return GeoTypeArray;
+}
+
+function cleanMulti(coverageSerialized) {
+  return coverageSerialized.split("\n\n\n").reduce((res, or) => {
+    if (or.includes("x=")) {
+      res.push(or);
+    }
+    return res;
+  }, []);
+}
+
+function ProcessLevel2(CoverageSerialized2ndLevel) {
+  let level2 = CoverageSerialized2ndLevel.split("\n\n");
+  if (level2.length < 2) {
+    if (CoverageSerialized2ndLevel.includes("x=")) {
+      return CoverageSerializedXYZToGeojsonPosition(CoverageSerialized2ndLevel);
+    } else {
+      return level2;
+    }
+  } else if (level2.length < 4) {
+    return level2.map((v) => CoverageSerializedXYZToGeojsonPosition(v));
+  } else {
+    level2 = ProcessPolygon(level2);
+  }
+  return level2;
+}
+
+function ProcessPolygon(CoverageSerialized2ndLevel) {
+  return [
+    makePolyClockwise(
+      CoverageSerialized2ndLevel.map((v) =>
+        CoverageSerializedXYZToGeojsonPosition(v)
+      )
+    ),
+  ];
+}
 export function geoSerializedToGeojson(json) {
   let geojson = {
     type: "FeatureCollection",
@@ -11,76 +62,52 @@ export function geoSerializedToGeojson(json) {
   for (let i = 0; i < json.length; i++) {
     if (
       json[i] &&
-      Object.prototype.hasOwnProperty.call(json[i], "CoverageSerialized")
+      Object.prototype.hasOwnProperty.call(json[i], "CoverageSerialized") &&
+      json[i].CoverageSerialized.includes("x=")
     ) {
-      let geoType = ""; //  list of type used by iDig in field CoverageSerialized  are : Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, and GeometryCollection?
-
+      let geojsonCoordinates = "";
+      let geoType = ""; // Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon. and GeometryCollection?
       let polyStrings = json[i].CoverageSerialized;
       if (polyStrings.includes("\n\n\n")) {
-        polyStrings = polyStrings.split("\n\n\n");
+        polyStrings = cleanMulti(polyStrings);
 
         if (polyStrings[0].includes("\n\n")) {
-          if (polyStrings[0].split("\n\n").length < 4) {
-            geoType = "MultiLineString";
-            polyStrings = polyStrings.map((v) =>
+          geoType = "MultiPolygon";
+          geojsonCoordinates = polyStrings.map((v) => [
+            makePolyClockwise(
               v
                 .split("\n\n")
                 .map((v) => CoverageSerializedXYZToGeojsonPosition(v))
-            );
-          } else {
-            geoType = "MultiPolygon";
-            polyStrings = polyStrings.map((v) => [
-              makePolyClockwise(
-                v
-                  .split("\n\n")
-                  .map((v) => CoverageSerializedXYZToGeojsonPosition(v))
-              ),
-            ]);
-          }
+            ),
+          ]);
         } else {
           // pour gérer le cas super rare ou /n/n/n mais pas de /n/n !
           geoType = "Point";
-          polyStrings = CoverageSerializedXYZToGeojsonPosition(polyStrings[0]);
-        }
-      } else if (polyStrings.includes("\n\n")) {
-        polyStrings = polyStrings.split("\n\n");
-
-        if (polyStrings.length < 4) {
-          // it seems this wrongly assume that >= 4 are Polygones but it may be LineString
-          geoType = "LineString";
-          polyStrings = polyStrings.map((v) =>
-            CoverageSerializedXYZToGeojsonPosition(v)
+          geojsonCoordinates = CoverageSerializedXYZToGeojsonPosition(
+            polyStrings[0]
           );
-        } else {
-          geoType = "Polygon";
-          polyStrings = [
-            makePolyClockwise(
-              polyStrings.map((v) => CoverageSerializedXYZToGeojsonPosition(v))
-            ),
-          ];
         }
-      } else if (polyStrings.includes("\n")) {
-        geoType = "Point";
-        polyStrings = CoverageSerializedXYZToGeojsonPosition(polyStrings);
+      } else {
+        geoType = determineGeoType(polyStrings);
+        geojsonCoordinates = ProcessLevel2(polyStrings);
       }
 
-      // END of cases
-      if (polyStrings !== null) {
+      if (geojsonCoordinates !== null) {
         geojson.features.push({
           type: "Feature",
           geometry: {
             type: geoType,
-            coordinates: polyStrings,
+            coordinates: geojsonCoordinates,
           },
           // As properties we only send back few fields to produce a lighter output
           properties: {
-            id: json[i].Identifier,
+            id: json[i].IdentifierUUID,
             type: json[i].Type,
             title: json[i].Title,
           },
         });
       } else {
-        console.log("coord err IdentifierUUID  : " + json[i].Identifier);
+        console.log("coord error on : " + json[i].CoverageSerialized);
       }
     }
   }
