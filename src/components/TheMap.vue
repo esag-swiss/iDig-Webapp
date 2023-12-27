@@ -122,11 +122,19 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 #mapContainer {
-  height: 50vh;
+  position: absolute;
+
+  width: 100%;
+  height: 100%;
 }
 .leaflet-interactive:hover {
+  fill-opacity: 1;
+  stroke-opacity: 1;
+  stroke-width: 4;
+}
+g path:hover {
   fill-opacity: 1;
 }
 </style>
