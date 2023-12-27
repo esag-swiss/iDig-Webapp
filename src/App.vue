@@ -17,14 +17,31 @@
       </nav>
 
       <!-- MAIN FRAME The map and tab goes here -->
-      <div class="col-md-10 ml-sm-auto col-lg-10 pt-3 px-4">
-        <TheTable v-if="checkedTrenchesItemsSelectedType.length > 0">
-        </TheTable>
+      <div class="col-md-10 ml-sm-auto col-lg-10 p-3">
+        <div
+          v-if="checkedTrenchesItemsSelectedType.length > 0"
+          class="theTableDiv"
+          :class="{ expanded: isSmallExpanded }"
+        >
+          <TheTable> </TheTable>
+        </div>
+
         <div v-else class="d-flex justify-content-center mt-5">
           Pas de données sélectionnées
         </div>
-        <hr />
-        <TheMap v-if="checkedTrenchesItemsSelectedType.length > 0"></TheMap>
+
+        <div
+          v-if="checkedTrenchesItemsSelectedType.length > 0"
+          class="theMapDiv"
+          :class="{ expanded: isSmallExpanded }"
+        >
+          <TheMap></TheMap>
+        </div>
+        <div
+          v-if="checkedTrenchesItemsSelectedType.length > 0"
+          class="theToggle"
+          @click="toggleSize"
+        ></div>
       </div>
     </div>
     <div v-else class="d-flex justify-content-center mt-5">
@@ -58,9 +75,20 @@ export default {
     TheControlExport,
     TheMap,
   },
+  data() {
+    return {
+      isSmallExpanded: false,
+    };
+  },
   computed: {
     ...mapState(useAppStore, ["isLoaded"]),
     ...mapState(useDataStore, ["checkedTrenchesItemsSelectedType"]),
+  },
+
+  methods: {
+    toggleSize() {
+      this.isSmallExpanded = !this.isSmallExpanded;
+    },
   },
 };
 </script>
@@ -71,6 +99,46 @@ export default {
   font-weight: 500;
   line-height: 1.2;
   margin-bottom: 0rem;
+}
+
+.theToggle {
+  transition: width 0.3s, height 0.3s;
+}
+
+.theToggle:hover {
+  width: 152px;
+  height: 152px;
+  cursor: pointer;
+}
+
+.theToggle,
+.theMapDiv,
+.theTableDiv.expanded {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 150px;
+  height: 150px;
+  z-index: 1022;
+  overflow: hidden;
+}
+
+.theMapDiv,
+.theTableDiv.expanded {
+  transition: width 0.3s, height 0.3s;
+}
+
+.theMapDiv {
+  z-index: 1000;
+}
+
+.theMapDiv.expanded,
+.theTableDiv {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 100%;
+  height: 100%;
 }
 
 /*
