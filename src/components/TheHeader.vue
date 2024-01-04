@@ -8,7 +8,7 @@
       </ul>
 
       <div v-if="isLoaded">
-        <span class="text-white">
+        <span class="text-white d-none d-md-inline">
           {{ project }} - {{ username }}@{{ server }}
         </span>
         <TheHeaderLang />
