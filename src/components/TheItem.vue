@@ -333,12 +333,10 @@ export default {
 <style scoped>
 .TheItemwrapper {
   position: absolute;
-  top: -5px;
-  left: -10%;
-  width: 100%;
+  top: 5%;
+  width: 90%;
   height: auto;
   background: rgb(255, 255, 255);
-
   z-index: 1024;
 }
 

@@ -7,7 +7,7 @@
   <div class="container-fluid">
     <div v-if="isLoaded" class="row">
       <!-- SIDEBAR -->
-      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+      <nav class="col-2 d-block bg-light sidebar">
         <div class="sidebar-sticky hidescrollbar p-1">
           <TheControlSearch></TheControlSearch>
           <TheControlTrenches> </TheControlTrenches>
@@ -17,11 +17,11 @@
       </nav>
 
       <!-- MAIN FRAME The map and tab goes here -->
-      <div class="col-md-10 ml-sm-auto col-lg-10 p-3">
+      <div class="col-10 p-1">
         <div
           v-if="checkedTrenchesItemsSelectedType.length > 0"
           class="theTableDiv"
-          :class="{ expanded: isSmallExpanded }"
+          :class="{ toggled: isToggled }"
         >
           <TheTable> </TheTable>
         </div>
@@ -33,7 +33,7 @@
         <div
           v-if="checkedTrenchesItemsSelectedType.length > 0"
           class="theMapDiv"
-          :class="{ expanded: isSmallExpanded }"
+          :class="{ toggled: isToggled }"
         >
           <TheMap></TheMap>
         </div>
@@ -58,7 +58,7 @@ import TheTable from "@/components/TheTable.vue";
 import TheSpinner from "@/components/TheSpinner.vue";
 import TheControlExport from "@/components/TheControlExport.vue";
 import TheMap from "@/components/TheMap.vue";
-import { mapState } from "pinia";
+import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
 import TheControlSearch from "@/components/TheControlSearch.vue";
@@ -75,20 +75,16 @@ export default {
     TheControlExport,
     TheMap,
   },
-  data() {
-    return {
-      isSmallExpanded: false,
-    };
-  },
   computed: {
-    ...mapState(useAppStore, ["isLoaded"]),
+    ...mapState(useAppStore, ["isLoaded", "isToggled"]),
     ...mapState(useDataStore, ["checkedTrenchesItemsSelectedType"]),
   },
 
   methods: {
     toggleSize() {
-      this.isSmallExpanded = !this.isSmallExpanded;
+      this.setIsToggled(!this.isToggled);
     },
+    ...mapActions(useAppStore, ["setIsToggled"]),
   },
 };
 </script>
@@ -101,44 +97,38 @@ export default {
   margin-bottom: 0rem;
 }
 
-.theToggle {
-  transition: width 0.3s, height 0.3s;
-}
-
 .theToggle:hover {
-  width: 152px;
-  height: 152px;
   cursor: pointer;
 }
 
 .theToggle,
-.theMapDiv,
-.theTableDiv.expanded {
+.theMapDiv.toggled,
+.theTableDiv {
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
+  border-radius: 25px;
   z-index: 1022;
   overflow: hidden;
-}
-
-.theMapDiv,
-.theTableDiv.expanded {
   transition: width 0.3s, height 0.3s;
+  font-size: 30%;
 }
 
 .theMapDiv {
   z-index: 1000;
 }
 
-.theMapDiv.expanded,
-.theTableDiv {
-  position: absolute;
+.theMapDiv,
+.theTableDiv.toggled {
+  position: relative;
   top: 0px;
   right: 0px;
   width: 100%;
   height: 100%;
+  border-radius: 0px;
+  font-size: 100%;
 }
 
 /*
