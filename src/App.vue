@@ -104,16 +104,16 @@ export default {
 .theToggle,
 .theMapDiv.toggled,
 .theTableDiv {
-  position: absolute;
-  top: 20px;
+  position: fixed;
+  bottom: 20px;
   right: 20px;
   width: 100px;
   height: 100px;
   border-radius: 25px;
+  font-size: 30%;
   z-index: 1022;
   overflow: hidden;
   transition: width 0.3s, height 0.3s;
-  font-size: 30%;
 }
 
 .theMapDiv {
@@ -123,8 +123,8 @@ export default {
 .theMapDiv,
 .theTableDiv.toggled {
   position: relative;
-  top: 0px;
-  right: 0px;
+  bottom: 0px;
+  right: 1px;
   width: 100%;
   height: 100%;
   border-radius: 0px;
