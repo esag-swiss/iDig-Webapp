@@ -8,6 +8,7 @@ import L from "leaflet";
 import { geoSerializedToGeojson } from "@/services/json2geojson";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
+import { useAppStore } from "@/stores/app";
 
 export default {
   name: "TheMap",
@@ -18,45 +19,66 @@ export default {
     };
   },
   computed: {
+    ...mapState(useAppStore, ["isToggled"]),
     ...mapState(useDataStore, ["checkedTrenchesItems"]),
     fileData() {
       return geoSerializedToGeojson(this.checkedTrenchesItems);
     },
   },
   watch: {
+    isToggled: function () {
+      this.map.remove();
+      this.initMap();
+    },
     checkedTrenchesItems: function () {
       this.layer.clearLayers();
       this.refreshMap();
     },
   },
   mounted() {
-    this.map = L.map("mapContainer", {
-      attributionControl: false,
-      zoomControl: true,
-      //   note that Leaflet supports very few coordinate systems: CRS:3857, CRS:3395 and CRS:4326 see also L.CRS.Simple.
-    });
-
-    L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
-      maxZoom: 25,
-      maxNativeZoom: 19,
-      attribution:
-        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(this.map);
-
-    // WMS layer from Dipylon. To be used in dev only for not overload their server
-    // L.tileLayer
-    //   .wms("http://116.202.128.162:83/geoserver/wms?SERVICE=WMS?", {
-    //     layers: "amarynthos:AMA22_complete_GGRS87",
-    //     attribution: "ESAG",
-    //     transparent: true,
-    //     maxZoom: 25,
-    //   })
-    //   .addTo(this.map);
-
-    this.refreshMap();
+    this.initMap();
   },
 
   methods: {
+    initMap() {
+      this.map = L.map("mapContainer", {
+        attributionControl: false,
+        zoomControl: !this.isToggled,
+      });
+
+      // Ajouter les couches de tuiles de base
+      const osmLayer = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
+        maxZoom: 25,
+        maxNativeZoom: 19,
+        attribution:
+          '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      });
+
+      // WMS layer from Dipylon. To be used in dev only for not overload their server
+      const wmsLayer = L.tileLayer.wms(
+        "http://116.202.128.162:83/geoserver/wms?SERVICE=WMS?",
+        {
+          layers: "amarynthos:AMA22_complete_GGRS87",
+          attribution: "ESAG",
+          transparent: true,
+          maxZoom: 25,
+        }
+      );
+
+      // Créer un objet de contrôle de couches
+      const baseLayers = {
+        OpenStreetMap: osmLayer,
+        "WMS Layer": wmsLayer,
+      };
+
+      // Ajouter le contrôle de couches à la carte
+      L.control.layers(baseLayers).addTo(this.map);
+
+      // Sélectionner la couche OpenStreetMap par défaut
+      osmLayer.addTo(this.map);
+
+      this.refreshMap();
+    },
     onEachFeature(feature, layer) {
       if (feature.properties && feature.properties.id) {
         layer.bindPopup(
@@ -124,8 +146,7 @@ export default {
 
 <style>
 #mapContainer {
-  position: absolute;
-
+  position: relative;
   width: 100%;
   height: 100%;
 }
@@ -133,8 +154,5 @@ export default {
   fill-opacity: 1;
   stroke-opacity: 1;
   stroke-width: 4;
-}
-g path:hover {
-  fill-opacity: 1;
 }
 </style>
