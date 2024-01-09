@@ -97,6 +97,5 @@ export const allTrenchesPerProject = {
     "AMA22-S37",
     "AMA22-S38",
     "AMA22-S39",
-    "AMA-test",
   ],
 };
