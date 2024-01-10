@@ -11,6 +11,7 @@ export const useAppStore = defineStore("app", {
   state: () => ({
     loadingCount: 0,
     isLoaded: false,
+    isToggled: false,
     // Load local storage values for these elements, or empty string if not exist :
     lang: lsLoadLang(),
     username: lsLoadUsername(),
@@ -44,6 +45,9 @@ export const useAppStore = defineStore("app", {
     },
     setIsLoaded(value) {
       this.isLoaded = value;
+    },
+    setIsToggled(value) {
+      this.isToggled = value;
     },
   },
 });

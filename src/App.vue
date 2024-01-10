@@ -7,7 +7,7 @@
   <div class="container-fluid">
     <div v-if="isLoaded" class="row">
       <!-- SIDEBAR -->
-      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+      <nav class="col-2 d-block bg-light sidebar">
         <div class="sidebar-sticky hidescrollbar p-1">
           <TheControlSearch></TheControlSearch>
           <TheControlTrenches> </TheControlTrenches>
@@ -17,14 +17,31 @@
       </nav>
 
       <!-- MAIN FRAME The map and tab goes here -->
-      <div class="col-md-10 ml-sm-auto col-lg-10 pt-3 px-4">
-        <TheTable v-if="checkedTrenchesItemsSelectedType.length > 0">
-        </TheTable>
+      <div class="col-10 p-1">
+        <div
+          v-if="checkedTrenchesItemsSelectedType.length > 0"
+          class="theTableDiv"
+          :class="{ toggled: isToggled }"
+        >
+          <TheTable> </TheTable>
+        </div>
+
         <div v-else class="d-flex justify-content-center mt-5">
           Pas de données sélectionnées
         </div>
-        <hr />
-        <TheMap v-if="checkedTrenchesItemsSelectedType.length > 0"></TheMap>
+
+        <div
+          v-if="checkedTrenchesItemsSelectedType.length > 0"
+          class="theMapDiv"
+          :class="{ toggled: isToggled }"
+        >
+          <TheMap></TheMap>
+        </div>
+        <div
+          v-if="checkedTrenchesItemsSelectedType.length > 0"
+          class="theToggle"
+          @click="toggleSize"
+        ></div>
       </div>
     </div>
     <div v-else class="d-flex justify-content-center mt-5">
@@ -41,7 +58,7 @@ import TheTable from "@/components/TheTable.vue";
 import TheSpinner from "@/components/TheSpinner.vue";
 import TheControlExport from "@/components/TheControlExport.vue";
 import TheMap from "@/components/TheMap.vue";
-import { mapState } from "pinia";
+import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
 import TheControlSearch from "@/components/TheControlSearch.vue";
@@ -59,8 +76,15 @@ export default {
     TheMap,
   },
   computed: {
-    ...mapState(useAppStore, ["isLoaded"]),
+    ...mapState(useAppStore, ["isLoaded", "isToggled"]),
     ...mapState(useDataStore, ["checkedTrenchesItemsSelectedType"]),
+  },
+
+  methods: {
+    toggleSize() {
+      this.setIsToggled(!this.isToggled);
+    },
+    ...mapActions(useAppStore, ["setIsToggled"]),
   },
 };
 </script>
@@ -71,6 +95,40 @@ export default {
   font-weight: 500;
   line-height: 1.2;
   margin-bottom: 0rem;
+}
+
+.theToggle:hover {
+  cursor: pointer;
+}
+
+.theToggle,
+.theMapDiv.toggled,
+.theTableDiv {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 100px;
+  height: 100px;
+  border-radius: 25px;
+  font-size: 30%;
+  z-index: 1022;
+  overflow: hidden;
+  transition: width 0.3s, height 0.3s;
+}
+
+.theMapDiv {
+  z-index: 1000;
+}
+
+.theMapDiv,
+.theTableDiv.toggled {
+  position: relative;
+  bottom: 0px;
+  right: 1px;
+  width: 100%;
+  height: 100%;
+  border-radius: 0px;
+  font-size: 100%;
 }
 
 /*
