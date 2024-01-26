@@ -152,12 +152,16 @@ export function apiUpdateTrenchItem(
     .finally(() => decrementLoadingCount());
 }
 export function apiFetchImage(img, trench) {
-  const { server, project, incrementLoadingCount, decrementLoadingCount } =
-    useAppStore();
+  const {
+    server,
+    project,
+    username,
+    password,
+    incrementLoadingCount,
+    decrementLoadingCount,
+  } = useAppStore();
   let name = img.split("\n")[0].split("=")[1];
   let checksum = img.split("\n")[1].split("=")[1];
-
-  console.log(trench);
   incrementLoadingCount();
   axios({
     headers: {
@@ -165,12 +169,8 @@ export function apiFetchImage(img, trench) {
     },
     method: "get",
     url: `${server}/idig/${project}/${trench}/attachments/${name}?checksum=${checksum}`,
-
     responseType: "blob",
-    auth: {
-      username: "idig",
-      password: "idig",
-    },
+    auth: { username, password },
     data: {},
   })
     .then((response) => {
@@ -185,6 +185,79 @@ export function apiFetchImage(img, trench) {
       alert(
         `Error: ${error}\nSomething went wrong! Please check the image URL.`
       );
+    })
+    .finally(() => decrementLoadingCount());
+}
+export function apiFetchImageSRC(img, trench) {
+  const {
+    server,
+    project,
+    username,
+    password,
+    incrementLoadingCount,
+    decrementLoadingCount,
+  } = useAppStore();
+  let name = img.split("\n")[0].split("=")[1];
+  let checksum = img.split("\n")[1].split("=")[1];
+  incrementLoadingCount();
+  return axios({
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    method: "get",
+    url: `${server}/idig/${project}/${trench}/attachments/${name}?checksum=${checksum}`,
+    responseType: "blob",
+    auth: { username, password },
+    data: {},
+  })
+    .catch((error) => {
+      alert(
+        `Error: ${error}\nSomething went wrong! Please check the image URL.`
+      );
+    })
+    .finally(() => decrementLoadingCount());
+}
+export function apiFetchPlanWld(img, trench) {
+  const {
+    server,
+    project,
+    username,
+    password,
+    incrementLoadingCount,
+    decrementLoadingCount,
+  } = useAppStore();
+  let name = img.split("\n\n")[1].split("\n")[0].split("=")[1];
+  let checksum = img.split("\n\n")[1].split("\n")[1].split("=")[1];
+  incrementLoadingCount();
+
+  return axios({
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    method: "get",
+    url: `${server}/idig/${project}/${trench}/attachments/${name}?checksum=${checksum}`,
+    responseType: "blob",
+    auth: { username, password },
+    data: {},
+  })
+    .then((response) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const textContent = reader.result;
+          resolve(textContent);
+        };
+        reader.onerror = (error) => {
+          reject(error);
+        };
+        reader.readAsText(response.data);
+      });
+    })
+    .catch((error) => {
+      alert(
+        `Error: ${error}\nSomething went wrong! Please check the image URL.`
+      );
+      throw error; // Rethrow the error to maintain consistency in handling errors
     })
     .finally(() => decrementLoadingCount());
 }
