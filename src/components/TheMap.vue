@@ -11,6 +11,11 @@ import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
 import { apiFetchImageSRC, apiFetchPlanWld } from "@/services/ApiClient";
 import { convertToEPSG4326 } from "@/services/coordinateUtils";
+import {
+  openDB,
+  addImageToDB,
+  getImageFromDB,
+} from "@/services/indexedDbManager";
 
 export default {
   name: "TheMap",
@@ -26,6 +31,7 @@ export default {
       "checkedTrenchesItemsPlans",
       "checkedTrenchesItems",
       "checkedTrenchesItemsPlans",
+      "projectPreferencesCRS",
     ]),
   },
   watch: {
@@ -99,37 +105,54 @@ export default {
     },
 
     async createMapsOverlay(RelationAttachments, Trench) {
-      const planURL = await apiFetchImageSRC(RelationAttachments, Trench).then(
-        async (response) => {
-          let blob = new Blob([response.data], {
-            type: response.headers["content-type"],
-          });
-          const imageTitle = RelationAttachments.split("\n")[0]
-            .split("=")[1]
-            .split(".")[0];
-          // Créer l'URL objet pour l'image
-          const imageURL = URL.createObjectURL(blob);
+      const imageTitle = RelationAttachments.split("\n")[0]
+        .split("=")[1]
+        .split(".")[0];
 
-          // Créer une nouvelle instance de l'objet Image
-          const img = new Image();
+      const db = await openDB();
+      const result = await getImageFromDB(db, imageTitle);
+      let planURL;
 
-          // Charger l'image
-          img.src = imageURL;
+      if (result) {
+        // Utilisez le blob pour créer une URL d'objet
+        const imageURL = URL.createObjectURL(result.imageBlob);
 
-          // Attendre que l'image soit chargée
-          await new Promise((resolve) => {
-            img.onload = resolve;
-          });
+        planURL = {
+          imageTitle: result.imageTitle,
+          imageURL: imageURL,
+          width: result.width,
+          height: result.height,
+        };
+      } else {
+        planURL = await apiFetchImageSRC(RelationAttachments, Trench).then(
+          async (response) => {
+            let blob = new Blob([response.data], {
+              type: response.headers["content-type"],
+            });
+            // Créer l'URL objet pour l'image
+            const imageURL = URL.createObjectURL(blob);
+            // Créer une nouvelle instance de l'objet Image
+            const img = new Image();
+            // Charger l'image
+            img.src = imageURL;
+            // Attendre que l'image soit chargée
+            await new Promise((resolve) => {
+              img.onload = resolve;
+            });
 
-          return {
-            [imageTitle]: {
+            // Update IndexedDB
+            const db = await openDB();
+            addImageToDB(db, blob, imageTitle, img.width, img.height);
+
+            return {
+              imageTitle: imageTitle,
               imageURL: imageURL,
               width: img.width,
               height: img.height,
-            },
-          };
-        }
-      );
+            };
+          }
+        );
+      }
 
       const planlatLngBounds = await apiFetchPlanWld(
         RelationAttachments,
@@ -138,8 +161,8 @@ export default {
         .then((textContent) => {
           const wldCoefficients = textContent.split("\n");
           // Dimensions de l'image raster
-          const width = planURL[Object.keys(planURL)[0]].width;
-          const height = planURL[Object.keys(planURL)[0]].height;
+          const width = planURL.width;
+          const height = planURL.height;
 
           function wldToExtent(wldCoefficients, width, height) {
             const [scaleX, rotationY, rotationX, scaleY, West, North] =
@@ -162,21 +185,27 @@ export default {
         });
 
       const latLngBounds = L.latLngBounds([
-        [convertToEPSG4326(planlatLngBounds.SW, "Amarynthos").coords.reverse()],
-        [convertToEPSG4326(planlatLngBounds.NE, "Amarynthos").coords.reverse()], // SWNE
+        [
+          convertToEPSG4326(
+            planlatLngBounds.SW,
+            this.projectPreferencesCRS
+          ).coords.reverse(),
+        ],
+        [
+          convertToEPSG4326(
+            planlatLngBounds.NE,
+            this.projectPreferencesCRS
+          ).coords.reverse(),
+        ], // SWNE
       ]);
 
-      const imageOverlay = L.imageOverlay(
-        planURL[Object.keys(planURL)[0]].imageURL,
-        latLngBounds,
-        {
-          opacity: 0.8,
-          interactive: true,
-        }
-      );
+      const imageOverlay = L.imageOverlay(planURL.imageURL, latLngBounds, {
+        opacity: 0.8,
+        interactive: true,
+      });
 
       return {
-        [Object.keys(planURL)[0]]: imageOverlay,
+        [planURL.imageTitle]: imageOverlay,
       };
     },
 
