@@ -32,7 +32,14 @@ export const openDB = () => {
 };
 
 // Fonction pour ajouter une image à IndexedDB
-export const addImageToDB = async (db, blob, imageTitle, width, height) => {
+export const addImageToDB = async (
+  db,
+  blob,
+  imageTitle,
+  width,
+  height,
+  planlatLngBounds
+) => {
   const transaction = db.transaction(["rasterImagesStore"], "readwrite");
   const imageStore = transaction.objectStore("rasterImagesStore");
 
@@ -42,6 +49,7 @@ export const addImageToDB = async (db, blob, imageTitle, width, height) => {
     imageBlob: blob,
     width: width,
     height: height,
+    planlatLngBounds: planlatLngBounds,
   };
 
   imageStore.put(imageData);

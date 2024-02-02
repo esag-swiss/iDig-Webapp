@@ -109,12 +109,11 @@ export default {
         .split("=")[1]
         .split(".")[0];
 
+      let planURL;
+      let planlatLngBounds;
       const db = await openDB();
       const result = await getImageFromDB(db, imageTitle);
-      let planURL;
-
       if (result) {
-        // Utilisez le blob pour créer une URL d'objet
         const imageURL = URL.createObjectURL(result.imageBlob);
 
         planURL = {
@@ -123,10 +122,11 @@ export default {
           width: result.width,
           height: result.height,
         };
+        planlatLngBounds = result.planlatLngBounds;
       } else {
-        planURL = await apiFetchImageSRC(RelationAttachments, Trench).then(
+        await apiFetchImageSRC(RelationAttachments, Trench).then(
           async (response) => {
-            let blob = new Blob([response.data], {
+            const blob = new Blob([response.data], {
               type: response.headers["content-type"],
             });
             // Créer l'URL objet pour l'image
@@ -140,35 +140,26 @@ export default {
               img.onload = resolve;
             });
 
-            // Update IndexedDB
-            const db = await openDB();
-            addImageToDB(db, blob, imageTitle, img.width, img.height);
-
-            return {
+            planURL = {
               imageTitle: imageTitle,
+              imageBlob: blob,
               imageURL: imageURL,
               width: img.width,
               height: img.height,
             };
           }
         );
-      }
-
-      const planlatLngBounds = await apiFetchPlanWld(
-        RelationAttachments,
-        Trench
-      )
-        .then((textContent) => {
+        planlatLngBounds = await apiFetchPlanWld(
+          RelationAttachments,
+          Trench
+        ).then(async (textContent) => {
           const wldCoefficients = textContent.split("\n");
-          // Dimensions de l'image raster
           const width = planURL.width;
           const height = planURL.height;
 
-          function wldToExtent(wldCoefficients, width, height) {
+          async function wldToExtent(wldCoefficients, width, height) {
             const [scaleX, rotationY, rotationX, scaleY, West, North] =
               wldCoefficients.map((value) => parseFloat(value));
-
-            // Calcul des SWNE
             const South = North + scaleY * height;
             const East = West + scaleX * width;
 
@@ -177,12 +168,19 @@ export default {
               NE: [East, North],
             };
           }
-          // Appel de la fonction
           return wldToExtent(wldCoefficients, width, height);
-        })
-        .catch((error) => {
-          console.error(error);
         });
+        // mettre à jour Update IndexedDB
+        const db = await openDB();
+        addImageToDB(
+          db,
+          planURL.imageBlob,
+          imageTitle,
+          planURL.width,
+          planURL.height,
+          planlatLngBounds
+        );
+      }
 
       const latLngBounds = L.latLngBounds([
         [
@@ -201,7 +199,6 @@ export default {
 
       const imageOverlay = L.imageOverlay(planURL.imageURL, latLngBounds, {
         opacity: 0.8,
-        interactive: true,
       });
 
       return {
