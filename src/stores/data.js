@@ -60,12 +60,12 @@ export const useDataStore = defineStore("data", {
 
     checkedTrenchesItemsPlans(state) {
       return state.checkedTrenchesItems.filter((item) =>
-        item.Type.includes("Plan")
+        item?.Type?.includes("Plan")
       );
     },
     checkedTrenchesItemsSelectedType(state) {
       return state.checkedTrenchesItems.filter((item) =>
-        item.Type.includes(state.selectedType)
+        item?.Type?.includes(state.selectedType)
       );
     },
 
@@ -129,7 +129,9 @@ export const useDataStore = defineStore("data", {
       const processPreferences = (base64Preferences) => {
         let preferences = "";
         try {
-          preferences = JSON.parse(base64Preferences);
+          preferences = JSON.parse(
+            base64Preferences.replace(/},\n\t+}/g, "}}")
+          );
         } catch (e) {
           let message = `error: default preference file is not a valid json<br/>${e?.message}<br/>`;
           Notify.create({
