@@ -218,11 +218,10 @@ export const useDataStore = defineStore("data", {
 
           this.checkedTrenchesVersion[trenchName] = response.data.version;
           if (response.data.surveys) {
-            this.checkedTrenchesData[trenchName] =
-              await this.addTrenchNameToItems(
-                response.data.surveys,
-                trenchName
-              );
+            this.checkedTrenchesData[trenchName] = this.addTrenchNameToItems(
+              response.data.surveys,
+              trenchName
+            );
           }
 
           // Update localStorage
