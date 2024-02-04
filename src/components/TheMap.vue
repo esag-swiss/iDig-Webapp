@@ -30,6 +30,7 @@ export default {
     ...mapState(useDataStore, [
       "checkedTrenchesItemsPlans",
       "checkedTrenchesItems",
+      "checkedTrenchesItemsSelectedTypeAndSearched",
       "checkedTrenchesItemsPlans",
       "projectPreferencesCRS",
     ]),
@@ -39,7 +40,7 @@ export default {
       this.map.remove();
       this.initMap();
     },
-    checkedTrenchesItems: function () {
+    checkedTrenchesItemsSelectedTypeAndSearched: function () {
       this.map.remove();
       this.initMap();
     },
@@ -230,7 +231,9 @@ export default {
         opacity: 0.2,
       };
       this.layer = L.geoJSON(
-        geoSerializedToGeojson(this.checkedTrenchesItems),
+        geoSerializedToGeojson(
+          this.checkedTrenchesItemsSelectedTypeAndSearched
+        ),
         {
           onEachFeature: this.onEachFeature,
           style: function (feature) {
