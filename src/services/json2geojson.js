@@ -116,7 +116,7 @@ export function geoSerializedToGeojson(json) {
 
 // Convert coordinates from iDig format to geojson position in EPSG4326
 // Geojson position is the fundamental geometry construct
-function CoverageSerializedXYZToGeojsonPosition(XYZ) {
+export function CoverageSerializedXYZToGeojsonPosition(XYZ) {
   let coordinates = XYZ.split("\n");
   coordinates = coordinates.reduce((v, or) => {
     if (

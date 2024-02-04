@@ -58,9 +58,14 @@ export const useDataStore = defineStore("data", {
       return [].concat(...Object.values(state.checkedTrenchesData));
     },
 
+    checkedTrenchesItemsPlans(state) {
+      return state.checkedTrenchesItems.filter((item) =>
+        item?.Type?.includes("Plan")
+      );
+    },
     checkedTrenchesItemsSelectedType(state) {
-      return state.checkedTrenchesItems.filter(
-        (item) => item && item.Type && item.Type.includes(state.selectedType)
+      return state.checkedTrenchesItems.filter((item) =>
+        item?.Type?.includes(state.selectedType)
       );
     },
 
@@ -124,7 +129,9 @@ export const useDataStore = defineStore("data", {
       const processPreferences = (base64Preferences) => {
         let preferences = "";
         try {
-          preferences = JSON.parse(base64Preferences);
+          preferences = JSON.parse(
+            base64Preferences.replace(/},\n\t+}/g, "}}")
+          );
         } catch (e) {
           let message = `error: default preference file is not a valid json<br/>${e?.message}<br/>`;
           Notify.create({
@@ -211,7 +218,10 @@ export const useDataStore = defineStore("data", {
 
           this.checkedTrenchesVersion[trenchName] = response.data.version;
           if (response.data.surveys) {
-            this.checkedTrenchesData[trenchName] = response.data.surveys;
+            this.checkedTrenchesData[trenchName] = this.addTrenchNameToItems(
+              response.data.surveys,
+              trenchName
+            );
           }
 
           // Update localStorage
@@ -234,7 +244,13 @@ export const useDataStore = defineStore("data", {
         }
       };
     },
-
+    addTrenchNameToItems(items, trenchName) {
+      return items.map((obj) => {
+        // Crée un nouvel objet avec les propriétés de l'objet d'origine
+        // et ajoute la nouvelle propriété "Trench"
+        return { ...obj, Trench: trenchName };
+      });
+    },
     removeCheckedTrenchesData(trenchList) {
       trenchList.forEach((trenchName) => {
         delete this.checkedTrenchesData[trenchName];
