@@ -40,8 +40,8 @@ export default {
       this.initMap();
     },
     checkedTrenchesItems: function () {
-      this.layer.clearLayers();
-      this.refreshMap();
+      this.map.remove();
+      this.initMap();
     },
   },
   mounted() {
