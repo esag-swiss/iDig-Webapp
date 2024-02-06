@@ -4,8 +4,9 @@
     class="spinner-TheItem vh-100 vw-100 position-absolute"
   >
     <div class="d-flex justify-content-center align-items-center vh-100">
-      <div class="spinner-border text-light" role="status">
-        <span class="sr-only">Loading...</span>
+      <div class="spinner-container">
+        <div class="spinner-border text-light" role="status"></div>
+        <span class="spinner-text">{{ loadingCount }}</span>
       </div>
     </div>
   </div>
@@ -29,8 +30,21 @@ export default {
   z-index: 3000;
 }
 
+.spinner-container {
+  position: relative;
+}
+
 .spinner-border {
   width: 5rem;
   height: 5rem;
+}
+
+.spinner-text {
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1rem; /* Ajustez la taille de la police selon vos besoins */
 }
 </style>
