@@ -95,7 +95,7 @@ export default {
       "setProjectPreferencesFields",
       "setProjectPreferencesBase64",
       "fetchPreferences",
-      "fetchProjectTrenchesNames",
+      "fetchIdigTrenchesNames",
       "fetchProjectTrenchesNamesFromFile",
     ]),
     resetStores() {
@@ -106,21 +106,11 @@ export default {
     },
     async connect() {
       this.setServer(this.cleanServerUserEntry(this.server));
-
-      // const devMode = "new_server";
-      const devMode = "old_server";
-
-      if (devMode === "new_server") {
-        try {
-          await this.fetchProjectTrenchesNames();
-          await this.fetchPreferences(this.firstTrench);
-          lsStoreConnection();
-        } catch (e) {
-          /* empty */
-        }
-      }
-
-      if (devMode === "old_server") {
+      try {
+        await this.fetchIdigTrenchesNames();
+        await this.fetchPreferences(this.firstTrench);
+        lsStoreConnection();
+      } catch (e) {
         try {
           this.fetchProjectTrenchesNamesFromFile();
           await this.fetchPreferences(this.firstTrench);

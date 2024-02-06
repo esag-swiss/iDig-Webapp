@@ -38,6 +38,32 @@ export function apiFetchProjectTrenchesNames() {
     })
     .finally(() => decrementLoadingCount());
 }
+export function apiFetchIdigTrenchesNames() {
+  const {
+    server,
+    username,
+    password,
+    incrementLoadingCount,
+    decrementLoadingCount,
+  } = useAppStore();
+
+  incrementLoadingCount();
+  return axios({
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+    },
+    method: "get",
+    url: `${server}/idig/`,
+    auth: { username, password },
+  })
+    .catch((error) => {
+      displayError(error);
+      throw error;
+    })
+    .finally(() => decrementLoadingCount());
+}
 export function apiFetchTrenchVersion(trench) {
   const {
     server,
