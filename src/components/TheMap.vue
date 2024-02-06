@@ -26,7 +26,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(useAppStore, ["isToggled"]),
+    ...mapState(useAppStore, ["isToggled", "loadingCount"]),
     ...mapState(useDataStore, [
       "checkedTrenchesItemsPlans",
       "checkedTrenchesItems",
@@ -41,8 +41,16 @@ export default {
       this.initMap();
     },
     checkedTrenchesItemsSelectedTypeAndSearched: function () {
-      this.map.remove();
-      this.initMap();
+      if (this.loadingCount === 0) {
+        this.map.remove();
+        this.initMap();
+      }
+    },
+    loadingCount: function (newLoadingCount, oldLoadingCount) {
+      if (oldLoadingCount === 1 && newLoadingCount === 0) {
+        this.map.remove();
+        this.initMap();
+      }
     },
   },
   mounted() {

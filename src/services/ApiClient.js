@@ -55,7 +55,7 @@ export function apiFetchIdigTrenchesNames() {
       "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
     },
     method: "get",
-    url: `${server}/idig/`,
+    url: `${server}/idig`,
     auth: { username, password },
   })
     .catch((error) => {
