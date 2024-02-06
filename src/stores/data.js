@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import {
   apiFetchPreferences,
   apiFetchProjectTrenchesNames,
+  apiFetchIdigTrenchesNames,
   apiFetchSurvey,
   apiFetchTrenchVersion,
 } from "@/services/ApiClient";
@@ -51,7 +52,7 @@ export const useDataStore = defineStore("data", {
     },
 
     firstTrench(state) {
-      return state.projectTrenchesNames?.[0];
+      return state.projectTrenchesNames?.reverse()[0];
     },
 
     checkedTrenchesItems(state) {
@@ -111,6 +112,15 @@ export const useDataStore = defineStore("data", {
     async fetchProjectTrenchesNames() {
       return apiFetchProjectTrenchesNames().then((response) => {
         this.setProjectTrenchesNames(response.data);
+      });
+    },
+
+    async fetchIdigTrenchesNames() {
+      return apiFetchIdigTrenchesNames().then((response) => {
+        const uniqueNames = [
+          ...new Set(response.data.trenches.map((trench) => trench.name)),
+        ];
+        this.setProjectTrenchesNames(uniqueNames);
       });
     },
 
