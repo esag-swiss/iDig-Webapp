@@ -98,7 +98,7 @@ export default {
     },
     async createMapsOverlays() {
       const promises = this.checkedTrenchesItemsPlans.map((obj) => {
-        if (obj.RelationAttachments) {
+        if (obj.RelationAttachments?.includes("\n\n")) {
           return this.createMapsOverlay(obj.RelationAttachments, obj.Trench);
         }
       });
