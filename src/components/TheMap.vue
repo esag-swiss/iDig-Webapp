@@ -16,7 +16,7 @@ import {
   addImageToDB,
   getImageFromDB,
 } from "@/services/indexedDbManager";
-import { createIndexedDBMap } from "@/services/idigMap.js";
+import { createMapsOverlay, createIndexedDBMap } from "@/services/idigMap.js";
 
 export default {
   name: "TheMap",
@@ -24,6 +24,9 @@ export default {
     return {
       map: null,
       itemsLayer: null,
+      mapsLayers: null,
+      baseLayers: null,
+      layerControl: null,
     };
   },
   computed: {
@@ -38,8 +41,13 @@ export default {
   },
   watch: {
     isToggled: function () {
-      this.map.remove();
-      this.initMap();
+      if (this.isToggled) {
+        this.layerControl.remove();
+        this.map.removeControl(this.map.zoomControl);
+      } else {
+        this.layerControl.addTo(this.map);
+        this.map.addControl(this.map.zoomControl);
+      }
     },
     checkedTrenchesItemsSelectedTypeAndSearched: function () {
       if (this.loadingCount === 0) {
@@ -67,7 +75,27 @@ export default {
         maxNativeZoom: 19,
         attribution:
           '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(this.map);
+      });
+
+      var Minimaliste = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: "abcd",
+          maxZoom: 25,
+        }
+      );
+
+      var Sombre = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: "abcd",
+          maxZoom: 25,
+        }
+      ).addTo(this.map);
 
       // WMS layer from Dipylon. To be used in dev only for not overload their server
       const wmsLayer = L.tileLayer.wms(
@@ -80,12 +108,15 @@ export default {
         }
       );
 
-      const baseLayers = {
-        map: osmLayer,
-        ortho: wmsLayer,
+      this.baseLayers = {
+        OSM: osmLayer,
+        Minimaliste: Minimaliste,
+        Sombre: Sombre,
       };
-      const overlayMaps = await this.createMapsOverlays();
-      L.control.layers(baseLayers, overlayMaps).addTo(this.map);
+
+      this.mapsLayers = await this.createMapsOverlays();
+      this.layerControl = L.control.layers(this.baseLayers, this.mapsLayers);
+      this.layerControl.addTo(this.map);
 
       this.loadItemsLayer();
     },
@@ -164,7 +195,6 @@ export default {
           );
         }
       });
-
       // Attendre que toutes les promesses soient résolues
       const overlays = await Promise.all(promises);
       // Combine toutes les overlays dans un seul objet
