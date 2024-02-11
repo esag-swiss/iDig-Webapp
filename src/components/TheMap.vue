@@ -16,13 +16,14 @@ import {
   addImageToDB,
   getImageFromDB,
 } from "@/services/indexedDbManager";
+import { createIndexedDBMap } from "@/services/idigMap.js";
 
 export default {
   name: "TheMap",
   data() {
     return {
       map: null,
-      layer: null,
+      itemsLayer: null,
     };
   },
   computed: {
@@ -42,14 +43,12 @@ export default {
     },
     checkedTrenchesItemsSelectedTypeAndSearched: function () {
       if (this.loadingCount === 0) {
-        this.map.remove();
-        this.initMap();
+        this.loadItemsLayer();
       }
     },
     loadingCount: function (newLoadingCount, oldLoadingCount) {
       if (oldLoadingCount === 1 && newLoadingCount === 0) {
-        this.map.remove();
-        this.initMap();
+        this.loadItemsLayer();
       }
     },
   },
@@ -63,8 +62,6 @@ export default {
         attributionControl: false,
         zoomControl: !this.isToggled,
       });
-
-      // Ajouter les couches de tuiles de base
       const osmLayer = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
         maxZoom: 25,
         maxNativeZoom: 19,
@@ -83,28 +80,93 @@ export default {
         }
       );
 
-      // Créer un objet de contrôle de couches
       const baseLayers = {
         map: osmLayer,
         ortho: wmsLayer,
       };
-
       const overlayMaps = await this.createMapsOverlays();
-
-      // Ajouter le contrôle de couches à la carte
       L.control.layers(baseLayers, overlayMaps).addTo(this.map);
 
-      this.refreshMap();
+      this.loadItemsLayer();
     },
+
+    loadItemsLayer() {
+      if (this.itemsLayer) {
+        this.map.removeLayer(this.itemsLayer);
+      }
+      let geojsonMarkerOptions = {
+        radius: 8,
+        fillColor: "grey",
+        color: "grey",
+        weight: 2,
+        opacity: 0.2,
+        fillOpacity: 0.2,
+      };
+      let layerStyle = {
+        fillColor: "grey",
+        fillOpacity: 0.2,
+        weight: 2,
+        opacity: 0.2,
+      };
+      this.itemsLayer = L.geoJSON(
+        geoSerializedToGeojson(
+          this.checkedTrenchesItemsSelectedTypeAndSearched
+        ),
+        {
+          onEachFeature: this.onEachFeature,
+          style: function (feature) {
+            switch (feature.properties.type) {
+              case "Context":
+                return {
+                  color: "#f6ceb7",
+                  fillOpacity: 0.2,
+                  weight: 2,
+                  opacity: 0.2,
+                };
+
+              case "Feature":
+                return {
+                  color: "#ecc6d3",
+                  fillOpacity: 0.2,
+                  weight: 2,
+                  opacity: 0.2,
+                };
+              case "Artifact":
+                return {
+                  color: "#7ebcff",
+                  fillOpacity: 0.2,
+                  weight: 2,
+                  opacity: 0.2,
+                };
+
+              default:
+                return layerStyle;
+            }
+          },
+          pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, geojsonMarkerOptions);
+          },
+        }
+      );
+      this.itemsLayer.addTo(this.map);
+      this.map.fitBounds(this.itemsLayer.getBounds());
+    },
+
     async createMapsOverlays() {
       const promises = this.checkedTrenchesItemsPlans.map((obj) => {
         if (obj.RelationAttachments?.includes("\n\n")) {
           return this.createMapsOverlay(obj.RelationAttachments, obj.Trench);
+        } else if (obj.RelationAttachments?.includes(").")) {
+          return createIndexedDBMap(
+            obj.RelationAttachments,
+            obj.Trench,
+            this.projectPreferencesCRS
+          );
         }
       });
+
       // Attendre que toutes les promesses soient résolues
       const overlays = await Promise.all(promises);
-
       // Combine toutes les overlays dans un seul objet
       const result = overlays.reduce((acc, overlay) => {
         return { ...acc, ...overlay };
@@ -215,71 +277,12 @@ export default {
       };
     },
 
-    onEachFeature(feature, layer) {
+    onEachFeature(feature, itemsLayer) {
       if (feature.properties && feature.properties.id) {
-        layer.bindPopup(
+        itemsLayer.bindPopup(
           feature.properties.id + "<br>" + feature.properties.title
         );
       }
-    },
-
-    refreshMap() {
-      let geojsonMarkerOptions = {
-        radius: 8,
-        fillColor: "grey",
-        color: "grey",
-        weight: 2,
-        opacity: 0.2,
-        fillOpacity: 0.2,
-      };
-      let layerStyle = {
-        fillColor: "grey",
-        fillOpacity: 0.2,
-        weight: 2,
-        opacity: 0.2,
-      };
-      this.layer = L.geoJSON(
-        geoSerializedToGeojson(
-          this.checkedTrenchesItemsSelectedTypeAndSearched
-        ),
-        {
-          onEachFeature: this.onEachFeature,
-          style: function (feature) {
-            switch (feature.properties.type) {
-              case "Context":
-                return {
-                  color: "#f6ceb7",
-                  fillOpacity: 0.2,
-                  weight: 2,
-                  opacity: 0.2,
-                };
-
-              case "Feature":
-                return {
-                  color: "#ecc6d3",
-                  fillOpacity: 0.2,
-                  weight: 2,
-                  opacity: 0.2,
-                };
-              case "Artifact":
-                return {
-                  color: "#7ebcff",
-                  fillOpacity: 0.2,
-                  weight: 2,
-                  opacity: 0.2,
-                };
-
-              default:
-                return layerStyle;
-            }
-          },
-          pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, geojsonMarkerOptions);
-          },
-        }
-      );
-      this.layer.addTo(this.map);
-      this.map.fitBounds(this.layer.getBounds());
     },
   },
 };
