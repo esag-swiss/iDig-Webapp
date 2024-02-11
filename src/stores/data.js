@@ -116,11 +116,14 @@ export const useDataStore = defineStore("data", {
     },
 
     async fetchIdigTrenchesNames() {
+      const { project } = useAppStore();
       return apiFetchIdigTrenchesNames().then((response) => {
-        const uniqueNames = [
-          ...new Set(response.data.trenches.map((trench) => trench.name)),
-        ];
-        this.setProjectTrenchesNames(uniqueNames);
+        const TrenchesNamesForCurrentProject = response.data.trenches.filter(
+          (trench) => trench.project === project
+        );
+        this.setProjectTrenchesNames(
+          TrenchesNamesForCurrentProject.map((trench) => trench.name)
+        );
       });
     },
 
