@@ -59,7 +59,12 @@ export function apiFetchIdigTrenchesNames() {
     auth: { username, password },
   })
     .catch((error) => {
-      displayError(error);
+      Notify.create({
+        type: "negative",
+        message:
+          "Impossible de charger les trenches depuis le serveur, chargement de la liste par défaut",
+        html: true,
+      });
       throw error;
     })
     .finally(() => decrementLoadingCount());
