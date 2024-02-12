@@ -41,7 +41,7 @@ export default {
     ]),
   },
   watch: {
-    isMapMinimized: function () {
+    isMapMinimized: async function () {
       if (this.isMapMinimized) {
         this.layerControl.remove();
         this.map.removeControl(this.map.zoomControl);
@@ -49,17 +49,19 @@ export default {
         this.initMap();
         this.firstMapShowed = false;
       } else {
+        this.mapsLayers = await this.createMapsOverlays();
+        this.layerControl = L.control.layers(this.baseLayers, this.mapsLayers);
         this.layerControl.addTo(this.map);
         this.map.addControl(this.map.zoomControl);
       }
     },
     checkedTrenchesItemsSelectedTypeAndSearched: function () {
-      if (this.loadingCount === 0) {
+      if (this.loadingCount === 0 && this.map) {
         this.loadItemsLayer();
       }
     },
     loadingCount: function (newLoadingCount, oldLoadingCount) {
-      if (oldLoadingCount === 1 && newLoadingCount === 0) {
+      if (oldLoadingCount === 1 && newLoadingCount === 0 && this.map) {
         this.loadItemsLayer();
       }
     },
@@ -112,6 +114,7 @@ export default {
         OSM: osmLayer,
         Minimaliste: Minimaliste,
         Sombre: Sombre,
+        Ortho: wmsLayer,
       };
 
       this.mapsLayers = await this.createMapsOverlays();
@@ -122,7 +125,7 @@ export default {
     },
 
     loadItemsLayer() {
-      if (this.itemsLayer) {
+      if (this.itemsLayer && this.map) {
         this.map.removeLayer(this.itemsLayer);
       }
       let geojsonMarkerOptions = {
@@ -150,24 +153,24 @@ export default {
               case "Context":
                 return {
                   color: "#f6ceb7",
-                  fillOpacity: 0.2,
+                  fillOpacity: 0.5,
                   weight: 2,
-                  opacity: 0.2,
+                  opacity: 0.5,
                 };
 
               case "Feature":
                 return {
-                  color: "#ecc6d3",
-                  fillOpacity: 0.2,
+                  color: "#fcf80a",
+                  fillOpacity: 0.5,
                   weight: 2,
-                  opacity: 0.2,
+                  opacity: 0.5,
                 };
               case "Artifact":
                 return {
-                  color: "#7ebcff",
-                  fillOpacity: 0.2,
-                  weight: 2,
-                  opacity: 0.2,
+                  color: "#fc9797",
+                  fillOpacity: 0.8,
+                  weight: 3,
+                  opacity: 0.8,
                 };
 
               default:
