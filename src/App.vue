@@ -21,7 +21,7 @@
         <div
           v-if="checkedTrenchesItemsSelectedType.length > 0"
           class="theTableDiv"
-          :class="{ toggled: isToggled }"
+          :class="{ toggled: isMapMinimized }"
         >
           <TheTable> </TheTable>
         </div>
@@ -33,14 +33,15 @@
         <div
           v-if="checkedTrenchesItemsSelectedType.length > 0"
           class="theMapDiv"
-          :class="{ toggled: isToggled }"
+          :class="{ toggled: isMapMinimized }"
         >
           <TheMap></TheMap>
         </div>
         <div
           v-if="checkedTrenchesItemsSelectedType.length > 0"
+          :class="{ miniMap: isMapMinimized }"
           class="theToggle"
-          @click="toggleSize"
+          @click="toggleMap"
         ></div>
       </div>
     </div>
@@ -76,15 +77,15 @@ export default {
     TheMap,
   },
   computed: {
-    ...mapState(useAppStore, ["isLoaded", "isToggled"]),
+    ...mapState(useAppStore, ["isLoaded", "isMapMinimized"]),
     ...mapState(useDataStore, ["checkedTrenchesItemsSelectedType"]),
   },
 
   methods: {
-    toggleSize() {
-      this.setIsToggled(!this.isToggled);
+    toggleMap() {
+      this.setIsMapMinimized(!this.isMapMinimized);
     },
-    ...mapActions(useAppStore, ["setIsToggled"]),
+    ...mapActions(useAppStore, ["setIsMapMinimized"]),
   },
 };
 </script>
@@ -114,6 +115,11 @@ export default {
   z-index: 1022;
   overflow: hidden;
   transition: width 0.3s, height 0.3s;
+}
+
+.miniMap {
+  background-image: url("@/assets/plan.PNG");
+  background-size: contain;
 }
 
 .theMapDiv {

@@ -27,10 +27,11 @@ export default {
       mapsLayers: null,
       baseLayers: null,
       layerControl: null,
+      firstMapShowed: true,
     };
   },
   computed: {
-    ...mapState(useAppStore, ["isToggled", "loadingCount"]),
+    ...mapState(useAppStore, ["isMapMinimized", "loadingCount"]),
     ...mapState(useDataStore, [
       "checkedTrenchesItemsPlans",
       "checkedTrenchesItems",
@@ -40,10 +41,13 @@ export default {
     ]),
   },
   watch: {
-    isToggled: function () {
-      if (this.isToggled) {
+    isMapMinimized: function () {
+      if (this.isMapMinimized) {
         this.layerControl.remove();
         this.map.removeControl(this.map.zoomControl);
+      } else if (this.firstMapShowed) {
+        this.initMap();
+        this.firstMapShowed = false;
       } else {
         this.layerControl.addTo(this.map);
         this.map.addControl(this.map.zoomControl);
@@ -60,15 +64,11 @@ export default {
       }
     },
   },
-  mounted() {
-    this.initMap();
-  },
-
   methods: {
     async initMap() {
       this.map = L.map("mapContainer", {
         attributionControl: false,
-        zoomControl: !this.isToggled,
+        zoomControl: true,
       });
       const osmLayer = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
         maxZoom: 25,
