@@ -9,14 +9,7 @@ import { geoSerializedToGeojson } from "@/services/json2geojson";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
-import { apiFetchImageSRC, apiFetchPlanWld } from "@/services/ApiClient";
-import { convertToEPSG4326 } from "@/services/coordinateUtils";
-import {
-  openDB,
-  addImageToDB,
-  getImageFromDB,
-} from "@/services/indexedDbManager";
-import { createMapsOverlay, createIndexedDBMap } from "@/services/idigMap.js";
+import { createMapsOverlay } from "@/services/idigMap.js";
 
 export default {
   name: "TheMap",
@@ -125,7 +118,7 @@ export default {
     },
 
     loadItemsLayer() {
-      if (this.itemsLayer && this.map) {
+      if (this.itemsLayer) {
         this.map.removeLayer(this.itemsLayer);
       }
       let geojsonMarkerOptions = {
@@ -183,15 +176,27 @@ export default {
         }
       );
       this.itemsLayer.addTo(this.map);
+      const greeceBounds = L.latLngBounds(
+        L.latLng(35, 20), // Coin sud-ouest de la Grèce
+        L.latLng(42, 30) // Coin nord-est de la Grèce
+      );
+      let bounds = this.itemsLayer.getBounds();
+      if (bounds.isValid()) {
+        this.map.fitBounds(bounds);
+      } else {
+        this.map.fitBounds(greeceBounds);
+      }
+
       this.map.fitBounds(this.itemsLayer.getBounds());
     },
 
     async createMapsOverlays() {
       const promises = this.checkedTrenchesItemsPlans.map((obj) => {
-        if (obj.RelationAttachments?.includes("\n\n")) {
-          return this.createMapsOverlay(obj.RelationAttachments, obj.Trench);
-        } else if (obj.RelationAttachments?.includes(").")) {
-          return createIndexedDBMap(
+        if (
+          obj.RelationAttachments?.includes("\n\n") ||
+          obj.RelationAttachments?.includes(").")
+        ) {
+          return createMapsOverlay(
             obj.RelationAttachments,
             obj.Trench,
             this.projectPreferencesCRS
@@ -206,108 +211,6 @@ export default {
       }, {});
 
       return result;
-    },
-
-    async createMapsOverlay(RelationAttachments, Trench) {
-      const imageTitle = RelationAttachments.split("\n")[0]
-        .split("=")[1]
-        .split(".")[0];
-
-      let planURL;
-      let planlatLngBounds;
-      const db = await openDB();
-      const result = await getImageFromDB(db, imageTitle);
-      if (result) {
-        const imageURL = URL.createObjectURL(result.imageBlob);
-
-        planURL = {
-          imageTitle: result.imageTitle,
-          imageURL: imageURL,
-          width: result.width,
-          height: result.height,
-        };
-        planlatLngBounds = result.planlatLngBounds;
-      } else {
-        await apiFetchImageSRC(RelationAttachments, Trench).then(
-          async (response) => {
-            const blob = new Blob([response.data], {
-              type: response.headers["content-type"],
-            });
-            // Créer l'URL objet pour l'image
-            const imageURL = URL.createObjectURL(blob);
-            // Créer une nouvelle instance de l'objet Image
-            const img = new Image();
-            // Charger l'image
-            img.src = imageURL;
-            // Attendre que l'image soit chargée
-            await new Promise((resolve) => {
-              img.onload = resolve;
-            });
-
-            planURL = {
-              imageTitle: imageTitle,
-              imageBlob: blob,
-              imageURL: imageURL,
-              width: img.width,
-              height: img.height,
-            };
-          }
-        );
-        planlatLngBounds = await apiFetchPlanWld(
-          RelationAttachments,
-          Trench
-        ).then(async (textContent) => {
-          const wldCoefficients = textContent.split("\n");
-          const width = planURL.width;
-          const height = planURL.height;
-
-          async function wldToExtent(wldCoefficients, width, height) {
-            const [scaleX, rotationY, rotationX, scaleY, West, North] =
-              wldCoefficients.map((value) => parseFloat(value));
-            const South = North + scaleY * height;
-            const East = West + scaleX * width;
-
-            return {
-              SW: [West, South],
-              NE: [East, North],
-            };
-          }
-          return wldToExtent(wldCoefficients, width, height);
-        });
-        // mettre à jour Update IndexedDB
-        const db = await openDB();
-        addImageToDB(
-          db,
-          planURL.imageBlob,
-          imageTitle,
-          planURL.width,
-          planURL.height,
-          planlatLngBounds
-        );
-      }
-
-      const latLngBounds = L.latLngBounds([
-        [
-          convertToEPSG4326(
-            planlatLngBounds.SW,
-            this.projectPreferencesCRS
-          ).coords.reverse(),
-        ],
-        [
-          convertToEPSG4326(
-            planlatLngBounds.NE,
-            this.projectPreferencesCRS
-          ).coords.reverse(),
-        ], // SWNE
-      ]);
-
-      const imageOverlay = L.imageOverlay(planURL.imageURL, latLngBounds, {
-        opacity: 0.8,
-      });
-
-      return {
-        [planURL.imageTitle]: imageOverlay,
-      };
     },
 
     onEachFeature(feature, itemsLayer) {
