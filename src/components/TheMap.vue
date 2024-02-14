@@ -9,24 +9,22 @@ import { geoSerializedToGeojson } from "@/services/json2geojson";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
-import { apiFetchImageSRC, apiFetchPlanWld } from "@/services/ApiClient";
-import { convertToEPSG4326 } from "@/services/coordinateUtils";
-import {
-  openDB,
-  addImageToDB,
-  getImageFromDB,
-} from "@/services/indexedDbManager";
+import { createMapsOverlay } from "@/services/idigMap.js";
 
 export default {
   name: "TheMap",
   data() {
     return {
       map: null,
-      layer: null,
+      itemsLayer: null,
+      mapsLayers: null,
+      baseLayers: null,
+      layerControl: null,
+      firstMapShowed: true,
     };
   },
   computed: {
-    ...mapState(useAppStore, ["isToggled", "loadingCount"]),
+    ...mapState(useAppStore, ["isMapMinimized", "loadingCount"]),
     ...mapState(useDataStore, [
       "checkedTrenchesItemsPlans",
       "checkedTrenchesItems",
@@ -36,41 +34,63 @@ export default {
     ]),
   },
   watch: {
-    isToggled: function () {
-      this.map.remove();
-      this.initMap();
+    isMapMinimized: async function () {
+      if (this.isMapMinimized) {
+        this.layerControl.remove();
+        this.map.removeControl(this.map.zoomControl);
+      } else if (this.firstMapShowed) {
+        this.initMap();
+        this.firstMapShowed = false;
+      } else {
+        this.mapsLayers = await this.createMapsOverlays();
+        this.layerControl = L.control.layers(this.baseLayers, this.mapsLayers);
+        this.layerControl.addTo(this.map);
+        this.map.addControl(this.map.zoomControl);
+      }
     },
     checkedTrenchesItemsSelectedTypeAndSearched: function () {
-      if (this.loadingCount === 0) {
-        this.map.remove();
-        this.initMap();
+      if (this.loadingCount === 0 && this.map) {
+        this.loadItemsLayer();
       }
     },
     loadingCount: function (newLoadingCount, oldLoadingCount) {
-      if (oldLoadingCount === 1 && newLoadingCount === 0) {
-        this.map.remove();
-        this.initMap();
+      if (oldLoadingCount === 1 && newLoadingCount === 0 && this.map) {
+        this.loadItemsLayer();
       }
     },
   },
-  mounted() {
-    this.initMap();
-  },
-
   methods: {
     async initMap() {
       this.map = L.map("mapContainer", {
         attributionControl: false,
-        zoomControl: !this.isToggled,
+        zoomControl: true,
       });
-
-      // Ajouter les couches de tuiles de base
       const osmLayer = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
         maxZoom: 25,
         maxNativeZoom: 19,
         attribution:
           '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(this.map);
+      });
+
+      var Minimaliste = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: "abcd",
+          maxZoom: 25,
+        }
+      );
+
+      var Sombre = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: "abcd",
+          maxZoom: 25,
+        }
+      ).addTo(this.map);
 
       // WMS layer from Dipylon. To be used in dev only for not overload their server
       const wmsLayer = L.tileLayer.wms(
@@ -83,147 +103,24 @@ export default {
         }
       );
 
-      // Créer un objet de contrôle de couches
-      const baseLayers = {
-        map: osmLayer,
-        ortho: wmsLayer,
+      this.baseLayers = {
+        OSM: osmLayer,
+        Minimaliste: Minimaliste,
+        Sombre: Sombre,
+        Ortho: wmsLayer,
       };
 
-      const overlayMaps = await this.createMapsOverlays();
+      this.mapsLayers = await this.createMapsOverlays();
+      this.layerControl = L.control.layers(this.baseLayers, this.mapsLayers);
+      this.layerControl.addTo(this.map);
 
-      // Ajouter le contrôle de couches à la carte
-      L.control.layers(baseLayers, overlayMaps).addTo(this.map);
-
-      this.refreshMap();
-    },
-    async createMapsOverlays() {
-      const promises = this.checkedTrenchesItemsPlans.map((obj) => {
-        if (obj.RelationAttachments?.includes("\n\n")) {
-          return this.createMapsOverlay(obj.RelationAttachments, obj.Trench);
-        }
-      });
-      // Attendre que toutes les promesses soient résolues
-      const overlays = await Promise.all(promises);
-
-      // Combine toutes les overlays dans un seul objet
-      const result = overlays.reduce((acc, overlay) => {
-        return { ...acc, ...overlay };
-      }, {});
-
-      return result;
+      this.loadItemsLayer();
     },
 
-    async createMapsOverlay(RelationAttachments, Trench) {
-      const imageTitle = RelationAttachments.split("\n")[0]
-        .split("=")[1]
-        .split(".")[0];
-
-      let planURL;
-      let planlatLngBounds;
-      const db = await openDB();
-      const result = await getImageFromDB(db, imageTitle);
-      if (result) {
-        const imageURL = URL.createObjectURL(result.imageBlob);
-
-        planURL = {
-          imageTitle: result.imageTitle,
-          imageURL: imageURL,
-          width: result.width,
-          height: result.height,
-        };
-        planlatLngBounds = result.planlatLngBounds;
-      } else {
-        await apiFetchImageSRC(RelationAttachments, Trench).then(
-          async (response) => {
-            const blob = new Blob([response.data], {
-              type: response.headers["content-type"],
-            });
-            // Créer l'URL objet pour l'image
-            const imageURL = URL.createObjectURL(blob);
-            // Créer une nouvelle instance de l'objet Image
-            const img = new Image();
-            // Charger l'image
-            img.src = imageURL;
-            // Attendre que l'image soit chargée
-            await new Promise((resolve) => {
-              img.onload = resolve;
-            });
-
-            planURL = {
-              imageTitle: imageTitle,
-              imageBlob: blob,
-              imageURL: imageURL,
-              width: img.width,
-              height: img.height,
-            };
-          }
-        );
-        planlatLngBounds = await apiFetchPlanWld(
-          RelationAttachments,
-          Trench
-        ).then(async (textContent) => {
-          const wldCoefficients = textContent.split("\n");
-          const width = planURL.width;
-          const height = planURL.height;
-
-          async function wldToExtent(wldCoefficients, width, height) {
-            const [scaleX, rotationY, rotationX, scaleY, West, North] =
-              wldCoefficients.map((value) => parseFloat(value));
-            const South = North + scaleY * height;
-            const East = West + scaleX * width;
-
-            return {
-              SW: [West, South],
-              NE: [East, North],
-            };
-          }
-          return wldToExtent(wldCoefficients, width, height);
-        });
-        // mettre à jour Update IndexedDB
-        const db = await openDB();
-        addImageToDB(
-          db,
-          planURL.imageBlob,
-          imageTitle,
-          planURL.width,
-          planURL.height,
-          planlatLngBounds
-        );
+    loadItemsLayer() {
+      if (this.itemsLayer) {
+        this.map.removeLayer(this.itemsLayer);
       }
-
-      const latLngBounds = L.latLngBounds([
-        [
-          convertToEPSG4326(
-            planlatLngBounds.SW,
-            this.projectPreferencesCRS
-          ).coords.reverse(),
-        ],
-        [
-          convertToEPSG4326(
-            planlatLngBounds.NE,
-            this.projectPreferencesCRS
-          ).coords.reverse(),
-        ], // SWNE
-      ]);
-
-      const imageOverlay = L.imageOverlay(planURL.imageURL, latLngBounds, {
-        opacity: 0.8,
-      });
-
-      return {
-        [planURL.imageTitle]: imageOverlay,
-      };
-    },
-
-    onEachFeature(feature, layer) {
-      if (feature.properties && feature.properties.id) {
-        layer.bindPopup(
-          feature.properties.id + "<br>" + feature.properties.title
-        );
-      }
-    },
-
-    refreshMap() {
       let geojsonMarkerOptions = {
         radius: 8,
         fillColor: "grey",
@@ -238,7 +135,7 @@ export default {
         weight: 2,
         opacity: 0.2,
       };
-      this.layer = L.geoJSON(
+      this.itemsLayer = L.geoJSON(
         geoSerializedToGeojson(
           this.checkedTrenchesItemsSelectedTypeAndSearched
         ),
@@ -249,24 +146,24 @@ export default {
               case "Context":
                 return {
                   color: "#f6ceb7",
-                  fillOpacity: 0.2,
+                  fillOpacity: 0.5,
                   weight: 2,
-                  opacity: 0.2,
+                  opacity: 0.5,
                 };
 
               case "Feature":
                 return {
-                  color: "#ecc6d3",
-                  fillOpacity: 0.2,
+                  color: "#fcf80a",
+                  fillOpacity: 0.5,
                   weight: 2,
-                  opacity: 0.2,
+                  opacity: 0.5,
                 };
               case "Artifact":
                 return {
-                  color: "#7ebcff",
-                  fillOpacity: 0.2,
-                  weight: 2,
-                  opacity: 0.2,
+                  color: "#fc9797",
+                  fillOpacity: 0.8,
+                  weight: 3,
+                  opacity: 0.8,
                 };
 
               default:
@@ -278,8 +175,50 @@ export default {
           },
         }
       );
-      this.layer.addTo(this.map);
-      this.map.fitBounds(this.layer.getBounds());
+      this.itemsLayer.addTo(this.map);
+      const greeceBounds = L.latLngBounds(
+        L.latLng(35, 20), // Coin sud-ouest de la Grèce
+        L.latLng(42, 30) // Coin nord-est de la Grèce
+      );
+      let bounds = this.itemsLayer.getBounds();
+      if (bounds.isValid()) {
+        this.map.fitBounds(bounds);
+      } else {
+        this.map.fitBounds(greeceBounds);
+      }
+
+      this.map.fitBounds(this.itemsLayer.getBounds());
+    },
+
+    async createMapsOverlays() {
+      const promises = this.checkedTrenchesItemsPlans.map((obj) => {
+        if (
+          obj.RelationAttachments?.includes("\n\n") ||
+          obj.RelationAttachments?.includes(").")
+        ) {
+          return createMapsOverlay(
+            obj.RelationAttachments,
+            obj.Trench,
+            this.projectPreferencesCRS
+          );
+        }
+      });
+      // Attendre que toutes les promesses soient résolues
+      const overlays = await Promise.all(promises);
+      // Combine toutes les overlays dans un seul objet
+      const result = overlays.reduce((acc, overlay) => {
+        return { ...acc, ...overlay };
+      }, {});
+
+      return result;
+    },
+
+    onEachFeature(feature, itemsLayer) {
+      if (feature.properties && feature.properties.id) {
+        itemsLayer.bindPopup(
+          feature.properties.id + "<br>" + feature.properties.title
+        );
+      }
     },
   },
 };
