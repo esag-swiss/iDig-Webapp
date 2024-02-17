@@ -61,10 +61,6 @@ export const getImageFromDB = async (db, imageTitle) => {
       if (result) {
         resolve(result);
       } else {
-        console.log(
-          "Aucune ImageData trouvée dans IndexedDB pour l'image",
-          imageTitle
-        );
         resolve(null); // L'image n'existe pas dans IndexedDB
       }
     };
