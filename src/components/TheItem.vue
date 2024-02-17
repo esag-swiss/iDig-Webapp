@@ -88,11 +88,7 @@
               v-else-if="field.field === 'RelationAttachments'"
               class="col-md-12 p-0 pl-1 border-none"
             >
-              <q-toggle
-                v-model="imageDisplayed"
-                label="Image"
-                @click="toggleImage(currentItem[field.field])"
-              />
+              image
 
               <img id="image" src="" class="img-fluid" />
             </div>
@@ -188,14 +184,7 @@
               v-if="field.field == 'RelationAttachments'"
               class="col-md-12 p-2 border-none"
             >
-              <div v-if="currentItem[field.field]">
-                <q-toggle
-                  v-model="imageDisplayed"
-                  label="Image"
-                  @click="toggleImage(currentItem[field.field])"
-                />
-                <img id="image" src="" class="img-fluid" />
-              </div>
+              <div v-if="currentItem[field.field]"></div>
               <div v-else>No file attached</div>
             </div>
             <div v-else class="col-md-12 p-2 border-none">
@@ -209,7 +198,7 @@
 </template>
 
 <script>
-import { apiUpdateTrenchItem, apiFetchImage } from "@/services/ApiClient";
+import { apiUpdateTrenchItem, apiFetchImageSRC } from "@/services/ApiClient";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
@@ -226,7 +215,6 @@ export default {
   data() {
     return {
       field: "Material",
-      imageDisplayed: false,
     };
   },
   computed: {
@@ -246,27 +234,22 @@ export default {
       return Object.getOwnPropertyNames(this.currentItem);
     },
 
-    selectedTrench() {
-      // return the trench of the selected item
+    trenchtoUpdate() {
       if (this.currentItem) {
-        const matchingTrench = Object.entries(this.checkedTrenchesData);
-        return matchingTrench.filter((x) =>
-          x[1].some((k) =>
-            k.IdentifierUUID.includes(this.currentItem.IdentifierUUID)
-          )
-        )[0][0];
+        return this.checkedTrenchesData[this.currentItem.Trench];
       } else {
         return "";
       }
     },
 
-    trenchtoUpdate() {
-      if (this.currentItem) {
-        return this.checkedTrenchesData[this.selectedTrench];
-      } else {
-        return "";
-      }
+    trenchtoUpdateWithoutTrenchProp() {
+      return this.checkedTrenchesData[this.currentItem.Trench].map((obj) => {
+        // Crée un nouvel objet sans la propriété "Trench"
+        const { Trench, ...newObj } = obj;
+        return newObj;
+      });
     },
+
     groupOfFieldsAccordingToType() {
       if (this.projectPreferencesTypes) {
         return this.projectPreferencesTypes.filter((x) => {
@@ -312,20 +295,15 @@ export default {
     },
 
     pushSurvey() {
-      const head = this.checkedTrenchesVersion[this.selectedTrench];
-      const surveys = this.trenchtoUpdate;
+      const head = this.checkedTrenchesVersion[this.currentItem.Trench];
+      const surveys = this.trenchtoUpdateWithoutTrenchProp;
       const preferences = this.projectPreferencesBase64;
 
-      apiUpdateTrenchItem(this.selectedTrench, head, surveys, preferences);
+      apiUpdateTrenchItem(this.currentItem.Trench, head, surveys, preferences);
     },
 
-    toggleImage(img) {
-      if (this.imageDisplayed) {
-        apiFetchImage(img, this.selectedTrench);
-      } else {
-        let imageNode = document.getElementById("image");
-        imageNode.src = "";
-      }
+    imageSRC(RelationAttachments, Trench) {
+      return apiFetchImageSRC(RelationAttachments, Trench);
     },
   },
 };
