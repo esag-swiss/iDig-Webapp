@@ -80,7 +80,13 @@ export default {
     ...mapState(useAppStore, ["isLoaded", "isMapMinimized"]),
     ...mapState(useDataStore, ["checkedTrenchesItemsSelectedType"]),
   },
-
+  watch: {
+    checkedTrenchesItemsSelectedType: function () {
+      if (Object.keys(this.checkedTrenchesItemsSelectedType).length === 0) {
+        this.setIsMapMinimized(true);
+      }
+    },
+  },
   methods: {
     toggleMap() {
       this.setIsMapMinimized(!this.isMapMinimized);
