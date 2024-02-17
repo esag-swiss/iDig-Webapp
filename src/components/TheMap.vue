@@ -27,35 +27,51 @@ export default {
     ...mapState(useAppStore, ["isMapMinimized", "loadingCount"]),
     ...mapState(useDataStore, [
       "checkedTrenchesItemsPlans",
-      "checkedTrenchesItems",
       "checkedTrenchesItemsSelectedTypeAndSearched",
-      "checkedTrenchesItemsPlans",
       "projectPreferencesCRS",
+      "checkedTrenchesData",
     ]),
   },
   watch: {
+    // initialise la carte uniquement à la première vue
     isMapMinimized: async function () {
-      if (this.isMapMinimized) {
-        this.layerControl.remove();
-        this.map.removeControl(this.map.zoomControl);
-      } else if (this.firstMapShowed) {
+      if (this.firstMapShowed) {
         this.initMap();
         this.firstMapShowed = false;
-      } else {
-        this.mapsLayers = await this.createMapsOverlays();
-        this.layerControl = L.control.layers(this.baseLayers, this.mapsLayers);
-        this.layerControl.addTo(this.map);
-        this.map.addControl(this.map.zoomControl);
       }
     },
-    checkedTrenchesItemsSelectedTypeAndSearched: function () {
-      if (this.loadingCount === 0 && this.map) {
-        this.loadItemsLayer();
-      }
-    },
+    // attendre que toutes les trenches soient chargées avant d'afficher le geojson
     loadingCount: function (newLoadingCount, oldLoadingCount) {
       if (oldLoadingCount === 1 && newLoadingCount === 0 && this.map) {
         this.loadItemsLayer();
+      }
+    },
+    // lors de suppression de trenches actualiser le geojson
+    checkedTrenchesItemsSelectedTypeAndSearched: function () {
+      if (this.loadingCount === 0 && this.map) {
+        this.loadItemsLayer();
+        if (this.map) {
+          // Supprime toutes les couches de mapsLayers
+          for (const layerName in this.mapsLayers) {
+            if (
+              Object.prototype.hasOwnProperty.call(this.mapsLayers, layerName)
+            ) {
+              const layerToRemove = this.mapsLayers[layerName];
+              this.map.removeLayer(layerToRemove);
+            }
+          }
+        }
+      }
+    },
+
+    checkedTrenchesItemsPlans: async function () {
+      if (this.map) {
+        await this.layerControl.remove();
+
+        this.mapsLayers = await this.createMapsOverlays();
+        this.layerControl = L.control
+          .layers(this.baseLayers, this.mapsLayers)
+          .addTo(this.map);
       }
     },
   },
@@ -80,7 +96,7 @@ export default {
           subdomains: "abcd",
           maxZoom: 25,
         }
-      );
+      ).addTo(this.map);
 
       var Sombre = L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
@@ -90,7 +106,7 @@ export default {
           subdomains: "abcd",
           maxZoom: 25,
         }
-      ).addTo(this.map);
+      );
 
       // WMS layer from Dipylon. To be used in dev only for not overload their server
       const wmsLayer = L.tileLayer.wms(
@@ -107,7 +123,6 @@ export default {
         OSM: osmLayer,
         Minimaliste: Minimaliste,
         Sombre: Sombre,
-        Ortho: wmsLayer,
       };
 
       this.mapsLayers = await this.createMapsOverlays();
@@ -175,19 +190,18 @@ export default {
           },
         }
       );
-      this.itemsLayer.addTo(this.map);
+
       const greeceBounds = L.latLngBounds(
         L.latLng(35, 20), // Coin sud-ouest de la Grèce
         L.latLng(42, 30) // Coin nord-est de la Grèce
       );
       let bounds = this.itemsLayer.getBounds();
       if (bounds.isValid()) {
+        this.itemsLayer.addTo(this.map);
         this.map.fitBounds(bounds);
       } else {
         this.map.fitBounds(greeceBounds);
       }
-
-      this.map.fitBounds(this.itemsLayer.getBounds());
     },
 
     async createMapsOverlays() {
