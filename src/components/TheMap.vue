@@ -88,7 +88,7 @@ export default {
           '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       });
 
-      var Minimaliste = L.tileLayer(
+      const Minimaliste = L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
         {
           attribution:
@@ -96,9 +96,9 @@ export default {
           subdomains: "abcd",
           maxZoom: 25,
         }
-      ).addTo(this.map);
+      );
 
-      var Sombre = L.tileLayer(
+      const Sombre = L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
         {
           attribution:
@@ -108,6 +108,13 @@ export default {
         }
       );
 
+      const Satellite = L.tileLayer(
+        "http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+        {
+          maxZoom: 25,
+          subdomains: ["mt0", "mt1", "mt2", "mt3"],
+        }
+      ).addTo(this.map);
       // WMS layer from Dipylon. To be used in dev only for not overload their server
       const wmsLayer = L.tileLayer.wms(
         "http://116.202.128.162:83/geoserver/wms?SERVICE=WMS?",
@@ -120,13 +127,16 @@ export default {
       );
 
       this.baseLayers = {
+        Satellite: Satellite,
         OSM: osmLayer,
         Minimaliste: Minimaliste,
         Sombre: Sombre,
       };
 
       this.mapsLayers = await this.createMapsOverlays();
-      this.layerControl = L.control.layers(this.baseLayers, this.mapsLayers);
+      this.layerControl = L.control.layers(this.baseLayers, this.mapsLayers, {
+        sortLayers: true,
+      });
       this.layerControl.addTo(this.map);
 
       this.loadItemsLayer();
@@ -205,18 +215,20 @@ export default {
     },
 
     async createMapsOverlays() {
-      const promises = this.checkedTrenchesItemsPlans.map((obj) => {
-        if (
-          obj.RelationAttachments?.includes("\n\n") ||
-          obj.RelationAttachments?.includes(").")
-        ) {
-          return createMapsOverlay(
+      const promises = this.checkedTrenchesItemsPlans
+        .filter(
+          (obj) =>
+            obj.RelationAttachments?.includes("\n\n") ||
+            obj.RelationAttachments?.includes(").")
+        )
+        .map((obj) =>
+          createMapsOverlay(
             obj.RelationAttachments,
             obj.Trench,
-            this.projectPreferencesCRS
-          );
-        }
-      });
+            this.projectPreferencesCRS,
+            obj.Title
+          )
+        );
       // Attendre que toutes les promesses soient résolues
       const overlays = await Promise.all(promises);
       // Combine toutes les overlays dans un seul objet
