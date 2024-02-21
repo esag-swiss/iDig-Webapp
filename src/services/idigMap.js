@@ -57,8 +57,10 @@ export async function createMapsOverlay(
         async function wldToExtent(wldCoefficients, width, height) {
           const [scaleX, rotationY, rotationX, scaleY, West, North] =
             wldCoefficients.map((value) => parseFloat(value));
-          const South = North + scaleY * height;
-          const East = West + scaleX * width;
+
+          const East = scaleX * width + rotationX * height + West;
+          const South = rotationY * width + scaleY * height + North;
+
           return {
             SW: [West, South],
             NE: [East, North],
