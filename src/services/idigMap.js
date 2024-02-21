@@ -10,9 +10,10 @@ import { apiFetchImageSRC, apiFetchPlanWld } from "@/services/ApiClient";
 export async function createMapsOverlay(
   RelationAttachments,
   Trench,
-  projectPreferencesCRS
+  projectPreferencesCRS,
+  imageTitle
 ) {
-  let imageTitle;
+  let imageName;
   let imageUrl;
 
   let imageBlob;
@@ -22,9 +23,9 @@ export async function createMapsOverlay(
   let leafletLatLngBounds;
 
   //look if plan is present in indexedDB and fetch details
-  imageTitle = RelationAttachments.split("\n")[0].split("=")[1].split(".")[0];
+  imageName = RelationAttachments.split("\n")[0].split("=")[1].split(".")[0];
   const db = await openDB();
-  const result = await getImageFromDB(db, imageTitle);
+  const result = await getImageFromDB(db, imageName);
 
   if (result) {
     imageUrl = URL.createObjectURL(result.imageBlob);
@@ -70,7 +71,7 @@ export async function createMapsOverlay(
 
     // stocker le plan dans IndexedDB
     const db = await openDB();
-    addPlanToDB(db, imageTitle, imageBlob, planlatLngBounds);
+    addPlanToDB(db, imageName, imageBlob, planlatLngBounds);
   } else if (RelationAttachments.includes(").")) {
     let fetchPlan = await apiFetchImageSRC(RelationAttachments, Trench);
 
@@ -88,7 +89,7 @@ export async function createMapsOverlay(
 
     // stocker le plan dans IndexedDB
     const db = await openDB();
-    addPlanToDB(db, imageTitle, imageBlob, planlatLngBounds);
+    addPlanToDB(db, imageName, imageBlob, planlatLngBounds);
   }
 
   // Leaflet à besoin de coordonnées formatées SWNE et en EPSG4326 (WGS84)

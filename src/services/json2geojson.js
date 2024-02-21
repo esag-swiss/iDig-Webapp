@@ -101,7 +101,7 @@ export function geoSerializedToGeojson(json) {
           },
           // As properties we only send back few fields to produce a lighter output
           properties: {
-            id: json[i].IdentifierUUID,
+            id: json[i].Identifier,
             type: json[i].Type,
             title: json[i].Title,
           },

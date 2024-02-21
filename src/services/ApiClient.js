@@ -182,6 +182,7 @@ export function apiUpdateTrenchItem(
     })
     .finally(() => decrementLoadingCount());
 }
+
 export function apiFetchImage(img, trench) {
   const {
     server,
@@ -219,7 +220,8 @@ export function apiFetchImage(img, trench) {
     })
     .finally(() => decrementLoadingCount());
 }
-export function apiFetchImageSRC(img, trench) {
+
+export function apiFetchImageSRC(RelationAttachments, trench) {
   const {
     server,
     project,
@@ -228,8 +230,8 @@ export function apiFetchImageSRC(img, trench) {
     incrementLoadingCount,
     decrementLoadingCount,
   } = useAppStore();
-  let name = img.split("\n")[0].split("=")[1];
-  let checksum = img.split("\n")[1].split("=")[1];
+  let name = RelationAttachments.split("\n")[0].split("=")[1];
+  let checksum = RelationAttachments.split("\n")[1].split("=")[1];
   incrementLoadingCount();
   return axios({
     headers: {
@@ -243,12 +245,13 @@ export function apiFetchImageSRC(img, trench) {
   })
     .catch((error) => {
       alert(
-        `Error: ${error}\nSomething went wrong! Please check the image URL.`
+        `Error: ${error}\nSomething went wrong with fetching layer!\nPlease check the RelationAttachments field. ${RelationAttachments}`
       );
     })
     .finally(() => decrementLoadingCount());
 }
-export function apiFetchPlanWld(img, trench) {
+
+export function apiFetchPlanWld(RelationAttachments, trench) {
   const {
     server,
     project,
@@ -257,8 +260,10 @@ export function apiFetchPlanWld(img, trench) {
     incrementLoadingCount,
     decrementLoadingCount,
   } = useAppStore();
-  let name = img.split("\n\n")[1].split("\n")[0].split("=")[1];
-  let checksum = img.split("\n\n")[1].split("\n")[1].split("=")[1];
+  let name = RelationAttachments.split("\n\n")[1].split("\n")[0].split("=")[1];
+  let checksum = RelationAttachments.split("\n\n")[1]
+    .split("\n")[1]
+    .split("=")[1];
   incrementLoadingCount();
 
   return axios({
@@ -286,7 +291,7 @@ export function apiFetchPlanWld(img, trench) {
     })
     .catch((error) => {
       alert(
-        `Error: ${error}\nSomething went wrong! Please check the image URL.`
+        `Error: ${error}\nSomething went wrong with fetching wld!\nPlease check the RelationAttachments field. ${RelationAttachments}`
       );
       throw error; // Rethrow the error to maintain consistency in handling errors
     })
