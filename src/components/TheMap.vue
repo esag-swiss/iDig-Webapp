@@ -147,7 +147,7 @@ export default {
         this.map.removeLayer(this.itemsLayer);
       }
       let geojsonMarkerOptions = {
-        radius: 8,
+        radius: 5,
         fillColor: "grey",
         color: "grey",
         weight: 2,
@@ -242,7 +242,11 @@ export default {
     onEachFeature(feature, itemsLayer) {
       if (feature.properties && feature.properties.id) {
         itemsLayer.bindPopup(
-          feature.properties.id + "<br>" + feature.properties.title
+          feature.properties.source +
+            " " +
+            feature.properties.id +
+            "<br>" +
+            feature.properties.title
         );
       }
     },
