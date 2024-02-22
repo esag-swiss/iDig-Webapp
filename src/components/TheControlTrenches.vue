@@ -12,6 +12,17 @@
         @click="isDisplayedArray[index] = !isDisplayedArray[index]"
       >
         {{ trenchGroupName }}
+        <q-btn
+          align="left"
+          padding="2px 5px"
+          size="10px"
+          color="secondary"
+          label="all"
+          @click="checkGroup(trenchGroupName)"
+          ><q-tooltip class="bg-accent"
+            >all trenches from group</q-tooltip
+          ></q-btn
+        >
       </li>
       <!-- liste trenches -->
       <div v-if="isDisplayedArray[index]">
@@ -38,25 +49,29 @@
     </ul>
 
     <!-- Check All/None -->
-    <div class="q-gutter-sm">
-      <q-btn
-        align="left"
-        padding="xs"
-        color="secondary"
-        :disabled="isNoneChecked"
-        label="None"
-        @click="uncheckAll"
-        ><q-tooltip class="bg-accent">Uncheck all trenches</q-tooltip></q-btn
-      >
-      <q-btn
-        align="left"
-        padding="xs"
-        color="secondary"
-        :disabled="isAllChecked"
-        label="All"
-        @click="checkAll"
-        ><q-tooltip class="bg-accent">Check all trenches</q-tooltip></q-btn
-      >
+    <div class="q-pa-xs">
+      <div class="q-gutter-sm">
+        <q-btn
+          align="left"
+          size="10px"
+          padding="2px 5px"
+          color="secondary"
+          :disabled="isNoneChecked"
+          label="None"
+          @click="uncheckAll"
+          ><q-tooltip class="bg-accent">Uncheck all trenches</q-tooltip></q-btn
+        >
+        <q-btn
+          align="left"
+          size="10px"
+          padding="2px 5px"
+          color="secondary"
+          :disabled="isAllChecked"
+          label="All"
+          @click="checkAll"
+          ><q-tooltip class="bg-accent">Check all trenches</q-tooltip></q-btn
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -91,21 +106,14 @@ export default {
   },
   watch: {
     checkedTrenchesNames(newTrenchList, oldTrenchList) {
-      if (newTrenchList.length > oldTrenchList.length) {
-        const addedTrenches = newTrenchList.filter(
-          (trenchName) => !oldTrenchList.includes(trenchName)
-        );
-        this.addCheckedTrenchesData(addedTrenches);
-      } else if (newTrenchList.length < oldTrenchList.length) {
-        const removedTrenches = oldTrenchList.filter(
-          (trenchName) => !newTrenchList.includes(trenchName)
-        );
-        this.removeCheckedTrenchesData(removedTrenches);
-      } else {
-        console.error(
-          "watch for checkedTrenchesNames was call with new and old value having same length"
-        );
-      }
+      const addedTrenches = newTrenchList.filter(
+        (item) => !oldTrenchList.includes(item)
+      );
+      const removedTrenches = oldTrenchList.filter(
+        (item) => !newTrenchList.includes(item)
+      );
+      this.removeCheckedTrenchesData(removedTrenches);
+      this.addCheckedTrenchesData(addedTrenches);
     },
   },
   methods: {
@@ -120,6 +128,12 @@ export default {
     },
     uncheckAll() {
       this.setCheckedTrenchesNames([]);
+    },
+    checkGroup(checkGroup) {
+      let newCheckedTrenchesNames = this.checkedTrenchesNames.concat(
+        this.projectTrenchesNames.filter((item) => item.includes(checkGroup))
+      );
+      this.setCheckedTrenchesNames(newCheckedTrenchesNames);
     },
   },
 };

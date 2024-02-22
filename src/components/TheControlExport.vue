@@ -3,7 +3,8 @@
     <h3>Export</h3>
     <q-btn
       align="left"
-      padding="xs"
+      size="10px"
+      padding="2px 5px"
       color="secondary"
       label=".json"
       @click="exportFile('json')"
@@ -13,7 +14,8 @@
     >
     <q-btn
       align="left"
-      padding="xs"
+      size="10px"
+      padding="2px 5px"
       color="secondary"
       label=".tab"
       @click="exportFile('tab')"
@@ -23,7 +25,8 @@
     >
     <q-btn
       align="left"
-      padding="xs"
+      size="10px"
+      padding="2px 5px"
       color="secondary"
       label=".Pdf"
       @click="generatePDF()"
@@ -33,7 +36,8 @@
     >
     <q-btn
       align="left"
-      padding="xs"
+      size="10px"
+      padding="2px 5px"
       color="secondary"
       label="Geojson"
       @click="exportFile('geojson')"
