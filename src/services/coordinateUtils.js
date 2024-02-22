@@ -7,6 +7,10 @@ proj4.defs([
     "+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9996 +x_0=500000 +y_0=0 +datum=GGRS87 +units=m +no_defs ",
   ],
   [
+    "GGRS87",
+    "+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9996 +x_0=500000 +y_0=0 +datum=GGRS87 +units=m +no_defs ",
+  ],
+  [
     "Amarynthos", // Based on EPSG2100 with X -400000 and Y -4200000
     "+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9996 +x_0=100000 +y_0=-4200000 +datum=GGRS87 +units=m +no_defs ",
   ],
