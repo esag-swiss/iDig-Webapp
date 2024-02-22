@@ -76,31 +76,74 @@ export const useDataStore = defineStore("data", {
         return state.checkedTrenchesItemsSelectedType;
       }
 
-      // If the search text contains a colon, then we filter by property, otherwise, we search all properties
-      return state.searchText.includes(":")
-        ? filterByProperty(state)
-        : filterAllProperties(state);
+      if (state.searchText.includes("AND")) {
+        let searchTerms = state.searchText.replace(/\s+/g, "").split("AND");
+        let currentResult = state.checkedTrenchesItemsSelectedType;
+        // Apply "AND" logic to each term
+        for (let i = 0; i < searchTerms.length; i++) {
+          currentResult = currentResult.filter((item) =>
+            searchTerms[i].includes(":")
+              ? filterByProperty(searchTerms[i]).includes(item)
+              : filterAllProperties(searchTerms[i]).includes(item)
+          );
+        }
+        return currentResult;
+      } else if (state.searchText.includes("OR")) {
+        let searchTerms = state.searchText.replace(/\s+/g, "").split("OR");
+        let currentResult = [];
+
+        // Apply "OR" logic to each term
+        for (let i = 0; i < searchTerms.length; i++) {
+          currentResult = currentResult.concat(
+            state.checkedTrenchesItemsSelectedType.filter((item) =>
+              searchTerms[i].includes(":")
+                ? filterByProperty(searchTerms[i]).includes(item)
+                : filterAllProperties(searchTerms[i]).includes(item)
+            )
+          );
+        }
+
+        // Remove duplicates from the result (if any)
+        currentResult = Array.from(new Set(currentResult));
+        return currentResult;
+      } else {
+        // If the search text contains a colon, then we filter by property, otherwise, we search all properties
+        return state.searchText.includes(":")
+          ? filterByProperty(state.searchText)
+          : filterAllProperties(state.searchText);
+      }
 
       // Filter items based on a specific property mentioned before the colon in the searchText
       // Warning !! It is currently filtering only to the english name, which may not be the table displayed name
-      function filterByProperty(state) {
-        const [property, value] = state.searchText.split(":");
+      function filterByProperty(searchString) {
+        const [property, value] = searchString.split(":");
+
+        let obj = state.projectPreferencesFieldsWithTranslation;
+        function findKeyByValue(obj, targetValue) {
+          for (const key in obj) {
+            if (
+              obj.hasOwnProperty(key) &&
+              obj[key].toLowerCase() === targetValue.toLowerCase()
+            ) {
+              return key;
+            }
+          }
+        }
+        let propertyName = findKeyByValue(obj, property);
 
         // First, filter items that have the requested property
         return state.checkedTrenchesItemsSelectedType
-          .filter((item) => property in item)
+          .filter((item) => propertyName in item)
           .filter((item) =>
-            item[property].toLowerCase().includes(value.toLowerCase())
+            item[propertyName].toLowerCase().includes(value.toLowerCase())
           );
       }
 
       // Filter items by checking all properties for the searchText
-      function filterAllProperties(state) {
-        const searchText = state.searchText.toLowerCase();
-
+      function filterAllProperties(searchString) {
         return state.checkedTrenchesItemsSelectedType.filter((item) =>
           Object.values(item).some((val) =>
-            String(val).toLowerCase().includes(searchText)
+            String(val).toLowerCase().includes(searchString.toLowerCase())
           )
         );
       }
