@@ -11,18 +11,14 @@
         class="list-group-item accordion text-bold"
         @click="isDisplayedArray[index] = !isDisplayedArray[index]"
       >
-        {{ trenchGroupName }}
-        <q-btn
-          align="left"
-          padding="2px 5px"
-          size="10px"
-          color="secondary"
-          label="all"
-          @click="checkGroup(trenchGroupName)"
-          ><q-tooltip class="bg-accent"
-            >all trenches from group</q-tooltip
-          ></q-btn
+        <label class="px-1 m-0 text-bold" for="checkbox">
+          {{ trenchGroupName }}</label
         >
+        <input
+          v-model="isCheckedArray[index]"
+          type="checkbox"
+          @change="checkGroup(trenchGroupName, isCheckedArray[index])"
+        />
       </li>
       <!-- liste trenches -->
       <div v-if="isDisplayedArray[index]">
@@ -36,11 +32,12 @@
             class="list-group-item accordion"
           >
             <input
+              id="trench-checkbox"
               v-model="checkedTrenchesNames"
               type="checkbox"
               :value="trenchName"
             />
-            <label class="px-1 m-0 text-bold" for="checkbox">{{
+            <label class="px-1 m-0 text-bold" for="trench-checkbox">{{
               trenchName
             }}</label>
           </li>
@@ -84,6 +81,7 @@ export default {
   data() {
     return {
       isDisplayedArray: [],
+      isCheckedArray: [],
     };
   },
   computed: {
@@ -129,11 +127,19 @@ export default {
     uncheckAll() {
       this.setCheckedTrenchesNames([]);
     },
-    checkGroup(checkGroup) {
-      let newCheckedTrenchesNames = this.checkedTrenchesNames.concat(
-        this.projectTrenchesNames.filter((item) => item.includes(checkGroup))
-      );
-      this.setCheckedTrenchesNames(newCheckedTrenchesNames);
+    checkGroup(checkGroup, checked) {
+      if (checked) {
+        let newCheckedTrenchesNames = this.checkedTrenchesNames.concat(
+          this.projectTrenchesNames.filter((item) => item.includes(checkGroup))
+        );
+        this.setCheckedTrenchesNames(newCheckedTrenchesNames);
+      } else {
+        // Enlever les items de checkGroup de checkedTrenchesNames
+        let filteredCheckedTrenchesNames = this.checkedTrenchesNames.filter(
+          (item) => !item.includes(checkGroup)
+        );
+        this.setCheckedTrenchesNames(filteredCheckedTrenchesNames);
+      }
     },
   },
 };
