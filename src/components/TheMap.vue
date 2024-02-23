@@ -21,6 +21,7 @@ export default {
       baseLayers: null,
       layerControl: null,
       firstMapShowed: true,
+      isProcessingTrenchItemsPlans: false,
     };
   },
   computed: {
@@ -44,6 +45,7 @@ export default {
     loadingCount: function (newLoadingCount, oldLoadingCount) {
       if (oldLoadingCount === 1 && newLoadingCount === 0 && this.map) {
         this.loadItemsLayer();
+        this.layerControl.remove();
       }
     },
     // lors de suppression de trenches actualiser le geojson
@@ -65,13 +67,17 @@ export default {
     },
 
     checkedTrenchesItemsPlans: async function () {
-      if (this.map) {
-        await this.layerControl.remove();
-
-        this.mapsLayers = await this.createMapsOverlays();
-        this.layerControl = L.control
-          .layers(this.baseLayers, this.mapsLayers)
-          .addTo(this.map);
+      if (this.map && !this.isProcessingTrenchItemsPlans) {
+        this.isProcessingTrenchItemsPlans = true;
+        try {
+          await this.layerControl.remove();
+          this.mapsLayers = await this.createMapsOverlays();
+          this.layerControl = L.control
+            .layers(this.baseLayers, this.mapsLayers)
+            .addTo(this.map);
+        } finally {
+          this.isProcessingTrenchItemsPlans = false;
+        }
       }
     },
   },
