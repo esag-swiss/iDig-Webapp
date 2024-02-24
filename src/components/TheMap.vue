@@ -21,41 +21,65 @@ export default {
       baseLayers: null,
       layerControl: null,
       firstMapShowed: true,
+      isProcessingTrenchItemsPlans: false,
     };
   },
   computed: {
     ...mapState(useAppStore, ["isMapMinimized", "loadingCount"]),
     ...mapState(useDataStore, [
       "checkedTrenchesItemsPlans",
-      "checkedTrenchesItems",
       "checkedTrenchesItemsSelectedTypeAndSearched",
-      "checkedTrenchesItemsPlans",
       "projectPreferencesCRS",
+      "checkedTrenchesData",
     ]),
   },
   watch: {
+    // initialize map when first toggled on
     isMapMinimized: async function () {
-      if (this.isMapMinimized) {
-        this.layerControl.remove();
-        this.map.removeControl(this.map.zoomControl);
-      } else if (this.firstMapShowed) {
+      if (this.firstMapShowed) {
         this.initMap();
         this.firstMapShowed = false;
-      } else {
-        this.mapsLayers = await this.createMapsOverlays();
-        this.layerControl = L.control.layers(this.baseLayers, this.mapsLayers);
-        this.layerControl.addTo(this.map);
-        this.map.addControl(this.map.zoomControl);
       }
     },
-    checkedTrenchesItemsSelectedTypeAndSearched: function () {
-      if (this.loadingCount === 0 && this.map) {
-        this.loadItemsLayer();
-      }
-    },
+    // load items layer only when all selected trenches are loaded
     loadingCount: function (newLoadingCount, oldLoadingCount) {
       if (oldLoadingCount === 1 && newLoadingCount === 0 && this.map) {
         this.loadItemsLayer();
+        this.layerControl.remove();
+      }
+    },
+    // when removing trenches load items layer
+    checkedTrenchesItemsSelectedTypeAndSearched: function () {
+      if (this.loadingCount === 0 && this.map) {
+        this.loadItemsLayer();
+        if (this.map) {
+          // removes mapslayers
+          for (const layerName in this.mapsLayers) {
+            if (
+              Object.prototype.hasOwnProperty.call(this.mapsLayers, layerName)
+            ) {
+              const layerToRemove = this.mapsLayers[layerName];
+              this.map.removeLayer(layerToRemove);
+            }
+          }
+        }
+      }
+    },
+
+    checkedTrenchesItemsPlans: async function () {
+      if (this.map && !this.isProcessingTrenchItemsPlans) {
+        this.isProcessingTrenchItemsPlans = true;
+        try {
+          await this.layerControl.remove();
+          this.mapsLayers = await this.createMapsOverlays();
+          this.layerControl = L.control
+            .layers(this.baseLayers, this.mapsLayers, {
+              sortLayers: true,
+            })
+            .addTo(this.map);
+        } finally {
+          this.isProcessingTrenchItemsPlans = false;
+        }
       }
     },
   },
@@ -72,7 +96,7 @@ export default {
           '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       });
 
-      var Minimaliste = L.tileLayer(
+      const Minimaliste = L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
         {
           attribution:
@@ -82,7 +106,7 @@ export default {
         }
       );
 
-      var Sombre = L.tileLayer(
+      const Sombre = L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
         {
           attribution:
@@ -90,8 +114,15 @@ export default {
           subdomains: "abcd",
           maxZoom: 25,
         }
-      ).addTo(this.map);
+      );
 
+      const Satellite = L.tileLayer(
+        "http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+        {
+          maxZoom: 25,
+          subdomains: ["mt0", "mt1", "mt2", "mt3"],
+        }
+      ).addTo(this.map);
       // WMS layer from Dipylon. To be used in dev only for not overload their server
       const wmsLayer = L.tileLayer.wms(
         "http://116.202.128.162:83/geoserver/wms?SERVICE=WMS?",
@@ -104,14 +135,16 @@ export default {
       );
 
       this.baseLayers = {
+        Satellite: Satellite,
         OSM: osmLayer,
         Minimaliste: Minimaliste,
         Sombre: Sombre,
-        Ortho: wmsLayer,
       };
 
       this.mapsLayers = await this.createMapsOverlays();
-      this.layerControl = L.control.layers(this.baseLayers, this.mapsLayers);
+      this.layerControl = L.control.layers(this.baseLayers, this.mapsLayers, {
+        sortLayers: true,
+      });
       this.layerControl.addTo(this.map);
 
       this.loadItemsLayer();
@@ -122,7 +155,7 @@ export default {
         this.map.removeLayer(this.itemsLayer);
       }
       let geojsonMarkerOptions = {
-        radius: 8,
+        radius: 5,
         fillColor: "grey",
         color: "grey",
         weight: 2,
@@ -175,37 +208,38 @@ export default {
           },
         }
       );
-      this.itemsLayer.addTo(this.map);
+
       const greeceBounds = L.latLngBounds(
-        L.latLng(35, 20), // Coin sud-ouest de la Grèce
-        L.latLng(42, 30) // Coin nord-est de la Grèce
+        L.latLng(35, 20), // Greece south west corner
+        L.latLng(42, 30) // Greece north east corner
       );
       let bounds = this.itemsLayer.getBounds();
       if (bounds.isValid()) {
+        this.itemsLayer.addTo(this.map);
         this.map.fitBounds(bounds);
       } else {
         this.map.fitBounds(greeceBounds);
       }
-
-      this.map.fitBounds(this.itemsLayer.getBounds());
     },
 
     async createMapsOverlays() {
-      const promises = this.checkedTrenchesItemsPlans.map((obj) => {
-        if (
-          obj.RelationAttachments?.includes("\n\n") ||
-          obj.RelationAttachments?.includes(").")
-        ) {
-          return createMapsOverlay(
+      const promises = this.checkedTrenchesItemsPlans
+        .filter(
+          (obj) =>
+            obj.RelationAttachments?.includes("\n\n") ||
+            obj.RelationAttachments?.includes(").")
+        )
+        .map((obj) =>
+          createMapsOverlay(
             obj.RelationAttachments,
             obj.Trench,
-            this.projectPreferencesCRS
-          );
-        }
-      });
-      // Attendre que toutes les promesses soient résolues
+            this.projectPreferencesCRS,
+            obj.Title
+          )
+        );
+
       const overlays = await Promise.all(promises);
-      // Combine toutes les overlays dans un seul objet
+      // Combine overlays in one object
       const result = overlays.reduce((acc, overlay) => {
         return { ...acc, ...overlay };
       }, {});
@@ -216,7 +250,11 @@ export default {
     onEachFeature(feature, itemsLayer) {
       if (feature.properties && feature.properties.id) {
         itemsLayer.bindPopup(
-          feature.properties.id + "<br>" + feature.properties.title
+          feature.properties.source +
+            " " +
+            feature.properties.id +
+            "<br>" +
+            feature.properties.title
         );
       }
     },
