@@ -34,26 +34,26 @@ export default {
     ]),
   },
   watch: {
-    // initialise la carte uniquement à la première vue
+    // initialize map when first toggled on
     isMapMinimized: async function () {
       if (this.firstMapShowed) {
         this.initMap();
         this.firstMapShowed = false;
       }
     },
-    // attendre que toutes les trenches soient chargées avant d'afficher le geojson
+    // load items layer only when all selected trenches are loaded
     loadingCount: function (newLoadingCount, oldLoadingCount) {
       if (oldLoadingCount === 1 && newLoadingCount === 0 && this.map) {
         this.loadItemsLayer();
         this.layerControl.remove();
       }
     },
-    // lors de suppression de trenches actualiser le geojson
+    // when removing trenches load items layer
     checkedTrenchesItemsSelectedTypeAndSearched: function () {
       if (this.loadingCount === 0 && this.map) {
         this.loadItemsLayer();
         if (this.map) {
-          // Supprime toutes les couches de mapsLayers
+          // removes mapslayers
           for (const layerName in this.mapsLayers) {
             if (
               Object.prototype.hasOwnProperty.call(this.mapsLayers, layerName)
@@ -73,7 +73,9 @@ export default {
           await this.layerControl.remove();
           this.mapsLayers = await this.createMapsOverlays();
           this.layerControl = L.control
-            .layers(this.baseLayers, this.mapsLayers)
+            .layers(this.baseLayers, this.mapsLayers, {
+              sortLayers: true,
+            })
             .addTo(this.map);
         } finally {
           this.isProcessingTrenchItemsPlans = false;
@@ -208,8 +210,8 @@ export default {
       );
 
       const greeceBounds = L.latLngBounds(
-        L.latLng(35, 20), // Coin sud-ouest de la Grèce
-        L.latLng(42, 30) // Coin nord-est de la Grèce
+        L.latLng(35, 20), // Greece south west corner
+        L.latLng(42, 30) // Greece north east corner
       );
       let bounds = this.itemsLayer.getBounds();
       if (bounds.isValid()) {
@@ -235,9 +237,9 @@ export default {
             obj.Title
           )
         );
-      // Attendre que toutes les promesses soient résolues
+
       const overlays = await Promise.all(promises);
-      // Combine toutes les overlays dans un seul objet
+      // Combine overlays in one object
       const result = overlays.reduce((acc, overlay) => {
         return { ...acc, ...overlay };
       }, {});
