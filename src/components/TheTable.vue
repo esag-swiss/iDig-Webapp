@@ -1,170 +1,95 @@
 <template>
   <div v-show="currentItem" class="TheItemframe" @click="clearTheItem()"></div>
   <TheItem v-if="currentItem" :currentItem="currentItem"> </TheItem>
-  <TheTableLite
-    :hasCheckbox="false"
-    :isLoading="table.isLoading"
-    :isReSearch="table.isReSearch"
-    :columns="table.columns"
-    :rows="table.rows"
-    :isStaticMode="true"
-    :rowClasses="table.rowClasses"
-    :total="table.totalRecordCount"
-    :sortable="table.sortable"
-    :messages="table.messages"
-    @is-finished="tableLoadingFinish"
-    @row-clicked="rowClicked"
-  ></TheTableLite>
+  <div class="q-pa-xs">
+    <q-table
+      style="height: 93vh"
+      flat
+      bordered
+      :rows="rows"
+      :columns="columns"
+      dense
+      separator="vertical"
+      row-key="name"
+      @row-click="onRowClick"
+      virtual-scroll
+      v-model:pagination="pagination"
+      :rows-per-page-options="[0]"
+    />
+  </div>
 </template>
 
 <script>
-import {
-  defineComponent,
-  reactive,
-  ref,
-  computed,
-  watch,
-  onMounted,
-} from "vue";
-import TheTableLite from "@/components/TheTableLite.vue";
+import { ref, watch } from "vue";
 import TheItem from "@/components/TheItem.vue";
 import { useDataStore } from "@/stores/data";
-import { useAppStore } from "@/stores/app";
 
-export default defineComponent({
-  name: "TheTable",
-  components: { TheTableLite, TheItem },
+export default {
+  name: "TheQTable",
+  components: { TheItem },
   setup() {
-    // make table columns and rows reactive inside the table object, with 2 watches :
     const dataStore = useDataStore();
-    const appStore = useAppStore();
-
-    const updateTableColumns = () => {
-      table.columns = dataStore.checkedFieldNames.map((fieldName) => ({
-        field: fieldName,
+    const rows = ref(dataStore.checkedTrenchesItemsSelectedTypeAndSearched);
+    const columns = ref(
+      dataStore.checkedFieldNames.map((fieldName) => ({
+        name: fieldName,
+        required: true,
         label: dataStore.projectPreferencesFieldsWithTranslation[fieldName],
+        align: "left",
+        field: fieldName,
         sortable: true,
-        checked: true,
-      }));
-    };
-    watch(
-      [
-        () => dataStore.checkedFieldNames,
-        () => dataStore.checkedTrenchesNames,
-        () => dataStore.selectedType,
-        () => appStore.lang,
-      ],
-      updateTableColumns
-    );
-    onMounted(updateTableColumns);
-
-    const checkedTrenchesItemsSelectedTypeAndSearched = ref(
-      dataStore.checkedTrenchesItemsSelectedTypeAndSearched
+      }))
     );
     watch(
       () => dataStore.checkedTrenchesItemsSelectedTypeAndSearched,
-      (newItems) => {
-        table.rows = newItems;
+      (newRows) => {
+        rows.value = newRows;
       }
     );
-
-    // Table config
-    const table = reactive({
-      columns: [],
-      rows: checkedTrenchesItemsSelectedTypeAndSearched,
-      messages: {
-        pagingInfo: "{0}-{1} / {2}",
-        pageSizeChangeLabel: "item/page",
-        gotoPageLabel: " page ",
-        noDataAvailable: "no data",
-      },
-      totalRecordCount: computed(() => {
-        return table.rows.length;
-      }),
-      sortable: {
-        order: "Identifier",
-        sort: "asc",
-      },
-    });
-
-    // Loading finish event
-    const tableLoadingFinish = (elements) => {
-      table.isLoading = false;
-      Array.prototype.forEach.call(elements, function (element) {
-        if (element.classList.contains("name-btn")) {
-          element.addEventListener("click", function (event) {
-            event.stopPropagation(); // prevents further propagation of the current event in the capturing and bubbling phases.
-            console.log(this.dataset.id + " name-btn click!!");
-          });
-        }
-        if (element.classList.contains("quick-btn")) {
-          element.addEventListener("click", function (event) {
-            event.stopPropagation(); // prevents further propagation of the current event in the capturing and bubbling phases.
-            console.log(this.dataset.id + " quick-btn click!!");
-          });
-        }
-      });
-    };
-
-    // Row clicked event
+    watch(
+      () => dataStore.checkedFieldNames,
+      (newFieldNames) => {
+        columns.value = newFieldNames.map((fieldName) => ({
+          name: fieldName,
+          required: true,
+          label: dataStore.projectPreferencesFieldsWithTranslation[fieldName],
+          align: "left",
+          field: fieldName,
+          sortable: true,
+        }));
+      }
+    );
     let currentItem = ref();
-    const rowClicked = (rowsKey) => {
-      // Pour modifier une variable réactive, déclaré avec ref(), vous devez utiliser sa propriété .value
-      currentItem.value = rowsKey;
+    const onRowClick = (evt, row) => {
+      currentItem.value = row;
     };
 
     return {
-      table,
-      rowClicked,
-      tableLoadingFinish,
+      selected: ref([]),
+      initialPagination: {
+        sortBy: "desc",
+        descending: false,
+        page: 1,
+        rowsPerPage: 20,
+      },
+      columns,
+      rows,
       currentItem,
+      onRowClick,
+
+      pagination: ref({
+        rowsPerPage: 50,
+      }),
     };
-  },
-  data() {
-    return {};
   },
   methods: {
     clearTheItem() {
       this.currentItem = false;
-      // this.$parent.reload();
     },
   },
-});
+};
 </script>
-
-<style scoped>
-::v-deep(.vtl-table) {
-  margin: 0;
-}
-
-::v-deep(.vtl-table tr span) {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-}
-
-::v-deep(.vtl-table td) {
-  vertical-align: top;
-  padding: 0.25rem;
-
-  max-height: 50px;
-}
-
-::v-deep(.vtl-paging-pagination-page-link) {
-  border: none;
-}
-
-::v-deep(.page-link) {
-  padding: 0.25rem;
-}
-
-::v-deep(.vtl-pagination) {
-  margin: 0;
-}
-
+<style>
 #hideTheItem {
   /* color: white; */
   z-index: 1023;
@@ -185,5 +110,9 @@ export default defineComponent({
 }
 .TheItemframe:hover {
   background: rgba(0, 0, 0, 0.5);
+}
+
+.q-table__bottom {
+  border: 0;
 }
 </style>
