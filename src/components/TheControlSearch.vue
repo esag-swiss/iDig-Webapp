@@ -3,7 +3,7 @@
     :value="searchText"
     class="form-control form-control-sm"
     placeholder="Search..."
-    @input="(event) => setSearchText(event.target.value)"
+    @keyup.enter="(event) => setSearchText(event.target.value)"
   />
 </template>
 

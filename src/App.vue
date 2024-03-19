@@ -112,8 +112,8 @@ export default {
 .theMapDiv.toggled,
 .theTableDiv {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 50px;
+  right: 30px;
   width: 100px;
   height: 100px;
   border-radius: 25px;
@@ -129,16 +129,19 @@ export default {
 }
 
 .theMapDiv {
+  height: 100%;
   z-index: 1000;
 }
-
+.theTableDiv.toggled {
+  height: 94vh;
+}
 .theMapDiv,
 .theTableDiv.toggled {
   position: relative;
   bottom: 0px;
   right: 1px;
   width: 100%;
-  height: 100%;
+
   border-radius: 0px;
   font-size: 100%;
 }
