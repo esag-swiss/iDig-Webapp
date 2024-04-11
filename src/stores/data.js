@@ -186,7 +186,9 @@ export const useDataStore = defineStore("data", {
         let preferences = "";
         try {
           preferences = JSON.parse(
-            base64Preferences.replace(/},\n\t+}/g, "}}")
+            base64Preferences
+              .replace(/},\n\t+}/g, "}}")
+              .replace(/},\n\t+]/g, "}]")
           );
         } catch (e) {
           let message = `error: default preference file is not a valid json<br/>${e?.message}<br/>`;

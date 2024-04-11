@@ -9,7 +9,7 @@
       label=".json"
       @click="exportFile('json')"
       ><q-tooltip class="bg-accent"
-        >filtered items as .json file</q-tooltip
+        >filtered items with all non empty fields as .json file</q-tooltip
       ></q-btn
     >
     <q-btn
@@ -20,7 +20,8 @@
       label=".tab"
       @click="exportFile('tab')"
       ><q-tooltip class="bg-accent"
-        >filtered items as .tab file</q-tooltip
+        >filtered items with all fields use in the set of data as .tab
+        file</q-tooltip
       ></q-btn
     >
     <q-btn
@@ -31,7 +32,7 @@
       label=".Pdf"
       @click="generatePDF()"
       ><q-tooltip class="bg-accent"
-        >filtered items as PDF report</q-tooltip
+        >PDF report of displayed items</q-tooltip
       ></q-btn
     >
     <q-btn
@@ -81,9 +82,15 @@ export default {
         this.fileName = this.selectedType;
         const items = this.checkedTrenchesItemsSelectedType;
         const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
-        const header = Object.keys(items[0]);
+        const uniqueKeys = new Set();
+
+        items.forEach((item) => {
+          Object.keys(item).forEach((key) => uniqueKeys.add(key));
+        });
+        const header = Array.from(uniqueKeys);
+
         this.fileData = [
-          header.join("\t"), // header row first
+          header.join("\t"),
           ...items.map((row) =>
             header
               .map((fieldName) => JSON.stringify(row[fieldName], replacer))
@@ -97,7 +104,7 @@ export default {
         this.fileName = "Trenches";
         this.fileData = JSON.stringify(
           geoSerializedToGeojson(this.checkedTrenchesItems)
-        ); // tous les items des trenches selectionnées
+        );
       }
 
       const blob = new Blob([this.fileData], { type: "text/plain" });
