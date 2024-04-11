@@ -12,7 +12,13 @@
         @click="isDisplayedArray[index] = !isDisplayedArray[index]"
       >
         <label class="px-1 m-0 text-bold" for="checkbox">
-          {{ trenchGroupName }}</label
+          <q-icon
+            v-if="isDisplayedArray[index]"
+            name="keyboard_arrow_down"
+          /><q-icon
+            v-if="!isDisplayedArray[index]"
+            name="keyboard_arrow_right"
+          />{{ trenchGroupName }}</label
         >
         <input
           v-model="isCheckedArray[index]"
