@@ -2,21 +2,30 @@
   <div class="TheItemwrapper justify-content-center">
     <div v-if="currentItem" class="TheItem center-block mx-auto">
       <!--header-->
-      <div class="d-flex align-items-start border-bottom p-1">
+      <div class="d-flex mr-2 border-bottom">
         <div class="col text-left">
           <h3>{{ currentItem.Type }} {{ currentItem.Identifier }}</h3>
-        </div>
-        <div class="navbar-text py-0">
           {{ currentItem.IdentifierUUID }}
         </div>
 
-        <button
-          type="button"
-          class="btn btn-outline-danger my-sm-0 m-2 py-0"
-          @click="pushSurvey()"
-        >
-          save
-        </button>
+        <div style="padding: 10px 5px 5px 5px">
+          <q-btn
+            v-if="editMode"
+            round
+            color="secondary"
+            @click="pushSurvey()"
+            :size="'sm'"
+            icon="cloud_upload"
+            style="padding-left: 16px"
+          />
+          <q-tooltip class="bg-accent"
+            >upload modification to iDig server</q-tooltip
+          >
+        </div>
+        <div style="padding: 5px 5px 5px 5px">
+          <q-toggle v-model="editMode" color="red" />
+          <q-tooltip class="bg-accent">enable edit mode </q-tooltip>
+        </div>
       </div>
 
       <!--Formulaire-->
@@ -33,9 +42,11 @@
         </li>
 
         <div
-          v-for="field in group.fields.filter((item) =>
-            fieldsOfCurrentItem.includes(item.field)
-          )"
+          v-for="field in editMode
+            ? group.fields
+            : group.fields.filter((item) =>
+                fieldsOfCurrentItem.includes(item.field)
+              )"
           :key="field"
           class="d-flex align-items-start border-bottom"
         >
@@ -52,7 +63,10 @@
 
           <!-- 0  Champ existe dans fields  -->
 
-          <div v-if="fieldExist(field.field) != 0" class="col-md-10 p-2">
+          <div
+            v-if="fieldExist(field.field) != 0 && editMode"
+            class="col-md-10 p-2"
+          >
             <!-- 1  Champ == TYPE  -->
             <div v-if="field.field === 'Type'" class="col-md-12 p-0">
               <select
@@ -188,7 +202,7 @@
               <div v-else>No file attached</div>
             </div>
             <div v-else class="col-md-12 p-2 border-none">
-              Not listed as field, will be displayed in a further component
+              {{ currentItem[field.field] }}
             </div>
           </div>
         </div>
@@ -215,6 +229,7 @@ export default {
   data() {
     return {
       field: "Material",
+      editMode: true,
     };
   },
   computed: {
@@ -311,9 +326,9 @@ export default {
 <style scoped>
 .TheItemwrapper {
   position: absolute;
-  top: 5%;
   width: 90%;
-  height: auto;
+  height: 90vh;
+  overflow-y: auto;
   background: rgb(255, 255, 255);
   z-index: 1024;
 }
