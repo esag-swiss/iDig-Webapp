@@ -77,73 +77,118 @@ export const useDataStore = defineStore("data", {
       }
 
       if (state.searchText.includes("AND")) {
-        let searchTerms = state.searchText.replace(/\s+/g, "").split("AND");
+        let searchTerms = state.searchText.split("AND");
         let currentResult = state.checkedTrenchesItemsSelectedType;
         // Apply "AND" logic to each term
         for (let i = 0; i < searchTerms.length; i++) {
-          currentResult = currentResult.filter((item) =>
-            searchTerms[i].includes(":")
-              ? filterByProperty(searchTerms[i]).includes(item)
-              : filterAllProperties(searchTerms[i]).includes(item)
-          );
+          currentResult = searchTerms[i].includes(":")
+            ? filterByProperty(currentResult, searchTerms[i])
+            : filterAllProperties(currentResult, searchTerms[i]);
         }
         return currentResult;
       } else if (state.searchText.includes("OR")) {
-        let searchTerms = state.searchText.replace(/\s+/g, "").split("OR");
+        let searchTerms = state.searchText.split("OR");
         let currentResult = [];
-
         // Apply "OR" logic to each term
         for (let i = 0; i < searchTerms.length; i++) {
-          currentResult = currentResult.concat(
-            state.checkedTrenchesItemsSelectedType.filter((item) =>
-              searchTerms[i].includes(":")
-                ? filterByProperty(searchTerms[i]).includes(item)
-                : filterAllProperties(searchTerms[i]).includes(item)
-            )
-          );
+          const termResult = searchTerms[i].includes(":")
+            ? filterByProperty(
+                state.checkedTrenchesItemsSelectedType,
+                searchTerms[i]
+              )
+            : filterAllProperties(
+                state.checkedTrenchesItemsSelectedType,
+                searchTerms[i]
+              );
+          currentResult = currentResult.concat(termResult); // Concatenate termResult to currentResult
         }
-
         // Remove duplicates from the result (if any)
         currentResult = Array.from(new Set(currentResult));
         return currentResult;
       } else {
         // If the search text contains a colon, then we filter by property, otherwise, we search all properties
         return state.searchText.includes(":")
-          ? filterByProperty(state.searchText)
-          : filterAllProperties(state.searchText);
+          ? filterByProperty(
+              state.checkedTrenchesItemsSelectedType,
+              state.searchText
+            )
+          : filterAllProperties(
+              state.checkedTrenchesItemsSelectedType,
+              state.searchText
+            );
       }
 
       // Filter items based on a specific property mentioned before the colon in the searchText
-      // Warning !! It is currently filtering only to the english name, which may not be the table displayed name
-      function filterByProperty(searchString) {
-        const [property, value] = searchString.split(":");
+      function filterByProperty(objet, searchString) {
+        let [searchProperty, searchText] = searchString.split(":");
+        searchText = searchText.trim();
 
-        let obj = state.projectPreferencesFieldsWithTranslation;
-        function findKeyByValue(obj, targetValue) {
+        // Check if search text is enclosed in quotes
+        const isCaseSensitive =
+          searchText.startsWith('"') && searchText.endsWith('"');
+
+        // Remove quotes if present
+        if (isCaseSensitive) {
+          searchText = searchText.substring(1, searchText.length - 1);
+        } else {
+          searchText = searchText
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
+        }
+
+        // First, translates key
+        let translationTab = state.projectPreferencesFieldsWithTranslation;
+        function findRawKey(obj, searchProperty) {
           for (const key in obj) {
-            if (
-              obj.hasOwnProperty(key) &&
-              obj[key].toLowerCase() === targetValue.toLowerCase()
-            ) {
+            if (obj[key].toLowerCase() === searchProperty.toLowerCase()) {
               return key;
             }
           }
         }
-        let propertyName = findKeyByValue(obj, property);
+        let propertyName = findRawKey(translationTab, searchProperty);
 
-        // First, filter items that have the requested property
-        return state.checkedTrenchesItemsSelectedType
+        // 2d, filters items that have the requested key
+        return objet
           .filter((item) => propertyName in item)
           .filter((item) =>
-            item[propertyName].toLowerCase().includes(value.toLowerCase())
+            isCaseSensitive
+              ? item[propertyName].includes(searchText)
+              : item[propertyName]
+                  .toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .includes(searchText)
           );
       }
 
       // Filter items by checking all properties for the searchText
-      function filterAllProperties(searchString) {
-        return state.checkedTrenchesItemsSelectedType.filter((item) =>
+      function filterAllProperties(obj, searchString) {
+        let searchText = searchString.trim();
+
+        // Check if search text is enclosed in quotes
+        const isCaseSensitive =
+          searchText.startsWith('"') && searchText.endsWith('"');
+
+        // Remove quotes if present
+        if (isCaseSensitive) {
+          searchText = searchText.substring(1, searchText.length - 1);
+        } else {
+          searchText = searchText
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
+        }
+
+        return obj.filter((item) =>
           Object.values(item).some((val) =>
-            String(val).toLowerCase().includes(searchString.toLowerCase())
+            isCaseSensitive
+              ? String(val).includes(searchText)
+              : String(val)
+                  .toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .includes(searchText)
           )
         );
       }
