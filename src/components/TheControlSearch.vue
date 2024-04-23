@@ -1,10 +1,11 @@
 <template>
   <div>
     <q-tooltip class="bg-accent"
-      >Search is not case sensitive. Operators AND, OR are accepted.<br />Search
-      in a specific field by mentioning the label in the current language before
-      columns.<br />
-      <i>e.g.</i>: 'Title: Pyxis AND zigzag'.
+      >Search is case and diacritics sensitive only when search terms are
+      enclosed within double quotation marks.<br />Operators AND and OR are
+      accepted but can't be combined.<br />You can search within a specific
+      field by mentioning the label in the current language before the colon.<br />
+      <i>e.g.</i>: 'Titre:"Fusaï" OR spindle'.
     </q-tooltip>
     <input
       :value="searchText"
