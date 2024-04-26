@@ -24,109 +24,135 @@
         </div>
         <div style="padding: 5px 5px 5px 5px">
           <q-toggle v-model="editMode" color="red" />
-          <q-tooltip class="bg-accent">enable edit mode </q-tooltip>
+          <q-tooltip class="bg-accent"
+            >{{ editMode ? "disable edit mode" : "enable edit mode" }}
+          </q-tooltip>
         </div>
       </div>
 
       <!--Formulaire-->
-      <!-- Display all fields present in item and listed in Fields  -->
 
       <ul
-        v-for="group in groupsOfFieldsAccordingToItem"
+        v-for="group in editMode
+          ? groupOfFieldsAccordingToTypeAndNative
+          : groupsOfFieldsAccordingToItem"
         :key="group"
         class="list-group"
       >
-        <!-- Groups label -->
+        <!-- GROUPS LABELS -->
         <li class="list-group-item text-uppercase accordion p-2 border-bottom">
           {{ group.labels ? group.labels[lang] : group.group }}
         </li>
 
         <div
           v-for="field in editMode
-            ? group.fields
+            ? group.fields.filter((item) => item.field !== 'CoverageSpatial')
             : group.fields.filter((item) =>
                 fieldsOfCurrentItem.includes(item.field)
               )"
           :key="field"
           class="d-flex align-items-start border-bottom"
         >
-          <!-- Display field label. Look first if an alternative label exist for the select item type -->
+          <!-- FIELDS LABEL.  -->
           <div class="text-right text-dark border-right p-2 col-md-2">
             {{
-              field.labels?.[lang] ??
-              projectPreferencesFieldsWithTranslation[field.field] ??
-              field.field
-            }}
+              // labels from types.groups.fields.labels.[lang] except if empty
+              field.labels?.[lang] !== undefined && field.labels?.[lang] !== ""
+                ? field.labels?.[lang]
+                : projectPreferencesFieldsWithTranslation[field.field] ??
+                  fieldsSchema[field.field]?.labels?.[lang] ??
+                  field.field
+            }}<q-tooltip
+              anchor="center left"
+              self="bottom middle"
+              class="bg-accent"
+              >{{ field.field }}</q-tooltip
+            >
           </div>
 
-          <!-- Fields value : many cases  -->
-
-          <!-- 0  Champ existe dans fields  -->
-
-          <div
-            v-if="fieldExist(field.field) != 0 && editMode"
-            class="col-md-10 p-2"
-          >
-            <!-- 1  Champ == TYPE  -->
-            <div v-if="field.field === 'Type'" class="col-md-12 p-0">
+          <!--  -->
+          <!-- VALUE : many cases  -->
+          <!--  -->
+          <div class="col-md-10 border-none p-0">
+            <!-- TYPE  -->
+            <div v-if="field.field === 'Type'" class="col-md-12 p-2">
               <select
-                v-model="
-                  trenchtoUpdate.filter((x) => {
-                    return x.IdentifierUUID == currentItem.IdentifierUUID;
-                  })[0][field.field]
-                "
+                v-if="editMode"
+                v-model="currentItem[field.field]"
                 class="col-md-12 border-none p-0"
               >
                 <option
                   v-for="type in projectPreferencesTypes"
                   :key="type"
+                  :value="type.type"
                   class=""
                 >
-                  <!-- TODO gérer les langues -->
-                  {{ type.type }}
+                  {{ type.labels?.[lang] ?? type.type }}
                 </option>
               </select>
+              <div v-else>
+                {{ findTranslationOfType(currentItem[field.field]) }}
+              </div>
             </div>
-
-            <!-- 1  Champ == DATE -->
+            <!-- IMAGE -->
+            <div
+              v-else-if="field.field === 'RelationAttachments'"
+              class="col-md-12 p-2 border-none"
+            >
+              <div v-if="currentItem[field.field]" class="col-md-12">
+                <img id="image" :src="imageSrc" class="img-fluid" />
+              </div>
+            </div>
+            <!-- CoverageSerialized -->
             <div
               v-else-if="
-                field.field === 'DateEarliest' || field.field === 'DateLatest'
+                field.field === 'CoverageSerialized' && currentItem[field.field]
               "
-              class="col-md-12 p-0 border-none"
+              class="col-md-12 p-2 border-none"
+            >
+              <div style="max-height: 3.6rem; overflow: hidden">
+                {{ determineTypeGeo(currentItem[field.field]) }}
+              </div>
+            </div>
+            <!-- BOOLEAN  -->
+            <div
+              v-else-if="fieldsSchema[field.field]?.type === 'boolean'"
+              class="col-md-10 p-2"
+            >
+              <q-toggle
+                v-model="currentItem[field.field]"
+                false-value="0"
+                true-value="1"
+                color="green"
+                :disable="!editMode"
+              />
+            </div>
+            <!-- DATE -->
+            <div
+              v-else-if="fieldsSchema[field.field]?.type === 'DateUTC'"
+              class="col-md-10 p-2"
             >
               {{ format_date(currentItem[field.field]) }}
             </div>
-            <!-- 1  Champ == IMAGE -->
+            <!-- MULTILINE -->
             <div
-              v-else-if="field.field === 'RelationAttachments'"
-              class="col-md-12 p-0 pl-1 border-none"
+              v-else-if="fieldType(field.field)?.hasOwnProperty('multiline')"
+              class="col-md-12 p-2 border-none"
             >
-              image
-
-              <img id="image" src="" class="img-fluid" />
-            </div>
-            <!-- 1  Champ == RightsSidelined -->
-            <div
-              v-else-if="field.field === 'RightsSidelined'"
-              class="col-md-12 p-0 pl-1 border-none"
-            >
-              <input
-                v-model="
-                  trenchtoUpdate.filter((x) => {
-                    return x.IdentifierUUID == currentItem.IdentifierUUID;
-                  })[0]['RightsSidelined']
-                "
-                type="text"
+              <textarea
+                v-if="editMode"
+                v-model="currentItem[field.field]"
                 class="col-md-12 p-0 border-none"
-              />
+              ></textarea>
+              <div v-else>{{ currentItem[field.field] }}</div>
             </div>
-
-            <!-- 1  Champ != type NOR date  -->
-
-            <div v-else>
+            <!-- VALUELIST  -->
+            <div
+              v-else-if="fieldType(field.field)?.hasOwnProperty('valuelist')"
+              class="col-md-12 p-2 border-none"
+            >
               <!-- 2 has property valuelist  -->
-              <div v-if="fieldType(field.field).hasOwnProperty('valuelist')">
+              <div v-if="editMode">
                 <!-- 3 valuelist n'est pas vide  -->
                 <div
                   v-if="fieldType(field.field).valuelist.length > 0"
@@ -168,42 +194,79 @@
                   class="col-md-12 p-0 border-none"
                 />
               </div>
-              <textarea
-                v-else-if="fieldType(field.field).hasOwnProperty('multiline')"
-                v-model="
-                  trenchtoUpdate.filter((x) => {
-                    return x.IdentifierUUID == currentItem.IdentifierUUID;
-                  })[0][field.field]
-                "
-                class="col-md-12 p-0 border-none"
-              ></textarea>
+              <div v-else>{{ currentItem[field.field] }}</div>
+            </div>
+            <!-- STRING -->
+            <div
+              v-else-if="field.field == 'CoverageSpatial'"
+              class="col-md-12 p-2 border-none"
+            >
+              sqf
+            </div>
 
-              <!-- cas basique champ avec properties field et label -->
+            <div v-else class="col-md-12 p-2 border-none">
               <input
-                v-else
+                v-if="editMode"
                 v-model="
                   trenchtoUpdate.filter((x) => {
                     return x.IdentifierUUID == currentItem.IdentifierUUID;
                   })[0][field.field]
                 "
                 type="text"
-                class="col-md-12 p-0 border-none"
+                class="col-md-12 p-2 border-none"
               />
+              <div v-else style="max-height: 3.6rem; overflow: hidden">
+                {{ currentItem[field.field] }}
+              </div>
             </div>
           </div>
-          <!-- 0 le champ n'est pas dans pref.fields -->
-          <div v-else>
-            <!-- 1 IMAGE -->
-            <div
-              v-if="field.field == 'RelationAttachments'"
-              class="col-md-12 p-2 border-none"
+        </div>
+      </ul>
+      <!--  NO GROUPS HEADER -->
+      <ul class="list-group">
+        <li
+          class="list-group-item text-uppercase accordion p-2 border-bottom"
+        ></li>
+        <!-- ROWS -->
+        <div
+          v-for="flield in listFieldsNotIncludedInGroups"
+          :key="flield"
+          class="d-flex align-items-start border-bottom"
+        >
+          <!-- LABELS -->
+          <div class="text-right text-dark border-right p-2 col-md-2">
+            {{
+              projectPreferencesFieldsWithTranslation[flield] ??
+              fieldsSchema[flield]?.labels?.[lang] ??
+              flield
+            }}<q-tooltip
+              anchor="center left"
+              self="bottom middle"
+              class="bg-accent"
+              >{{ flield }}</q-tooltip
             >
-              <div v-if="currentItem[field.field]"></div>
-              <div v-else>No file attached</div>
-            </div>
-            <div v-else class="col-md-12 p-2 border-none">
-              {{ currentItem[field.field] }}
-            </div>
+          </div>
+          <!-- VALUES -->
+          <div
+            v-if="fieldsSchema[flield]?.type === 'boolean'"
+            class="col-md-10 p-2"
+          >
+            <q-toggle
+              v-model="currentItem[flield]"
+              false-value="0"
+              true-value="1"
+              color="green"
+              :disable="!editMode"
+            />
+          </div>
+          <div
+            v-else-if="fieldsSchema[flield]?.type === 'DateUTC'"
+            class="col-md-10 p-2"
+          >
+            {{ format_date(currentItem[flield]) }}
+          </div>
+          <div v-else class="col-md-10 p-2">
+            {{ currentItem[flield] }}
           </div>
         </div>
       </ul>
@@ -213,10 +276,12 @@
 
 <script>
 import { apiUpdateTrenchItem, apiFetchImageSRC } from "@/services/ApiClient";
-import { mapState } from "pinia";
+import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
 import dayjs from "dayjs";
+import { fieldsSchema } from "@/assets/nativeFields";
+import { determineGeoType } from "@/services/json2geojson";
 
 export default {
   name: "TheItem",
@@ -229,7 +294,8 @@ export default {
   data() {
     return {
       field: "Material",
-      editMode: true,
+      editMode: false,
+      imageSrc: "",
     };
   },
   computed: {
@@ -241,9 +307,12 @@ export default {
       "checkedTrenchesData",
       "checkedTrenchesVersion",
       "selectedType",
+      "isEditMode",
     ]),
     ...mapState(useAppStore, ["lang"]),
-
+    fieldsSchema() {
+      return fieldsSchema;
+    },
     //  array of fields presents in current item
     fieldsOfCurrentItem() {
       return Object.getOwnPropertyNames(this.currentItem);
@@ -259,40 +328,135 @@ export default {
 
     trenchtoUpdateWithoutTrenchProp() {
       return this.checkedTrenchesData[this.currentItem.Trench].map((obj) => {
-        // Crée un nouvel objet sans la propriété "Trench"
+        // remove property "Trench" before pushing data. It was added temporarly for helping webapp identifying items
         const { Trench, ...newObj } = obj;
         return newObj;
       });
     },
 
     groupOfFieldsAccordingToType() {
-      if (this.projectPreferencesTypes) {
-        return this.projectPreferencesTypes.filter((x) => {
-          return x.type.includes(this.selectedType);
-        })[0].groups;
-      } else {
-        return this.projectPreferencesTypes;
-      }
+      let groups = [];
+      groups = this.projectPreferencesTypes.filter((x) => {
+        return x.type.includes(this.selectedType);
+      })[0].groups;
+      return groups;
     },
+
     groupsOfFieldsAccordingToItem() {
-      if (this.projectPreferencesTypes) {
-        let groups = this.projectPreferencesTypes.filter((x) => {
-          return x.type.includes(this.selectedType);
-        })[0].groups;
+      let groups = this.groupOfFieldsAccordingToTypeAndNative;
+      groups = groups.filter((obj) =>
+        obj.fields.some((field) =>
+          this.fieldsOfCurrentItem.includes(field.field)
+        )
+      );
+      return groups;
+    },
 
-        groups = groups.filter((obj) =>
-          obj.fields.some((field) =>
-            this.fieldsOfCurrentItem.includes(field.field)
-          )
-        );
+    groupOfFieldsAccordingToTypeAndNative() {
+      let groups = [...this.groupOfFieldsAccordingToType];
+      groups.forEach((obj) => {
+        if (obj.group === "Relation Section") {
+          let fieldsToAdd = [
+            { field: "RelationIsAboveUUID" },
+            { field: "RelationIsBelowUUID" },
+            { field: "RelationIsNextToUUID" },
+            { field: "RelationCutsUUID" },
+            { field: "RelationIsCutByUUID" },
+            { field: "RelationIsAfterUUID" },
+            { field: "RelationIsBeforeUUID" },
+            { field: "RelationIsCoevalWithUUID" },
+            { field: "RelationBelongsToUUID" },
+            { field: "RelationIncludesUUID" },
+          ];
+          fieldsToAdd.forEach((field) => {
+            if (
+              !obj.fields.some(
+                (existingField) => existingField.field === field.field
+              )
+            ) {
+              obj.fields.push(field);
+            }
+          });
+        }
+        if (obj.group === "Points") {
+          let fieldsToAdd = [
+            { field: "CoverageSerialized" },
+            // { field: "CoverageXYZ" },
+            // { field: "CoverageGEO" },
+            // { field: "CoverageGeoJSON" },
 
-        return groups;
-      } else {
-        return this.projectPreferencesTypes;
-      }
+            // { field: "CoverageAltitude" },
+            // { field: "CoverageArea" },
+            // { field: "CoverageEnvelope" },
+            // { field: "CoveragePosition" },
+            // { field: "CoverageStyle" },
+            // { field: "CoverageTiles" },
+            // { field: "CoverageUnion" },
+            // { field: "CoverageCoordinates" },
+            // { field: "CoverageSpatialUUID" },
+            // { field: "CoverageSpatial" },
+            // { field: "CoverageCRS" },
+            // { field: "CoverageGeometry" },
+            // { field: "CoverageTransform" },
+          ];
+          fieldsToAdd.forEach((field) => {
+            if (
+              !obj.fields.some(
+                (existingField) => existingField.field === field.field
+              )
+            ) {
+              obj.fields.push(field);
+            }
+          });
+        }
+        if (obj.group === "Status Section") {
+          let fieldsToAdd = [
+            { field: "RightsSidelined" },
+            { field: "RightsLocked" },
+            { field: "RightsTrashed" },
+            { field: "RightsDeleted" },
+            { field: "RightsStatus" },
+          ];
+          fieldsToAdd.forEach((field) => {
+            if (
+              !obj.fields.some(
+                (existingField) => existingField.field === field.field
+              )
+            ) {
+              obj.fields.push(field);
+            }
+          });
+        }
+      });
+      return groups; // Retour du tableau modifié
+    },
+
+    listFieldsNotIncludedInGroups() {
+      let fieldsDisplayed = ["IdentifierUUID", "Trench"];
+      let fieldsNotDisplayed = [];
+
+      this.groupOfFieldsAccordingToType.forEach((obj) => {
+        obj.fields.forEach((key) => {
+          fieldsDisplayed.push(key.field);
+        });
+      });
+
+      fieldsNotDisplayed = this.fieldsOfCurrentItem.filter(
+        (item) => !fieldsDisplayed.includes(item)
+      );
+      return fieldsNotDisplayed;
     },
   },
+  mounted() {
+    if (this.currentItem.RelationAttachments && this.currentItem.Trench) {
+      this.fetchImage(
+        this.currentItem.RelationAttachments,
+        this.currentItem.Trench
+      );
+    }
+  },
   methods: {
+    ...mapActions(useAppStore, ["setIsEditMode"]),
     format_date(value) {
       if (value) {
         return dayjs(value).format("DD/MM/YYYY");
@@ -316,9 +480,39 @@ export default {
 
       apiUpdateTrenchItem(this.currentItem.Trench, head, surveys, preferences);
     },
+    determineTypeGeo(e) {
+      return determineGeoType(e);
+    },
 
-    imageSRC(RelationAttachments, Trench) {
-      return apiFetchImageSRC(RelationAttachments, Trench);
+    async fetchImage(RelationAttachments, Trench) {
+      return await apiFetchImageSRC(RelationAttachments, Trench).then(
+        (response) => {
+          let blob = new Blob([response.data], {
+            type: response.headers["content-type"],
+          });
+          let imgUrl = URL.createObjectURL(blob);
+
+          this.imageSrc = imgUrl;
+        }
+      );
+    },
+    findTranslationOfType(type) {
+      // Parcourir tous les éléments de types
+      for (const item of this.projectPreferencesTypes) {
+        // Si le type correspond à celui recherché
+        if (item.type === type) {
+          // Vérifier si la langue demandée existe dans les labels
+          if (item.labels.hasOwnProperty(this.lang)) {
+            // Retourner la traduction
+            return item.labels[this.lang];
+          } else {
+            // Si la langue demandée n'existe pas, retourner le label par défaut (en)
+            return type;
+          }
+        }
+      }
+      // Si le type n'est pas trouvé, retourner une chaîne vide ou une valeur par défaut
+      return "";
     },
   },
 };

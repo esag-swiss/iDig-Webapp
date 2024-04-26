@@ -398,6 +398,20 @@ export const fieldsSchema = {
   },
 
   // COVERAGE SPATIAL
+  // TODO indentify those that are generated during iPad export
+  CoverageSerialized: {
+    field: "CoverageSerialized",
+    labels: {
+      en: "spatial point data",
+      fr: "Données topo iDig",
+    },
+    tips: {
+      en: "raw spatial point data (including fields set by the total station)",
+      fr: "Données ponctuelles spatiales brutes (incluant les champs définis par la station totale)",
+    },
+  },
+
+  //  “convenience” fields generated from the “source of truth” inside CoverageSerialized.
 
   CoverageXYZ: {
     field: "CoverageXYZ",
@@ -422,6 +436,7 @@ export const fieldsSchema = {
     },
   },
   CoverageGeoJSON: {
+    comment: "not used?",
     field: "CoverageGeoJSON",
     labels: {
       en: "GeoJSON Coverage",
@@ -432,17 +447,7 @@ export const fieldsSchema = {
       fr: "données de couverture au format GeoJSON",
     },
   },
-  CoverageSerialized: {
-    field: "CoverageSerialized",
-    labels: {
-      en: "spatial point data",
-      fr: "Données topo iDig",
-    },
-    tips: {
-      en: "raw spatial point data (including fields set by the total station)",
-      fr: "Données ponctuelles spatiales brutes (incluant les champs définis par la station totale)",
-    },
-  },
+
   CoverageAltitude: {
     field: "CoverageAltitude",
     labels: {
@@ -476,6 +481,10 @@ export const fieldsSchema = {
       fr: "La boîte englobante de l'élément spécifiée sous forme de 'Envelope(xmin, xmax, ymax, ymin)'",
     },
   },
+  CoverageEnvelopeGEO: "not in comments",
+  CoverageEnvelopeXYZ: "not in comments",
+  CoverageCropped: "not in comments",
+
   CoveragePosition: {
     field: "CoveragePosition",
     labels: {
@@ -488,6 +497,7 @@ export const fieldsSchema = {
     },
   },
   CoverageStyle: {
+    comment: "not used?",
     field: "CoverageStyle",
     labels: {
       en: "style",
@@ -499,6 +509,7 @@ export const fieldsSchema = {
     },
   },
   CoverageTiles: {
+    comment: "not used?",
     field: "CoverageTiles",
     labels: {
       en: "folder of tiles",
@@ -510,6 +521,7 @@ export const fieldsSchema = {
     },
   },
   CoverageUnion: {
+    comment: "not used?",
     field: "CoverageUnion",
     labels: {
       en: "union of spatial data",
@@ -521,6 +533,7 @@ export const fieldsSchema = {
     },
   },
   CoverageCoordinates: {
+    comment: "not used?",
     field: "CoverageCoordinates",
     labels: {
       en: "spatial data",
@@ -532,6 +545,7 @@ export const fieldsSchema = {
     },
   },
   CoverageSpatialUUID: {
+    comment: "not used?",
     field: "CoverageSpatialUUID",
     labels: {
       en: "Spatial UUID",
@@ -543,6 +557,7 @@ export const fieldsSchema = {
     },
   },
   CoverageSpatial: {
+    comment: "not used?",
     field: "CoverageSpatial",
     type: "ExtraFields",
     labels: {
@@ -555,6 +570,7 @@ export const fieldsSchema = {
     },
   },
   CoverageCRS: {
+    comment: "not used?",
     field: "CoverageCRS",
     type: "ExtraFields",
     labels: {
@@ -567,6 +583,7 @@ export const fieldsSchema = {
     },
   },
   CoverageGeometry: {
+    comment: "not used?",
     field: "CoverageGeometry",
     type: "ExtraFields",
     labels: {
@@ -579,6 +596,7 @@ export const fieldsSchema = {
     },
   },
   CoverageTransform: {
+    comment: "not used?",
     field: "CoverageTransform",
     type: "ExtraFields",
     labels: {
@@ -592,6 +610,7 @@ export const fieldsSchema = {
   },
 
   // COVERAGE SPATIAL find in items
+  // OLD version fields
   SpatialCoordinates: {
     field: "SpatialCoordinates",
     labels: {
@@ -667,6 +686,39 @@ export const fieldsSchema = {
     tips: {
       en: "union of multiple spatial data",
       fr: "union de plusieurs données spatiales",
+    },
+  },
+  SpatialCRS: {
+    field: "SpatialUnion",
+    labels: {
+      en: "CRS",
+      fr: "CRS",
+    },
+    tips: {
+      en: "the CRS defined above",
+      fr: "Le CRS défini ci-dessus",
+    },
+  },
+  SpatialAltitude: {
+    field: "SpatialAltitude",
+    labels: {
+      en: "Altitude",
+      fr: "Altitude",
+    },
+    tips: {
+      en: "altitude of the spatial data",
+      fr: "altitude des données spatiales",
+    },
+  },
+  SpatialArea: {
+    field: "SpatialArea",
+    labels: {
+      en: "Spatial Area",
+      fr: "Superficie",
+    },
+    tips: {
+      en: "area of the spatial data",
+      fr: "superficie des données spatiales",
     },
   },
 };
