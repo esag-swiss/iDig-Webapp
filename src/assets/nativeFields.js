@@ -31,14 +31,22 @@ export const fieldsSchema = {
       comment: "Fields can have the following properties attached to them:",
       properties: {
         label: "the displayed field name", // ne doit plus être utilisé ? remplacé par labels ?
+
+        multivalue:
+          "[ARRAY TYPE].   (allows multiple values from a valuelist to be selected)",
+
         valuelist:
           "(either an fixed list of values or an empty list which dynamically creates a list based on what you type)",
-        multivalue: "(allows multiple values from a valuelist to be selected)",
-        multitype: "(creates dynamic values for valuelists from all types)",
+        // limited to type
+
+        multitype:
+          "(creates dynamic values for valuelists from all types) ex CoverageTemporal, Excavators, Workmen, Room, Sondage (all valuelist,multivalue,   multitype)",
+        // not limited to a type, can't be without "valuelist"?
         multiline: "(used for fields with multiple lines like Description)",
-        number: "(the field value should be interpreted as a number)",
-        mandatory: "(a value should always exist in this field)",
-        regexp: "(a regular expression to check field validity).",
+        number:
+          "[only use once](the field value should be interpreted as a number)",
+        mandatory: "[never use](a value should always exist in this field)",
+        regexp: "[never use](a regular expression to check field validity).",
       },
     },
   },
@@ -227,57 +235,58 @@ export const fieldsSchema = {
   },
 
   // "group": "Relationships",
+  // les relations c'est uniquement dans la même trench ?
   // [sur, sous, à côté de, coupe, coupé par, postérieur à, antérieur à, contemporain de, appartient à, inclue]
   // Can be also :     "RelationIsAbove:",     "RelationIsBelow:",     "RelationIsNextTo:",    "RelationIsAfter:",    "RelationIsBefore:",    RelationIsCoevalWith:",     "RelationBelongsTo:",    "RelationIncludes:",    "[RelationCuts:]",    "[RelationIsCutBy:]",
   RelationIsAboveUUID: {
     labels: { fr: "Sur" },
     type: "link",
-    goupp: "Relationships",
+    goupe: "Relationships",
   },
   RelationIsBelowUUID: {
     labels: { fr: "sous" },
     type: "link",
-    goupp: "Relationships",
+    goupe: "Relationships",
   },
   RelationIsNextToUUID: {
     labels: { fr: "à côté de" },
     type: "link",
-    goupp: "Relationships",
+    goupe: "Relationships",
   },
   RelationCutsUUID: {
     labels: { fr: "coupe" },
     type: "link",
-    goupp: "Relationships",
+    goupe: "Relationships",
   },
   RelationIsCutByUUID: {
     labels: { fr: "coupé par" },
     type: "link",
-    goupp: "Relationships",
+    goupe: "Relationships",
   },
   RelationIsAfterUUID: {
     labels: { fr: "postérieur à" },
     type: "link",
-    goupp: "Relationships",
+    goupe: "Relationships",
   },
   RelationIsBeforeUUID: {
     labels: { fr: "antérieur à" },
     type: "link",
-    goupp: "Relationships",
+    goupe: "Relationships",
   },
   RelationIsCoevalWithUUID: {
     labels: { fr: "contemporain de" },
     type: "link",
-    goupp: "Relationships",
+    goupe: "Relationships",
   },
   RelationBelongsToUUID: {
     labels: { fr: "appartient à" },
     type: "link",
-    goupp: "Relationships",
+    goupe: "Relationships",
   },
   RelationIncludesUUID: {
     labels: { fr: "inclue" },
     type: "link",
-    goupp: "Relationships",
+    goupe: "Relationships",
   },
 
   // COVERAGE TEMPORAL DATE
