@@ -32,6 +32,12 @@ export const useDataStore = defineStore("data", {
   }),
 
   getters: {
+    projectPreferencesTypesList(state) {
+      let projectTypes = state.projectPreferencesTypes.map((field) => {
+        return field.type;
+      });
+      return projectTypes;
+    },
     projectPreferencesFieldsWithTranslation(state) {
       const { lang } = useAppStore();
       if (!state.projectPreferencesFields) {
