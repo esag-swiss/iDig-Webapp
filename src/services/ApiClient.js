@@ -142,12 +142,7 @@ export function apiFetchSurvey(trench) {
     .finally(() => decrementLoadingCount());
 }
 
-export function apiUpdateTrenchItem(
-  trench,
-  head,
-  surveys,
-  projectPreferencesBase64
-) {
+export function apiUpdateTrenchItem(trench, head, surveys, preferences) {
   const {
     server,
     project,
@@ -167,7 +162,7 @@ export function apiUpdateTrenchItem(
       head,
       device: "webapp",
       surveys,
-      projectPreferencesBase64,
+      preferences,
     }),
   })
     .then(() => {
