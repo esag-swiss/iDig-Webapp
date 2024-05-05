@@ -63,16 +63,17 @@ export const fieldsSchema = {
     field: "Source",
     type: "ExtraFields",
     labels: {
-      en: "source",
+      en: "Source",
+      fr: "Source",
     },
     tips: {
-      en: "Trench",
+      en: "original Trench of the iTems",
+      fr: "Secteur d'origine de l'élément",
     },
   },
   // "group": "Status",
   RightsSidelined: {
     type: "boolean",
-    boolean: true,
     group: "Status Section",
     labels: {
       fr: "Invisible",
@@ -106,7 +107,8 @@ export const fieldsSchema = {
       fr: "Ecarté",
     },
     tips: {
-      en: "if the item is in the trash or not",
+      en: "if the item is in the trash or not  (use by iDig app)",
+      fr: "si l'élément est dans la corbeille de l'iPad ou non",
     },
   },
   RightsDeleted: {
@@ -116,7 +118,8 @@ export const fieldsSchema = {
       fr: "Supprimé",
     },
     tips: {
-      en: "",
+      en: "is deleted (use by iDig app)",
+      fr: "est supprimé (utilisé par iDig app)",
     },
   },
   RightsStatus: {
@@ -126,10 +129,24 @@ export const fieldsSchema = {
       de: "Status",
       en: "Status",
     },
-    valuelist: ["All Done", "Attention"],
-    multivalue: true,
+    valuelists: [
+      { fr: "Prêt", en: "Ready" },
+      { fr: "Terminé", en: "All Done" },
+      { fr: "Attention", en: "Attention" },
+      { fr: "A traiter", en: "Will Process" },
+      { fr: "En attente", en: "Waiting" },
+
+      { fr: "Archivé", en: "Archived" },
+
+      { fr: "En cours", en: "Open" },
+      { fr: "Clos", en: "Closed" },
+      { fr: "Indéterminé", en: "Undefined" },
+      { fr: "A cataloguer", en: "Will Catalog" },
+    ],
+    valuelist: ["Ready", "All Done", "Attention", "Will Process", "Waiting"],
     tips: {
-      en: "used for filtering and coloring items by status",
+      en: "Used for filtering and coloring items by status",
+      fr: "Utilisé pour colorer et filtrer les éléments par status",
     },
   },
 
@@ -337,8 +354,8 @@ export const fieldsSchema = {
   DateTimeZone: {
     type: "Date?",
     labels: {
-      en: "time zone name",
-      fr: "nom du fuseau horaire",
+      en: "time zone",
+      fr: "fuseau horaire",
     },
     tips: {
       en: "the time zone name",
