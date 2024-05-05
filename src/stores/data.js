@@ -32,12 +32,23 @@ export const useDataStore = defineStore("data", {
   }),
 
   getters: {
-    projectPreferencesTypesList(state) {
-      let projectTypes = state.projectPreferencesTypes.map((field) => {
-        return field.type;
+    projectPreferencesTypesForSelect(state) {
+      const { lang } = useAppStore();
+      let options = state.projectPreferencesTypes.map((field) => {
+        return { value: field.type, label: field.labels[lang] };
       });
-      return projectTypes;
+      return options;
     },
+
+    projectPreferencesTypesTranslation(state) {
+      const { lang } = useAppStore();
+      let options = {};
+      state.projectPreferencesTypes.forEach((field) => {
+        options[field.type] = field.labels[lang];
+      });
+      return options;
+    },
+
     projectPreferencesFieldsWithTranslation(state) {
       const { lang } = useAppStore();
       if (!state.projectPreferencesFields) {
@@ -70,6 +81,7 @@ export const useDataStore = defineStore("data", {
         item?.Type?.includes("Plan")
       );
     },
+
     checkedTrenchesItemsSelectedType(state) {
       return state.checkedTrenchesItems.filter((item) =>
         item?.Type?.includes(state.selectedType)

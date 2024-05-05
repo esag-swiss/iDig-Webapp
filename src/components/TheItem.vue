@@ -3,12 +3,14 @@
     <div v-if="currentItem" class="TheItem center-block mx-auto">
       <!--header-->
       <div class="d-flex mr-2 border-bottom">
-        <div class="col text-left">
-          <h3>{{ currentItem.Type }} {{ currentItem.Identifier }}</h3>
-          {{ currentItem.IdentifierUUID }}
+        <div class="col mt-2 text-left">
+          <h3>
+            {{ projectPreferencesTypesTranslation[currentItem.Type] }}
+            {{ currentItem.Identifier }}
+          </h3>
         </div>
 
-        <div style="padding: 10px 5px 5px 5px">
+        <div class="m-1">
           <q-btn
             v-if="editMode"
             round
@@ -16,13 +18,13 @@
             @click="pushSurvey()"
             :size="'sm'"
             icon="cloud_upload"
-            style="padding-left: 16px"
+            style="padding-left: 16px; margin: 5px"
           />
           <q-tooltip class="bg-accent"
             >upload modification to iDig server</q-tooltip
           >
         </div>
-        <div style="padding: 5px 5px 5px 5px">
+        <div class="m-1">
           <q-toggle
             v-model="editMode"
             :disable="username !== 'Theu'"
@@ -44,7 +46,9 @@
         class="list-group"
       >
         <!-- GROUPS LABELS -->
-        <li class="list-group-item text-uppercase accordion p-1 border-bottom">
+        <li
+          class="list-group-item text-uppercase accordion p-1 pl-2 border-bottom"
+        >
           {{ group.labels ? group.labels[lang] : group.group }}
         </li>
 
@@ -84,30 +88,45 @@
               <div v-if="editMode" class="col-md-12 p-1 m-0 border-none">
                 <q-select
                   v-model="currentItem[field.field]"
-                  use-input
                   dense
                   options-dense
                   filled
-                  :options="projectPreferencesTypesList"
+                  :options="projectPreferencesTypesForSelect"
+                  emit-value
+                  map-options
                   class="select"
                 />
               </div>
-              <!-- <select
-                v-if="editMode"
-                v-model="currentItem[field.field]"
-                class="col-md-12 border-none p-0"
-              >
-                <option
-                  v-for="type in projectPreferencesTypes"
-                  :key="type"
-                  :value="type.type"
-                  class=""
-                >
-                  {{ type.labels?.[lang] ?? type.type }}
-                </option>
-              </select> -->
               <div v-else>
                 {{ findTranslationOfType(currentItem[field.field]) }}
+              </div>
+            </div>
+            <!-- RightsStatus  -->
+            <!--       -->
+            <div
+              v-else-if="field.field === 'RightsStatus'"
+              class="col-md-12 p-1"
+            >
+              <div class="col-md-12 p-1 m-0 border-none">
+                <q-select
+                  v-model="currentItem[field.field]"
+                  dense
+                  options-dense
+                  filled
+                  :options="fieldsSchema.RightsStatus.valuelists"
+                  option-value="en"
+                  option-label="fr"
+                  :disable="!editMode"
+                  emit-value
+                  map-options
+                  class="select"
+                /><q-tooltip
+                  v-if="fieldType(field.field, group)?.tips?.[lang]"
+                  anchor="bottom left"
+                  self="top left"
+                  class="bg-accent"
+                  >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
+                >
               </div>
             </div>
             <!-- IMAGE -->
@@ -152,11 +171,21 @@
             </div>
             <!-- RELATIONS-->
             <div
-              v-else-if="fieldsSchema[field.field]?.type === 'link'"
+              v-else-if="
+                fieldsSchema[field.field]?.type === 'link' &&
+                currentItem[field.field]
+              "
               class="col-md-10 p-1"
             >
-              {{ currentItem[field.field]
-              }}<q-tooltip
+              <q-chip
+                v-for="item in popupItems(currentItem[field.field])"
+                :key="item"
+                color="primary"
+                text-color="white"
+              >
+                {{ item }}
+              </q-chip>
+              <q-tooltip
                 v-if="fieldType(field.field, group)?.tips?.[lang]"
                 anchor="bottom left"
                 self="top left"
@@ -214,12 +243,18 @@
               </div>
               <div v-if="editMode" class="col-md-12 p-1 m-0 border-none">
                 <q-select
-                  v-model="stringTest[index.toString() + indexGroup.toString()]"
+                  v-model="
+                    arrayForMultivalueFields[
+                      index.toString() + indexGroup.toString()
+                    ]
+                  "
                   use-input
                   @update:model-value="
                     updateMultiArray(
                       field.field,
-                      stringTest[index.toString() + indexGroup.toString()]
+                      arrayForMultivalueFields[
+                        index.toString() + indexGroup.toString()
+                      ]
                     )
                   "
                   dense
@@ -251,12 +286,18 @@
               </div>
               <div v-if="editMode" class="col-md-12 p-1 m-0 border-none">
                 <q-select
-                  v-model="stringTest[index.toString() + indexGroup.toString()]"
+                  v-model="
+                    arrayForMultivalueFields[
+                      index.toString() + indexGroup.toString()
+                    ]
+                  "
                   use-input
                   @update:model-value="
                     updateMultiArray(
                       field.field,
-                      stringTest[index.toString() + indexGroup.toString()]
+                      arrayForMultivalueFields[
+                        index.toString() + indexGroup.toString()
+                      ]
                     )
                   "
                   dense
@@ -303,6 +344,13 @@
               <div v-else class="col-md-12 p-1 m-0 border-none">
                 {{ currentItem[field.field] }}
               </div>
+              <q-tooltip
+                v-if="fieldType(field.field, group)?.tips?.[lang]"
+                anchor="bottom left"
+                self="top left"
+                class="bg-accent"
+                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
+              >
             </div>
             <!--                -->
             <!-- VALUELIST EMPTY (DYNAMIQUE)-->
@@ -338,11 +386,7 @@
             <div v-else class="col-md-12 p-1 border-none">
               <input
                 v-if="editMode"
-                v-model="
-                  trenchtoUpdate.filter((x) => {
-                    return x.IdentifierUUID == currentItem.IdentifierUUID;
-                  })[0][field.field]
-                "
+                v-model="currentItem[field.field]"
                 type="text"
                 class="col-md-12 p-1 border-none"
               />
@@ -367,45 +411,33 @@
         ></li>
         <!-- ROWS -->
         <div
-          v-for="flield in listFieldsNotIncludedInGroups"
-          :key="flield"
+          v-for="field in listFieldsNotIncludedInGroups"
+          :key="field"
           class="d-flex align-items-start border-bottom"
         >
           <!-- LABELS -->
           <div class="text-right text-dark border-right p-1 col-md-2">
             {{
-              projectPreferencesFieldsWithTranslation[flield] ??
-              fieldsSchema[flield]?.labels?.[lang] ??
-              flield
-            }}<q-tooltip
-              v-if="fieldType(field.field, ' ')?.tips?.[lang]"
+              projectPreferencesFieldsWithTranslation[field] ??
+              fieldsSchema[field]?.labels?.[lang] ??
+              field
+            }}
+            <q-tooltip
               anchor="center left"
-              self="bottom left"
+              self="bottom middle"
               class="bg-accent"
-              >{{ flield }}</q-tooltip
+              >{{ field }}</q-tooltip
             >
           </div>
-          <!-- VALUES -->
+
           <div
-            v-if="fieldsSchema[flield]?.type === 'boolean'"
+            v-if="fieldsSchema[field]?.type === 'DateUTC'"
             class="col-md-10 p-1"
           >
-            <q-toggle
-              v-model="currentItem[flield]"
-              false-value="0"
-              true-value="1"
-              color="green"
-              :disable="!editMode"
-            />
-          </div>
-          <div
-            v-else-if="fieldsSchema[flield]?.type === 'DateUTC'"
-            class="col-md-10 p-1"
-          >
-            {{ format_date(currentItem[flield]) }}
+            {{ format_date(currentItem[field]) }}
           </div>
           <div v-else class="col-md-10 p-1">
-            {{ currentItem[flield] }}
+            {{ currentItem[field] }}
           </div>
         </div>
       </ul>
@@ -435,122 +467,22 @@ export default {
       field: "Material",
       editMode: false,
       imageSrc: "",
-      stringTest: [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-      ],
+      arrayForMultivalueFields: [], // case MULTIVALUE field
     };
   },
   computed: {
     ...mapState(useDataStore, [
       "projectPreferencesTypes",
-      "projectPreferencesTypesList",
+      "projectPreferencesTypesForSelect",
+      "projectPreferencesTypesTranslation",
       "projectPreferencesFields",
       "projectPreferencesBase64",
       "projectPreferencesFieldsWithTranslation",
       "checkedTrenchesData",
       "checkedTrenchesVersion",
+      "checkedTrenchesItemsSelectedType",
       "selectedType",
       "isEditMode",
-      "checkedTrenchesItems",
-      "checkedTrenchesItemsSelectedType",
     ]),
     ...mapState(useAppStore, ["username", "lang"]),
     fieldsSchema() {
@@ -559,14 +491,6 @@ export default {
     //  array of fields presents in current item
     fieldsOfCurrentItem() {
       return Object.getOwnPropertyNames(this.currentItem);
-    },
-
-    trenchtoUpdate() {
-      if (this.currentItem) {
-        return this.checkedTrenchesData[this.currentItem.Trench];
-      } else {
-        return "";
-      }
     },
 
     trenchtoUpdateWithoutTrenchProp() {
@@ -622,12 +546,7 @@ export default {
           });
         }
         if (obj.group === "Points") {
-          let fieldsToAdd = [
-            { field: "CoverageSerialized" },
-            // { field: "CoverageXYZ" },
-            // { field: "CoverageGEO" },
-            // { field: "CoverageGeoJSON" },
-          ];
+          let fieldsToAdd = [{ field: "CoverageSerialized" }];
           fieldsToAdd.forEach((field) => {
             if (
               !obj.fields.some(
@@ -642,8 +561,6 @@ export default {
           let fieldsToAdd = [
             { field: "RightsSidelined" },
             { field: "RightsLocked" },
-            { field: "RightsTrashed" },
-            { field: "RightsDeleted" },
             { field: "RightsStatus" },
           ];
           fieldsToAdd.forEach((field) => {
@@ -657,23 +574,28 @@ export default {
           });
         }
       });
-      return groups; // Retour du tableau modifié
+      return groups;
     },
 
     listFieldsNotIncludedInGroups() {
-      let fieldsDisplayed = ["IdentifierUUID", "Trench"];
-      let fieldsNotDisplayed = [];
+      let fieldsNotToDisplay = [
+        "IdentifierUUID",
+        "Trench",
+        "RightsTrashed",
+        "RightsDeleted",
+      ];
+      let fieldsNotPrinsentInGroup = [];
 
-      this.groupOfFieldsAccordingToType.forEach((obj) => {
+      this.groupOfFieldsAccordingToTypeAndNative.forEach((obj) => {
         obj.fields.forEach((key) => {
-          fieldsDisplayed.push(key.field);
+          fieldsNotToDisplay.push(key.field);
         });
       });
 
-      fieldsNotDisplayed = this.fieldsOfCurrentItem.filter(
-        (item) => !fieldsDisplayed.includes(item)
+      fieldsNotPrinsentInGroup = this.fieldsOfCurrentItem.filter(
+        (item) => !fieldsNotToDisplay.includes(item)
       );
-      return fieldsNotDisplayed;
+      return fieldsNotPrinsentInGroup;
     },
   },
   mounted() {
@@ -699,7 +621,7 @@ export default {
     },
 
     fieldType(field, groupObject) {
-      let groupName = groupObject?.group ?? "";
+      let groupName = groupObject.group ?? "";
       let fieldSchema = this.projectPreferencesFields.filter(
         (x) => x.field == field
       )[0];
@@ -715,16 +637,12 @@ export default {
           return x.field.includes(field);
         })[0];
 
-      if (fieldSchemaFromGroups?.multivalue) {
-        fieldSchema.multivalue = fieldSchemaFromGroups?.multivalue;
-        fieldSchema.valuelist = fieldSchemaFromGroups.valuelist;
-        fieldSchema.tips = fieldSchemaFromGroups.tips;
+      if (fieldSchemaFromGroups) {
+        fieldSchema = { ...fieldSchema, ...fieldSchemaFromGroups };
       }
-      if (fieldSchemaFromGroups?.valuelist) {
-        fieldSchema.valuelist = fieldSchemaFromGroups.valuelist;
-      }
-      if (fieldSchemaFromGroups?.tips) {
-        fieldSchema.tips = fieldSchemaFromGroups.tips;
+
+      if (this.fieldsSchema[field]) {
+        fieldSchema = { ...this.fieldsSchema[field], ...fieldSchema };
       }
 
       return fieldSchema;
@@ -734,7 +652,6 @@ export default {
       let valeursField = this.checkedTrenchesItemsSelectedType.map(
         (objet) => objet[field]
       );
-
       // Filtrer les doublons
       return valeursField
         .filter((valeur, index, self) => self.indexOf(valeur) === index)
@@ -748,6 +665,7 @@ export default {
 
       apiUpdateTrenchItem(this.currentItem.Trench, head, surveys, preferences);
     },
+
     determineTypeGeo(e) {
       return determineGeoType(e);
     },
@@ -764,24 +682,20 @@ export default {
         }
       );
     },
+
     findTranslationOfType(type) {
-      // Parcourir tous les éléments de types
       for (const item of this.projectPreferencesTypes) {
-        // Si le type correspond à celui recherché
         if (item.type === type) {
-          // Vérifier si la langue demandée existe dans les labels
           if (item.labels.hasOwnProperty(this.lang)) {
-            // Retourner la traduction
             return item.labels[this.lang];
           } else {
-            // Si la langue demandée n'existe pas, retourner le label par défaut (en)
             return type;
           }
         }
       }
-      // Si le type n'est pas trouvé, retourner une chaîne vide ou une valeur par défaut
-      return "";
+      return type;
     },
+
     updateMultiArray(field, value) {
       if (this.currentItem[field]?.includes(value)) {
         this.currentItem[field] = this.currentItem[field].replace(
@@ -793,6 +707,26 @@ export default {
           ? this.currentItem[field] + "\n" + value
           : value;
       }
+    },
+
+    popupItems(IdentifierUUIDs) {
+      if (IdentifierUUIDs.includes("\n")) {
+        let relatedItems = IdentifierUUIDs.split("\n");
+        relatedItems = relatedItems.map((obj) => this.popupItem(obj));
+        return relatedItems;
+      } else {
+        return [this.popupItem(IdentifierUUIDs)];
+      }
+    },
+
+    popupItem(IdentifierUUID) {
+      const filteredItems = this.trenchtoUpdateWithoutTrenchProp.filter((x) =>
+        x.IdentifierUUID.includes(IdentifierUUID)
+      );
+      return filteredItems.map(
+        (item) =>
+          this.projectPreferencesTypesTranslation[item.Type] + ": " + item.Title
+      )[0];
     },
   },
 };
