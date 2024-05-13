@@ -46,6 +46,7 @@
         class="list-group"
       >
         <!-- GROUPS LABELS -->
+        <!--               -->
         <li
           class="list-group-item text-uppercase accordion p-1 pl-2 border-bottom"
         >
@@ -61,7 +62,9 @@
           :key="field"
           class="d-flex align-items-start border-bottom"
         >
-          <!-- FIELDS LABEL.  -->
+          <!--                -->
+          <!-- FIELDS LABEL   -->
+          <!--                -->
           <div class="text-right text-dark border-right p-1 col-md-2">
             {{
               // labels from types.groups.fields.labels.[lang] except if empty
@@ -70,20 +73,20 @@
                 : projectPreferencesFieldsWithTranslation[field.field] ??
                   fieldsSchema[field.field]?.labels?.[lang] ??
                   field.field
-            }}<q-tooltip
+            }}
+            <q-tooltip
               anchor="center left"
               self="bottom middle"
               class="bg-accent"
-              >{{ field.field }}</q-tooltip
-            >
+              >{{ field.field }}
+            </q-tooltip>
           </div>
 
-          <!--  -->
+          <!--                     -->
           <!-- VALUE : many cases  -->
-          <!--  -->
+          <!--                     -->
           <div class="col-md-10 border-none p-0">
             <!-- TYPE  -->
-            <!--       -->
             <div v-if="field.field === 'Type'" class="col-md-12 p-1">
               <div v-if="editMode" class="col-md-12 p-1 m-0 border-none">
                 <q-select
@@ -102,7 +105,6 @@
               </div>
             </div>
             <!-- RightsStatus  -->
-            <!--       -->
             <div
               v-else-if="field.field === 'RightsStatus'"
               class="col-md-12 p-1"
@@ -130,7 +132,6 @@
               </div>
             </div>
             <!-- IMAGE -->
-            <!--       -->
             <div
               v-else-if="field.field === 'RelationAttachments'"
               class="col-md-12 p-1 border-none"
@@ -150,7 +151,7 @@
                 {{ determineTypeGeo(currentItem[field.field]) }}
               </div>
             </div>
-            <!-- BOOLEAN  SEEMS TO EQUALS Status group-->
+            <!-- BOOLEAN -->
             <div
               v-else-if="fieldsSchema[field.field]?.type === 'boolean'"
               class="col-md-10 p-1"
@@ -228,8 +229,7 @@
                 >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
               >
             </div>
-            <!-- VALUELIST &&  MULTIVALUE -->
-            <!-- LIST NOT EMPTY  -->
+            <!-- MULTIVALUE && VALUELIST NOT EMPTY   -->
             <div
               v-else-if="
                 fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
@@ -271,8 +271,7 @@
                 >
               </div>
             </div>
-            <!-- VALUELIST &&  MULTIVALUE -->
-            <!-- LIST  EMPTY  -->
+            <!-- MULTIVALUE && VALUELIST EMPTY   -->
             <div
               v-else-if="
                 fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
@@ -316,7 +315,6 @@
               </div>
             </div>
             <!-- VALUELIST NOT EMPTY-->
-            <!--                    -->
             <div
               v-else-if="
                 fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
@@ -352,9 +350,7 @@
                 >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
               >
             </div>
-            <!--                -->
             <!-- VALUELIST EMPTY (DYNAMIQUE)-->
-            <!--                -->
             <div
               v-else-if="
                 fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
@@ -404,7 +400,7 @@
           </div>
         </div>
       </ul>
-      <!--  NO GROUPS HEADER -->
+      <!--  CASES NO GROUPS HEADER -->
       <ul class="list-group">
         <li
           class="list-group-item text-uppercase accordion p-1 border-bottom"
@@ -426,8 +422,8 @@
               anchor="center left"
               self="bottom middle"
               class="bg-accent"
-              >{{ field }}</q-tooltip
-            >
+              >{{ field }}
+            </q-tooltip>
           </div>
 
           <div
