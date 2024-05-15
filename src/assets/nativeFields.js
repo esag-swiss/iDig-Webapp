@@ -135,13 +135,11 @@ export const fieldsSchema = {
       { fr: "Attention", en: "Attention" },
       { fr: "A traiter", en: "Will Process" },
       { fr: "En attente", en: "Waiting" },
-
-      { fr: "Archivé", en: "Archived" },
-
       { fr: "En cours", en: "Open" },
       { fr: "Clos", en: "Closed" },
       { fr: "Indéterminé", en: "Undefined" },
       { fr: "A cataloguer", en: "Will Catalog" },
+      // { fr: "Archivé", en: "Archived" }, // only used on iPad
     ],
     valuelist: ["Ready", "All Done", "Attention", "Will Process", "Waiting"],
     tips: {
