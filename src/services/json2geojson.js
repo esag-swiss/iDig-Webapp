@@ -1,7 +1,7 @@
 import { convertToEPSG4326 } from "@/services/coordinateUtils";
 import { useDataStore } from "@/stores/data";
 
-function determineGeoType(coverageSerialized) {
+export function determineGeoType(coverageSerialized) {
   let GeoTypeArray = "";
   let level3 = cleanMulti(coverageSerialized);
   if (level3.length > 1) {
