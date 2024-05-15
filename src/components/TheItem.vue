@@ -15,10 +15,10 @@
             v-if="editMode"
             round
             color="secondary"
-            @click="pushSurvey()"
-            :size="'sm'"
+            class="m-1 pl-3"
             icon="cloud_upload"
-            style="padding-left: 16px; margin: 5px"
+            :size="'sm'"
+            @click="pushSurvey()"
           />
           <q-tooltip class="bg-accent"
             >upload modification to iDig server</q-tooltip
@@ -147,7 +147,7 @@
               "
               class="col-md-12 p-1 border-none"
             >
-              <div style="max-height: 3.6rem; overflow: hidden">
+              <div>
                 {{ determineTypeGeo(currentItem[field.field]) }}
               </div>
             </div>
@@ -386,9 +386,7 @@
                 type="text"
                 class="col-md-12 p-1 border-none"
               />
-              <div v-else style="max-height: 3.6rem; overflow: hidden">
-                {{ currentItem[field.field] }}
-              </div>
+              <div v-else>{{ currentItem[field.field] }}</div>
               <q-tooltip
                 v-if="fieldType(field.field, group)?.tips?.[lang]"
                 anchor="bottom left"
