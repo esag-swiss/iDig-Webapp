@@ -10,7 +10,7 @@ module.exports = {
   ],
   rules: {
     // Reverse default :
-    "vue/attribute-hyphenation": ["error", "never"],
+    // "vue/attribute-hyphenation": ["error", "never"],
     // Already in "recommended" or "strongly recommended", but added here to raise error instead of warning :
     "vue/attributes-order": ["error"],
     "vue/component-tags-order": [
