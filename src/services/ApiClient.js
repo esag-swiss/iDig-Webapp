@@ -165,12 +165,6 @@ export function apiUpdateTrenchItem(trench, head, surveys, preferences) {
       preferences,
     }),
   })
-    .then(() => {
-      Notify.create({
-        type: "positive",
-        message: `The item was saved`,
-      });
-    })
     .catch((error) => {
       displayError(error);
       throw error;
