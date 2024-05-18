@@ -27,6 +27,9 @@ export const useDataStore = defineStore("data", {
     checkedTrenchesData: {},
     checkedTrenchesVersion: lsLoadCheckedTrenchesVersion(),
     searchText: "",
+    syncPatches: "",
+    syncTrench: "",
+    syncNewVersion: "",
     selectedType: "Artifact",
     checkedFieldNames: [],
   }),
@@ -378,6 +381,14 @@ export const useDataStore = defineStore("data", {
       });
     },
 
+    trenchtoSync(trenchName) {
+      return this.checkedTrenchesData[trenchName].map((obj) => {
+        // remove property "Trench" before pushing data. It was added temporarly for helping webapp identifying items
+        const { Trench, ...newObj } = obj;
+        return newObj;
+      });
+    },
+
     // ACTIONS : STATES SETTERS :
     setProjectPreferencesTypes(projectPreferencesTypes) {
       this.projectPreferencesTypes = projectPreferencesTypes;
@@ -421,6 +432,13 @@ export const useDataStore = defineStore("data", {
 
     setSearchText(searchText) {
       this.searchText = searchText;
+    },
+
+    setSyncPatches(syncPatches) {
+      this.syncPatches = syncPatches;
+    },
+    setSyncTrench(syncTrench) {
+      this.syncTrench = syncTrench;
     },
   },
 });

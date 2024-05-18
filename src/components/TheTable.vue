@@ -1,5 +1,10 @@
 <template>
-  <div v-show="currentItem" class="TheItemframe" @click="clearTheItem()"></div>
+  <div
+    v-show="currentItem"
+    class="TheItemframe"
+    @click="clearTheItem(), setSyncPatches('')"
+  ></div>
+  <ThePatches v-if="syncPatches"></ThePatches>
   <TheItem v-if="currentItem" :currentItem="currentItem"> </TheItem>
   <div class="q-pa-xs">
     <q-table
@@ -7,12 +12,11 @@
       row-key="name"
       :rows="rows"
       :columns="columns"
+      virtual-scroll
       :rows-per-page-options="[0]"
-      style="height: 93vh"
       dense
       separator="vertical"
       @row-click="onRowClick"
-      virtual-scroll
       ><template v-slot:header="props">
         <q-tr :props="props">
           <q-th
@@ -35,25 +39,20 @@
           </q-th>
         </q-tr>
       </template>
-      <!-- <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.value }}
-          </q-td>
-        </q-tr>
-      </template> -->
     </q-table>
   </div>
 </template>
 
 <script>
 import { ref, watch } from "vue";
-import TheItem from "@/components/TheItem.vue";
+import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
+import TheItem from "@/components/TheItem.vue";
+import ThePatches from "@/components/ThePatches.vue";
 
 export default {
   name: "TheQTable",
-  components: { TheItem },
+  components: { TheItem, ThePatches },
   setup() {
     const dataStore = useDataStore();
     const rows = ref(dataStore.checkedTrenchesItemsSelectedTypeAndSearched);
@@ -131,7 +130,7 @@ export default {
     });
 
     const pagination = ref({
-      rowsPerPage: 50,
+      rowsPerPage: 0,
     });
 
     return {
@@ -148,18 +147,15 @@ export default {
       dragEnd,
     };
   },
+  computed: {
+    ...mapState(useDataStore, ["syncPatches"]),
+  },
+  methods: {
+    ...mapActions(useDataStore, ["setSyncPatches"]),
+  },
 };
 </script>
 <style>
-#hideTheItem {
-  /* color: white; */
-  z-index: 1023;
-  height: 20px;
-  width: 12px;
-  position: absolute;
-  right: 20px;
-  background-color: white;
-}
 .TheItemframe {
   position: fixed;
   top: 0;
@@ -173,6 +169,15 @@ export default {
   background: rgba(0, 0, 0, 0.5);
 }
 
+.q-table {
+  table-layout: fixed;
+  height: 93vh;
+}
+
+.q-table td,
+.q-table th {
+  overflow: hidden;
+}
 .q-table__bottom {
   border: 0;
 }
