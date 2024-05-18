@@ -1,6 +1,6 @@
 <template>
-  <div class="TheItemwrapper justify-content-center">
-    <div v-if="currentItem" class="TheItem center-block mx-auto">
+  <div v-if="currentItem" class="TheItemwrapper justify-content-center">
+    <div class="TheItem center-block mx-auto">
       <!--header-->
       <div class="d-flex mr-2 border-bottom">
         <div class="col mt-2 text-left">
@@ -606,7 +606,11 @@ export default {
 
   methods: {
     ...mapActions(useAppStore, ["setIsEditMode"]),
-    ...mapActions(useDataStore, ["setSyncPatches", "setSyncTrench"]),
+    ...mapActions(useDataStore, [
+      "setSyncPatches",
+      "setSyncTrench",
+      "setSyncNewVersion",
+    ]),
     format_date(value) {
       if (value) {
         return dayjs(value).format("DD/MM/YYYY");
@@ -669,8 +673,8 @@ export default {
       );
 
       if (resp.data.status === "pushed") {
-        // this.checkedTrenchesVersion[this.currentItem.Trench] =
-        //   resp.data.version;
+        this.checkedTrenchesVersion[this.currentItem.Trench] =
+          resp.data.version;
         Notify.create({
           type: "positive",
           message: `The item was saved`,
@@ -678,6 +682,7 @@ export default {
       } else if (resp.data.status === "pull") {
         this.setSyncPatches(resp.data.updates);
         this.setSyncTrench(this.currentItem.Trench);
+        this.setSyncNewVersion(resp.data.version);
         Notify.create({
           type: "warning",
           message: `There is a newer version on server`,
@@ -745,6 +750,12 @@ export default {
   overflow-y: auto;
   background: rgb(255, 255, 255);
   z-index: 1024;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+  border-radius: 12px;
+}
+.ThePatcheswrapper::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }
 
 .TheItem {

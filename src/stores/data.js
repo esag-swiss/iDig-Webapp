@@ -440,5 +440,8 @@ export const useDataStore = defineStore("data", {
     setSyncTrench(syncTrench) {
       this.syncTrench = syncTrench;
     },
+    setSyncNewVersion(syncNewVersion) {
+      this.syncNewVersion = syncNewVersion;
+    },
   },
 });
