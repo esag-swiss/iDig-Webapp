@@ -67,7 +67,9 @@
 
 <script>
 import { mapState, mapActions } from "pinia";
+import { Notify } from "quasar";
 import { useDataStore } from "@/stores/data";
+import { apiUpdateTrenchItem } from "@/services/ApiClient";
 
 export default {
   name: "ThePatches",
@@ -81,24 +83,19 @@ export default {
     ...mapState(useDataStore, [
       "syncPatches",
       "syncTrench",
+      "syncNewVersion",
+      "checkedTrenchesVersion",
       "projectPreferencesFieldsWithTranslation",
       "projectPreferencesTypesTranslation",
+
+      "projectPreferencesBase64",
     ]),
   },
   mounted() {
     this.toggleArrayOfValues = this.syncPatches.map((obj) => obj.id);
   },
   methods: {
-    ...mapActions(useDataStore, [
-      "setSyncPatches",
-      "trenchtoSync",
-      "trenchtoSync",
-    ]),
-    syncSurvey() {
-      this.newItems = this.syncPatches
-        .filter((item) => this.toggleArrayOfValues.includes(item.id))
-        .map((item) => item.new);
-    },
+    ...mapActions(useDataStore, ["setSyncPatches", "trenchtoSync"]),
 
     compareObjects(oldObj, newObj) {
       const differences = {};
@@ -109,6 +106,44 @@ export default {
         }
       });
       return differences;
+    },
+
+    async syncSurvey() {
+      const head = this.syncNewVersion;
+      let surveys = [];
+      const preferences = this.projectPreferencesBase64;
+
+      this.newItems = this.syncPatches
+        .filter((item) => this.toggleArrayOfValues.includes(item.id))
+        .map((item) => item.new);
+
+      surveys = [
+        ...this.trenchtoSync(this.syncTrench).filter(
+          (item) => !this.toggleArrayOfValues.includes(item.IdentifierUUID)
+        ),
+        ...this.newItems,
+      ];
+      let resp = await apiUpdateTrenchItem(
+        this.syncTrench,
+        head,
+        surveys,
+        preferences
+      );
+
+      if (resp.data.status === "pushed") {
+        this.checkedTrenchesVersion[this.syncTrench] = resp.data.version;
+        Notify.create({
+          type: "positive",
+          message: `The item was saved`,
+        });
+        this.setSyncPatches("");
+      } else if (resp.data.status === "pull") {
+        this.setSyncPatches(resp.data.updates);
+        Notify.create({
+          type: "warning",
+          message: `There is a newer version on server`,
+        });
+      }
     },
   },
 };
@@ -129,12 +164,4 @@ export default {
 .ThePatcheswrapper::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
-
-/* .ThePatches {
-  height: auto;
-  margin-top: 0%;
-  margin-bottom: 0%;
-  width: 100%;
-  background: rgb(255, 255, 255);
-} */
 </style>
