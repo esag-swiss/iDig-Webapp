@@ -15,6 +15,7 @@
       virtual-scroll
       :rows-per-page-options="[0]"
       dense
+      class="q-table"
       separator="vertical"
       @row-click="onRowClick"
       ><template v-slot:header="props">
@@ -177,9 +178,6 @@ export default {
 .q-table td,
 .q-table th {
   overflow: hidden;
-}
-.q-table__bottom {
-  border: 0;
 }
 
 .table_column {
