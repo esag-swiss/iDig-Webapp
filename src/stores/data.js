@@ -368,6 +368,20 @@ export const useDataStore = defineStore("data", {
         }
       };
     },
+
+    async UpdateSyncTrenchData(trenchName, surveys) {
+      if (surveys) {
+        this.checkedTrenchesData[trenchName] = this.addTrenchNameToItems(
+          surveys,
+          trenchName
+        );
+      }
+
+      // Update IndexedDB
+      const db = await openDB();
+      await storeDataInIndexedDB(db, trenchName, surveys);
+    },
+
     addTrenchNameToItems(items, trenchName) {
       return items.map((obj) => {
         // Crée un nouvel objet avec les propriétés de l'objet d'origine

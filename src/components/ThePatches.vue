@@ -95,7 +95,11 @@ export default {
     this.toggleArrayOfValues = this.syncPatches.map((obj) => obj.id);
   },
   methods: {
-    ...mapActions(useDataStore, ["setSyncPatches", "trenchtoSync"]),
+    ...mapActions(useDataStore, [
+      "setSyncPatches",
+      "trenchtoSync",
+      "UpdateSyncTrenchData",
+    ]),
 
     compareObjects(oldObj, newObj) {
       const differences = {};
@@ -131,7 +135,15 @@ export default {
       );
 
       if (resp.data.status === "pushed") {
+        // mettre les lignes suivantes conccernant version dans data.js
         this.checkedTrenchesVersion[this.syncTrench] = resp.data.version;
+        // Update localStorage
+        localStorage.setItem(
+          "localTrenchesVersion",
+          JSON.stringify(this.checkedTrenchesVersion)
+        );
+
+        this.UpdateSyncTrenchData(this.syncTrench, surveys);
         Notify.create({
           type: "positive",
           message: `The item was saved`,
@@ -142,6 +154,11 @@ export default {
         Notify.create({
           type: "warning",
           message: `There is a newer version on server`,
+        });
+      } else {
+        Notify.create({
+          type: "positive",
+          message: `sync ok`,
         });
       }
     },
