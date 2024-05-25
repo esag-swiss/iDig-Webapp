@@ -15,8 +15,8 @@
 
       {{
         syncPatches.length > 1
-          ? syncPatches.length + " Modifications"
-          : syncPatches.length + " Modification"
+          ? syncPatches.length + " Modifications on iDig server"
+          : syncPatches.length + " Modification on iDig server"
       }}
       <q-btn
         round
@@ -31,8 +31,8 @@
     <div id="main" class="q-px-sm">
       <q-list separator class="q-px-sm">
         <q-item
-          v-for="(patche, index) in syncPatches"
-          :key="patche"
+          v-for="patche in patchesInConflict"
+          :key="patche.id"
           class="q-px-sm"
         >
           <q-item-section>
@@ -48,16 +48,18 @@
               caption
             >
               {{ projectPreferencesFieldsWithTranslation[key] ?? key }}:
-              {{ value }}
+              {{ value.old + " -> " + value.new }}
             </q-item-label>
           </q-item-section>
           <q-item-section side class="q-px-sm">
             <q-toggle
               v-model="toggleArrayOfValues"
               :val="patche.new.IdentifierUUID"
-              color="blue"
+              :color="patche.Conflict ? 'red' : 'blue'"
               class="q-px-sm"
-            />
+            /><q-tooltip class="bg-accent">{{
+              "reject or accept the modification from server"
+            }}</q-tooltip>
           </q-item-section>
         </q-item>
       </q-list>
@@ -70,6 +72,7 @@ import { mapState, mapActions } from "pinia";
 import { Notify } from "quasar";
 import { useDataStore } from "@/stores/data";
 import { apiUpdateTrenchItem } from "@/services/ApiClient";
+import { openDB, readDataInIndexedDB } from "@/services/indexedDbManager";
 
 export default {
   name: "ThePatches",
@@ -77,6 +80,8 @@ export default {
     return {
       toggleArrayOfValues: [],
       newItems: [],
+      oldTrenchData: [],
+      locallyChangedIdentifierUUID: [],
     };
   },
   computed: {
@@ -87,13 +92,46 @@ export default {
       "checkedTrenchesVersion",
       "projectPreferencesFieldsWithTranslation",
       "projectPreferencesTypesTranslation",
-
+      "checkedTrenchesData",
       "projectPreferencesBase64",
     ]),
+
+    patchesInConflict() {
+      return this.syncPatches
+        .map((obj) => {
+          return {
+            ...obj,
+            Conflict: this.locallyChangedIdentifierUUID.includes(obj.id),
+          };
+        })
+        .sort((a, b) => b.Conflict - a.Conflict);
+    },
   },
-  mounted() {
+
+  async mounted() {
     this.toggleArrayOfValues = this.syncPatches.map((obj) => obj.id);
+    const db = await openDB();
+    const oldTrenchData = JSON.parse(
+      await readDataInIndexedDB(db, this.syncTrench)
+    );
+    const currentTrenchData = this.checkedTrenchesData[this.syncTrench];
+    let difInTrench = [];
+
+    for (let i = 0; i < oldTrenchData.length; i++) {
+      const differences = this.compareTrenches(
+        oldTrenchData[i],
+        currentTrenchData[i]
+      );
+      if (Object.keys(differences).length > 0) {
+        difInTrench.push(oldTrenchData[i].IdentifierUUID);
+      }
+    }
+    // console.log(difInTrench);
+    this.locallyChangedIdentifierUUID = difInTrench;
+    // console.log(currentTrenchData[0]);
+    // console.log(oldTrenchData); // Si vous voulez voir le résultat
   },
+
   methods: {
     ...mapActions(useDataStore, [
       "setSyncPatches",
@@ -102,6 +140,17 @@ export default {
     ]),
 
     compareObjects(oldObj, newObj) {
+      const differences = {};
+      const allKeys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
+      allKeys.forEach((key) => {
+        if (oldObj[key] !== newObj[key]) {
+          differences[key] = { new: newObj[key], old: oldObj[key] };
+        }
+      });
+      return differences;
+    },
+
+    compareTrenches(oldObj, newObj) {
       const differences = {};
       const allKeys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
       allKeys.forEach((key) => {
@@ -144,6 +193,7 @@ export default {
         );
 
         this.UpdateSyncTrenchData(this.syncTrench, surveys);
+
         Notify.create({
           type: "positive",
           message: `The item was saved`,
