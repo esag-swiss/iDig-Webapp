@@ -610,6 +610,7 @@ export default {
       "setSyncPatches",
       "setSyncTrench",
       "setSyncNewVersion",
+      "UpdateSyncTrenchData",
     ]),
     format_date(value) {
       if (value) {
@@ -675,6 +676,14 @@ export default {
       if (resp.data.status === "pushed") {
         this.checkedTrenchesVersion[this.currentItem.Trench] =
           resp.data.version;
+
+        localStorage.setItem(
+          "localTrenchesVersion",
+          JSON.stringify(this.checkedTrenchesVersion)
+        );
+
+        this.UpdateSyncTrenchData(this.currentItem.Trench, surveys);
+
         Notify.create({
           type: "positive",
           message: `The item was saved`,
