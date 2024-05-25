@@ -341,6 +341,7 @@ export const useDataStore = defineStore("data", {
           }
 
           this.checkedTrenchesVersion[trenchName] = response.data.version;
+
           if (response.data.surveys) {
             this.checkedTrenchesData[trenchName] = this.addTrenchNameToItems(
               response.data.surveys,
@@ -370,16 +371,18 @@ export const useDataStore = defineStore("data", {
     },
 
     async UpdateSyncTrenchData(trenchName, surveys) {
-      if (surveys) {
-        this.checkedTrenchesData[trenchName] = this.addTrenchNameToItems(
-          surveys,
-          trenchName
-        );
-      }
+      this.checkedTrenchesData[trenchName] = this.addTrenchNameToItems(
+        surveys,
+        trenchName
+      );
 
       // Update IndexedDB
       const db = await openDB();
-      await storeDataInIndexedDB(db, trenchName, surveys);
+      await storeDataInIndexedDB(
+        db,
+        trenchName,
+        this.checkedTrenchesData[trenchName]
+      );
     },
 
     addTrenchNameToItems(items, trenchName) {
