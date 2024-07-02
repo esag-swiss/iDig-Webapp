@@ -172,7 +172,11 @@ export default {
 
 .q-table {
   table-layout: fixed;
-  height: 93vh;
+  max-height: 93vh;
+}
+
+.q-table__bottom {
+  padding: 4px 24px 4px 16px;
 }
 
 .q-table td,
