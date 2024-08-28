@@ -1,6 +1,6 @@
 <template>
-  <div class="TheItemwrapper justify-content-center">
-    <div v-if="currentItem" class="TheItem center-block mx-auto">
+  <div v-if="currentItem" class="TheItemwrapper justify-content-center">
+    <div class="TheItem center-block mx-auto">
       <!--header-->
       <div class="d-flex mr-2 border-bottom">
         <div class="col mt-2 text-left">
@@ -101,7 +101,9 @@
                 />
               </div>
               <div v-else>
-                {{ findTranslationOfType(currentItem[field.field]) }}
+                {{
+                  projectPreferencesTypesTranslation[currentItem[field.field]]
+                }}
               </div>
             </div>
             <!-- RightsStatus  -->
@@ -440,6 +442,7 @@
 </template>
 
 <script>
+import { Notify } from "quasar";
 import { apiUpdateTrenchItem, apiFetchImageSRC } from "@/services/ApiClient";
 import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
@@ -603,6 +606,12 @@ export default {
 
   methods: {
     ...mapActions(useAppStore, ["setIsEditMode"]),
+    ...mapActions(useDataStore, [
+      "setSyncPatches",
+      "setSyncTrench",
+      "setSyncNewVersion",
+      "UpdateSyncTrenchData",
+    ]),
     format_date(value) {
       if (value) {
         return dayjs(value).format("DD/MM/YYYY");
@@ -652,12 +661,42 @@ export default {
         .sort();
     },
 
-    pushSurvey() {
+    async pushSurvey() {
       const head = this.checkedTrenchesVersion[this.currentItem.Trench];
       const surveys = this.trenchtoUpdateWithoutTrenchProp;
       const preferences = this.projectPreferencesBase64;
 
-      apiUpdateTrenchItem(this.currentItem.Trench, head, surveys, preferences);
+      let resp = await apiUpdateTrenchItem(
+        this.currentItem.Trench,
+        head,
+        surveys,
+        preferences
+      );
+
+      if (resp.data.status === "pushed") {
+        this.checkedTrenchesVersion[this.currentItem.Trench] =
+          resp.data.version;
+
+        localStorage.setItem(
+          "localTrenchesVersion",
+          JSON.stringify(this.checkedTrenchesVersion)
+        );
+
+        this.UpdateSyncTrenchData(this.currentItem.Trench, surveys);
+
+        Notify.create({
+          type: "positive",
+          message: `The item was saved`,
+        });
+      } else if (resp.data.status === "pull") {
+        this.setSyncPatches(resp.data.updates);
+        this.setSyncTrench(this.currentItem.Trench);
+        this.setSyncNewVersion(resp.data.version);
+        Notify.create({
+          type: "warning",
+          message: `There is a newer version on server`,
+        });
+      }
     },
 
     determineTypeGeo(e) {
@@ -675,19 +714,6 @@ export default {
           this.imageSrc = imgUrl;
         }
       );
-    },
-
-    findTranslationOfType(type) {
-      for (const item of this.projectPreferencesTypes) {
-        if (item.type === type) {
-          if (item.labels.hasOwnProperty(this.lang)) {
-            return item.labels[this.lang];
-          } else {
-            return type;
-          }
-        }
-      }
-      return type;
     },
 
     updateMultiArray(field, value) {
@@ -733,6 +759,12 @@ export default {
   overflow-y: auto;
   background: rgb(255, 255, 255);
   z-index: 1024;
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+  border-radius: 12px;
+}
+.ThePatcheswrapper::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }
 
 .TheItem {

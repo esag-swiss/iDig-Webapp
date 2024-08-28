@@ -27,6 +27,9 @@ export const useDataStore = defineStore("data", {
     checkedTrenchesData: {},
     checkedTrenchesVersion: lsLoadCheckedTrenchesVersion(),
     searchText: "",
+    syncPatches: "",
+    syncTrench: "",
+    syncNewVersion: "",
     selectedType: "Artifact",
     checkedFieldNames: [],
   }),
@@ -338,6 +341,7 @@ export const useDataStore = defineStore("data", {
           }
 
           this.checkedTrenchesVersion[trenchName] = response.data.version;
+
           if (response.data.surveys) {
             this.checkedTrenchesData[trenchName] = this.addTrenchNameToItems(
               response.data.surveys,
@@ -365,6 +369,22 @@ export const useDataStore = defineStore("data", {
         }
       };
     },
+
+    async UpdateSyncTrenchData(trenchName, surveys) {
+      this.checkedTrenchesData[trenchName] = this.addTrenchNameToItems(
+        surveys,
+        trenchName
+      );
+
+      // Update IndexedDB
+      const db = await openDB();
+      await storeDataInIndexedDB(
+        db,
+        trenchName,
+        this.checkedTrenchesData[trenchName]
+      );
+    },
+
     addTrenchNameToItems(items, trenchName) {
       return items.map((obj) => {
         // Crée un nouvel objet avec les propriétés de l'objet d'origine
@@ -375,6 +395,14 @@ export const useDataStore = defineStore("data", {
     removeCheckedTrenchesData(trenchList) {
       trenchList.forEach((trenchName) => {
         delete this.checkedTrenchesData[trenchName];
+      });
+    },
+
+    trenchtoSync(trenchName) {
+      return this.checkedTrenchesData[trenchName].map((obj) => {
+        // remove property "Trench" before pushing data. It was added temporarly for helping webapp identifying items
+        const { Trench, ...newObj } = obj;
+        return newObj;
       });
     },
 
@@ -421,6 +449,16 @@ export const useDataStore = defineStore("data", {
 
     setSearchText(searchText) {
       this.searchText = searchText;
+    },
+
+    setSyncPatches(syncPatches) {
+      this.syncPatches = syncPatches;
+    },
+    setSyncTrench(syncTrench) {
+      this.syncTrench = syncTrench;
+    },
+    setSyncNewVersion(syncNewVersion) {
+      this.syncNewVersion = syncNewVersion;
     },
   },
 });
