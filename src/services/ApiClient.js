@@ -15,29 +15,6 @@ function displayError(error) {
   });
 }
 
-export function apiFetchProjectTrenchesNames() {
-  const {
-    server,
-    project,
-    username,
-    password,
-    incrementLoadingCount,
-    decrementLoadingCount,
-  } = useAppStore();
-
-  incrementLoadingCount();
-  return axios({
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    method: "get",
-    url: `${server}/idig/${project}/trenches`,
-    auth: { username, password },
-  })
-    .catch((error) => {
-      displayError(error);
-      throw error;
-    })
-    .finally(() => decrementLoadingCount());
-}
 export function apiFetchIdigTrenchesNames() {
   const {
     server,
@@ -69,6 +46,7 @@ export function apiFetchIdigTrenchesNames() {
     })
     .finally(() => decrementLoadingCount());
 }
+
 export function apiFetchTrenchVersion(trench) {
   const {
     server,
@@ -142,7 +120,7 @@ export function apiFetchSurvey(trench) {
     .finally(() => decrementLoadingCount());
 }
 
-export function apiUpdateTrenchItem(trench, head, surveys, preferences) {
+export function apiPushTrench(trench, head, surveys, preferences) {
   const {
     server,
     project,
@@ -153,6 +131,7 @@ export function apiUpdateTrenchItem(trench, head, surveys, preferences) {
   } = useAppStore();
 
   incrementLoadingCount();
+
   return axios({
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "post",
@@ -168,44 +147,6 @@ export function apiUpdateTrenchItem(trench, head, surveys, preferences) {
     .catch((error) => {
       displayError(error);
       throw error;
-    })
-    .finally(() => decrementLoadingCount());
-}
-
-export function apiFetchImage(img, trench) {
-  const {
-    server,
-    project,
-    username,
-    password,
-    incrementLoadingCount,
-    decrementLoadingCount,
-  } = useAppStore();
-  let name = img.split("\n")[0].split("=")[1];
-  let checksum = img.split("\n")[1].split("=")[1];
-  incrementLoadingCount();
-  axios({
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    method: "get",
-    url: `${server}/idig/${project}/${trench}/attachments/${name}?checksum=${checksum}`,
-    responseType: "blob",
-    auth: { username, password },
-    data: {},
-  })
-    .then((response) => {
-      let imageNode = document.getElementById("image");
-      let blob = new Blob([response.data], {
-        type: response.headers["content-type"],
-      });
-      let imgUrl = URL.createObjectURL(blob);
-      imageNode.src = imgUrl;
-    })
-    .catch((error) => {
-      alert(
-        `Error: ${error}\nSomething went wrong! Please check the image URL.`
-      );
     })
     .finally(() => decrementLoadingCount());
 }

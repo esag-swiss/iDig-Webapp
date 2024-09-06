@@ -30,7 +30,6 @@ export default {
       "checkedTrenchesItemsPlans",
       "checkedTrenchesItemsSelectedTypeAndSearched",
       "projectPreferencesCRS",
-      "checkedTrenchesData",
     ]),
   },
   watch: {
