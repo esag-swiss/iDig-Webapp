@@ -1,11 +1,8 @@
 <template>
-  <div
-    v-if="loadingCount > 0"
-    class="spinner-TheItem vh-100 vw-100 position-absolute"
-  >
+  <div v-if="loadingCount > 0" class="vh-100 vw-100 position-absolute">
     <div class="d-flex justify-content-center align-items-center vh-100">
       <div class="spinner-container">
-        <div class="spinner-border text-light" role="status"></div>
+        <div class="spinner-border text-dark" role="status"></div>
         <span class="spinner-text">{{ loadingCount }}</span>
       </div>
     </div>
@@ -27,11 +24,11 @@ export default {
 <style scoped>
 .spinner-TheItem {
   background-color: rgb(0, 0, 0, 0.85);
-  z-index: 3000;
 }
 
 .spinner-container {
   position: relative;
+  z-index: 3000;
 }
 
 .spinner-border {
@@ -40,7 +37,7 @@ export default {
 }
 
 .spinner-text {
-  color: white;
+  color: black;
   position: absolute;
   top: 50%;
   left: 50%;
