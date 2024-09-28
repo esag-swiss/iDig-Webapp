@@ -1,8 +1,8 @@
 <template>
   <div class="ThePatcheswrapper justify-content-center">
+    <!--header-->
     <div
-      id="header"
-      class="sticky-top q-fixed bg-grey-4 q-px-sm q-py-sm full-width row items-center justify-between"
+      class="sticky-top q-fixed bg-grey-1 q-px-sm full-width row items-center justify-between"
     >
       <q-btn
         round
@@ -71,7 +71,7 @@
 import { mapState, mapActions } from "pinia";
 import { Notify } from "quasar";
 import { useDataStore } from "@/stores/data";
-import { apiUpdateTrenchItem } from "@/services/ApiClient";
+import { apiPushTrench } from "@/services/ApiClient";
 import { openDB, readDataInIndexedDB } from "@/services/indexedDbManager";
 
 export default {
@@ -176,7 +176,7 @@ export default {
         ),
         ...this.newItems,
       ];
-      let resp = await apiUpdateTrenchItem(
+      let resp = await apiPushTrench(
         this.syncTrench,
         head,
         surveys,

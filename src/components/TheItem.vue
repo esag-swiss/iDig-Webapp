@@ -1,41 +1,40 @@
 <template>
   <div v-if="currentItem" class="TheItemwrapper justify-content-center">
-    <div class="TheItem center-block mx-auto">
-      <!--header-->
-      <div class="d-flex mr-2 border-bottom">
-        <div class="col mt-2 text-left">
-          <h3>
-            {{ projectPreferencesTypesTranslation[currentItem.Type] }}
-            {{ currentItem.Identifier }}
-          </h3>
-        </div>
-
-        <div class="m-1">
-          <q-btn
-            v-if="editMode"
-            round
-            color="secondary"
-            class="m-1 pl-3"
-            icon="cloud_upload"
-            :size="'sm'"
-            @click="pushSurvey()"
-          />
-          <q-tooltip class="bg-accent"
-            >upload modification to iDig server</q-tooltip
-          >
-        </div>
-        <div class="m-1">
-          <q-toggle
-            v-model="editMode"
-            :disable="username !== 'Theu'"
-            color="red"
-          />
-          <q-tooltip class="bg-accent"
-            >{{ editMode ? "disable edit mode" : "enable edit mode" }}
-          </q-tooltip>
-        </div>
+    <!--header-->
+    <div
+      class="sticky-top q-fixed bg-grey-1 q-px-sm full-width row items-center justify-between"
+    >
+      <div class="col text-weight-medium text-left">
+        {{ projectPreferencesTypesTranslation[currentItem.Type] }}
+        {{ currentItem.Identifier }}
       </div>
 
+      <div class="mx-1">
+        <q-btn
+          v-if="editMode"
+          round
+          color="secondary"
+          class="m-1 pl-3"
+          icon="cloud_upload"
+          :size="'sm'"
+          @click="pushSurvey()"
+        />
+        <q-tooltip class="bg-accent"
+          >upload modification to iDig server</q-tooltip
+        >
+      </div>
+      <div class="mx-1">
+        <q-toggle
+          v-model="editMode"
+          :disable="username === 'Readonly'"
+          color="red"
+        />
+        <q-tooltip class="bg-accent"
+          >{{ editMode ? "disable edit mode" : "enable edit mode" }}
+        </q-tooltip>
+      </div>
+    </div>
+    <div class="TheItem center-block mx-auto">
       <!--Formulaire-->
 
       <ul
@@ -65,7 +64,7 @@
           <!--                -->
           <!-- FIELDS LABEL   -->
           <!--                -->
-          <div class="text-right text-dark border-right p-1 col-md-2">
+          <div class="text-right text-dark border-right p-1 col-2">
             {{
               // labels from types.groups.fields.labels.[lang] except if empty
               field.labels?.[lang] !== undefined && field.labels?.[lang] !== ""
@@ -85,10 +84,10 @@
           <!--                     -->
           <!-- VALUE : many cases  -->
           <!--                     -->
-          <div class="col-md-10 border-none p-0">
+          <div class="col-10 border-none p-0">
             <!-- TYPE  -->
-            <div v-if="field.field === 'Type'" class="col-md-12 p-1">
-              <div v-if="editMode" class="col-md-12 p-1 m-0 border-none">
+            <div v-if="field.field === 'Type'" class="col-12 p-1">
+              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
                 <q-select
                   v-model="currentItem[field.field]"
                   dense
@@ -107,11 +106,8 @@
               </div>
             </div>
             <!-- RightsStatus  -->
-            <div
-              v-else-if="field.field === 'RightsStatus'"
-              class="col-md-12 p-1"
-            >
-              <div class="col-md-12 p-1 m-0 border-none">
+            <div v-else-if="field.field === 'RightsStatus'" class="col-12 p-1">
+              <div class="col-12 p-1 m-0 border-none">
                 <q-select
                   v-model="currentItem[field.field]"
                   dense
@@ -136,9 +132,9 @@
             <!-- IMAGE -->
             <div
               v-else-if="field.field === 'RelationAttachments'"
-              class="col-md-12 p-1 border-none"
+              class="col-12 p-1 border-none"
             >
-              <div v-if="currentItem[field.field]" class="col-md-12">
+              <div v-if="currentItem[field.field]" class="col-12">
                 <img id="image" :src="imageSrc" class="img-fluid" />
               </div>
             </div>
@@ -147,7 +143,7 @@
               v-else-if="
                 field.field === 'CoverageSerialized' && currentItem[field.field]
               "
-              class="col-md-12 p-1 border-none"
+              class="col-12 p-1 border-none"
             >
               <div>
                 {{ determineTypeGeo(currentItem[field.field]) }}
@@ -156,7 +152,7 @@
             <!-- BOOLEAN -->
             <div
               v-else-if="fieldsSchema[field.field]?.type === 'boolean'"
-              class="col-md-10 p-1"
+              class="col-10 p-1"
             >
               <q-toggle
                 v-model="currentItem[field.field]"
@@ -178,7 +174,7 @@
                 fieldsSchema[field.field]?.type === 'link' &&
                 currentItem[field.field]
               "
-              class="col-md-10 p-1"
+              class="col-10 p-1"
             >
               <q-chip
                 v-for="item in popupItems(currentItem[field.field])"
@@ -199,7 +195,7 @@
             <!-- DATE -->
             <div
               v-else-if="fieldsSchema[field.field]?.type === 'DateUTC'"
-              class="col-md-10 p-1"
+              class="col-10 p-1"
             >
               {{ format_date(currentItem[field.field]) }}
               <q-tooltip
@@ -215,12 +211,12 @@
               v-else-if="
                 fieldType(field.field, group)?.hasOwnProperty('multiline')
               "
-              class="col-md-12 p-1 border-none"
+              class="col-12 p-1 border-none"
             >
               <textarea
                 v-if="editMode"
                 v-model="currentItem[field.field]"
-                class="col-md-12 p-0 border-none"
+                class="col-12 p-0 border-none"
               ></textarea>
               <div v-else>{{ currentItem[field.field] }}</div>
               <q-tooltip
@@ -238,12 +234,12 @@
                 fieldType(field.field, group)?.hasOwnProperty('multivalue') &&
                 fieldType(field.field, group)?.valuelist?.length !== 0
               "
-              class="col-md-12 p-1 m-0 border-none"
+              class="col-12 p-1 m-0 border-none"
             >
-              <div class="col-md-12 p-1 m-0 border-none">
+              <div class="col-12 p-1 m-0 border-none">
                 {{ currentItem[field.field] }}
               </div>
-              <div v-if="editMode" class="col-md-12 p-1 m-0 border-none">
+              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
                 <q-select
                   v-model="
                     arrayForMultivalueFields[
@@ -280,12 +276,12 @@
                 fieldType(field.field, group)?.hasOwnProperty('multivalue') &&
                 fieldType(field.field, group)?.valuelist.length == 0
               "
-              class="col-md-12 p-1 m-0 border-none"
+              class="col-12 p-1 m-0 border-none"
             >
-              <div class="col-md-12 p-1 m-0 border-none">
+              <div class="col-12 p-1 m-0 border-none">
                 {{ currentItem[field.field] }}
               </div>
-              <div v-if="editMode" class="col-md-12 p-1 m-0 border-none">
+              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
                 <q-select
                   v-model="
                     arrayForMultivalueFields[
@@ -322,9 +318,9 @@
                 fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
                 fieldType(field.field, group)?.valuelist.length !== 0
               "
-              class="col-md-12 p-1 m-0 border-none"
+              class="col-12 p-1 m-0 border-none"
             >
-              <div v-if="editMode" class="col-md-12 p-1 m-0 border-none">
+              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
                 <q-select
                   v-model="currentItem[field.field]"
                   use-input
@@ -341,7 +337,7 @@
                   >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
                 >
               </div>
-              <div v-else class="col-md-12 p-1 m-0 border-none">
+              <div v-else class="col-12 p-1 m-0 border-none">
                 {{ currentItem[field.field] }}
               </div>
               <q-tooltip
@@ -358,10 +354,10 @@
                 fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
                 fieldType(field.field, group)?.valuelist.length == 0
               "
-              class="col-md-12 p-1 m-0 border-none"
+              class="col-12 p-1 m-0 border-none"
             >
               {{ currentItem[field.field] }}
-              <div v-if="editMode" class="col-md-12 p-1 m-0 border-none">
+              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
                 <q-select
                   v-model="currentItem[field.field]"
                   use-input
@@ -381,12 +377,12 @@
               </div>
             </div>
             <!-- STRING -->
-            <div v-else class="col-md-12 p-1 border-none">
+            <div v-else class="col-12 p-1 border-none">
               <input
                 v-if="editMode"
                 v-model="currentItem[field.field]"
                 type="text"
-                class="col-md-12 p-1 border-none"
+                class="col-12 p-1 border-none"
               />
               <div v-else>{{ currentItem[field.field] }}</div>
               <q-tooltip
@@ -412,7 +408,7 @@
           class="d-flex align-items-start border-bottom"
         >
           <!-- LABELS -->
-          <div class="text-right text-dark border-right p-1 col-md-2">
+          <div class="text-right text-dark border-right p-1 col-2">
             {{
               projectPreferencesFieldsWithTranslation[field] ??
               fieldsSchema[field]?.labels?.[lang] ??
@@ -428,13 +424,17 @@
 
           <div
             v-if="fieldsSchema[field]?.type === 'DateUTC'"
-            class="col-md-10 p-1"
+            class="col-10 p-1"
           >
             {{ format_date(currentItem[field]) }}
           </div>
-          <div v-else class="col-md-10 p-1">
-            {{ currentItem[field] }}
-          </div>
+          <input
+            v-else-if="editMode"
+            v-model="currentItem[field]"
+            type="text"
+            class="col-10 p-1 border-none"
+          />
+          <div v-else class="col-10 p-1">{{ currentItem[field] }}</div>
         </div>
       </ul>
     </div>
@@ -443,7 +443,7 @@
 
 <script>
 import { Notify } from "quasar";
-import { apiUpdateTrenchItem, apiFetchImageSRC } from "@/services/ApiClient";
+import { apiPushTrench, apiFetchImageSRC } from "@/services/ApiClient";
 import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
@@ -461,10 +461,11 @@ export default {
   },
   data() {
     return {
-      field: "Material",
+      // field: "Material",
       editMode: false,
       imageSrc: "",
-      arrayForMultivalueFields: [], // case MULTIVALUE field
+      arrayForMultivalueFields: [],
+      fieldsSchema: fieldsSchema,
     };
   },
   computed: {
@@ -479,20 +480,17 @@ export default {
       "checkedTrenchesVersion",
       "checkedTrenchesItemsSelectedType",
       "selectedType",
-      "isEditMode",
     ]),
     ...mapState(useAppStore, ["username", "lang"]),
-    fieldsSchema() {
-      return fieldsSchema;
-    },
+
     //  array of fields presents in current item
     fieldsOfCurrentItem() {
       return Object.getOwnPropertyNames(this.currentItem);
     },
 
+    // TODO consider removing the following  --------------------
     trenchtoUpdateWithoutTrenchProp() {
       return this.checkedTrenchesData[this.currentItem.Trench].map((obj) => {
-        // remove property "Trench" before pushing data. It was added temporarly for helping webapp identifying items
         const { Trench, ...newObj } = obj;
         return newObj;
       });
@@ -605,7 +603,6 @@ export default {
   },
 
   methods: {
-    ...mapActions(useAppStore, ["setIsEditMode"]),
     ...mapActions(useDataStore, [
       "setSyncPatches",
       "setSyncTrench",
@@ -616,11 +613,6 @@ export default {
       if (value) {
         return dayjs(value).format("DD/MM/YYYY");
       }
-    },
-    fieldExist(field) {
-      // attention comme fields ne liste pas tous les champs on verifie si il existe
-      return this.projectPreferencesFields.filter((x) => x.field == field)
-        .length;
     },
 
     fieldType(field, groupObject) {
@@ -666,7 +658,7 @@ export default {
       const surveys = this.trenchtoUpdateWithoutTrenchProp;
       const preferences = this.projectPreferencesBase64;
 
-      let resp = await apiUpdateTrenchItem(
+      let resp = await apiPushTrench(
         this.currentItem.Trench,
         head,
         surveys,
@@ -740,9 +732,9 @@ export default {
     },
 
     popupItem(IdentifierUUID) {
-      const filteredItems = this.trenchtoUpdateWithoutTrenchProp.filter((x) =>
-        x.IdentifierUUID.includes(IdentifierUUID)
-      );
+      const filteredItems = this.checkedTrenchesData[
+        this.currentItem.Trench
+      ].filter((x) => x.IdentifierUUID.includes(IdentifierUUID));
       return filteredItems.map(
         (item) =>
           this.projectPreferencesTypesTranslation[item.Type] + ": " + item.Title
@@ -759,12 +751,13 @@ export default {
   overflow-y: auto;
   background: rgb(255, 255, 255);
   z-index: 1024;
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ ; chrome */
+  scrollbar-width: none; /* Firefox? ; Edge */
   border-radius: 12px;
+  overflow-x: hidden;
 }
 .ThePatcheswrapper::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
+  display: none; /* Safari ? */
 }
 
 .TheItem {

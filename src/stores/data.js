@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import {
   apiFetchPreferences,
-  apiFetchProjectTrenchesNames,
   apiFetchIdigTrenchesNames,
   apiFetchSurvey,
   apiFetchTrenchVersion,
@@ -217,13 +216,6 @@ export const useDataStore = defineStore("data", {
   },
 
   actions: {
-    // ACTIONS TO FETCH FROM API AND SET :
-    async fetchProjectTrenchesNames() {
-      return apiFetchProjectTrenchesNames().then((response) => {
-        this.setProjectTrenchesNames(response.data);
-      });
-    },
-
     async fetchIdigTrenchesNames() {
       const { project } = useAppStore();
       return apiFetchIdigTrenchesNames().then((response) => {
@@ -387,8 +379,7 @@ export const useDataStore = defineStore("data", {
 
     addTrenchNameToItems(items, trenchName) {
       return items.map((obj) => {
-        // Crée un nouvel objet avec les propriétés de l'objet d'origine
-        // et ajoute la nouvelle propriété "Trench"
+        // add property 'Trench' to item object to indicate the trench it is originated and since property "source" doesn't seems to be consistent.
         return { ...obj, Trench: trenchName };
       });
     },
@@ -433,14 +424,6 @@ export const useDataStore = defineStore("data", {
 
     setProjectTrenchesNames(projectTrenchesNames) {
       this.projectTrenchesNames = projectTrenchesNames;
-    },
-
-    setCheckedTrenchesData(checkedTrenchesData) {
-      this.checkedTrenchesData = checkedTrenchesData;
-    },
-
-    setCheckedTrenchesVersion(checkedTrenchesVersion) {
-      this.checkedTrenchesVersion = checkedTrenchesVersion;
     },
 
     setCheckedTrenchesNames(checkedTrenchesNames) {

@@ -122,7 +122,6 @@ export default {
   },
   methods: {
     ...mapActions(useDataStore, [
-      "setCheckedTrenchesData",
       "setCheckedTrenchesNames",
       "addCheckedTrenchesData",
       "removeCheckedTrenchesData",
@@ -140,7 +139,7 @@ export default {
         );
         this.setCheckedTrenchesNames(newCheckedTrenchesNames);
       } else {
-        // Enlever les items de checkGroup de checkedTrenchesNames
+        // Removes items from checkGroup and checkedTrenchesNames
         let filteredCheckedTrenchesNames = this.checkedTrenchesNames.filter(
           (item) => !item.includes(checkGroup)
         );
