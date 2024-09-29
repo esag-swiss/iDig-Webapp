@@ -7,7 +7,7 @@
       Type
     </h3>
   </div>
-  <!-- dropdown for types -->
+  <!-- dropdown for types and sub-types -->
   <select
     :value="selectedType"
     class="form-control form-control-sm"
@@ -16,7 +16,7 @@
     <option
       v-for="type in projectPreferencesTypes"
       :key="type"
-      :value="type.type"
+      :value="type.subtype || type.type"
     >
       {{ type.plurals[lang] ?? type.type }}
     </option>
@@ -27,7 +27,7 @@
     <h3 title="display only fields for the selected type">Champs</h3>
     <!-- liste les groupes pour le type sélectionné -->
     <ul
-      v-for="(group, index) in groupsOfFieldsAccordingToType"
+      v-for="(group, index) in groupOfFieldsAccordingToTypeAndSubtype"
       :key="group"
       class="list-group"
     >
@@ -82,10 +82,33 @@ export default {
     ]),
     ...mapWritableState(useDataStore, ["checkedFieldNames"]), // mapWritableState for v-model only
     // liste les groupes pour l'accordéon des champs en fonction du Type
+
     groupsOfFieldsAccordingToType() {
       return this.projectPreferencesTypes.filter((x) => {
-        return x.type.includes(this.selectedType);
+        return (
+          x.type.includes(this.selectedType) ||
+          (x.subtype && x.subtype.includes(this.selectedType))
+        );
       })[0]?.groups;
+    },
+
+    groupOfFieldsAccordingToTypeAndSubtype() {
+      let groups = [...this.groupsOfFieldsAccordingToType];
+      groups.forEach((obj) => {
+        if (obj.group === "General Section") {
+          let fieldsToAdd = [{ field: "Subtype" }];
+          fieldsToAdd.forEach((field) => {
+            if (
+              !obj.fields.some(
+                (existingField) => existingField.field === field.field
+              )
+            ) {
+              obj.fields.push(field);
+            }
+          });
+        }
+      });
+      return groups;
     },
   },
   watch: {

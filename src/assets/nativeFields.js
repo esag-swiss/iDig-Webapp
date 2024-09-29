@@ -71,6 +71,25 @@ export const fieldsSchema = {
       fr: "Secteur d'origine de l'élément",
     },
   },
+  Subtype: {
+    field: "subtype",
+    group: "General",
+    type: "ExtraFields",
+    labels: {
+      en: "Subtype",
+      fr: "Sous type",
+      it: "Sottotipo",
+      de: "Untertyp",
+      el: "Υποτύπος",
+    },
+    tips: {
+      en: "Allows defining different properties for the subtype beyond those defined for the type",
+      fr: "Permet de définir différentes propriétés pour le sous-type que celles définies pour le type",
+      it: "Consente di definire proprietà differenti per il sottotipo rispetto a quelle definite per il tipo",
+      de: "Ermöglicht die Definition verschiedener Eigenschaften für den Untertyp, die sich von denen des Typs unterscheiden",
+      el: "Επιτρέπει τον ορισμό διαφορετικών ιδιοτήτων για τον υποτύπο πέραν αυτών που ορίζονται για τον τύπο",
+    },
+  },
   // "group": "Status",
   RightsSidelined: {
     type: "boolean",

@@ -14,6 +14,7 @@ import {
   storeDataInIndexedDB,
   readDataInIndexedDB,
 } from "@/services/indexedDbManager";
+import { fieldsSchema } from "@/assets/nativeFields";
 
 export const useDataStore = defineStore("data", {
   state: () => ({
@@ -37,7 +38,26 @@ export const useDataStore = defineStore("data", {
     projectPreferencesTypesForSelect(state) {
       const { lang } = useAppStore();
       let options = state.projectPreferencesTypes.map((field) => {
-        return { value: field.type, label: field.labels[lang] };
+        return {
+          value: field.type,
+          label: field.labels[lang],
+          subtype: field.subtype,
+        };
+      });
+      return options;
+    },
+
+    projectPreferencesTypesForOption(state) {
+      const { lang } = useAppStore();
+      let options = state.projectPreferencesTypes.map((field) => {
+        return {
+          label: field.labels[lang],
+          value: {
+            type: field.type,
+
+            subtype: field.subtype,
+          },
+        };
       });
       return options;
     },
@@ -47,7 +67,12 @@ export const useDataStore = defineStore("data", {
       let options = {};
       state.projectPreferencesTypes.forEach((field) => {
         options[field.type] = field.labels[lang];
+        // Si un subtype est défini, ajout de la traduction pour le subtype
+        if (field.subtype) {
+          options[field.subtype] = field.labels[lang] ?? options[field.subtype];
+        }
       });
+
       return options;
     },
 
@@ -67,6 +92,11 @@ export const useDataStore = defineStore("data", {
           translatedLabels[this.projectPreferencesFields.indexOf(field)];
       }
 
+      if (fieldsSchema.Subtype) {
+        //
+        const subtypeLabel = fieldsSchema.Subtype.labels?.[lang] ?? "Subtype";
+        langKeys = { ...langKeys, Subtype: subtypeLabel };
+      }
       return langKeys;
     },
 
@@ -85,9 +115,19 @@ export const useDataStore = defineStore("data", {
     },
 
     checkedTrenchesItemsSelectedType(state) {
-      return state.checkedTrenchesItems.filter((item) =>
+      // Filtrage par Type
+      let filteredItems = state.checkedTrenchesItems.filter((item) =>
         item?.Type?.includes(state.selectedType)
       );
+
+      // Si aucun élément n'est trouvé avec Type, filtrer par Subtype
+      if (filteredItems.length === 0) {
+        filteredItems = state.checkedTrenchesItems.filter((item) =>
+          item?.Subtype?.includes(state.selectedType)
+        );
+      }
+
+      return filteredItems;
     },
 
     checkedTrenchesItemsSelectedTypeAndSearched(state) {
