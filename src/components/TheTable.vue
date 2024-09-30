@@ -50,12 +50,14 @@ import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import TheItem from "@/components/TheItem.vue";
 import ThePatches from "@/components/ThePatches.vue";
+import { useAppStore } from "@/stores/app";
 
 export default {
   name: "TheQTable",
   components: { TheItem, ThePatches },
   setup() {
     const dataStore = useDataStore();
+    const appStore = useAppStore();
     const rows = ref(dataStore.checkedTrenchesItemsSelectedTypeAndSearched);
     const currentItem = ref();
     const startX = ref(0);
@@ -97,9 +99,11 @@ export default {
 
     const onRowClick = (evt, row) => {
       currentItem.value = row;
+      appStore.setIsItemSelected(true);
     };
     const clearTheItem = () => {
       currentItem.value = null;
+      appStore.setIsItemSelected(false);
     };
     const dragStart = (event) => {
       startX.value = event.clientX;

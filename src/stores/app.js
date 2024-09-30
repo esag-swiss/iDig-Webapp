@@ -12,6 +12,7 @@ export const useAppStore = defineStore("app", {
     loadingCount: 0,
     isLoaded: false,
     isMapMinimized: true,
+    isItemSelected: false,
     // Load local storage values for these elements, or empty string if not exist :
     lang: lsLoadLang(),
     username: lsLoadUsername(),
@@ -48,6 +49,9 @@ export const useAppStore = defineStore("app", {
     },
     setIsMapMinimized(value) {
       this.isMapMinimized = value;
+    },
+    setIsItemSelected(value) {
+      this.isItemSelected = value;
     },
   },
 });

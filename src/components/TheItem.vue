@@ -54,9 +54,14 @@
 
         <div
           v-for="(field, index) in editMode
-            ? group.fields.filter((item) => item.field !== 'CoverageSpatial')
-            : group.fields.filter((item) =>
-                fieldsOfCurrentItem.includes(item.field)
+            ? group.fields.filter(
+                (item) =>
+                  item.field !== 'CoverageSpatial' && item.field !== 'Subtype'
+              )
+            : group.fields.filter(
+                (item) =>
+                  fieldsOfCurrentItem.includes(item.field) &&
+                  item.field !== 'Subtype'
               )"
           :key="field"
           class="d-flex align-items-start border-bottom"
@@ -89,23 +94,29 @@
             <div v-if="field.field === 'Type'" class="col-12 p-1">
               <div v-if="editMode" class="col-12 p-1 m-0 border-none">
                 <q-select
-                  v-model="currentItem[field.field]"
+                  v-model="selectedTypeSubtype"
                   dense
                   options-dense
                   filled
-                  :options="projectPreferencesTypesForSelect"
+                  :options="projectPreferencesTypesForOption"
                   emit-value
                   map-options
                   class="select"
+                  :label="
+                    projectPreferencesTypesTranslation[currentItem.Subtype] ||
+                    projectPreferencesTypesTranslation[currentItem[field.field]]
+                  "
+                  @update:model-value="updateTypeAndSubtype"
                 />
               </div>
               <div v-else>
                 {{
+                  projectPreferencesTypesTranslation[currentItem.Subtype] ||
                   projectPreferencesTypesTranslation[currentItem[field.field]]
                 }}
               </div>
             </div>
-            <!-- RightsStatus  -->
+            <!-- RightsStatus  TODO voir option value et label -->
             <div v-else-if="field.field === 'RightsStatus'" class="col-12 p-1">
               <div class="col-12 p-1 m-0 border-none">
                 <q-select
@@ -134,7 +145,7 @@
               v-else-if="field.field === 'RelationAttachments'"
               class="col-12 p-1 border-none"
             >
-              <div v-if="currentItem[field.field]" class="col-12">
+              <div v-show="currentItem[field.field]" class="col-12">
                 <img id="image" :src="imageSrc" class="img-fluid" />
               </div>
             </div>
@@ -356,7 +367,6 @@
               "
               class="col-12 p-1 m-0 border-none"
             >
-              {{ currentItem[field.field] }}
               <div v-if="editMode" class="col-12 p-1 m-0 border-none">
                 <q-select
                   v-model="currentItem[field.field]"
@@ -374,6 +384,9 @@
                   class="bg-accent"
                   >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
                 >
+              </div>
+              <div v-else class="col-12 p-1 m-0 border-none">
+                {{ currentItem[field.field] }}
               </div>
             </div>
             <!-- STRING -->
@@ -461,7 +474,7 @@ export default {
   },
   data() {
     return {
-      // field: "Material",
+      selectedTypeSubtype: null,
       editMode: false,
       imageSrc: "",
       arrayForMultivalueFields: [],
@@ -472,6 +485,7 @@ export default {
     ...mapState(useDataStore, [
       "projectPreferencesTypes",
       "projectPreferencesTypesForSelect",
+      "projectPreferencesTypesForOption",
       "projectPreferencesTypesTranslation",
       "projectPreferencesFields",
       "projectPreferencesBase64",
@@ -499,7 +513,10 @@ export default {
     groupOfFieldsAccordingToType() {
       let groups = [];
       groups = this.projectPreferencesTypes.filter((x) => {
-        return x.type.includes(this.selectedType);
+        return (
+          x.type.includes(this.selectedType) ||
+          (x.subtype && x.subtype.includes(this.selectedType))
+        );
       })[0].groups;
       return groups;
     },
@@ -517,6 +534,18 @@ export default {
     groupOfFieldsAccordingToTypeAndNative() {
       let groups = [...this.groupOfFieldsAccordingToType];
       groups.forEach((obj) => {
+        if (obj.group === "General Section") {
+          let fieldsToAdd = [{ field: "Subtype" }];
+          fieldsToAdd.forEach((field) => {
+            if (
+              !obj.fields.some(
+                (existingField) => existingField.field === field.field
+              )
+            ) {
+              obj.fields.push(field);
+            }
+          });
+        }
         if (obj.group === "Relation Section") {
           let fieldsToAdd = [
             { field: "RelationIsAboveUUID" },
@@ -614,6 +643,10 @@ export default {
         return dayjs(value).format("DD/MM/YYYY");
       }
     },
+    updateTypeAndSubtype(value) {
+      this.currentItem.Type = value.type;
+      this.currentItem.Subtype = value.subtype;
+    },
 
     fieldType(field, groupObject) {
       let groupName = groupObject.group ?? "";
@@ -623,7 +656,10 @@ export default {
 
       let fieldSchemaFromGroups = this.projectPreferencesTypes
         .filter((x) => {
-          return x.type.includes(this.selectedType);
+          return (
+            x.type.includes(this.selectedType) ||
+            (x.subtype && x.subtype.includes(this.selectedType))
+          );
         })[0]
         ?.groups.filter((x) => {
           return x.group.includes(groupName);
@@ -783,5 +819,9 @@ export default {
 <style>
 .q-field__native {
   padding-left: 7px;
+}
+.q-field__label {
+  left: 5px;
+  color: black;
 }
 </style>

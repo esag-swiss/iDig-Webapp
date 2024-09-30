@@ -38,7 +38,7 @@
           <TheMap></TheMap>
         </div>
         <div
-          v-if="checkedTrenchesItemsSelectedType.length > 0"
+          v-if="checkedTrenchesItemsSelectedType.length > 0 && !isItemSelected"
           :class="{ miniMap: isMapMinimized }"
           class="theToggle"
           @click="toggleMap"
@@ -77,7 +77,7 @@ export default {
     TheMap,
   },
   computed: {
-    ...mapState(useAppStore, ["isLoaded", "isMapMinimized"]),
+    ...mapState(useAppStore, ["isLoaded", "isMapMinimized", "isItemSelected"]),
     ...mapState(useDataStore, ["checkedTrenchesItemsSelectedType"]),
   },
   watch: {
