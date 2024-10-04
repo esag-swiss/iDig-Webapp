@@ -37,6 +37,36 @@
     <div class="TheItem center-block mx-auto">
       <!--Formulaire-->
 
+      <!--   IMAGE DISPLAY SECTION (for RelationAttachments and RelationIncludesUUID) -->
+      <ul v-if="!editMode" class="list-group">
+        <div v-if="relatedImageUrls.length > 0" class="col-12 p-1">
+          <div class="thumbnails-container">
+            <!-- Image miniature avec clic pour agrandir -->
+            <img
+              v-for="(url, index) in relatedImageUrls"
+              :key="index"
+              :src="url"
+              class="img-thumbnail"
+              @click="selectedImageUrl = url"
+            />
+          </div>
+
+          <!-- Overlay avec l'image agrandie -->
+          <div
+            v-if="selectedImageUrl"
+            class="image-overlay"
+            @click="selectedImageUrl = null"
+          >
+            <img
+              :src="selectedImageUrl"
+              class="img-fullscreen"
+              alt="Image agrandie"
+            />
+          </div>
+        </div>
+      </ul>
+
+      <!--   LISTE OF GROUPS and FIELDS section) -->
       <ul
         v-for="(group, indexGroup) in editMode
           ? groupOfFieldsAccordingToTypeAndNative
@@ -140,21 +170,11 @@
                 >
               </div>
             </div>
-            <!-- IMAGE -->
-            <div
-              v-else-if="field.field === 'RelationAttachments'"
-              class="col-12 p-1 border-none"
-            >
-              <div v-show="currentItem[field.field]" class="col-12">
-                <img id="image" :src="imageSrc" class="img-fluid" />
-              </div>
-            </div>
+
             <!-- CoverageSerialized -->
             <div
-              v-else-if="
-                field.field === 'CoverageSerialized' && currentItem[field.field]
-              "
-              class="col-12 p-1 border-none"
+              v-else-if="field.field === 'CoverageSerialized'"
+              class="col-12 p-1"
             >
               <div>
                 {{ determineTypeGeo(currentItem[field.field]) }}
@@ -163,7 +183,7 @@
             <!-- BOOLEAN -->
             <div
               v-else-if="fieldsSchema[field.field]?.type === 'boolean'"
-              class="col-10 p-1"
+              class="col-12 p-1"
             >
               <q-toggle
                 v-model="currentItem[field.field]"
@@ -185,13 +205,14 @@
                 fieldsSchema[field.field]?.type === 'link' &&
                 currentItem[field.field]
               "
-              class="col-10 p-1"
+              class="col-12 p-1 flex-grow-1"
             >
               <q-chip
                 v-for="item in popupItems(currentItem[field.field])"
                 :key="item"
                 color="primary"
                 text-color="white"
+                class="q-chip"
               >
                 {{ item }}
               </q-chip>
@@ -206,7 +227,7 @@
             <!-- DATE -->
             <div
               v-else-if="fieldsSchema[field.field]?.type === 'DateUTC'"
-              class="col-10 p-1"
+              class="col-12 p-1"
             >
               {{ format_date(currentItem[field.field]) }}
               <q-tooltip
@@ -222,7 +243,7 @@
               v-else-if="
                 fieldType(field.field, group)?.hasOwnProperty('multiline')
               "
-              class="col-12 p-1 border-none"
+              class="col-12 p-1"
             >
               <textarea
                 v-if="editMode"
@@ -245,9 +266,9 @@
                 fieldType(field.field, group)?.hasOwnProperty('multivalue') &&
                 fieldType(field.field, group)?.valuelist?.length !== 0
               "
-              class="col-12 p-1 m-0 border-none"
+              class="col-12 p-1 border-none"
             >
-              <div class="col-12 p-1 m-0 border-none">
+              <div class="col-12 p-1 border-none">
                 {{ currentItem[field.field] }}
               </div>
               <div v-if="editMode" class="col-12 p-1 m-0 border-none">
@@ -329,7 +350,7 @@
                 fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
                 fieldType(field.field, group)?.valuelist.length !== 0
               "
-              class="col-12 p-1 m-0 border-none"
+              class="col-12 p-1 border-none"
             >
               <div v-if="editMode" class="col-12 p-1 m-0 border-none">
                 <q-select
@@ -365,7 +386,7 @@
                 fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
                 fieldType(field.field, group)?.valuelist.length == 0
               "
-              class="col-12 p-1 m-0 border-none"
+              class="col-12 p-1 border-none"
             >
               <div v-if="editMode" class="col-12 p-1 m-0 border-none">
                 <q-select
@@ -463,6 +484,11 @@ import { useAppStore } from "@/stores/app";
 import dayjs from "dayjs";
 import { fieldsSchema } from "@/assets/nativeFields";
 import { determineGeoType } from "@/services/json2geojson";
+import {
+  openDB,
+  addPlanToDB,
+  getImageFromDB,
+} from "@/services/indexedDbManager";
 
 export default {
   name: "TheItem",
@@ -476,7 +502,8 @@ export default {
     return {
       selectedTypeSubtype: null,
       editMode: false,
-      imageSrc: "",
+      selectedImageUrl: null, // Pour stocker l'URL de l'image sélectionnée
+      relatedImageUrls: [], // Tableau pour stocker les URLs d'images récupérées
       arrayForMultivalueFields: [],
       fieldsSchema: fieldsSchema,
     };
@@ -511,6 +538,8 @@ export default {
     },
 
     groupOfFieldsAccordingToType() {
+      // all groups according to type from Preferences
+      // except Attachments since photo are managed elsewhere
       let groups = [];
       groups = this.projectPreferencesTypes.filter((x) => {
         return (
@@ -518,10 +547,11 @@ export default {
           (x.subtype && x.subtype.includes(this.selectedType))
         );
       })[0].groups;
-      return groups;
+      return groups.filter((obj) => obj.group !== "Attachments");
     },
 
     groupsOfFieldsAccordingToItem() {
+      // used to display only groups where items has fields
       let groups = this.groupOfFieldsAccordingToTypeAndNative;
       groups = groups.filter((obj) =>
         obj.fields.some((field) =>
@@ -532,6 +562,7 @@ export default {
     },
 
     groupOfFieldsAccordingToTypeAndNative() {
+      // all groups according to type from Preferences + natives fields or groups
       let groups = [...this.groupOfFieldsAccordingToType];
       groups.forEach((obj) => {
         if (obj.group === "General Section") {
@@ -602,33 +633,29 @@ export default {
     },
 
     listFieldsNotIncludedInGroups() {
-      let fieldsNotToDisplay = [
+      let notToDisplay = [
         "IdentifierUUID",
         "Trench",
         "RightsTrashed",
         "RightsDeleted",
+        "DateTimeZone",
       ];
       let fieldsNotPrinsentInGroup = [];
 
       this.groupOfFieldsAccordingToTypeAndNative.forEach((obj) => {
         obj.fields.forEach((key) => {
-          fieldsNotToDisplay.push(key.field);
+          notToDisplay.push(key.field);
         });
       });
 
       fieldsNotPrinsentInGroup = this.fieldsOfCurrentItem.filter(
-        (item) => !fieldsNotToDisplay.includes(item)
+        (item) => !notToDisplay.includes(item)
       );
       return fieldsNotPrinsentInGroup;
     },
   },
   mounted() {
-    if (this.currentItem.RelationAttachments && this.currentItem.Trench) {
-      this.fetchImage(
-        this.currentItem.RelationAttachments,
-        this.currentItem.Trench
-      );
-    }
+    this.fetchImages();
   },
 
   methods: {
@@ -728,20 +755,11 @@ export default {
     },
 
     determineTypeGeo(e) {
-      return determineGeoType(e);
-    },
-
-    async fetchImage(RelationAttachments, Trench) {
-      return await apiFetchImageSRC(RelationAttachments, Trench).then(
-        (response) => {
-          let blob = new Blob([response.data], {
-            type: response.headers["content-type"],
-          });
-          let imgUrl = URL.createObjectURL(blob);
-
-          this.imageSrc = imgUrl;
-        }
-      );
+      if (e) {
+        return determineGeoType(e);
+      } else {
+        return null;
+      }
     },
 
     updateMultiArray(field, value) {
@@ -755,6 +773,134 @@ export default {
           ? this.currentItem[field] + "\n" + value
           : value;
       }
+    },
+
+    async fetchImages() {
+      let relatedItems = [];
+      if (this.currentItem.RelationAttachments) {
+        relatedItems = [this.currentItem.IdentifierUUID];
+        // Récupérer les URL d'images pour chaque UUID trouvé
+        const imagePromises = relatedItems.map((uuid) =>
+          this.findObjectByUuid(uuid)
+        );
+        // Attendre la résolution de toutes les promesses d'URL d'images
+        const resolvedImages = await Promise.all(imagePromises);
+
+        // Filtrer les résultats pour ne garder que les valeurs non nulles
+        this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
+      }
+      if (this.currentItem.RelationIncludesUUID && this.currentItem.Trench) {
+        if (this.currentItem.RelationIncludesUUID.includes("\n")) {
+          relatedItems = this.currentItem.RelationIncludesUUID.split("\n");
+        } else {
+          relatedItems = [this.currentItem.RelationIncludesUUID];
+        }
+
+        // Récupérer les URL d'images pour chaque UUID trouvé
+        const imagePromises = relatedItems.map((uuid) =>
+          this.findObjectByUuid(uuid)
+        );
+        // Attendre la résolution de toutes les promesses d'URL d'images
+        const resolvedImages = await Promise.all(imagePromises);
+
+        // Filtrer les résultats pour ne garder que les valeurs non nulles
+        this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
+      }
+    },
+
+    findObjectByUuid(IdentifierUUID) {
+      // Vérifie si les données existent pour la tranchée actuelle
+      const trenchData = this.checkedTrenchesData[this.currentItem.Trench];
+
+      if (!trenchData) {
+        return null; // Retourne null si aucune donnée n'est disponible
+      }
+
+      // Filtrer les éléments correspondant à l'UUID
+      const filteredItems = trenchData.filter(
+        (x) => x.IdentifierUUID === IdentifierUUID && x.Type === "Image"
+      );
+
+      if (filteredItems.length > 0) {
+        return this.fetchURLs(filteredItems[0].RelationAttachments); // Récupérer l'image
+      } else {
+        return "null"; // Si aucun élément n'est trouvé, retournez null
+      }
+    },
+
+    async fetchURLsOLD(RelationAttachments) {
+      try {
+        const response = await apiFetchImageSRC(
+          RelationAttachments,
+          this.currentItem.Trench
+        );
+        if (response && response.data) {
+          let blob = new Blob([response.data], {
+            type: response.headers["content-type"],
+          });
+          return URL.createObjectURL(blob); // Retourne l'URL de l'image
+        } else {
+          return "/path/to/placeholder.jpg"; // Retourne une image de remplacement en cas d'erreur
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération de l'image :", error);
+        return "/path/to/placeholder.jpg"; // Placeholder en cas d'erreur
+      }
+    },
+
+    async fetchURLs(RelationAttachments) {
+      try {
+        // Extraire l'identifiant unique de l'image à partir de RelationAttachments
+        let imageName = RelationAttachments.split("\n")[0]
+          .split("=")[1]
+          .split(".")[0];
+
+        // Ouvrir IndexedDB et vérifier si l'image y est déjà stockée
+        const db = await openDB();
+        const result = await getImageFromDB(db, imageName);
+
+        if (result) {
+          // Si l'image est présente dans IndexedDB, la charger depuis la base de données
+          const imageUrl = URL.createObjectURL(result.imageBlob);
+          return imageUrl; // Retourner l'URL de l'image
+        } else {
+          // Si l'image n'est pas dans IndexedDB, la récupérer via l'API
+          const response = await apiFetchImageSRC(
+            RelationAttachments,
+            this.currentItem.Trench
+          );
+
+          if (response && response.data) {
+            // Créer un Blob à partir de la réponse
+            const imageBlob = new Blob([response.data], {
+              type: response.headers["content-type"],
+            });
+
+            // Créer une URL à partir du Blob
+            const imageUrl = URL.createObjectURL(imageBlob);
+
+            // Stocker l'image dans IndexedDB
+            await addPlanToDB(db, imageName, imageBlob, null);
+
+            return imageUrl; // Retourner l'URL de l'image
+          } else {
+            return "/src/assets/missing.PNG"; // Retourner une image de remplacement en cas d'erreur
+          }
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération de l'image :", error);
+        return "/src/assets/missing.PNG"; // Placeholder en cas d'erreur
+      }
+    },
+
+    // Ouvrir l'image agrandie
+    openImage(url) {
+      this.selectedImageUrl = url; // Stocker l'URL de l'image cliquée
+    },
+
+    // Fermer l'image agrandie
+    closeImage() {
+      this.selectedImageUrl = null; // Réinitialiser l'URL pour masquer l'image
     },
 
     popupItems(IdentifierUUIDs) {
@@ -815,6 +961,41 @@ export default {
 .select {
   margin: -5px;
 }
+/* Style pour la miniature */
+.img-thumbnail {
+  max-width: 100px;
+  cursor: pointer;
+}
+
+/* Overlay qui couvre toute la page */
+.image-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Fond semi-transparent */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050; /* Assure que l'overlay est au-dessus du reste */
+  cursor: pointer;
+}
+
+/* Image en plein écran dans l'overlay */
+.img-fullscreen {
+  max-width: 90%; /* Largeur maximale de 90% de l'écran */
+  max-height: 90%; /* Hauteur maximale de 90% de l'écran */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optionnel, ajoute une ombre */
+  cursor: pointer;
+}
+/* Conteneur pour aligner les images miniatures horizontalement */
+.thumbnails-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  max-width: 100%; /* Ajuste la largeur au conteneur */
+}
 </style>
 <style>
 .q-field__native {
@@ -823,5 +1004,11 @@ export default {
 .q-field__label {
   left: 5px;
   color: black;
+}
+.q-chip {
+  max-width: 150px; /* Limite la largeur */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Affiche des points de suspension si le texte est trop long */
 }
 </style>
