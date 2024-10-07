@@ -1,5 +1,16 @@
 <template>
-  <div id="mapContainer"></div>
+  <div v-show="!isItemSelected" id="mapContainer"></div>
+  <div v-show="!isItemSelected" id="exportButtons">
+    <q-btn
+      v-show="!isItemSelected"
+      align="left"
+      padding="2px"
+      color="secondary"
+      icon="download"
+      @click="exportMapAsPNG"
+      ><q-tooltip class="bg-accent">export map</q-tooltip></q-btn
+    >
+  </div>
 </template>
 
 <script>
@@ -10,6 +21,7 @@ import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
 import { createMapsOverlay } from "@/services/idigMap.js";
+import html2canvas from "html2canvas";
 
 export default {
   name: "TheMap",
@@ -25,7 +37,11 @@ export default {
     };
   },
   computed: {
-    ...mapState(useAppStore, ["isMapMinimized", "loadingCount"]),
+    ...mapState(useAppStore, [
+      "isMapMinimized",
+      "loadingCount",
+      "isItemSelected",
+    ]),
     ...mapState(useDataStore, [
       "checkedTrenchesItemsPlans",
       "checkedTrenchesItemsSelectedTypeAndSearched",
@@ -87,7 +103,14 @@ export default {
       this.map = L.map("mapContainer", {
         attributionControl: false,
         zoomControl: true,
+        renderer: L.canvas(),
       });
+
+      // Ajouter l'échelle à la carte
+      L.control
+        .scale({ position: "bottomleft", imperial: false })
+        .addTo(this.map);
+
       const osmLayer = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
         maxZoom: 25,
         maxNativeZoom: 19,
@@ -257,16 +280,62 @@ export default {
         );
       }
     },
+    async exportMapAsPNG() {
+      const mapElement = document.getElementById("mapContainer");
+      // Utiliser html2canvas pour capturer l'élément de la carte
+      html2canvas(mapElement, {
+        ignoreElements: function (element) {
+          if (
+            element.classList.contains("leaflet-control-zoom") ||
+            element.classList.contains("leaflet-control-layers")
+          ) {
+            return true;
+          }
+        },
+        useCORS: true,
+        async: true,
+      }).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        // Crée un lien de téléchargement
+        const link = document.createElement("a");
+        link.href = imgData;
+        link.download = "map_export.png";
+        link.click();
+      });
+    },
   },
 };
 </script>
 
 <style>
+#mapWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 #mapContainer {
   position: relative;
   width: 100%;
   height: 100%;
 }
+
+#exportButtons {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 1000; /* S'assure que les boutons sont au-dessus de la carte */
+}
+
+#exportButtons button {
+  padding: 8px;
+  margin-left: 45px;
+  margin-top: 2px;
+  border: none;
+}
+
 .leaflet-interactive:hover {
   fill-opacity: 1;
   stroke-opacity: 1;
