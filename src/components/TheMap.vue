@@ -2,7 +2,7 @@
   <div v-show="!isItemSelected" id="mapContainer"></div>
   <div v-show="!isItemSelected" id="exportButtons">
     <q-btn
-      v-show="!isItemSelected"
+      v-show="!isItemSelected && !isMapMinimized"
       align="left"
       padding="2px"
       color="secondary"
@@ -103,6 +103,8 @@ export default {
       this.map = L.map("mapContainer", {
         attributionControl: false,
         zoomControl: true,
+        zoomDelta: 0.25,
+        zoomSnap: 0,
         renderer: L.canvas(),
       });
 
@@ -307,6 +309,15 @@ export default {
 };
 </script>
 
+<style scoped>
+#exportButtons {
+  position: fixed;
+  bottom: 10px;
+  right: 43px;
+  z-index: 1000;
+}
+</style>
+
 <style>
 #mapWrapper {
   position: relative;
@@ -317,23 +328,6 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
-}
-
-#exportButtons {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  z-index: 1000; /* S'assure que les boutons sont au-dessus de la carte */
-}
-
-#exportButtons button {
-  padding: 8px;
-  margin-left: 45px;
-  margin-top: 2px;
-  border: none;
 }
 
 .leaflet-interactive:hover {

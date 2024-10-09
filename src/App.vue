@@ -10,9 +10,9 @@
       <nav class="col-2 d-block bg-light sidebar">
         <div class="sidebar-sticky hidescrollbar p-1">
           <TheControlSearch></TheControlSearch>
-          <TheControlTrenches> </TheControlTrenches>
-          <TheControlFields> </TheControlFields>
-          <TheControlExport> </TheControlExport>
+          <TheControlTrenches></TheControlTrenches>
+          <TheControlFields></TheControlFields>
+          <TheControlExport></TheControlExport>
         </div>
       </nav>
 
@@ -21,9 +21,9 @@
         <div
           v-if="checkedTrenchesItemsSelectedType.length > 0"
           class="theTableDiv"
-          :class="{ toggled: isMapMinimized }"
+          :class="{ minimized: !isMapMinimized }"
         >
-          <TheTable> </TheTable>
+          <TheTable></TheTable>
         </div>
 
         <div v-else class="d-flex justify-content-center mt-5">
@@ -33,16 +33,42 @@
         <div
           v-if="checkedTrenchesItemsSelectedType.length > 0"
           class="theMapDiv"
-          :class="{ toggled: isMapMinimized }"
+          :class="{ minimized: isMapMinimized }"
         >
           <TheMap></TheMap>
         </div>
-        <div
-          v-if="checkedTrenchesItemsSelectedType.length > 0 && !isItemSelected"
-          :class="{ miniMap: isMapMinimized }"
-          class="theToggle"
-          @click="toggleMap"
-        ></div>
+        <div v-show="isLoaded" class="mapbtn">
+          <q-btn
+            v-show="
+              checkedTrenchesItemsSelectedType.length > 0 &&
+              isMapMinimized &&
+              !isItemSelected
+            "
+            align="left"
+            padding="2px"
+            color="secondary"
+            icon="map"
+            @click="toggleMap"
+            ><q-tooltip
+              class="bg-accent"
+              anchor="top middle"
+              self="center right"
+              :offset="[100, 20]"
+              >map view</q-tooltip
+            ></q-btn
+          >
+          <q-btn
+            v-show="
+              checkedTrenchesItemsSelectedType.length > 0 && !isMapMinimized
+            "
+            align="left"
+            padding="2px"
+            color="secondary"
+            icon="format_list_bulleted"
+            @click="toggleMap"
+            ><q-tooltip class="bg-accent">list view</q-tooltip></q-btn
+          >
+        </div>
       </div>
     </div>
     <div v-else class="d-flex justify-content-center mt-5">
@@ -96,54 +122,53 @@ export default {
 };
 </script>
 
-<style>
-#app h3 {
-  font-size: 1.3rem;
-  font-weight: 500;
-  line-height: 1.2;
-  margin-bottom: 0rem;
-}
-
-.theToggle:hover {
-  cursor: pointer;
-}
-
-.theToggle,
-.theMapDiv.toggled,
-.theTableDiv {
+<style scoped>
+.mapbtn {
   position: fixed;
-  bottom: 50px;
-  right: 30px;
-  width: 100px;
-  height: 100px;
-  border-radius: 25px;
-  font-size: 30%;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   z-index: 1022;
-  overflow: hidden;
-  transition: width 0.3s, height 0.3s;
 }
 
-.miniMap {
-  background-image: url("@/assets/plan.PNG");
-  background-size: contain;
+.theTableDiv {
+  overflow: hidden;
+  height: 93vh;
 }
 
 .theMapDiv {
   height: 100%;
-  z-index: 1000;
-}
-.theTableDiv.toggled {
-  height: 94vh;
 }
 .theMapDiv,
-.theTableDiv.toggled {
+.theTableDiv {
   position: relative;
-  bottom: 0px;
-  right: 1px;
-  width: 100%;
 
-  border-radius: 0px;
-  font-size: 100%;
+  width: 100%;
+}
+
+.theMapDiv.minimized {
+  transition: width 0.5s, height 0.5s;
+}
+
+.minimized {
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  width: 5px;
+  height: 5px;
+  z-index: 1022;
+  overflow: hidden;
+}
+</style>
+
+<style>
+h3 {
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 0rem;
 }
 
 /*
@@ -168,7 +193,7 @@ export default {
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 }
-
+/* 
 .sidebar .nav-link {
   font-weight: 500;
   color: #333;
@@ -191,7 +216,7 @@ export default {
 .sidebar-heading {
   font-size: 0.75rem;
   text-transform: uppercase;
-}
+} */
 
 /*
  * Navbar
@@ -211,7 +236,7 @@ export default {
   border-radius: 0;
 }
 
-.form-control-dark {
+/* .form-control-dark {
   color: #fff;
   background-color: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.1);
@@ -220,18 +245,20 @@ export default {
 .form-control-dark:focus {
   border-color: transparent;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
-}
+} */
 
 /*
  * Utilities
  */
 
-.border-top {
+/* .border-top {
   border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
+} */
+
+/* utilisé dans theItem */
+/* .border-bottom {
   border-bottom: 1px solid #e5e5e5;
-}
+} */
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 .hidescrollbar::-webkit-scrollbar {
