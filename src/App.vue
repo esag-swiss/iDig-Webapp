@@ -78,28 +78,28 @@
 </template>
 
 <script>
-import TheControlTrenches from "@/components/TheControlTrenches.vue";
 import TheHeader from "@/components/TheHeader.vue";
+import TheControlSearch from "@/components/TheControlSearch.vue";
+import TheControlTrenches from "@/components/TheControlTrenches.vue";
 import TheControlFields from "@/components/TheControlFields.vue";
+import TheControlExport from "@/components/TheControlExport.vue";
 import TheTable from "@/components/TheTable.vue";
 import TheSpinner from "@/components/TheSpinner.vue";
-import TheControlExport from "@/components/TheControlExport.vue";
 import TheMap from "@/components/TheMap.vue";
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
-import TheControlSearch from "@/components/TheControlSearch.vue";
 
 export default {
   name: "App",
   components: {
-    TheControlSearch,
+    TheHeader,
     TheSpinner,
+    TheControlSearch,
     TheControlTrenches,
     TheControlFields,
-    TheTable,
-    TheHeader,
     TheControlExport,
+    TheTable,
     TheMap,
   },
   computed: {
@@ -193,35 +193,10 @@ h3 {
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 }
-/* 
-.sidebar .nav-link {
-  font-weight: 500;
-  color: #333;
-}
-
-.sidebar .nav-link .feather {
-  margin-right: 4px;
-  color: #999;
-}
-
-.sidebar .nav-link.active {
-  color: #007bff;
-}
-
-.sidebar .nav-link:hover .feather,
-.sidebar .nav-link.active .feather {
-  color: inherit;
-}
-
-.sidebar-heading {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-} */
 
 /*
  * Navbar
  */
-
 .navbar-brand {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
@@ -236,36 +211,10 @@ h3 {
   border-radius: 0;
 }
 
-/* .form-control-dark {
-  color: #fff;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.form-control-dark:focus {
-  border-color: transparent;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
-} */
-
-/*
- * Utilities
- */
-
-/* .border-top {
-  border-top: 1px solid #e5e5e5;
-} */
-
-/* utilisé dans theItem */
-/* .border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-} */
-
 /* Hide scrollbar for Chrome, Safari and Opera */
 .hidescrollbar::-webkit-scrollbar {
   display: none;
 }
-
-/* Hide scrollbar for IE, Edge and Firefox */
 .hidescrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
