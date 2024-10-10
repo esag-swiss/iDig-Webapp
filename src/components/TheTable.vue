@@ -40,6 +40,9 @@
           </q-th>
         </q-tr>
       </template>
+      <template v-slot:pagination="props">
+        <div class="pagination">Total : {{ rows.length }}</div>
+      </template>
     </q-table>
   </div>
 </template>
@@ -197,5 +200,8 @@ export default {
   right: -10px;
   min-width: 15px;
   cursor: col-resize;
+}
+.pagination {
+  margin-right: 30px;
 }
 </style>
