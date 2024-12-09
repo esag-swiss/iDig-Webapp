@@ -132,62 +132,50 @@ export const useDataStore = defineStore("data", {
 
     checkedTrenchesItemsSelectedTypeAndSearched(state) {
       // Early exit if no search text provided
-      if (state.searchText === "") {
+      if (state.searchText.trim() === "") {
         return state.checkedTrenchesItemsSelectedType;
       }
 
-      if (state.searchText.includes("AND")) {
-        let searchTerms = state.searchText.split("AND");
-        let currentResult = state.checkedTrenchesItemsSelectedType;
-        // Apply "AND" logic to each term
-        for (let i = 0; i < searchTerms.length; i++) {
-          currentResult = searchTerms[i].includes(":")
-            ? filterByProperty(currentResult, searchTerms[i])
-            : filterAllProperties(currentResult, searchTerms[i]);
+      const searchText = state.searchText.trim();
+      let result = [];
+
+      // Séparation en groupes utilisant le OR
+      const orGroups = searchText.split(/\sOR\s/).map((group) => group.trim());
+
+      // Evaluation des groupes avec l'opérateur AND en priorité
+      for (const group of orGroups) {
+        let andTerms = group.split(/\sAND\s/).map((term) => term.trim());
+        let andResult = state.checkedTrenchesItemsSelectedType;
+
+        // Appliquer le filtrage pour chaque terme de la condition AND
+        for (let term of andTerms) {
+          andResult = searchWithTerm(andResult, term);
         }
-        return currentResult;
-      } else if (state.searchText.includes("OR")) {
-        let searchTerms = state.searchText.split("OR");
-        let currentResult = [];
-        // Apply "OR" logic to each term
-        for (let i = 0; i < searchTerms.length; i++) {
-          const termResult = searchTerms[i].includes(":")
-            ? filterByProperty(
-                state.checkedTrenchesItemsSelectedType,
-                searchTerms[i]
-              )
-            : filterAllProperties(
-                state.checkedTrenchesItemsSelectedType,
-                searchTerms[i]
-              );
-          currentResult = currentResult.concat(termResult); // Concatenate termResult to currentResult
-        }
-        // Remove duplicates from the result (if any)
-        currentResult = Array.from(new Set(currentResult));
-        return currentResult;
-      } else {
-        // If the search text contains a colon, then we filter by property, otherwise, we search all properties
-        return state.searchText.includes(":")
-          ? filterByProperty(
-              state.checkedTrenchesItemsSelectedType,
-              state.searchText
-            )
-          : filterAllProperties(
-              state.checkedTrenchesItemsSelectedType,
-              state.searchText
-            );
+
+        // Concaténer les résultats de la condition AND avec les résultats globaux
+        result = result.concat(andResult);
       }
 
-      // Filter items based on a specific property mentioned before the colon in the searchText
-      function filterByProperty(objet, searchString) {
+      // Supprimer les doublons du résultat final
+      return Array.from(new Set(result));
+
+      // Fonction auxiliaire pour effectuer une recherche avec un seul terme
+      function searchWithTerm(items, term) {
+        return term.includes(":")
+          ? filterByProperty(items, term)
+          : filterAllProperties(items, term);
+      }
+
+      // Filtre par propriété spécifique
+      function filterByProperty(items, searchString) {
         let [searchProperty, searchText] = searchString.split(":");
         searchText = searchText.trim();
 
-        // Check if search text is enclosed in quotes
+        // Vérifiez si le texte de recherche est sensible à la casse
         const isCaseSensitive =
           searchText.startsWith('"') && searchText.endsWith('"');
 
-        // Remove quotes if present
+        // Supprimez les guillemets si présents
         if (isCaseSensitive) {
           searchText = searchText.substring(1, searchText.length - 1);
         } else {
@@ -197,40 +185,38 @@ export const useDataStore = defineStore("data", {
             .replace(/[\u0300-\u036f]/g, "");
         }
 
-        // First, translates key
+        // Traduire la clé si nécessaire
         let translationTab = state.projectPreferencesFieldsWithTranslation;
-        function findRawKey(obj, searchProperty) {
-          for (const key in obj) {
-            if (obj[key].toLowerCase() === searchProperty.toLowerCase()) {
-              return key;
-            }
-          }
-        }
-        let propertyName = findRawKey(translationTab, searchProperty);
+        const propertyName = findRawKey(translationTab, searchProperty.trim());
 
-        // 2d, filters items that have the requested key
-        return objet
-          .filter((item) => propertyName in item)
-          .filter((item) =>
-            isCaseSensitive
-              ? item[propertyName].includes(searchText)
-              : item[propertyName]
-                  .toLowerCase()
-                  .normalize("NFD")
-                  .replace(/[\u0300-\u036f]/g, "")
-                  .includes(searchText)
-          );
+        if (!propertyName) {
+          return [];
+        } // Si la propriété n'existe pas, retourner un tableau vide
+
+        return items.filter((item) => {
+          if (!item.hasOwnProperty(propertyName)) {
+            return false;
+          }
+          const value = String(item[propertyName]);
+          return isCaseSensitive
+            ? value.includes(searchText)
+            : value
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .includes(searchText);
+        });
       }
 
-      // Filter items by checking all properties for the searchText
-      function filterAllProperties(obj, searchString) {
+      // Filtre par toutes les propriétés
+      function filterAllProperties(items, searchString) {
         let searchText = searchString.trim();
 
-        // Check if search text is enclosed in quotes
+        // Vérifiez si le texte de recherche est sensible à la casse
         const isCaseSensitive =
           searchText.startsWith('"') && searchText.endsWith('"');
 
-        // Remove quotes if present
+        // Supprimez les guillemets si présents
         if (isCaseSensitive) {
           searchText = searchText.substring(1, searchText.length - 1);
         } else {
@@ -240,7 +226,7 @@ export const useDataStore = defineStore("data", {
             .replace(/[\u0300-\u036f]/g, "");
         }
 
-        return obj.filter((item) =>
+        return items.filter((item) =>
           Object.values(item).some((val) =>
             isCaseSensitive
               ? String(val).includes(searchText)
@@ -251,6 +237,16 @@ export const useDataStore = defineStore("data", {
                   .includes(searchText)
           )
         );
+      }
+
+      // Fonction pour trouver la clé brute basée sur la traduction
+      function findRawKey(obj, searchProperty) {
+        for (const key in obj) {
+          if (obj[key].toLowerCase() === searchProperty.toLowerCase()) {
+            return key;
+          }
+        }
+        return searchProperty;
       }
     },
   },

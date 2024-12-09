@@ -634,7 +634,7 @@ export default {
 
     listFieldsNotIncludedInGroups() {
       let notToDisplay = [
-        "IdentifierUUID",
+        // "IdentifierUUID",
         "Trench",
         "RightsTrashed",
         "RightsDeleted",
