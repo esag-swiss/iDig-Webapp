@@ -105,7 +105,6 @@ export default {
         zoomControl: true,
         zoomDelta: 0.25,
         zoomSnap: 0,
-        renderer: L.canvas(),
       });
 
       // Ajouter l'échelle à la carte
@@ -319,11 +318,6 @@ export default {
 </style>
 
 <style>
-#mapWrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
 #mapContainer {
   position: relative;
   width: 100%;
