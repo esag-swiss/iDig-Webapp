@@ -522,7 +522,6 @@ export default {
       "checkedTrenchesData",
       "checkedTrenchesVersion",
       "checkedTrenchesItemsSelectedType",
-      "selectedType",
     ]),
     ...mapState(useAppStore, ["username", "lang"]),
 
@@ -545,8 +544,8 @@ export default {
       let groups = [];
       groups = this.projectPreferencesTypes.filter((x) => {
         return (
-          x.type.includes(this.selectedType) ||
-          (x.subtype && x.subtype.includes(this.selectedType))
+          x.type.includes(this.currentItem.Type) ||
+          (x.subtype && x.subtype.includes(this.currentItem.Subtype))
         );
       })[0].groups;
       return groups.filter((obj) => obj.group !== "Attachments");
@@ -686,8 +685,8 @@ export default {
       let fieldSchemaFromGroups = this.projectPreferencesTypes
         .filter((x) => {
           return (
-            x.type.includes(this.selectedType) ||
-            (x.subtype && x.subtype.includes(this.selectedType))
+            x.type.includes(this.currentItem.Type) ||
+            (x.subtype && x.subtype.includes(this.currentItem.Subtype))
           );
         })[0]
         ?.groups.filter((x) => {
