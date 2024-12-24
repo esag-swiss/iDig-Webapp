@@ -208,13 +208,15 @@
               class="col-12 p-1 flex-grow-1"
             >
               <q-chip
-                v-for="item in popupItems(currentItem[field.field])"
+                v-for="item in itemsInChips(currentItem[field.field])"
+                clickable
+                @click="currentItem = item.fullItem"
                 :key="item"
                 color="primary"
                 text-color="white"
                 class="q-chip"
               >
-                {{ item }}
+                {{ item.chipText }}
               </q-chip>
               <q-tooltip
                 v-if="fieldType(field.field, group)?.tips?.[lang]"
@@ -895,7 +897,7 @@ export default {
 
     // Ouvrir l'image agrandie
     openImage(url) {
-      this.selectedImageUrl = url; // Stocker l'URL de l'image cliquée
+      this.selectedImageUrl = url;
     },
 
     // Fermer l'image agrandie
@@ -903,24 +905,36 @@ export default {
       this.selectedImageUrl = null; // Réinitialiser l'URL pour masquer l'image
     },
 
-    popupItems(IdentifierUUIDs) {
+    itemsInChips(IdentifierUUIDs) {
       if (IdentifierUUIDs.includes("\n")) {
         let relatedItems = IdentifierUUIDs.split("\n");
-        relatedItems = relatedItems.map((obj) => this.popupItem(obj));
+        relatedItems = relatedItems.map((obj) => this.chipText(obj));
         return relatedItems;
       } else {
-        return [this.popupItem(IdentifierUUIDs)];
+        return [this.chipText(IdentifierUUIDs)];
       }
     },
 
-    popupItem(IdentifierUUID) {
+    chipText(IdentifierUUID) {
       const filteredItems = this.checkedTrenchesData[
         this.currentItem.Trench
       ].filter((x) => x.IdentifierUUID.includes(IdentifierUUID));
-      return filteredItems.map(
-        (item) =>
-          this.projectPreferencesTypesTranslation[item.Type] + ": " + item.Title
-      )[0];
+
+      if (filteredItems.length > 0) {
+        const item = filteredItems[0];
+        return {
+          chipText:
+            this.projectPreferencesTypesTranslation[item.Type] +
+            ": " +
+            item.Title,
+          fullItem: item,
+        };
+      }
+
+      return {
+        chipText: "Unknown Item", // Valeur par défaut si aucun élément correspondant n'est trouvé
+        fullItem: null,
+      };
     },
   },
 };
@@ -1006,7 +1020,7 @@ export default {
   color: black;
 }
 .q-chip {
-  max-width: 150px; /* Limite la largeur */
+  /* max-width: 200px; Limite la largeur */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; /* Affiche des points de suspension si le texte est trop long */
