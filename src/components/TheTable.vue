@@ -27,11 +27,21 @@
             :style="{
               width: col.colWidth + col.colWidthType,
             }"
-            class="table_column"
+            class="th-container dropzone"
+            @dragover="onDragOver"
           >
-            {{ col.label }}
             <span
-              class="table__resize-handler"
+              class="arrow-left"
+              @click.stop="moveColumn(col.name, 'left')"
+            ></span>
+            <span>{{ col.label }}</span>
+            <span
+              class="arrow-right"
+              @click.stop="moveColumn(col.name, 'right')"
+            ></span>
+            <span class="cross-th" @click.stop="removeColumn(col.name)"></span>
+            <span
+              class="column__resize-handler"
               draggable="true"
               @dragstart="dragStart($event, col.name)"
               @dragend="dragEnd($event, col.name)"
@@ -99,6 +109,34 @@ export default {
         }));
       }
     );
+    const removeColumn = (colName) => {
+      dataStore.setCheckedFieldNames(
+        dataStore.checkedFieldNames.filter((fieldName) => fieldName !== colName)
+      );
+    };
+    const moveColumn = (colName, leftOrRight) => {
+      // Obtenir l'index actuel de la colonne
+      const currentIndex = dataStore.checkedFieldNames.indexOf(colName);
+
+      if (currentIndex === -1) {
+        console.error(`Colonne ${colName} introuvable`);
+        return;
+      }
+
+      // Calculer le nouvel index
+      const newIndex =
+        leftOrRight === "left"
+          ? Math.max(0, currentIndex - 1) // Déplacement à gauche
+          : Math.min(dataStore.checkedFieldNames.length - 1, currentIndex + 1); // Déplacement à droite
+
+      // Réorganiser les colonnes
+      const NewData = [...dataStore.checkedFieldNames];
+      const [movedColumn] = NewData.splice(currentIndex, 1); // Retirer la colonne
+      NewData.splice(newIndex, 0, movedColumn); // Insérer à la nouvelle position
+
+      // Mettre à jour les colonnes dans le store
+      dataStore.setCheckedFieldNames(NewData);
+    };
 
     const onRowClick = (evt, row) => {
       currentItem.value = row;
@@ -130,6 +168,10 @@ export default {
       deltaX.value = 0;
     };
 
+    const onDragOver = (event) => {
+      event.preventDefault();
+    };
+
     const initialPagination = ref({
       sortBy: "desc",
       descending: false,
@@ -148,22 +190,24 @@ export default {
       rows,
       currentItem,
       onRowClick,
-
+      removeColumn,
+      moveColumn,
       pagination,
       clearTheItem,
       dragStart,
       dragEnd,
+      onDragOver,
     };
   },
   computed: {
-    ...mapState(useDataStore, ["syncPatches"]),
+    ...mapState(useDataStore, ["syncPatches", "setCheckedFieldNames"]),
   },
   methods: {
     ...mapActions(useDataStore, ["setSyncPatches"]),
   },
 };
 </script>
-<style>
+<style scoped>
 .TheItemframe {
   position: fixed;
   top: 0;
@@ -185,23 +229,79 @@ export default {
 .q-table__bottom {
   padding: 4px 24px 4px 16px;
 }
+.pagination {
+  margin-right: 30px;
+}
 
 .q-table td,
 .q-table th {
   overflow: hidden;
 }
 
-.table_column {
-  position: relative;
-}
-
-.table__resize-handler {
+.column__resize-handler {
   position: absolute;
   right: -10px;
   min-width: 15px;
   cursor: col-resize;
 }
-.pagination {
-  margin-right: 30px;
+
+.q-table th {
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.q-table th:hover {
+  background-color: #f0f0f0;
+}
+
+.cross-th,
+.arrow-left,
+.arrow-right {
+  cursor: pointer;
+
+  margin: 0 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.cross-th {
+  right: 0px;
+  position: absolute;
+}
+
+.arrow-left,
+.arrow-right {
+  padding: 5px;
+}
+
+.cross-th:hover,
+.arrow-right:hover,
+.arrow-left:hover {
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.1
+  ); /* Couleur de fond plus foncée (semi-transparente) */
+}
+
+.cross-th::before {
+  content: "\2716"; /* Code Unicode pour une croix (✖) */
+}
+
+.arrow-right::before {
+  content: "\25B6";
+}
+
+.arrow-left::before {
+  content: "\25C0";
+}
+
+.q-table th:hover .cross-th,
+.q-table th:hover .arrow-left,
+.q-table th:hover .arrow-right {
+  opacity: 1; /* Rendre les ellipses visibles au survol du <q-th>*/
+  visibility: visible; /* Permettre l'interaction */
 }
 </style>
