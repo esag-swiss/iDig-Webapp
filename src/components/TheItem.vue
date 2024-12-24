@@ -210,7 +210,10 @@
               <q-chip
                 v-for="item in itemsInChips(currentItem[field.field])"
                 clickable
-                @click="currentItem = item.fullItem"
+                @click="
+                  currentItem = item.fullItem;
+                  fetchImages();
+                "
                 :key="item"
                 color="primary"
                 text-color="white"
