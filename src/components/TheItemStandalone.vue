@@ -40,6 +40,105 @@
           </div>
         </div>
       </ul>
+
+      <!--   LISTE OF GROUPS and FIELDS section) -->
+      <ul
+        v-for="(group, indexGroup) in groupsOfFieldsAccordingToItem"
+        :key="group"
+        class="list-group"
+      >
+        <!-- GROUPS LABELS -->
+
+        <li
+          class="list-group-item text-uppercase accordion p-1 pl-2 border-bottom"
+        >
+          {{ group.labels ? group.labels[lang] : group.group }}
+        </li>
+
+        <!-- ROWS   -->
+
+        <div
+          v-for="(field, index) in group.fields.filter(
+            (item) =>
+              fieldsOfCurrentItem.includes(item.field) &&
+              item.field !== 'Subtype'
+          )"
+          :key="field"
+          class="d-flex align-items-start border-bottom"
+        >
+          <!-- FIELDS LABEL   -->
+
+          <div class="text-right text-dark border-right p-1 col-2">
+            {{
+              field.labels?.[lang] ||
+              projectPreferencesFieldsWithTranslation?.[field.field] ||
+              fieldsSchema?.[field.field]?.labels?.[lang] ||
+              field.field
+            }}
+          </div>
+          <!-- VALUE : many cases  -->
+          <!--                     -->
+          <div class="col-10 border-none p-0">
+            <div v-if="field.field === 'Type'" class="col-12 p-1">
+              {{
+                projectPreferencesTypesTranslation[currentItem.Subtype] ||
+                projectPreferencesTypesTranslation[currentItem[field.field]]
+              }}
+            </div>
+            <div v-else-if="field.field === 'RightsStatus'" class="col-12 p-1">
+              {{ currentItem[field.field] }}
+            </div>
+            <div
+              v-else-if="field.field === 'CoverageSerialized'"
+              class="col-12 p-1"
+            >
+              geodata
+            </div>
+            <div
+              v-else-if="fieldsSchema[field.field]?.type === 'boolean'"
+              class="col-12 p-1"
+            >
+              <q-toggle
+                v-model="currentItem[field.field]"
+                false-value="0"
+                true-value="1"
+                color="green"
+                :disable="true"
+              />
+            </div>
+            <div
+              v-else-if="fieldsSchema[field.field]?.type === 'link'"
+              class="col-12 p-1 flex-grow-1"
+            >
+              <q-chip
+                v-for="item in itemsInChips(currentItem[field.field])"
+                clickable
+                @click="
+                  openInNewTab(
+                    item.fullItem.IdentifierUUID,
+                    item.fullItem.Trench
+                  )
+                "
+                :key="item"
+                color="primary"
+                text-color="white"
+                class="q-chip"
+              >
+                {{ item.chipText }}
+              </q-chip>
+            </div>
+            <div
+              v-else-if="fieldsSchema[field.field]?.type === 'DateUTC'"
+              class="col-12 p-1"
+            >
+              {{ format_date(currentItem[field.field]) }}
+            </div>
+            <div v-else class="col-12 p-1">
+              {{ currentItem[field.field] }}
+            </div>
+          </div>
+        </div>
+      </ul>
     </div>
   </div>
 </template>
@@ -53,6 +152,8 @@ import {
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
+import { fieldsSchema } from "@/assets/nativeFields";
+import dayjs from "dayjs";
 
 export default {
   name: "TheItemStandalone",
@@ -76,7 +177,7 @@ export default {
       selectedImageUrl: null, // Pour stocker l'URL de l'image sélectionnée
       relatedImageUrls: [], // Tableau pour stocker les URLs d'images récupérées
       // arrayForMultivalueFields: [],
-      // fieldsSchema: fieldsSchema,
+      fieldsSchema: fieldsSchema,
     };
   },
   computed: {
@@ -417,12 +518,57 @@ export default {
         return "/src/assets/missing.PNG"; // Placeholder en cas d'erreur
       }
     },
+    itemsInChips(IdentifierUUIDs) {
+      if (IdentifierUUIDs.includes("\n")) {
+        let relatedItems = IdentifierUUIDs.split("\n");
+        relatedItems = relatedItems.map((obj) => this.chipText(obj));
+        return relatedItems;
+      } else {
+        return [this.chipText(IdentifierUUIDs)];
+      }
+    },
+
+    chipText(IdentifierUUID) {
+      const filteredItems = this.trenchData.filter((x) =>
+        x.IdentifierUUID.includes(IdentifierUUID)
+      );
+
+      if (filteredItems.length > 0) {
+        const item = filteredItems[0];
+        return {
+          chipText:
+            this.projectPreferencesTypesTranslation[item.Type] +
+            ": " +
+            item.Title,
+          fullItem: item,
+        };
+      }
+
+      return {
+        chipText: "Unknown Item", // Valeur par défaut si aucun élément correspondant n'est trouvé
+        fullItem: null,
+      };
+    },
+
+    openInNewTab(uuid, trench) {
+      const url = this.$router.resolve({
+        name: "TheItemStandalone",
+        params: { itemId: uuid, trenchSource: trench },
+      }).href;
+      window.open(url, "_blank"); // Ouvre un nouvel onglet avec l'URL générée
+    },
+
+    format_date(value) {
+      if (value) {
+        return dayjs(value).format("DD/MM/YYYY");
+      }
+    },
   },
 };
 </script>
 <style scoped>
 .TheItemwrapper {
-  position: absolute;
+  margin: auto;
   width: 90%;
   height: 90vh;
   overflow-y: auto;
