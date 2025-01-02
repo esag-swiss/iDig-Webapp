@@ -104,7 +104,8 @@ export function geoSerializedToGeojson(json) {
             id: json[i].Identifier,
             type: json[i].Type,
             title: json[i].Title,
-            source: json[i].Source,
+            Trench: json[i].Trench,
+            IdentifierUUID: json[i].IdentifierUUID,
           },
         });
       } else {
