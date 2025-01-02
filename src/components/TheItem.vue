@@ -102,11 +102,10 @@
           <div class="text-right text-dark border-right p-1 col-2">
             {{
               // labels from types.groups.fields.labels.[lang] except if empty
-              field.labels?.[lang] !== undefined && field.labels?.[lang] !== ""
-                ? field.labels?.[lang]
-                : projectPreferencesFieldsWithTranslation[field.field] ??
-                  fieldsSchema[field.field]?.labels?.[lang] ??
-                  field.field
+              field.labels?.[lang] ||
+              projectPreferencesFieldsWithTranslation?.[field.field] ||
+              fieldsSchema?.[field.field]?.labels?.[lang] ||
+              field.field
             }}
             <q-tooltip
               anchor="center left"
