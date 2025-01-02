@@ -269,16 +269,18 @@ export default {
 
       return result;
     },
-
+    // to edit
     onEachFeature(feature, itemsLayer) {
       if (feature.properties && feature.properties.id) {
-        itemsLayer.bindPopup(
-          feature.properties.source +
-            " " +
-            feature.properties.id +
-            "<br>" +
-            feature.properties.title
-        );
+        const popupContent = `
+      <div onclick="window.open('#/TheItemStandalone/${feature.properties.Trench}/${feature.properties.IdentifierUUID}', '_blank')">
+        <strong>${feature.properties.Trench} ${feature.properties.id}</strong><br>
+        ${feature.properties.title}<br>
+      </div>
+    `;
+        itemsLayer.bindPopup(popupContent, {
+          closeButton: false,
+        });
       }
     },
     async exportMapAsPNG() {
@@ -328,5 +330,12 @@ export default {
   fill-opacity: 1;
   stroke-opacity: 1;
   stroke-width: 4;
+}
+.leaflet-popup-content {
+}
+
+.leaflet-popup-content-wrapper:hover {
+  background-color: #f8f9fab4;
+  cursor: pointer;
 }
 </style>
