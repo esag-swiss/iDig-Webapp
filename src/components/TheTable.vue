@@ -18,6 +18,7 @@
       class="q-table"
       separator="vertical"
       @row-click="onRowClick"
+      @row-contextmenu="openInNewTab"
       ><template v-slot:header="props">
         <q-tr :props="props">
           <q-th
@@ -204,6 +205,13 @@ export default {
   },
   methods: {
     ...mapActions(useDataStore, ["setSyncPatches"]),
+    openInNewTab(eve, row) {
+      const url = this.$router.resolve({
+        name: "TheItemStandalone",
+        params: { itemId: row.IdentifierUUID, trenchSource: row.Trench },
+      }).href;
+      window.open(url, "_blank"); // Ouvre un nouvel onglet avec l'URL générée
+    },
   },
 };
 </script>

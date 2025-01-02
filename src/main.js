@@ -13,15 +13,16 @@ import "@quasar/extras/material-symbols-rounded/material-symbols-rounded.css";
 import "@quasar/extras/material-symbols-sharp/material-symbols-sharp.css";
 import "@quasar/extras/fontawesome-v6/fontawesome-v6.css";
 import "@quasar/extras/ionicons-v4/ionicons-v4.css";
+
 // Import Quasar css
 import "quasar/src/css/index.sass";
 import App from "./App.vue";
-
 import "./assets/main.css";
+import router from "./router/index.js"; // Assurez-vous que le routeur est importé
 
 const pinia = createPinia();
 const myApp = createApp(App);
-
+myApp.use(router);
 myApp.use(pinia);
 myApp.use(Quasar, {
   plugins: {

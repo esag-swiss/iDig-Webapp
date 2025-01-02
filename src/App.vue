@@ -3,8 +3,8 @@
 
   <!-- HEADER -->
   <TheHeader class="sticky-top"></TheHeader>
-
-  <div class="container-fluid">
+  <router-view v-if="$route.name === 'TheItemStandalone'" />
+  <div v-else class="container-fluid">
     <div v-if="isLoaded" class="row">
       <!-- SIDEBAR -->
       <nav class="col-2 d-block bg-light sidebar">
