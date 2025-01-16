@@ -206,15 +206,84 @@ export default {
   methods: {
     ...mapActions(useDataStore, ["setSyncPatches"]),
     openInNewTab(eve, row) {
-      const url = this.$router.resolve({
+      // Prevent the default context menu from opening
+      eve.preventDefault();
+
+      // Vérifier et fermer tout popup existant avant d'en créer un nouveau
+      const existingPopup = document.querySelector(".custom-popup");
+      if (existingPopup) {
+        document.body.removeChild(existingPopup);
+      }
+
+      // Create a small popup window
+      const left = eve.clientX;
+      const top = eve.clientY;
+
+      const popup = document.createElement("div");
+      popup.className = "custom-popup"; // Ajouter une classe pour identifier ce popup
+      popup.style.left = `${left}px`;
+      popup.style.top = `${top}px`;
+
+      const link = this.$router.resolve({
         name: "TheItemStandalone",
         params: { itemId: row.IdentifierUUID, trenchSource: row.Trench },
       }).href;
-      window.open(url, "_blank"); // Ouvre un nouvel onglet avec l'URL générée
+
+      const openNewTabButton = document.createElement("div");
+      openNewTabButton.innerText = "Open in New Tab";
+      openNewTabButton.onclick = () => {
+        window.open(link, "_blank");
+        document.body.removeChild(popup);
+      };
+
+      const Copy = document.createElement("div");
+      Copy.innerText = "Copy to Clipboard";
+      Copy.onclick = () => {
+        // copy to clipboard
+        const rowText = JSON.stringify(row, null, 2); // Convertir l'objet row en texte lisible
+        navigator.clipboard.writeText(rowText);
+        document.body.removeChild(popup);
+      };
+
+      popup.appendChild(openNewTabButton);
+      popup.appendChild(Copy);
+
+      // Append the popup to the body
+      document.body.appendChild(popup);
+
+      // Gérer les clics en dehors pour fermer le popup
+      const handleClickOutside = (event) => {
+        if (!popup.contains(event.target)) {
+          document.body.removeChild(popup);
+          document.removeEventListener("click", handleClickOutside);
+        }
+      };
+
+      // Ajouter l'événement
+      document.addEventListener("click", handleClickOutside);
     },
   },
 };
 </script>
+<style>
+.custom-popup {
+  position: fixed;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 9999;
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+}
+.custom-popup div {
+  padding: 5px 1px;
+  margin: 3px;
+}
+.custom-popup div:hover {
+  background-color: #f0f0f0;
+}
+</style>
+
 <style scoped>
 .TheItemframe {
   position: fixed;
