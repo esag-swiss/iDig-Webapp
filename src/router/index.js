@@ -5,7 +5,7 @@ const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/TheItemStandalone/:trenchSource/:itemId",
+      path: "/Item/:trenchSource/:itemId",
       name: "TheItemStandalone",
       component: TheItemStandalone,
       props: true,

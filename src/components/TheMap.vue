@@ -273,7 +273,7 @@ export default {
     onEachFeature(feature, itemsLayer) {
       if (feature.properties && feature.properties.id) {
         const popupContent = `
-      <div onclick="window.open('#/TheItemStandalone/${feature.properties.Trench}/${feature.properties.IdentifierUUID}', '_blank')">
+      <div onclick="window.open('#/Item/${feature.properties.Trench}/${feature.properties.IdentifierUUID}', '_blank')">
         <strong>${feature.properties.Trench} ${feature.properties.id}</strong><br>
         ${feature.properties.title}<br>
       </div>
