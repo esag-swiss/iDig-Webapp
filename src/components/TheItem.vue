@@ -1009,12 +1009,15 @@ export default {
   max-width: 100px;
   cursor: pointer;
 }
+.img-thumbnail:hover {
+  border: 2px solid #5b5d5f;
+}
 
 /* Conteneur pour aligner les images miniatures horizontalement */
 .thumbnails-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 10px;
+  gap: 0px;
   max-width: 100%; /* Ajuste la largeur au conteneur */
 }
 

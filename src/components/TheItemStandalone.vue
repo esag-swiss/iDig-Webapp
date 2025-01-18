@@ -634,6 +634,9 @@ export default {
   max-width: 100px;
   cursor: pointer;
 }
+.img-thumbnail:hover {
+  border: 2px solid #5b5d5f;
+}
 
 /* Conteneur pour aligner les images miniatures horizontalement */
 .thumbnails-container {
