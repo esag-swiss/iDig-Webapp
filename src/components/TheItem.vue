@@ -4,7 +4,7 @@
     <div
       class="sticky-top q-fixed bg-grey-1 q-px-sm full-width row items-center justify-between"
     >
-      <div class="col text-weight-medium text-left">
+      <div class="col text-uppercase text-h6">
         {{ projectPreferencesTypesTranslation[currentItem.Type] }}
         {{ currentItem.Identifier }}
       </div>
@@ -40,14 +40,17 @@
       <!--   IMAGE DISPLAY SECTION (for RelationAttachments and RelationIncludesUUID) -->
       <ul v-if="!editMode" class="list-group">
         <div v-if="relatedImageUrls.length > 0" class="col-12 p-1">
-          <div class="thumbnails-container">
+          <div v-if="!selectedImageUrl" class="thumbnails-container">
             <!-- Image miniature avec clic pour agrandir -->
             <img
               v-for="(url, index) in relatedImageUrls"
               :key="index"
               :src="url"
               class="img-thumbnail"
-              @click="selectedImageUrl = url"
+              @click="
+                selectedImageUrl = relatedImageUrls[index];
+                relatedImageUrlsselectedIndex = index;
+              "
             />
           </div>
 
@@ -57,11 +60,35 @@
             class="image-overlay"
             @click="selectedImageUrl = null"
           >
-            <img
-              :src="selectedImageUrl"
-              class="img-fullscreen"
-              alt="Image agrandie"
-            />
+            <!-- Bouton gauche -->
+            <div
+              class="nav-button left"
+              @click.stop="
+                relatedImageUrlsselectedIndex =
+                  (relatedImageUrlsselectedIndex -
+                    1 +
+                    relatedImageUrls.length) %
+                  relatedImageUrls.length;
+                selectedImageUrl =
+                  relatedImageUrls[relatedImageUrlsselectedIndex];
+              "
+            >
+              <span>&lt;</span>
+            </div>
+            <!-- Image affichée -->
+            <img :src="selectedImageUrl" class="img-fullscreen" alt="Image" />
+            <!-- Bouton droit -->
+            <div
+              class="nav-button right"
+              @click.stop="
+                relatedImageUrlsselectedIndex =
+                  (relatedImageUrlsselectedIndex + 1) % relatedImageUrls.length;
+                selectedImageUrl =
+                  relatedImageUrls[relatedImageUrlsselectedIndex];
+              "
+            >
+              <span>&gt;</span>
+            </div>
           </div>
         </div>
       </ul>
@@ -504,12 +531,13 @@ export default {
   },
   data() {
     return {
+      fieldsSchema: fieldsSchema,
       selectedTypeSubtype: null,
       editMode: false,
-      selectedImageUrl: null, // Pour stocker l'URL de l'image sélectionnée
-      relatedImageUrls: [], // Tableau pour stocker les URLs d'images récupérées
       arrayForMultivalueFields: [],
-      fieldsSchema: fieldsSchema,
+      relatedImageUrls: [], // Tableau pour stocker les URLs d'images récupérées
+      selectedImageUrl: null, // Pour stocker l'URL de l'image sélectionnée
+      relatedImageUrlsselectedIndex: null,
     };
   },
   computed: {
@@ -982,6 +1010,14 @@ export default {
   cursor: pointer;
 }
 
+/* Conteneur pour aligner les images miniatures horizontalement */
+.thumbnails-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  max-width: 100%; /* Ajuste la largeur au conteneur */
+}
+
 /* Overlay qui couvre toute la page */
 .image-overlay {
   position: fixed;
@@ -1004,12 +1040,33 @@ export default {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optionnel, ajoute une ombre */
   cursor: pointer;
 }
-/* Conteneur pour aligner les images miniatures horizontalement */
-.thumbnails-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 10px;
-  max-width: 100%; /* Ajuste la largeur au conteneur */
+
+.nav-button {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.nav-button.left {
+  left: 0;
+}
+
+.nav-button.right {
+  right: 0;
 }
 </style>
 <style>
