@@ -7,6 +7,7 @@ import {
 } from "@/services/indexedDbManager";
 import { apiFetchImageSRC, apiFetchPlanWld } from "@/services/ApiClient";
 
+// OVERLAYS LAYERS
 export async function createMapsOverlay(
   RelationAttachments,
   Trench,
@@ -145,4 +146,49 @@ export async function createMapsOverlays(
   }, {});
 
   return result;
+}
+
+// BASE LAYERS or TILES LAYERS
+export function createTileLayers() {
+  let osmLayer = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
+    maxZoom: 25,
+    maxNativeZoom: 19,
+    attribution:
+      '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+  });
+
+  let Minimaliste = L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+    {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 25,
+    }
+  );
+
+  let Sombre = L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+    {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 25,
+    }
+  );
+
+  let Satellite = L.tileLayer(
+    "http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+    {
+      maxZoom: 25,
+      subdomains: ["mt0", "mt1", "mt2", "mt3"],
+    }
+  );
+
+  return {
+    Satellite: Satellite,
+    OSM: osmLayer,
+    Minimaliste: Minimaliste,
+    Sombre: Sombre,
+  };
 }

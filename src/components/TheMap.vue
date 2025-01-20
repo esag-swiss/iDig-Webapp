@@ -19,8 +19,11 @@ import L from "leaflet";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
-import { createMapsOverlays } from "@/services/mapOverlays.js";
-import { loadItemsLayer, createTileLayers } from "@/services/mapLayers.js";
+import {
+  createMapsOverlays,
+  createTileLayers,
+} from "@/services/mapOverlays.js";
+import { loadItemsLayer } from "@/services/mapLayers.js";
 import { exportMapAsPNG } from "@/services/mapExport.js";
 
 export default {
