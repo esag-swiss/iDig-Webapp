@@ -23,7 +23,7 @@ import {
   createMapsOverlays,
   createTileLayers,
 } from "@/services/mapOverlays.js";
-import { loadItemsLayer } from "@/services/mapLayers.js";
+import { loadItemsLayer } from "@/services/mapItemsLayers.js";
 import { exportMapAsPNG } from "@/services/mapExport.js";
 
 export default {
