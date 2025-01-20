@@ -119,3 +119,30 @@ export async function createMapsOverlay(
     [imageTitle]: imageOverlay,
   };
 }
+export async function createMapsOverlays(
+  checkedTrenchesItemsPlans,
+  projectPreferencesCRS
+) {
+  const promises = checkedTrenchesItemsPlans
+    .filter(
+      (obj) =>
+        obj.RelationAttachments?.includes("\n\n") ||
+        obj.RelationAttachments?.includes(").")
+    )
+    .map((obj) =>
+      createMapsOverlay(
+        obj.RelationAttachments,
+        obj.Trench,
+        projectPreferencesCRS,
+        obj.Title
+      )
+    );
+
+  const overlays = await Promise.all(promises);
+  // Combine overlays in one object
+  const result = overlays.reduce((acc, overlay) => {
+    return { ...acc, ...overlay };
+  }, {});
+
+  return result;
+}
