@@ -39,6 +39,7 @@ let Satellite = L.tileLayer(
   "http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
   {
     maxZoom: 25,
+    maxNativeZoom: 19,
     subdomains: ["mt0", "mt1", "mt2", "mt3"],
   }
 );
