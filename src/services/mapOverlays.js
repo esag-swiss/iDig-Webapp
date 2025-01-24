@@ -7,8 +7,55 @@ import {
 } from "@/services/indexedDbManager";
 import { apiFetchImageSRC, apiFetchPlanWld } from "@/services/ApiClient";
 
-// OVERLAYS LAYERS
-export async function createMapsOverlay(
+// BASE LAYERS or TILES LAYERS
+let osmLayer = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
+  maxZoom: 25,
+  maxNativeZoom: 19,
+  attribution:
+    '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+});
+
+let Minimaliste = L.tileLayer(
+  "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+  {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: "abcd",
+    maxZoom: 25,
+  }
+);
+
+let Sombre = L.tileLayer(
+  "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+  {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: "abcd",
+    maxZoom: 25,
+  }
+);
+
+let Satellite = L.tileLayer(
+  "http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+  {
+    maxZoom: 25,
+    subdomains: ["mt0", "mt1", "mt2", "mt3"],
+  }
+);
+
+export const baseLayersTree = {
+  label: "Base Layers",
+  children: [
+    { label: "OSM", layer: osmLayer },
+    { label: "Light", layer: Minimaliste },
+    { label: "Dark", layer: Sombre },
+    { label: "Satellite", layer: Satellite },
+  ],
+};
+
+// OVERLAYS TREE ------------------------------
+
+async function createMapsOverlayTree(
   RelationAttachments,
   Trench,
   projectPreferencesCRS,
@@ -16,14 +63,12 @@ export async function createMapsOverlay(
 ) {
   let imageName;
   let imageUrl;
-
   let imageBlob;
   let imageWidth;
   let imageHeight;
   let planlatLngBounds;
-  let leafletLatLngBounds;
 
-  //look if plan is present in indexedDB and fetch details
+  // Vérification et récupération des détails depuis IndexedDB
   imageName = RelationAttachments.split("\n")[0].split("=")[1].split(".")[0];
   const db = await openDB();
   const result = await getImageFromDB(db, imageName);
@@ -31,164 +76,116 @@ export async function createMapsOverlay(
   if (result) {
     imageUrl = URL.createObjectURL(result.imageBlob);
     planlatLngBounds = result.planlatLngBounds;
-  } else if (RelationAttachments.includes("\n\n")) {
-    await apiFetchImageSRC(RelationAttachments, Trench).then(
-      async (response) => {
-        imageBlob = new Blob([response.data], {
-          type: response.headers["content-type"],
-        });
-        // Créer l'URL objet pour l'image
-        imageUrl = URL.createObjectURL(imageBlob);
-        // Créer une nouvelle instance de l'objet Image
-        const img = new Image();
-        // Charger l'image
-        img.src = imageUrl;
-        // Attendre que l'image soit chargée
-        await new Promise((resolve) => {
-          img.onload = resolve;
-        });
-        imageWidth = img.width;
-        imageHeight = img.height;
-      }
-    );
+  } else {
+    const fetchImage = async () => {
+      const response = await apiFetchImageSRC(RelationAttachments, Trench);
+      imageBlob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      imageUrl = URL.createObjectURL(imageBlob);
 
-    planlatLngBounds = await apiFetchPlanWld(RelationAttachments, Trench).then(
-      async (textContent) => {
-        const wldCoefficients = textContent.split("\n");
-        async function wldToExtent(wldCoefficients, width, height) {
-          const [scaleX, rotationY, rotationX, scaleY, West, North] =
-            wldCoefficients.map((value) => parseFloat(value));
-
-          const East = scaleX * width + rotationX * height + West;
-          const South = rotationY * width + scaleY * height + North;
-
-          return {
-            SW: [West, South],
-            NE: [East, North],
-          };
-        }
-
-        return wldToExtent(wldCoefficients, imageWidth, imageHeight);
-      }
-    );
-
-    // stocker le plan dans IndexedDB
-    const db = await openDB();
-    addPlanToDB(db, imageName, imageBlob, planlatLngBounds);
-  } else if (RelationAttachments.includes(").")) {
-    let fetchPlan = await apiFetchImageSRC(RelationAttachments, Trench);
-
-    imageBlob = new Blob([fetchPlan.data]);
-    imageUrl = URL.createObjectURL(imageBlob);
-
-    let NESW = RelationAttachments.split("\n")[0]
-      .split("=")[1]
-      .match(/\(([^)]+)\)/)[1];
-    NESW = NESW.split(",").map((value) => parseFloat(value));
-    planlatLngBounds = {
-      SW: [NESW[2], NESW[3]],
-      NE: [NESW[0], NESW[1]],
+      // Charger les dimensions de l'image
+      const img = new Image();
+      img.src = imageUrl;
+      await new Promise((resolve) => (img.onload = resolve));
+      imageWidth = img.width;
+      imageHeight = img.height;
     };
 
-    // stocker le plan dans IndexedDB
-    const db = await openDB();
+    const fetchBounds = async () => {
+      if (RelationAttachments.includes("\n\n")) {
+        const textContent = await apiFetchPlanWld(RelationAttachments, Trench);
+        const wldCoefficients = textContent.split("\n").map(parseFloat);
+
+        const [scaleX, rotationY, rotationX, scaleY, West, North] =
+          wldCoefficients;
+        const East = scaleX * imageWidth + rotationX * imageHeight + West;
+        const South = rotationY * imageWidth + scaleY * imageHeight + North;
+
+        return { SW: [West, South], NE: [East, North] };
+      } else if (RelationAttachments.includes(").")) {
+        const NESW = RelationAttachments.split("\n")[0]
+          .split("=")[1]
+          .match(/\(([^)]+)\)/)[1]
+          .split(",")
+          .map(parseFloat);
+        return { SW: [NESW[2], NESW[3]], NE: [NESW[0], NESW[1]] };
+      }
+    };
+
+    await fetchImage();
+    planlatLngBounds = await fetchBounds();
+
+    // Stocker les détails dans IndexedDB
     addPlanToDB(db, imageName, imageBlob, planlatLngBounds);
   }
 
-  // Leaflet à besoin de coordonnées formatées SWNE et en EPSG4326 (WGS84)
-  leafletLatLngBounds = L.latLngBounds([
-    [
-      convertToEPSG4326(
-        planlatLngBounds.SW,
-        projectPreferencesCRS
-      ).coords.reverse(),
-    ],
-    [
-      convertToEPSG4326(
-        planlatLngBounds.NE,
-        projectPreferencesCRS
-      ).coords.reverse(),
-    ],
+  // Conversion des coordonnées pour Leaflet
+  const leafletLatLngBounds = L.latLngBounds([
+    convertToEPSG4326(
+      planlatLngBounds.SW,
+      projectPreferencesCRS
+    ).coords.reverse(),
+    convertToEPSG4326(
+      planlatLngBounds.NE,
+      projectPreferencesCRS
+    ).coords.reverse(),
   ]);
 
+  // Création de l'overlay
   const imageOverlay = L.imageOverlay(imageUrl, leafletLatLngBounds, {
     opacity: 0.8,
   });
 
-  //RETURN
-  return {
-    [imageTitle]: imageOverlay,
-  };
+  return { label: imageTitle, layer: imageOverlay };
 }
-export async function createMapsOverlays(
+
+export async function createMapsOverlaysTree(
   checkedTrenchesItemsPlans,
   projectPreferencesCRS
 ) {
-  const promises = checkedTrenchesItemsPlans
-    .filter(
-      (obj) =>
-        obj.RelationAttachments?.includes("\n\n") ||
-        obj.RelationAttachments?.includes(").")
-    )
-    .map((obj) =>
-      createMapsOverlay(
+  const groupedOverlays = {};
+
+  for (const obj of checkedTrenchesItemsPlans) {
+    if (
+      obj.RelationAttachments?.includes("\n\n") ||
+      obj.RelationAttachments?.includes(").")
+    ) {
+      const overlay = await createMapsOverlayTree(
         obj.RelationAttachments,
         obj.Trench,
         projectPreferencesCRS,
         obj.Title
-      )
-    );
+      );
 
-  const overlays = await Promise.all(promises);
-  // Combine overlays in one object
-  const result = overlays.reduce((acc, overlay) => {
-    return { ...acc, ...overlay };
-  }, {});
+      // Extraire le préfixe des 5 premières lettres de `Title`
+      const prefix = obj.Title.substring(0, 5);
+
+      // Créer un groupe pour chaque préfixe si nécessaire
+      if (!groupedOverlays[prefix]) {
+        groupedOverlays[prefix] = {
+          label: prefix,
+          selectAllCheckbox: true,
+          collapsed: true,
+          children: [],
+        };
+      }
+
+      // Ajouter l'overlay à l'entrée correspondante
+      groupedOverlays[prefix].children.push(overlay);
+    }
+  }
+
+  // Trier les groupedOverlays par ordre alphabétique des labels
+  const sortedGroupedOverlays = Object.values(groupedOverlays).sort((a, b) =>
+    a.label.localeCompare(b.label)
+  );
+
+  const result = {
+    label: "Plans Orthophotos",
+    selectAllCheckbox: "Un/select all",
+    children: sortedGroupedOverlays,
+  };
 
   return result;
-}
-
-// BASE LAYERS or TILES LAYERS
-export function createTileLayers() {
-  let osmLayer = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
-    maxZoom: 25,
-    maxNativeZoom: 19,
-    attribution:
-      '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-  });
-
-  let Minimaliste = L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
-    {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: "abcd",
-      maxZoom: 25,
-    }
-  );
-
-  let Sombre = L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
-    {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: "abcd",
-      maxZoom: 25,
-    }
-  );
-
-  let Satellite = L.tileLayer(
-    "http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
-    {
-      maxZoom: 25,
-      subdomains: ["mt0", "mt1", "mt2", "mt3"],
-    }
-  );
-
-  return {
-    Satellite: Satellite,
-    OSM: osmLayer,
-    Minimaliste: Minimaliste,
-    Sombre: Sombre,
-  };
 }

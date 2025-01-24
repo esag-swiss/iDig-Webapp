@@ -16,15 +16,18 @@
 <script>
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import "leaflet.control.layers.tree";
+import "leaflet.control.layers.tree/L.Control.Layers.Tree.css";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
 import {
-  createMapsOverlays,
-  createTileLayers,
+  createMapsOverlaysTree,
+  baseLayersTree,
 } from "@/services/mapOverlays.js";
 import { loadItemsLayer } from "@/services/mapItemsLayers.js";
 import { exportMapAsPNG } from "@/services/mapExport.js";
+import CustomLayersTree from "@/services/CustomLayersTree.js";
 
 export default {
   name: "TheMap",
@@ -33,8 +36,11 @@ export default {
       map: null,
       itemsLayer: null,
       overlayLayers: null,
-      baseLayers: null,
-      layerControl: null,
+      // baseLayers: null,
+      // layerControl: null,
+      baseLayersTree: null,
+      overlaysTree: null,
+      treeLayerControl: null,
       firstMapShowed: true,
       isProcessingTrenchItemsPlans: false,
     };
@@ -63,44 +69,34 @@ export default {
     loadingCount: function (newLoadingCount, oldLoadingCount) {
       if (oldLoadingCount === 1 && newLoadingCount === 0 && this.map) {
         this.loadItemsLayer();
-        this.layerControl.remove();
       }
     },
-    // when removing trenches load items layer
+    // reload items layer when removing trenches
     checkedTrenchesItemsSelectedTypeAndSearched: function () {
       if (this.loadingCount === 0 && this.map) {
         this.loadItemsLayer();
-        if (this.map) {
-          // removes mapslayers
-          for (const layerName in this.overlayLayers) {
-            if (
-              Object.prototype.hasOwnProperty.call(
-                this.overlayLayers,
-                layerName
-              )
-            ) {
-              const layerToRemove = this.overlayLayers[layerName];
-              this.map.removeLayer(layerToRemove);
-            }
-          }
-        }
       }
     },
 
+    // reload overlays tree when changing trenches
     checkedTrenchesItemsPlans: async function () {
       if (this.map && !this.isProcessingTrenchItemsPlans) {
         this.isProcessingTrenchItemsPlans = true;
         try {
-          await this.layerControl.remove();
-          this.overlayLayers = await createMapsOverlays(
+          await this.treeLayerControl.remove();
+          this.treeLayerControl.removeAllOverlays(this.map);
+
+          this.overlaysTree = await createMapsOverlaysTree(
             this.checkedTrenchesItemsPlans,
             this.projectPreferencesCRS
           );
-          this.layerControl = L.control
-            .layers(this.baseLayers, this.overlayLayers, {
-              sortLayers: true,
-            })
-            .addTo(this.map);
+          this.treeLayerControl = L.control.layers.tree(
+            baseLayersTree,
+            this.overlaysTree
+          );
+          this.treeLayerControl.addTo(this.map);
+        } catch (error) {
+          console.error(error);
         } finally {
           this.isProcessingTrenchItemsPlans = false;
         }
@@ -109,20 +105,10 @@ export default {
   },
   methods: {
     async initMap() {
-      // Definition de baseLayers et overlayLayers
-      this.baseLayers = createTileLayers();
-
-      this.overlayLayers = await createMapsOverlays(
+      this.baseLayersTree = baseLayersTree;
+      this.overlaysTree = await createMapsOverlaysTree(
         this.checkedTrenchesItemsPlans,
         this.projectPreferencesCRS
-      );
-
-      this.layerControl = L.control.layers(
-        this.baseLayers,
-        this.overlayLayers,
-        {
-          sortLayers: true,
-        }
       );
 
       // Creation de la carte
@@ -131,11 +117,15 @@ export default {
         zoomControl: true,
         zoomDelta: 0.25,
         zoomSnap: 0,
-        layers: this.baseLayers["Satellite"],
+        layers: this.baseLayersTree.children[3].layer,
       });
 
-      // Ajout du control de couches
-      this.layerControl.addTo(this.map);
+      // Ajout du control de couches en arborescence
+      this.treeLayerControl = L.control.layers.tree(
+        baseLayersTree,
+        this.overlaysTree
+      );
+      this.treeLayerControl.addTo(this.map);
 
       // Ajout de l'échelle
       L.control
