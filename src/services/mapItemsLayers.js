@@ -84,14 +84,16 @@ export function loadItemsLayer(
 
 function onEachFeature(feature, layer) {
   if (feature.properties && feature.properties.id) {
-    const popupContent = `
-      <div onclick="window.open('#/Item/${feature.properties.Trench}/${feature.properties.IdentifierUUID}', '_blank')">
-        <strong>${feature.properties.Trench} ${feature.properties.id}</strong><br>
-        ${feature.properties.title}<br>
-      </div>
-    `;
-    layer.bindPopup(popupContent, {
-      closeButton: false,
+    const booltipContent = `<strong>${feature.properties.Trench} ${feature.properties.id}</strong><br>${feature.properties.title}`;
+    const itemUrl = `#/Item/${feature.properties.Trench}/${feature.properties.IdentifierUUID}`;
+
+    layer.on("click", () => {
+      window.open(itemUrl, "_blank");
+    });
+    layer.bindTooltip(booltipContent, {
+      permanent: false,
+      direction: "top",
+      offset: [0, -10],
     });
   }
 }
