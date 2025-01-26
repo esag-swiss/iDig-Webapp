@@ -14,7 +14,6 @@
           v-if="editMode"
           round
           color="secondary"
-          class="m-1 pl-3"
           icon="cloud_upload"
           :size="'sm'"
           @click="pushSurvey()"

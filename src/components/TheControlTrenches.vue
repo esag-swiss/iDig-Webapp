@@ -1,8 +1,40 @@
 <template>
   <div name="secteurs" class="p-1 m-1 bg-light border-0">
-    <h3>Secteurs</h3>
+    <h3>
+      Secteurs
+      <q-checkbox
+        @update:model-value="handleCheckboxUpdate"
+        v-model="isAllChecked"
+        size="xs"
+        indeterminate-value="maybe"
+      />
+      <q-tooltip class="bg-accent"> Select/Deselect All </q-tooltip>
+    </h3>
+    <q-dialog v-model="confirmAllChecked" persistent>
+      <q-card class="bg-accent text-white">
+        <q-card-section>
+          <div class="text-h6">Alert</div>
+        </q-card-section>
+        <q-card-section class="items-center">
+          <span class="q-ml-sm"
+            >This action will select all trenches. If there are more than 20
+            trenches, please proceed with caution.</span
+          >
+        </q-card-section>
+
+        <q-card-actions>
+          <q-btn
+            flat
+            label="Cancel"
+            @click="isAllChecked = 'maybe'"
+            v-close-popup
+          />
+          <q-btn flat label="Ok" @click="checkAll()" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <!-- liste trenches -->
-    <div v-if="projectTrenchesNames.length < 10">
+    <div v-if="projectTrenchesNames.length < 15">
       <ul
         v-for="trenchName in projectTrenchesNames"
         :key="trenchName"
@@ -69,32 +101,6 @@
         </div>
       </ul>
     </div>
-
-    <!-- Check All/None -->
-    <div v-if="projectTrenchesNames.length > 10" class="q-pa-xs">
-      <div class="q-gutter-sm">
-        <q-btn
-          align="left"
-          size="10px"
-          padding="2px 5px"
-          color="secondary"
-          :disabled="isNoneChecked"
-          label="None"
-          @click="uncheckAll"
-          ><q-tooltip class="bg-accent">Uncheck all trenches</q-tooltip></q-btn
-        >
-        <q-btn
-          align="left"
-          size="10px"
-          padding="2px 5px"
-          color="secondary"
-          :disabled="isAllChecked"
-          label="All"
-          @click="checkAll"
-          ><q-tooltip class="bg-accent">Check all trenches</q-tooltip></q-btn
-        >
-      </div>
-    </div>
   </div>
 </template>
 
@@ -107,6 +113,8 @@ export default {
     return {
       isDisplayedArray: [],
       isCheckedArray: [],
+      isAllChecked: false,
+      confirmAllChecked: false,
     };
   },
   computed: {
@@ -117,14 +125,6 @@ export default {
       return [...new Set(this.projectTrenchesNames?.map((x) => x.substr(0, 5)))]
         .sort()
         .reverse();
-    },
-    isAllChecked() {
-      return (
-        this.checkedTrenchesNames.length === this.projectTrenchesNames.length
-      );
-    },
-    isNoneChecked() {
-      return this.checkedTrenchesNames.length === 0;
     },
   },
   watch: {
@@ -137,6 +137,14 @@ export default {
       );
       this.removeCheckedTrenchesData(removedTrenches);
       this.addCheckedTrenchesData(addedTrenches);
+
+      if (newTrenchList.length === this.projectTrenchesNames.length) {
+        this.isAllChecked = true;
+      } else if (newTrenchList.length === 0) {
+        this.isAllChecked = false;
+      } else {
+        this.isAllChecked = "maybe";
+      }
     },
   },
   methods: {
@@ -145,11 +153,24 @@ export default {
       "addCheckedTrenchesData",
       "removeCheckedTrenchesData",
     ]),
+    handleCheckboxUpdate(value) {
+      if (value === true) {
+        if (this.projectTrenchesNames.length > 2) {
+          this.confirmAllChecked = true;
+        } else {
+          this.checkAll();
+        }
+      } else if (value === false) {
+        this.uncheckAll();
+      }
+    },
     checkAll() {
       this.setCheckedTrenchesNames([...this.projectTrenchesNames]);
+      this.isCheckedArray = this.accordionLabels.map(() => true);
     },
     uncheckAll() {
       this.setCheckedTrenchesNames([]);
+      this.isCheckedArray = this.accordionLabels.map(() => false);
     },
     checkGroup(checkGroup, checked) {
       if (checked) {
@@ -168,4 +189,14 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style>
+/* seems necessary to avoid Bootstrap Quasar conflict */
+.row {
+  margin-right: 0px;
+  margin-left: 0px;
+}
+.col {
+  padding-right: 0px;
+  padding-left: 0px;
+}
+</style>
