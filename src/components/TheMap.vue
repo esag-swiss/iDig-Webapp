@@ -7,7 +7,7 @@
       padding="2px"
       color="secondary"
       icon="download"
-      @click="exportMapAsPNG"
+      @click="exportMapAsPNG()"
       ><q-tooltip class="bg-accent">export map</q-tooltip></q-btn
     >
   </div>
@@ -16,12 +16,18 @@
 <script>
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { geoSerializedToGeojson } from "@/services/json2geojson";
+import "leaflet.control.layers.tree";
+import "leaflet.control.layers.tree/L.Control.Layers.Tree.css";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
-import { createMapsOverlay } from "@/services/idigMap.js";
-import html2canvas from "html2canvas";
+import {
+  createMapsOverlaysTree,
+  baseLayersTree,
+} from "@/services/mapOverlays.js";
+import { loadItemsLayer } from "@/services/mapItemsLayers.js";
+import { exportMapAsPNG } from "@/services/mapExport.js";
+import CustomLayersTree from "@/services/CustomLayersTree.js";
 
 export default {
   name: "TheMap",
@@ -29,9 +35,12 @@ export default {
     return {
       map: null,
       itemsLayer: null,
-      mapsLayers: null,
-      baseLayers: null,
-      layerControl: null,
+      overlayLayers: null,
+      // baseLayers: null,
+      // layerControl: null,
+      baseLayersTree: null,
+      overlaysTree: null,
+      treeLayerControl: null,
       firstMapShowed: true,
       isProcessingTrenchItemsPlans: false,
     };
@@ -60,38 +69,34 @@ export default {
     loadingCount: function (newLoadingCount, oldLoadingCount) {
       if (oldLoadingCount === 1 && newLoadingCount === 0 && this.map) {
         this.loadItemsLayer();
-        this.layerControl.remove();
       }
     },
-    // when removing trenches load items layer
+    // reload items layer when removing trenches
     checkedTrenchesItemsSelectedTypeAndSearched: function () {
       if (this.loadingCount === 0 && this.map) {
         this.loadItemsLayer();
-        if (this.map) {
-          // removes mapslayers
-          for (const layerName in this.mapsLayers) {
-            if (
-              Object.prototype.hasOwnProperty.call(this.mapsLayers, layerName)
-            ) {
-              const layerToRemove = this.mapsLayers[layerName];
-              this.map.removeLayer(layerToRemove);
-            }
-          }
-        }
       }
     },
 
+    // reload overlays tree when changing trenches
     checkedTrenchesItemsPlans: async function () {
       if (this.map && !this.isProcessingTrenchItemsPlans) {
         this.isProcessingTrenchItemsPlans = true;
         try {
-          await this.layerControl.remove();
-          this.mapsLayers = await this.createMapsOverlays();
-          this.layerControl = L.control
-            .layers(this.baseLayers, this.mapsLayers, {
-              sortLayers: true,
-            })
-            .addTo(this.map);
+          await this.treeLayerControl.remove();
+          this.treeLayerControl.removeAllOverlays(this.map);
+
+          this.overlaysTree = await createMapsOverlaysTree(
+            this.checkedTrenchesItemsPlans,
+            this.projectPreferencesCRS
+          );
+          this.treeLayerControl = L.control.layers.tree(
+            baseLayersTree,
+            this.overlaysTree
+          );
+          this.treeLayerControl.addTo(this.map);
+        } catch (error) {
+          console.error(error);
         } finally {
           this.isProcessingTrenchItemsPlans = false;
         }
@@ -100,211 +105,47 @@ export default {
   },
   methods: {
     async initMap() {
+      this.baseLayersTree = baseLayersTree;
+      this.overlaysTree = await createMapsOverlaysTree(
+        this.checkedTrenchesItemsPlans,
+        this.projectPreferencesCRS
+      );
+
+      // Creation de la carte
       this.map = L.map("mapContainer", {
         attributionControl: false,
         zoomControl: true,
         zoomDelta: 0.25,
         zoomSnap: 0,
+        layers: this.baseLayersTree.children[3].layer,
       });
 
-      // Ajouter l'échelle à la carte
+      // Ajout du control de couches en arborescence
+      this.treeLayerControl = L.control.layers.tree(
+        baseLayersTree,
+        this.overlaysTree
+      );
+      this.treeLayerControl.addTo(this.map);
+
+      // Ajout de l'échelle
       L.control
         .scale({ position: "bottomleft", imperial: false })
         .addTo(this.map);
 
-      const osmLayer = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
-        maxZoom: 25,
-        maxNativeZoom: 19,
-        attribution:
-          '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      });
-
-      const Minimaliste = L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
-        {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: "abcd",
-          maxZoom: 25,
-        }
-      );
-
-      const Sombre = L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
-        {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: "abcd",
-          maxZoom: 25,
-        }
-      );
-
-      const Satellite = L.tileLayer(
-        "http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
-        {
-          maxZoom: 25,
-          subdomains: ["mt0", "mt1", "mt2", "mt3"],
-        }
-      ).addTo(this.map);
-      // WMS layer from Dipylon. To be used in dev only for not overload their server
-      const wmsLayer = L.tileLayer.wms(
-        "http://116.202.128.162:83/geoserver/wms?SERVICE=WMS?",
-        {
-          layers: "amarynthos:AMA22_complete_GGRS87",
-          attribution: "ESAG",
-          transparent: true,
-          maxZoom: 25,
-        }
-      );
-
-      this.baseLayers = {
-        Satellite: Satellite,
-        OSM: osmLayer,
-        Minimaliste: Minimaliste,
-        Sombre: Sombre,
-      };
-
-      this.mapsLayers = await this.createMapsOverlays();
-      this.layerControl = L.control.layers(this.baseLayers, this.mapsLayers, {
-        sortLayers: true,
-      });
-      this.layerControl.addTo(this.map);
-
+      // Ajout des items
       this.loadItemsLayer();
     },
 
     loadItemsLayer() {
-      if (this.itemsLayer) {
-        this.map.removeLayer(this.itemsLayer);
-      }
-      let geojsonMarkerOptions = {
-        radius: 5,
-        fillColor: "grey",
-        color: "grey",
-        weight: 2,
-        opacity: 0.2,
-        fillOpacity: 0.2,
-      };
-      let layerStyle = {
-        fillColor: "grey",
-        fillOpacity: 0.2,
-        weight: 2,
-        opacity: 0.2,
-      };
-      this.itemsLayer = L.geoJSON(
-        geoSerializedToGeojson(
-          this.checkedTrenchesItemsSelectedTypeAndSearched
-        ),
-        {
-          onEachFeature: this.onEachFeature,
-          style: function (feature) {
-            switch (feature.properties.type) {
-              case "Context":
-                return {
-                  color: "#f6ceb7",
-                  fillOpacity: 0.5,
-                  weight: 2,
-                  opacity: 0.5,
-                };
-
-              case "Feature":
-                return {
-                  color: "#fcf80a",
-                  fillOpacity: 0.5,
-                  weight: 2,
-                  opacity: 0.5,
-                };
-              case "Artifact":
-                return {
-                  color: "#fc9797",
-                  fillOpacity: 0.8,
-                  weight: 3,
-                  opacity: 0.8,
-                };
-
-              default:
-                return layerStyle;
-            }
-          },
-          pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, geojsonMarkerOptions);
-          },
-        }
+      this.itemsLayer = loadItemsLayer(
+        this.map,
+        this.itemsLayer, // Passe l'ancien layer pour suppression
+        this.checkedTrenchesItemsSelectedTypeAndSearched
       );
-
-      const greeceBounds = L.latLngBounds(
-        L.latLng(35, 20), // Greece south west corner
-        L.latLng(42, 30) // Greece north east corner
-      );
-      let bounds = this.itemsLayer.getBounds();
-      if (bounds.isValid()) {
-        this.itemsLayer.addTo(this.map);
-        this.map.fitBounds(bounds);
-      } else {
-        this.map.fitBounds(greeceBounds);
-      }
     },
 
-    async createMapsOverlays() {
-      const promises = this.checkedTrenchesItemsPlans
-        .filter(
-          (obj) =>
-            obj.RelationAttachments?.includes("\n\n") ||
-            obj.RelationAttachments?.includes(").")
-        )
-        .map((obj) =>
-          createMapsOverlay(
-            obj.RelationAttachments,
-            obj.Trench,
-            this.projectPreferencesCRS,
-            obj.Title
-          )
-        );
-
-      const overlays = await Promise.all(promises);
-      // Combine overlays in one object
-      const result = overlays.reduce((acc, overlay) => {
-        return { ...acc, ...overlay };
-      }, {});
-
-      return result;
-    },
-    // to edit
-    onEachFeature(feature, itemsLayer) {
-      if (feature.properties && feature.properties.id) {
-        const popupContent = `
-      <div onclick="window.open('#/Item/${feature.properties.Trench}/${feature.properties.IdentifierUUID}', '_blank')">
-        <strong>${feature.properties.Trench} ${feature.properties.id}</strong><br>
-        ${feature.properties.title}<br>
-      </div>
-    `;
-        itemsLayer.bindPopup(popupContent, {
-          closeButton: false,
-        });
-      }
-    },
-    async exportMapAsPNG() {
-      const mapElement = document.getElementById("mapContainer");
-      // Utiliser html2canvas pour capturer l'élément de la carte
-      html2canvas(mapElement, {
-        ignoreElements: function (element) {
-          if (
-            element.classList.contains("leaflet-control-zoom") ||
-            element.classList.contains("leaflet-control-layers")
-          ) {
-            return true;
-          }
-        },
-        useCORS: true,
-        async: true,
-      }).then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        // Crée un lien de téléchargement
-        const link = document.createElement("a");
-        link.href = imgData;
-        link.download = "map_export.png";
-        link.click();
-      });
+    exportMapAsPNG() {
+      exportMapAsPNG(this.map);
     },
   },
 };
@@ -317,22 +158,21 @@ export default {
   right: 43px;
   z-index: 1000;
 }
-</style>
-
-<style>
 #mapContainer {
   position: relative;
   width: 100%;
   height: 100%;
 }
+</style>
 
+<style>
 .leaflet-interactive:hover {
   fill-opacity: 1;
   stroke-opacity: 1;
   stroke-width: 4;
 }
-.leaflet-popup-content {
-}
+/* .leaflet-popup-content {
+} */
 
 .leaflet-popup-content-wrapper:hover {
   background-color: #f8f9fab4;

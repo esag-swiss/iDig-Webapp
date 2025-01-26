@@ -19,6 +19,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.6.0",
     "leaflet": "^1.9.4",
+    "leaflet.control.layers.tree": "^1.1.0",
     "pinia": "^2.1.6",
     "proj4": "^2.9.0",
     "quasar": "^2.11.10",
