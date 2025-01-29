@@ -197,14 +197,13 @@
             </div>
 
             <!-- CoverageSerialized -->
-            <div
+            <TheItemCoverageSerialezed
               v-else-if="field.field === 'CoverageSerialized'"
               class="col-12 p-1"
-            >
-              <div>
-                {{ determineTypeGeo(currentItem[field.field]) }}
-              </div>
-            </div>
+              :field="field"
+              :currentItem="currentItem"
+            />
+
             <!-- BOOLEAN -->
             <div
               v-else-if="fieldsSchema[field.field]?.type === 'boolean'"
@@ -293,15 +292,20 @@
             <div
               v-else-if="
                 fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
-                fieldType(field.field, group)?.hasOwnProperty('multivalue') &&
-                fieldType(field.field, group)?.valuelist?.length !== 0
+                fieldType(field.field, group)?.hasOwnProperty('multivalue')
               "
               class="col-12 p-1 border-none"
             >
               <div class="col-12 p-1 border-none">
                 {{ currentItem[field.field] }}
               </div>
-              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
+              <div
+                v-if="
+                  editMode &&
+                  fieldType(field.field, group)?.valuelist?.length !== 0
+                "
+                class="col-12 p-1 m-0 border-none"
+              >
                 <q-select
                   v-model="
                     arrayForMultivalueFields[
@@ -330,20 +334,13 @@
                   >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
                 >
               </div>
-            </div>
-            <!-- MULTIVALUE && VALUELIST EMPTY   -->
-            <div
-              v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
-                fieldType(field.field, group)?.hasOwnProperty('multivalue') &&
-                fieldType(field.field, group)?.valuelist.length == 0
-              "
-              class="col-12 p-1 m-0 border-none"
-            >
-              <div class="col-12 p-1 m-0 border-none">
-                {{ currentItem[field.field] }}
-              </div>
-              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
+              <div
+                v-if="
+                  editMode &&
+                  fieldType(field.field, group)?.valuelist.length == 0
+                "
+                class="col-12 p-1 m-0 border-none"
+              >
                 <q-select
                   v-model="
                     arrayForMultivalueFields[
@@ -513,15 +510,21 @@ import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
 import dayjs from "dayjs";
 import { fieldsSchema } from "@/assets/nativeFields";
-import { determineGeoType } from "@/services/json2geojson";
 import {
   openDB,
   addPlanToDB,
   getImageFromDB,
 } from "@/services/indexedDbManager";
+import TheItemCoverageSerialezed from "@/components/TheItemCoverageSerialezed.vue";
+import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
 
 export default {
   name: "TheItem",
+  components: {
+    TheItemCoverageSerialezed,
+    TheItemMultivalue,
+  },
+
   props: {
     currentItem: {
       type: Object,
@@ -781,14 +784,6 @@ export default {
           type: "warning",
           message: `There is a newer version on server`,
         });
-      }
-    },
-
-    determineTypeGeo(e) {
-      if (e) {
-        return determineGeoType(e);
-      } else {
-        return null;
       }
     },
 
