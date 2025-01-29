@@ -134,11 +134,13 @@
               field.field
             }}
             <q-tooltip
-              anchor="center left"
-              self="bottom middle"
+              v-if="fieldType(field.field, group)?.tips?.[lang]"
+              anchor="bottom left"
+              self="top left"
               class="bg-accent"
-              >{{ field.field }}
-            </q-tooltip>
+              >({{ field.field }})
+              {{ fieldType(field.field, group).tips[lang] }}</q-tooltip
+            >
           </div>
 
           <!--                     -->
@@ -186,13 +188,7 @@
                   emit-value
                   map-options
                   class="select"
-                /><q-tooltip
-                  v-if="fieldType(field.field, group)?.tips?.[lang]"
-                  anchor="bottom left"
-                  self="top left"
-                  class="bg-accent"
-                  >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-                >
+                />
               </div>
             </div>
 
@@ -211,14 +207,7 @@
               :field="field"
               :currentItem="currentItem"
               :disable="!editMode"
-            /><q-tooltip
-              v-if="fieldType(field.field, group)?.tips?.[lang]"
-              anchor="bottom left"
-              self="top left"
-              class="bg-accent"
-              >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-            >
-
+            />
             <!-- RELATIONS-->
             <div
               v-else-if="
@@ -241,13 +230,6 @@
               >
                 {{ item.chipText }}
               </q-chip>
-              <q-tooltip
-                v-if="fieldType(field.field, group)?.tips?.[lang]"
-                anchor="bottom left"
-                self="top left"
-                class="bg-accent"
-                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-              >
             </div>
             <!-- DATE -->
             <div
@@ -255,13 +237,6 @@
               class="col-12 p-1"
             >
               {{ format_date(currentItem[field.field]) }}
-              <q-tooltip
-                v-if="fieldType(field.field, group)?.tips?.[lang]"
-                anchor="bottom left"
-                self="top left"
-                class="bg-accent"
-                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-              >
             </div>
             <!-- MULTILINE -->
             <div
@@ -276,13 +251,6 @@
                 class="col-12 p-0 border-none"
               ></textarea>
               <div v-else>{{ currentItem[field.field] }}</div>
-              <q-tooltip
-                v-if="fieldType(field.field, group)?.tips?.[lang]"
-                anchor="bottom left"
-                self="top left"
-                class="bg-accent"
-                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-              >
             </div>
             <!-- MULTIVALUE && VALUELIST NOT EMPTY   -->
             <div
@@ -322,13 +290,7 @@
                   filled
                   :options="fieldType(field.field, group).valuelist"
                   class="select"
-                /><q-tooltip
-                  v-if="fieldType(field.field, group)?.tips?.[lang]"
-                  anchor="bottom left"
-                  self="top left"
-                  class="bg-accent"
-                  >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-                >
+                />
               </div>
               <div
                 v-if="
@@ -358,13 +320,7 @@
                   filled
                   :options="listValueInField(field.field)"
                   class="select"
-                /><q-tooltip
-                  v-if="fieldType(field.field, group)?.tips?.[lang]"
-                  anchor="bottom left"
-                  self="top left"
-                  class="bg-accent"
-                  >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-                >
+                />
               </div>
             </div>
             <!-- VALUELIST NOT EMPTY-->
@@ -384,24 +340,11 @@
                   filled
                   :options="fieldType(field.field, group).valuelist"
                   class="select"
-                /><q-tooltip
-                  v-if="fieldType(field.field, group)?.tips?.[lang]"
-                  anchor="bottom left"
-                  self="top left"
-                  class="bg-accent"
-                  >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-                >
+                />
               </div>
               <div v-else class="col-12 p-1 m-0 border-none">
                 {{ currentItem[field.field] }}
               </div>
-              <q-tooltip
-                v-if="fieldType(field.field, group)?.tips?.[lang]"
-                anchor="bottom left"
-                self="top left"
-                class="bg-accent"
-                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-              >
             </div>
             <!-- VALUELIST EMPTY (DYNAMIQUE)-->
             <div
@@ -421,13 +364,7 @@
                   :options="listValueInField(field.field)"
                   class="select"
                   new-value-mode="add"
-                /><q-tooltip
-                  v-if="fieldType(field.field, group)?.tips?.[lang]"
-                  anchor="bottom left"
-                  self="top left"
-                  class="bg-accent"
-                  >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-                >
+                />
               </div>
               <div v-else class="col-12 p-1 m-0 border-none">
                 {{ currentItem[field.field] }}
@@ -442,13 +379,6 @@
                 class="col-12 p-1 border-none"
               />
               <div v-else>{{ currentItem[field.field] }}</div>
-              <q-tooltip
-                v-if="fieldType(field.field, group)?.tips?.[lang]"
-                anchor="bottom left"
-                self="top left"
-                class="bg-accent"
-                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-              >
             </div>
           </div>
         </div>
@@ -511,15 +441,15 @@ import {
   addPlanToDB,
   getImageFromDB,
 } from "@/services/indexedDbManager";
-import TheItemCoverageSerialezed from "@/components/TheItemCoverageSerialezed.vue";
 import TheItemBoolean from "@/components/TheItemBoolean.vue";
+import TheItemCoverageSerialezed from "@/components/TheItemCoverageSerialezed.vue";
 import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
 
 export default {
   name: "TheItem",
   components: {
-    TheItemCoverageSerialezed,
     TheItemBoolean,
+    TheItemCoverageSerialezed,
     TheItemMultivalue,
   },
 
