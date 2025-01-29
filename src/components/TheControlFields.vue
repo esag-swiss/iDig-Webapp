@@ -46,9 +46,15 @@
             :value="field.field"
             type="checkbox"
           />
-          <label class="pl-1 m-0" for="checkbox">{{
-            projectPreferencesFieldsWithTranslation[field.field] ?? field.field
-          }}</label>
+          <label class="pl-1 m-0" for="checkbox">
+            {{
+              // labels from types.groups.fields.labels.[lang] except if empty
+              field.labels?.[lang] ||
+              projectPreferencesFieldsWithTranslation?.[field.field] ||
+              fieldsSchema?.[field.field]?.labels?.[lang] ||
+              field.field
+            }}</label
+          >
         </div>
       </div>
     </ul>
