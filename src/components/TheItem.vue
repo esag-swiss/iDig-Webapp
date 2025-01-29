@@ -205,24 +205,20 @@
             />
 
             <!-- BOOLEAN -->
-            <div
+            <TheItemBoolean
               v-else-if="fieldsSchema[field.field]?.type === 'boolean'"
               class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :disable="!editMode"
+            /><q-tooltip
+              v-if="fieldType(field.field, group)?.tips?.[lang]"
+              anchor="bottom left"
+              self="top left"
+              class="bg-accent"
+              >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
             >
-              <q-toggle
-                v-model="currentItem[field.field]"
-                false-value="0"
-                true-value="1"
-                color="green"
-                :disable="!editMode"
-              /><q-tooltip
-                v-if="fieldType(field.field, group)?.tips?.[lang]"
-                anchor="bottom left"
-                self="top left"
-                class="bg-accent"
-                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-              >
-            </div>
+
             <!-- RELATIONS-->
             <div
               v-else-if="
@@ -516,12 +512,14 @@ import {
   getImageFromDB,
 } from "@/services/indexedDbManager";
 import TheItemCoverageSerialezed from "@/components/TheItemCoverageSerialezed.vue";
+import TheItemBoolean from "@/components/TheItemBoolean.vue";
 import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
 
 export default {
   name: "TheItem",
   components: {
     TheItemCoverageSerialezed,
+    TheItemBoolean,
     TheItemMultivalue,
   },
 
