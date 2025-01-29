@@ -1,15 +1,24 @@
 <template>
   <div name="secteurs" class="p-1 m-1 bg-light border-0">
-    <h3>
-      Secteurs
+    <div>
+      <span class="text-bold pseudoh3">Secteurs</span>
       <q-checkbox
+        v-if="isAllChecked !== false"
         @update:model-value="handleCheckboxUpdate"
         v-model="isAllChecked"
         size="xs"
+        toggle-order="ft"
         indeterminate-value="maybe"
-      />
-      <q-tooltip class="bg-accent"> Select/Deselect All </q-tooltip>
-    </h3>
+        ><q-tooltip class="bg-accent"> Select none </q-tooltip></q-checkbox
+      >
+      <q-checkbox
+        v-if="isAllChecked !== true"
+        @update:model-value="handleCheckboxUpdate"
+        size="xs"
+        v-model="toAllChecked"
+        ><q-tooltip class="bg-accent"> Select all </q-tooltip></q-checkbox
+      >
+    </div>
     <q-dialog v-model="confirmAllChecked" persistent>
       <q-card class="bg-accent text-white">
         <q-card-section>
@@ -26,7 +35,10 @@
           <q-btn
             flat
             label="Cancel"
-            @click="isAllChecked = 'maybe'"
+            @click="
+              isAllChecked = 'maybe';
+              toAllChecked = false;
+            "
             v-close-popup
           />
           <q-btn flat label="Ok" @click="checkAll()" v-close-popup />
@@ -114,6 +126,7 @@ export default {
       isDisplayedArray: [],
       isCheckedArray: [],
       isAllChecked: false,
+      toAllChecked: false,
       confirmAllChecked: false,
     };
   },
@@ -144,6 +157,7 @@ export default {
         this.isAllChecked = false;
       } else {
         this.isAllChecked = "maybe";
+        this.toAllChecked = false;
       }
     },
   },
@@ -155,7 +169,7 @@ export default {
     ]),
     handleCheckboxUpdate(value) {
       if (value === true) {
-        if (this.projectTrenchesNames.length > 2) {
+        if (this.projectTrenchesNames.length > 15) {
           this.confirmAllChecked = true;
         } else {
           this.checkAll();
@@ -198,5 +212,11 @@ export default {
 .col {
   padding-right: 0px;
   padding-left: 0px;
+}
+.pseudoh3 {
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 0rem;
 }
 </style>
