@@ -191,32 +191,20 @@
               class="col-12 p-1"
               :field="field"
               :currentItem="currentItem"
-              :editMode="!editMode"
+              :editMode="editMode"
             />
 
             <!-- RELATIONS-->
-            <div
+            <TheItemLink
               v-else-if="
                 fieldsSchema[field.field]?.type === 'link' &&
                 currentItem[field.field]
               "
               class="col-12 p-1 flex-grow-1"
-            >
-              <q-chip
-                v-for="item in itemsInChips(currentItem[field.field])"
-                clickable
-                @click="
-                  currentItem = item.fullItem;
-                  fetchImages();
-                "
-                :key="item"
-                color="primary"
-                text-color="white"
-                class="q-chip"
-              >
-                {{ item.chipText }}
-              </q-chip>
-            </div>
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+            />
 
             <!-- MULTILINE -->
             <div
@@ -426,6 +414,7 @@ import TheItemRightsStatus from "@/components/TheItemRightsStatus.vue";
 import TheItemBoolean from "@/components/TheItemBoolean.vue";
 import TheItemCoverageSerialezed from "@/components/TheItemCoverageSerialezed.vue";
 import TheItemDateUTC from "@/components/TheItemDateUTC.vue";
+import TheItemLink from "@/components/TheItemLink.vue";
 
 export default {
   name: "TheItem",
@@ -435,6 +424,7 @@ export default {
     TheItemBoolean,
     TheItemCoverageSerialezed,
     TheItemDateUTC,
+    TheItemLink,
   },
 
   props: {

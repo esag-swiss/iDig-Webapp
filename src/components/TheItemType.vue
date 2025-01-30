@@ -28,7 +28,7 @@
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 export default {
-  name: "TheItemBoolean",
+  name: "TheItemType",
   props: {
     field: Object,
     currentItem: Object,

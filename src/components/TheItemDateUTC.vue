@@ -7,7 +7,7 @@
 <script>
 import dayjs from "dayjs";
 export default {
-  name: "TheItemBoolean",
+  name: "TheItemDateUTC",
   props: {
     field: Object,
     currentItem: Object,

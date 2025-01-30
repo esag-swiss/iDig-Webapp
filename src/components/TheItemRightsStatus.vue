@@ -17,7 +17,7 @@
 <script>
 import { fieldsSchema } from "@/assets/nativeFields";
 export default {
-  name: "TheItemBoolean",
+  name: "TheItemRightsStatus",
   props: {
     field: Object,
     currentItem: Object,
