@@ -19,7 +19,7 @@
           @click="pushSurvey()"
         />
         <q-tooltip class="bg-accent"
-          >upload modification to iDig server</q-tooltip
+          >upload curent trench modification to iDig server</q-tooltip
         >
       </div>
       <div class="mx-1">
@@ -125,7 +125,7 @@
           <!--                -->
           <!-- FIELDS LABEL   -->
           <!--                -->
-          <div class="text-right text-dark border-right p-1 col-2">
+          <div class="text-right text-dark p-1 col-2">
             {{
               // labels from types.groups.fields.labels.[lang] except if empty
               field.labels?.[lang] ||
@@ -146,10 +146,10 @@
           <!--                     -->
           <!-- VALUE : many cases  -->
           <!--                     -->
-          <div class="col-10 border-none p-0">
+          <div class="col-10 border-none p-0 border-left">
             <!-- TYPE  -->
             <div v-if="field.field === 'Type'" class="col-12 p-1">
-              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
+              <div v-if="editMode">
                 <q-select
                   v-model="selectedTypeSubtype"
                   dense
@@ -174,23 +174,13 @@
               </div>
             </div>
             <!-- RightsStatus  TODO voir option value et label -->
-            <div v-else-if="field.field === 'RightsStatus'" class="col-12 p-1">
-              <div class="col-12 p-1 m-0 border-none">
-                <q-select
-                  v-model="currentItem[field.field]"
-                  dense
-                  options-dense
-                  filled
-                  :options="fieldsSchema.RightsStatus.valuelists"
-                  option-value="en"
-                  option-label="fr"
-                  :disable="!editMode"
-                  emit-value
-                  map-options
-                  class="select"
-                />
-              </div>
-            </div>
+            <TheItemRightsStatus
+              v-else-if="field.field === 'RightsStatus'"
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :disable="!editMode"
+            />
 
             <!-- CoverageSerialized -->
             <TheItemCoverageSerialezed
@@ -441,6 +431,7 @@ import {
   addPlanToDB,
   getImageFromDB,
 } from "@/services/indexedDbManager";
+import TheItemRightsStatus from "@/components/TheItemRightsStatus.vue";
 import TheItemBoolean from "@/components/TheItemBoolean.vue";
 import TheItemCoverageSerialezed from "@/components/TheItemCoverageSerialezed.vue";
 import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
@@ -448,6 +439,7 @@ import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
 export default {
   name: "TheItem",
   components: {
+    TheItemRightsStatus,
     TheItemBoolean,
     TheItemCoverageSerialezed,
     TheItemMultivalue,
