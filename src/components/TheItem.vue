@@ -143,36 +143,19 @@
             >
           </div>
 
-          <!--                     -->
-          <!-- VALUE : many cases  -->
-          <!--                     -->
+          <!------------------------------------------------------->
+          <!--------------- VALUE : /!\ many cases  --------------->
+          <!------------------------------------------------------->
           <div class="col-10 border-none p-0 border-left">
             <!-- TYPE  -->
-            <div v-if="field.field === 'Type'" class="col-12 p-1">
-              <div v-if="editMode">
-                <q-select
-                  v-model="selectedTypeSubtype"
-                  dense
-                  options-dense
-                  filled
-                  :options="projectPreferencesTypesForOption"
-                  emit-value
-                  map-options
-                  class="select"
-                  :label="
-                    projectPreferencesTypesTranslation[currentItem.Subtype] ||
-                    projectPreferencesTypesTranslation[currentItem[field.field]]
-                  "
-                  @update:model-value="updateTypeAndSubtype"
-                />
-              </div>
-              <div v-else>
-                {{
-                  projectPreferencesTypesTranslation[currentItem.Subtype] ||
-                  projectPreferencesTypesTranslation[currentItem[field.field]]
-                }}
-              </div>
-            </div>
+            <TheItemType
+              v-if="field.field === 'Type'"
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+            />
+
             <!-- RightsStatus  TODO voir option value et label -->
             <TheItemRightsStatus
               v-else-if="field.field === 'RightsStatus'"
@@ -431,6 +414,7 @@ import {
   addPlanToDB,
   getImageFromDB,
 } from "@/services/indexedDbManager";
+import TheItemType from "@/components/TheItemType.vue";
 import TheItemRightsStatus from "@/components/TheItemRightsStatus.vue";
 import TheItemBoolean from "@/components/TheItemBoolean.vue";
 import TheItemCoverageSerialezed from "@/components/TheItemCoverageSerialezed.vue";
@@ -439,6 +423,7 @@ import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
 export default {
   name: "TheItem",
   components: {
+    TheItemType,
     TheItemRightsStatus,
     TheItemBoolean,
     TheItemCoverageSerialezed,
@@ -454,7 +439,6 @@ export default {
   data() {
     return {
       fieldsSchema: fieldsSchema,
-      selectedTypeSubtype: null,
       editMode: false,
       arrayForMultivalueFields: [],
       relatedImageUrls: [], // Tableau pour stocker les URLs d'images récupérées
@@ -466,7 +450,6 @@ export default {
     ...mapState(useDataStore, [
       "projectPreferencesTypes",
       "projectPreferencesTypesForSelect",
-      "projectPreferencesTypesForOption",
       "projectPreferencesTypesTranslation",
       "projectPreferencesFields",
       "projectPreferencesBase64",
@@ -622,10 +605,6 @@ export default {
       if (value) {
         return dayjs(value).format("DD/MM/YYYY");
       }
-    },
-    updateTypeAndSubtype(value) {
-      this.currentItem.Type = value.type;
-      this.currentItem.Subtype = value.subtype;
     },
 
     fieldType(field, groupObject) {
@@ -915,9 +894,9 @@ export default {
 .border-none {
   border: none;
 }
-.select {
+/* .select {
   margin: -5px;
-}
+} */
 /* Style pour la miniature */
 .img-thumbnail {
   max-width: 100px;

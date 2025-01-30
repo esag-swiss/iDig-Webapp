@@ -1,13 +1,11 @@
 <template>
-  <div class="col-12 p-1">
-    <q-toggle
-      v-model="currentItem[field.field]"
-      false-value="0"
-      true-value="1"
-      color="green"
-      :disable="disable"
-    />
-  </div>
+  <q-toggle
+    v-model="currentItem[field.field]"
+    false-value="0"
+    true-value="1"
+    color="green"
+    :disable="disable"
+  />
 </template>
 
 <script>
