@@ -159,7 +159,6 @@
               :currentItem="currentItem"
               :editMode="editMode"
             />
-
             <!-- RightsStatus  TODO voir option value et label -->
             <TheItemRightsStatus
               v-else-if="field.field === 'RightsStatus'"
@@ -168,7 +167,6 @@
               :currentItem="currentItem"
               :disable="!editMode"
             />
-
             <!-- CoverageSerialized -->
             <TheItemCoverageSerialezed
               v-else-if="field.field === 'CoverageSerialized'"
@@ -176,7 +174,6 @@
               :field="field"
               :currentItem="currentItem"
             />
-
             <!-- BOOLEAN -->
             <TheItemBoolean
               v-else-if="fieldsSchema[field.field]?.type === 'boolean'"
@@ -193,33 +190,25 @@
               :currentItem="currentItem"
               :editMode="editMode"
             />
-
             <!-- RELATIONS-->
             <TheItemLink
+              v-else-if="fieldsSchema[field.field]?.type === 'link'"
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+            />
+            <!-- MULTILINE -->
+            <TheItemMultiline
               v-else-if="
-                fieldsSchema[field.field]?.type === 'link' &&
-                currentItem[field.field]
+                fieldType(field.field, group)?.hasOwnProperty('multiline')
               "
-              class="col-12 p-1 flex-grow-1"
+              class="col-12 p-1"
               :field="field"
               :currentItem="currentItem"
               :editMode="editMode"
             />
 
-            <!-- MULTILINE -->
-            <div
-              v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('multiline')
-              "
-              class="col-12 p-1"
-            >
-              <textarea
-                v-if="editMode"
-                v-model="currentItem[field.field]"
-                class="col-12 p-0 border-none"
-              ></textarea>
-              <div v-else>{{ currentItem[field.field] }}</div>
-            </div>
             <!-- MULTIVALUE && VALUELIST NOT EMPTY   -->
             <div
               v-else-if="
@@ -338,7 +327,7 @@
                 {{ currentItem[field.field] }}
               </div>
             </div>
-            <!-- STRING -->
+            <!-- STRING all other cases-->
             <div v-else class="col-12 p-1 border-none">
               <input
                 v-if="editMode"
@@ -354,8 +343,10 @@
       <!--  CASES NO GROUPS HEADER -->
       <ul class="list-group">
         <li
-          class="list-group-item text-uppercase accordion p-1 border-bottom"
-        ></li>
+          class="list-group-item text-uppercase accordion p-1 pl-2 border-bottom"
+        >
+          Fields not included in groups
+        </li>
         <!-- ROWS -->
         <div
           v-for="field in listFieldsNotIncludedInGroups"
@@ -381,15 +372,22 @@
             v-if="fieldsSchema[field]?.type === 'DateUTC'"
             class="col-10 p-1"
           >
-            <!-- {{ format_date(currentItem[field]) }} -->
+            <!-- DATE -->
+            <TheItemDateUTC
+              v-if="fieldsSchema[field.field]?.type === 'DateUTC'"
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+            />
           </div>
           <input
             v-else-if="editMode"
             v-model="currentItem[field]"
             type="text"
-            class="col-10 p-1 border-none"
+            class="col-12 p-1 border-none"
           />
-          <div v-else class="col-10 p-1">{{ currentItem[field] }}</div>
+          <div v-else class="col-12 p-1">{{ currentItem[field] }}</div>
         </div>
       </ul>
     </div>
@@ -402,7 +400,6 @@ import { apiPushTrench, apiFetchImageSRC } from "@/services/ApiClient";
 import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
-
 import { fieldsSchema } from "@/assets/nativeFields";
 import {
   openDB,
@@ -415,6 +412,7 @@ import TheItemBoolean from "@/components/TheItemBoolean.vue";
 import TheItemCoverageSerialezed from "@/components/TheItemCoverageSerialezed.vue";
 import TheItemDateUTC from "@/components/TheItemDateUTC.vue";
 import TheItemLink from "@/components/TheItemLink.vue";
+import TheItemMultiline from "@/components/TheItemMultiline.vue";
 
 export default {
   name: "TheItem",
@@ -425,6 +423,7 @@ export default {
     TheItemCoverageSerialezed,
     TheItemDateUTC,
     TheItemLink,
+    TheItemMultiline,
   },
 
   props: {
