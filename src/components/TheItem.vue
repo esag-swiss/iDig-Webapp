@@ -34,9 +34,13 @@
       </div>
     </div>
     <div class="TheItem center-block mx-auto">
-      <!--Formulaire-->
+      <!-------------------------------------------------------------------------------->
+      <!--------------------------------  FORM    -------------------------------------->
 
+      <!-------------------------------------------------------------------------------->
       <!--   IMAGE DISPLAY SECTION (for RelationAttachments and RelationIncludesUUID) -->
+      <!-------------------------------------------------------------------------------->
+
       <ul v-if="!editMode" class="list-group">
         <div v-if="relatedImageUrls.length > 0" class="col-12 p-1">
           <div v-if="!selectedImageUrl" class="thumbnails-container">
@@ -181,6 +185,15 @@
               :currentItem="currentItem"
               :disable="!editMode"
             />
+            <!-- DATE -->
+            <TheItemDateUTC
+              v-else-if="fieldsSchema[field.field]?.type === 'DateUTC'"
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="!editMode"
+            />
+
             <!-- RELATIONS-->
             <div
               v-else-if="
@@ -204,13 +217,7 @@
                 {{ item.chipText }}
               </q-chip>
             </div>
-            <!-- DATE -->
-            <div
-              v-else-if="fieldsSchema[field.field]?.type === 'DateUTC'"
-              class="col-12 p-1"
-            >
-              {{ format_date(currentItem[field.field]) }}
-            </div>
+
             <!-- MULTILINE -->
             <div
               v-else-if="
@@ -386,7 +393,7 @@
             v-if="fieldsSchema[field]?.type === 'DateUTC'"
             class="col-10 p-1"
           >
-            {{ format_date(currentItem[field]) }}
+            <!-- {{ format_date(currentItem[field]) }} -->
           </div>
           <input
             v-else-if="editMode"
@@ -407,7 +414,7 @@ import { apiPushTrench, apiFetchImageSRC } from "@/services/ApiClient";
 import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
-import dayjs from "dayjs";
+
 import { fieldsSchema } from "@/assets/nativeFields";
 import {
   openDB,
@@ -418,7 +425,7 @@ import TheItemType from "@/components/TheItemType.vue";
 import TheItemRightsStatus from "@/components/TheItemRightsStatus.vue";
 import TheItemBoolean from "@/components/TheItemBoolean.vue";
 import TheItemCoverageSerialezed from "@/components/TheItemCoverageSerialezed.vue";
-import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
+import TheItemDateUTC from "@/components/TheItemDateUTC.vue";
 
 export default {
   name: "TheItem",
@@ -427,7 +434,7 @@ export default {
     TheItemRightsStatus,
     TheItemBoolean,
     TheItemCoverageSerialezed,
-    TheItemMultivalue,
+    TheItemDateUTC,
   },
 
   props: {
@@ -601,11 +608,6 @@ export default {
       "setSyncNewVersion",
       "UpdateSyncTrenchData",
     ]),
-    format_date(value) {
-      if (value) {
-        return dayjs(value).format("DD/MM/YYYY");
-      }
-    },
 
     fieldType(field, groupObject) {
       let groupName = groupObject.group ?? "";
