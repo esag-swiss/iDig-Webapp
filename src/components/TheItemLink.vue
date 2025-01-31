@@ -2,10 +2,7 @@
   <q-chip
     v-for="item in itemsInChips(currentItem[field.field])"
     clickable
-    @click="
-      currentItem = item.fullItem
-      //   fetchImages();
-    "
+    @click="$emit('update:currentItem', item.fullItem)"
     :key="item"
     color="primary"
     text-color="white"
@@ -23,7 +20,10 @@ export default {
   name: "TheItemLink",
   props: {
     field: Object,
-    currentItem: Object,
+    currentItem: {
+      type: Object,
+      required: true,
+    },
     editMode: Boolean,
   },
   data() {
@@ -37,12 +37,14 @@ export default {
   },
   methods: {
     itemsInChips(IdentifierUUIDs) {
-      if (IdentifierUUIDs.includes("\n")) {
+      if (IdentifierUUIDs && IdentifierUUIDs.includes("\n")) {
         let relatedItems = IdentifierUUIDs.split("\n");
         relatedItems = relatedItems.map((obj) => this.chipText(obj));
         return relatedItems;
-      } else {
+      } else if (IdentifierUUIDs) {
         return [this.chipText(IdentifierUUIDs)];
+      } else {
+        return [];
       }
     },
     chipText(IdentifierUUID) {

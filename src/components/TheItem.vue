@@ -197,6 +197,7 @@
               :field="field"
               :currentItem="currentItem"
               :editMode="editMode"
+              @update:currentItem="handleUpdateCurrentItem"
             />
             <!-- MULTILINE -->
             <TheItemMultiline
@@ -586,6 +587,16 @@ export default {
       return fieldsNotPrinsentInGroup;
     },
   },
+
+  watch: {
+    currentItem: {
+      handler() {
+        this.fetchImages();
+      },
+      immediate: true,
+      deep: true,
+    },
+  },
   mounted() {
     this.fetchImages();
   },
@@ -848,6 +859,10 @@ export default {
         chipText: "Unknown Item", // Valeur par défaut si aucun élément correspondant n'est trouvé
         fullItem: null,
       };
+    },
+    handleUpdateCurrentItem(updatedItem) {
+      Object.assign(this.currentItem, updatedItem);
+      // Additional logic to handle the updated item
     },
   },
 };
