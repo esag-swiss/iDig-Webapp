@@ -281,53 +281,18 @@
                 />
               </div>
             </div>
-            <!-- VALUELIST NOT EMPTY-->
-            <div
+            <!-- VALUELIST -->
+            <TheItemValuelist
               v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
-                fieldType(field.field, group)?.valuelist.length !== 0
+                fieldType(field.field, group)?.hasOwnProperty('valuelist')
               "
-              class="col-12 p-1 border-none"
-            >
-              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
-                <q-select
-                  v-model="currentItem[field.field]"
-                  use-input
-                  dense
-                  options-dense
-                  filled
-                  :options="fieldType(field.field, group).valuelist"
-                  class="select"
-                />
-              </div>
-              <div v-else class="col-12 p-1 m-0 border-none">
-                {{ currentItem[field.field] }}
-              </div>
-            </div>
-            <!-- VALUELIST EMPTY (DYNAMIQUE)-->
-            <div
-              v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
-                fieldType(field.field, group)?.valuelist.length == 0
-              "
-              class="col-12 p-1 border-none"
-            >
-              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
-                <q-select
-                  v-model="currentItem[field.field]"
-                  use-input
-                  dense
-                  options-dense
-                  filled
-                  :options="listValueInField(field.field)"
-                  class="select"
-                  new-value-mode="add"
-                />
-              </div>
-              <div v-else class="col-12 p-1 m-0 border-none">
-                {{ currentItem[field.field] }}
-              </div>
-            </div>
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+              :group="group"
+            />
+
             <!-- STRING all other cases-->
             <div v-else class="col-12 p-1 border-none">
               <input
@@ -414,6 +379,7 @@ import TheItemCoverageSerialezed from "@/components/TheItemCoverageSerialezed.vu
 import TheItemDateUTC from "@/components/TheItemDateUTC.vue";
 import TheItemLink from "@/components/TheItemLink.vue";
 import TheItemMultiline from "@/components/TheItemMultiline.vue";
+import TheItemValuelist from "@/components/TheItemValuelist.vue";
 
 export default {
   name: "TheItem",
@@ -425,6 +391,7 @@ export default {
     TheItemDateUTC,
     TheItemLink,
     TheItemMultiline,
+    TheItemValuelist,
   },
 
   props: {
@@ -829,37 +796,6 @@ export default {
       this.selectedImageUrl = null; // Réinitialiser l'URL pour masquer l'image
     },
 
-    itemsInChips(IdentifierUUIDs) {
-      if (IdentifierUUIDs.includes("\n")) {
-        let relatedItems = IdentifierUUIDs.split("\n");
-        relatedItems = relatedItems.map((obj) => this.chipText(obj));
-        return relatedItems;
-      } else {
-        return [this.chipText(IdentifierUUIDs)];
-      }
-    },
-
-    chipText(IdentifierUUID) {
-      const filteredItems = this.checkedTrenchesData[
-        this.currentItem.Trench
-      ].filter((x) => x.IdentifierUUID.includes(IdentifierUUID));
-
-      if (filteredItems.length > 0) {
-        const item = filteredItems[0];
-        return {
-          chipText:
-            this.projectPreferencesTypesTranslation[item.Type] +
-            ": " +
-            item.Title,
-          fullItem: item,
-        };
-      }
-
-      return {
-        chipText: "Unknown Item", // Valeur par défaut si aucun élément correspondant n'est trouvé
-        fullItem: null,
-      };
-    },
     handleUpdateCurrentItem(updatedItem) {
       Object.assign(this.currentItem, updatedItem);
       // Additional logic to handle the updated item
