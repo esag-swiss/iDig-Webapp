@@ -150,7 +150,7 @@
           <!------------------------------------------------------->
           <!--------------- VALUE : /!\ many cases  --------------->
           <!------------------------------------------------------->
-          <div class="col-10 border-none p-0 border-left">
+          <div class="col-10 p-0 border-left">
             <!-- TYPE  -->
             <TheItemType
               v-if="field.field === 'Type'"
@@ -209,16 +209,15 @@
               :currentItem="currentItem"
               :editMode="editMode"
             />
-
             <!-- MULTIVALUE && VALUELIST NOT EMPTY   -->
             <div
               v-else-if="
                 fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
                 fieldType(field.field, group)?.hasOwnProperty('multivalue')
               "
-              class="col-12 p-1 border-none"
+              class="col-12 p-1"
             >
-              <div class="col-12 p-1 border-none">
+              <div class="col-12 p-1">
                 {{ currentItem[field.field] }}
               </div>
               <div
@@ -226,7 +225,7 @@
                   editMode &&
                   fieldType(field.field, group)?.valuelist?.length !== 0
                 "
-                class="col-12 p-1 m-0 border-none"
+                class="col-12 p-1 m-0"
               >
                 <q-select
                   v-model="
@@ -255,7 +254,7 @@
                   editMode &&
                   fieldType(field.field, group)?.valuelist.length == 0
                 "
-                class="col-12 p-1 m-0 border-none"
+                class="col-12 p-1 m-0"
               >
                 <q-select
                   v-model="
@@ -292,17 +291,14 @@
               :editMode="editMode"
               :group="group"
             />
-
             <!-- STRING all other cases-->
-            <div v-else class="col-12 p-1 border-none">
-              <input
-                v-if="editMode"
-                v-model="currentItem[field.field]"
-                type="text"
-                class="col-12 p-1 border-none"
-              />
-              <div v-else>{{ currentItem[field.field] }}</div>
-            </div>
+            <TheItemInput
+              v-else
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+            />
           </div>
         </div>
       </ul>
@@ -351,7 +347,7 @@
             v-else-if="editMode"
             v-model="currentItem[field]"
             type="text"
-            class="col-12 p-1 border-none"
+            class="col-12 p-1"
           />
           <div v-else class="col-12 p-1">{{ currentItem[field] }}</div>
         </div>
@@ -380,6 +376,7 @@ import TheItemDateUTC from "@/components/TheItemDateUTC.vue";
 import TheItemLink from "@/components/TheItemLink.vue";
 import TheItemMultiline from "@/components/TheItemMultiline.vue";
 import TheItemValuelist from "@/components/TheItemValuelist.vue";
+import TheItemInput from "@/components/TheItemInput.vue";
 
 export default {
   name: "TheItem",
@@ -392,6 +389,7 @@ export default {
     TheItemLink,
     TheItemMultiline,
     TheItemValuelist,
+    TheItemInput,
   },
 
   props: {
@@ -833,9 +831,9 @@ export default {
   background-color: #eee;
   cursor: default;
 }
-.border-none {
+/* .border-none {
   border: none;
-}
+} */
 /* .select {
   margin: -5px;
 } */
