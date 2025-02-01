@@ -32,6 +32,7 @@
     new-value-mode="add"
     @clear="currentItem[field.field] = previousValue"
     @filter="filterFn"
+    class="select"
   >
     <template v-slot:no-option>
       <q-item>
@@ -72,7 +73,6 @@ export default {
     return {
       fieldsSchema: fieldsSchema,
       selectedTypeSubtype: null,
-      model: null,
       options: [],
       previousValue: null,
     };
@@ -141,5 +141,8 @@ export default {
 </script>
 
 <style scoped>
-/* Styles spécifiques au composant enfant */
+/* this style to correct a strange style differnece between first and secanod q-select component */
+.select {
+  margin: 4px;
+}
 </style>
