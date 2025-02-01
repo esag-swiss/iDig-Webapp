@@ -1,21 +1,21 @@
 <template>
-  <div v-if="editMode">
-    <q-select
-      v-model="selectedTypeSubtype"
-      dense
-      options-dense
-      square
-      filled
-      :options="projectPreferencesTypesForOption"
-      emit-value
-      map-options
-      :label="
-        projectPreferencesTypesTranslation[currentItem.Subtype] ||
-        projectPreferencesTypesTranslation[currentItem[field.field]]
-      "
-      @update:model-value="updateTypeAndSubtype"
-    />
-  </div>
+  <q-select
+    v-if="editMode"
+    v-model="selectedTypeSubtype"
+    dense
+    options-dense
+    square
+    filled
+    :options="projectPreferencesTypesForOption"
+    emit-value
+    map-options
+    :label="
+      projectPreferencesTypesTranslation[currentItem.Subtype] ||
+      projectPreferencesTypesTranslation[currentItem[field.field]]
+    "
+    @update:model-value="updateTypeAndSubtype"
+  />
+
   <div v-else>
     {{
       projectPreferencesTypesTranslation[currentItem.Subtype] ||
