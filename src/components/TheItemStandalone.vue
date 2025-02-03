@@ -95,7 +95,7 @@
         >
           <!-- FIELDS LABEL   -->
 
-          <div class="text-right text-dark border-right p-1 col-2">
+          <div class="text-right text-dark p-1 col-2">
             {{
               field.labels?.[lang] ||
               projectPreferencesFieldsWithTranslation?.[field.field] ||
@@ -105,7 +105,7 @@
           </div>
           <!-- VALUE : many cases  -->
           <!--                     -->
-          <div class="col-10 border-none p-0">
+          <div class="col-10 border-none border-left p-0">
             <div v-if="field.field === 'Type'" class="col-12 p-1">
               {{
                 projectPreferencesTypesTranslation[currentItem.Subtype] ||
@@ -228,12 +228,12 @@ export default {
     },
 
     // TODO consider removing the following  --------------------
-    trenchtoUpdateWithoutTrenchProp() {
-      return this.checkedTrenchesData[this.currentItem.Trench].map((obj) => {
-        const { Trench, ...newObj } = obj;
-        return newObj;
-      });
-    },
+    // trenchtoUpdateWithoutTrenchProp() {
+    //   return this.checkedTrenchesData[this.currentItem.Trench].map((obj) => {
+    //     const { Trench, ...newObj } = obj;
+    //     return newObj;
+    //   });
+    // },
 
     groupOfFieldsAccordingToType() {
       // all groups according to type from Preferences
@@ -330,27 +330,27 @@ export default {
       return groups;
     },
 
-    listFieldsNotIncludedInGroups() {
-      let notToDisplay = [
-        // "IdentifierUUID",
-        "Trench",
-        "RightsTrashed",
-        "RightsDeleted",
-        "DateTimeZone",
-      ];
-      let fieldsNotPrinsentInGroup = [];
+    // listFieldsNotIncludedInGroups() {
+    //   let notToDisplay = [
+    //     // "IdentifierUUID",
+    //     "Trench",
+    //     "RightsTrashed",
+    //     "RightsDeleted",
+    //     "DateTimeZone",
+    //   ];
+    //   let fieldsNotPrinsentInGroup = [];
 
-      this.groupOfFieldsAccordingToTypeAndNative.forEach((obj) => {
-        obj.fields.forEach((key) => {
-          notToDisplay.push(key.field);
-        });
-      });
+    //   this.groupOfFieldsAccordingToTypeAndNative.forEach((obj) => {
+    //     obj.fields.forEach((key) => {
+    //       notToDisplay.push(key.field);
+    //     });
+    //   });
 
-      fieldsNotPrinsentInGroup = this.fieldsOfCurrentItem.filter(
-        (item) => !notToDisplay.includes(item)
-      );
-      return fieldsNotPrinsentInGroup;
-    },
+    //   fieldsNotPrinsentInGroup = this.fieldsOfCurrentItem.filter(
+    //     (item) => !notToDisplay.includes(item)
+    //   );
+    //   return fieldsNotPrinsentInGroup;
+    // },
   },
   watch: {
     currentItem(newValue) {
