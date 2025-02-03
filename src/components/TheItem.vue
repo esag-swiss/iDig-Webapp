@@ -210,76 +210,20 @@
               :editMode="editMode"
             />
             <!-- MULTIVALUE && VALUELIST NOT EMPTY   -->
-            <div
+            <TheItemMultivalue
               v-else-if="
                 fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
                 fieldType(field.field, group)?.hasOwnProperty('multivalue')
               "
               class="col-12 p-1"
-            >
-              <div class="col-12 p-1">
-                {{ currentItem[field.field] }}
-              </div>
-              <div
-                v-if="
-                  editMode &&
-                  fieldType(field.field, group)?.valuelist?.length !== 0
-                "
-                class="col-12 p-1 m-0"
-              >
-                <q-select
-                  v-model="
-                    arrayForMultivalueFields[
-                      index.toString() + indexGroup.toString()
-                    ]
-                  "
-                  use-input
-                  @update:model-value="
-                    updateMultiArray(
-                      field.field,
-                      arrayForMultivalueFields[
-                        index.toString() + indexGroup.toString()
-                      ]
-                    )
-                  "
-                  dense
-                  options-dense
-                  filled
-                  :options="fieldType(field.field, group).valuelist"
-                  class="select"
-                />
-              </div>
-              <div
-                v-if="
-                  editMode &&
-                  fieldType(field.field, group)?.valuelist.length == 0
-                "
-                class="col-12 p-1 m-0"
-              >
-                <q-select
-                  v-model="
-                    arrayForMultivalueFields[
-                      index.toString() + indexGroup.toString()
-                    ]
-                  "
-                  use-input
-                  @update:model-value="
-                    updateMultiArray(
-                      field.field,
-                      arrayForMultivalueFields[
-                        index.toString() + indexGroup.toString()
-                      ]
-                    )
-                  "
-                  dense
-                  options-dense
-                  new-value-mode="add"
-                  filled
-                  :options="listValueInField(field.field)"
-                  class="select"
-                />
-              </div>
-            </div>
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+              :group="group"
+              TheItemMultivalue
+              :indexGroup="indexGroup"
+              :index="index"
+            />
             <!-- VALUELIST -->
             <TheItemValuelist
               v-else-if="
@@ -330,10 +274,7 @@
             </q-tooltip>
           </div>
 
-          <div
-            v-if="fieldsSchema[field]?.type === 'DateUTC'"
-            class="col-10 p-1"
-          >
+          <div class="col-10 p-1">
             <!-- DATE -->
             <TheItemDateUTC
               v-if="fieldsSchema[field.field]?.type === 'DateUTC'"
@@ -342,14 +283,16 @@
               :currentItem="currentItem"
               :editMode="editMode"
             />
+
+            <TheItemInput
+              v-else-if="editMode && field !== 'IdentifierUUID'"
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+            />
+            <div v-else class="col-12 p-1">{{ currentItem[field] }}</div>
           </div>
-          <input
-            v-else-if="editMode"
-            v-model="currentItem[field]"
-            type="text"
-            class="col-12 p-1"
-          />
-          <div v-else class="col-12 p-1">{{ currentItem[field] }}</div>
         </div>
       </ul>
     </div>
@@ -375,6 +318,7 @@ import TheItemCoverageSerialezed from "@/components/TheItemCoverageSerialezed.vu
 import TheItemDateUTC from "@/components/TheItemDateUTC.vue";
 import TheItemLink from "@/components/TheItemLink.vue";
 import TheItemMultiline from "@/components/TheItemMultiline.vue";
+import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
 import TheItemValuelist from "@/components/TheItemValuelist.vue";
 import TheItemInput from "@/components/TheItemInput.vue";
 
@@ -388,6 +332,7 @@ export default {
     TheItemDateUTC,
     TheItemLink,
     TheItemMultiline,
+    TheItemMultivalue,
     TheItemValuelist,
     TheItemInput,
   },
@@ -605,15 +550,15 @@ export default {
       return fieldSchema;
     },
 
-    listValueInField(field) {
-      let valeursField = this.checkedTrenchesItemsSelectedType.map(
-        (objet) => objet[field]
-      );
-      // Filtrer les doublons
-      return valeursField
-        .filter((valeur, index, self) => self.indexOf(valeur) === index)
-        .sort();
-    },
+    // listValueInField(field) {
+    //   let valeursField = this.checkedTrenchesItemsSelectedType.map(
+    //     (objet) => objet[field]
+    //   );
+    //   // Filtrer les doublons
+    //   return valeursField
+    //     .filter((valeur, index, self) => self.indexOf(valeur) === index)
+    //     .sort();
+    // },
 
     async pushSurvey() {
       const head = this.checkedTrenchesVersion[this.currentItem.Trench];
@@ -653,18 +598,18 @@ export default {
       }
     },
 
-    updateMultiArray(field, value) {
-      if (this.currentItem[field]?.includes(value)) {
-        this.currentItem[field] = this.currentItem[field].replace(
-          value + "\n",
-          ""
-        );
-      } else {
-        this.currentItem[field] = this.currentItem[field]
-          ? this.currentItem[field] + "\n" + value
-          : value;
-      }
-    },
+    // updateMultiArray(field, value) {
+    //   if (this.currentItem[field]?.includes(value)) {
+    //     this.currentItem[field] = this.currentItem[field].replace(
+    //       value + "\n",
+    //       ""
+    //     );
+    //   } else {
+    //     this.currentItem[field] = this.currentItem[field]
+    //       ? this.currentItem[field] + "\n" + value
+    //       : value;
+    //   }
+    // },
 
     async fetchImages() {
       let relatedItems = [];
@@ -719,25 +664,25 @@ export default {
       }
     },
 
-    async fetchURLsOLD(RelationAttachments) {
-      try {
-        const response = await apiFetchImageSRC(
-          RelationAttachments,
-          this.currentItem.Trench
-        );
-        if (response && response.data) {
-          let blob = new Blob([response.data], {
-            type: response.headers["content-type"],
-          });
-          return URL.createObjectURL(blob); // Retourne l'URL de l'image
-        } else {
-          return "/path/to/placeholder.jpg"; // Retourne une image de remplacement en cas d'erreur
-        }
-      } catch (error) {
-        console.error("Erreur lors de la récupération de l'image :", error);
-        return "/path/to/placeholder.jpg"; // Placeholder en cas d'erreur
-      }
-    },
+    // async fetchURLsOLD(RelationAttachments) {
+    //   try {
+    //     const response = await apiFetchImageSRC(
+    //       RelationAttachments,
+    //       this.currentItem.Trench
+    //     );
+    //     if (response && response.data) {
+    //       let blob = new Blob([response.data], {
+    //         type: response.headers["content-type"],
+    //       });
+    //       return URL.createObjectURL(blob); // Retourne l'URL de l'image
+    //     } else {
+    //       return "/path/to/placeholder.jpg"; // Retourne une image de remplacement en cas d'erreur
+    //     }
+    //   } catch (error) {
+    //     console.error("Erreur lors de la récupération de l'image :", error);
+    //     return "/path/to/placeholder.jpg"; // Placeholder en cas d'erreur
+    //   }
+    // },
 
     async fetchURLs(RelationAttachments) {
       try {
