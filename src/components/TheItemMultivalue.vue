@@ -1,5 +1,5 @@
 <template>
-  <q-select
+  <!-- <q-select
     v-if="editMode && fieldType(field.field, group)?.valuelist?.length !== 0"
     v-model="model"
     square
@@ -15,9 +15,9 @@
     :options="fieldType(field.field, group).valuelist"
     @update:model-value="updateMultiArrayNew(field.field, model)"
     @clear="resetValue"
-  />
+  /> -->
   <q-select
-    v-if="editMode && fieldType(field.field, group)?.valuelist.length == 0"
+    v-if="editMode"
     v-model="model"
     square
     dense
@@ -35,6 +35,9 @@
     @update:model-value="updateMultiArrayNew(field.field, model)"
     @clear="resetValue"
   />
+  <div v-else>
+    {{ currentItem[field.field] }}
+  </div>
 </template>
 
 <script>
@@ -150,6 +153,9 @@ export default {
       let valeursField = this.checkedTrenchesItemsSelectedType.map(
         (objet) => objet[field]
       );
+      let valuelistItems =
+        this.fieldType(this.field.field, this.group).valuelist || [];
+      valeursField = valeursField.concat(valuelistItems);
       // Filtrer les doublons
       return valeursField
         .filter((valeur, index, self) => self.indexOf(valeur) === index)

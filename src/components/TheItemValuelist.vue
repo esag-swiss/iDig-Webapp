@@ -1,6 +1,6 @@
 <template>
   <!-- VALUELIST NOT EMPTY (RESTRICTED)-->
-  <q-select
+  <!-- <q-select
     v-if="editMode && fieldType(field.field, group)?.valuelist.length !== 0"
     v-model="currentItem[field.field]"
     use-input
@@ -15,10 +15,10 @@
     @blur="isFocused = false"
     :options="fieldType(field.field, group).valuelist"
     @clear="currentItem[field.field] = previousValue"
-  />
+  /> -->
   <!-- VALUELIST EMPTY (DYNAMIQUE)-->
   <q-select
-    v-else-if="editMode && fieldType(field.field, group)?.valuelist.length == 0"
+    v-if="editMode"
     v-model="currentItem[field.field]"
     use-input
     square
@@ -131,6 +131,9 @@ export default {
       let valeursField = this.checkedTrenchesItemsSelectedType.map(
         (objet) => objet[field]
       );
+      let valuelistItems =
+        this.fieldType(this.field.field, this.group).valuelist || [];
+      valeursField = valeursField.concat(valuelistItems);
       // Filtrer les doublons
       return valeursField
         .filter((valeur, index, self) => self.indexOf(valeur) === index)
