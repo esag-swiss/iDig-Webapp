@@ -210,15 +210,9 @@ export default {
   computed: {
     ...mapState(useDataStore, [
       "projectPreferencesTypes",
-      "projectPreferencesTypesForSelect",
-      "projectPreferencesTypesForOption",
       "projectPreferencesTypesTranslation",
-      "projectPreferencesFields",
       "projectPreferencesBase64",
       "projectPreferencesFieldsWithTranslation",
-      "checkedTrenchesData",
-      "checkedTrenchesVersion",
-      "checkedTrenchesItemsSelectedType",
     ]),
     ...mapState(useAppStore, ["username", "lang"]),
 
@@ -226,14 +220,6 @@ export default {
     fieldsOfCurrentItem() {
       return Object.getOwnPropertyNames(this.currentItem);
     },
-
-    // TODO consider removing the following  --------------------
-    // trenchtoUpdateWithoutTrenchProp() {
-    //   return this.checkedTrenchesData[this.currentItem.Trench].map((obj) => {
-    //     const { Trench, ...newObj } = obj;
-    //     return newObj;
-    //   });
-    // },
 
     groupOfFieldsAccordingToType() {
       // all groups according to type from Preferences
@@ -329,28 +315,6 @@ export default {
       });
       return groups;
     },
-
-    // listFieldsNotIncludedInGroups() {
-    //   let notToDisplay = [
-    //     // "IdentifierUUID",
-    //     "Trench",
-    //     "RightsTrashed",
-    //     "RightsDeleted",
-    //     "DateTimeZone",
-    //   ];
-    //   let fieldsNotPrinsentInGroup = [];
-
-    //   this.groupOfFieldsAccordingToTypeAndNative.forEach((obj) => {
-    //     obj.fields.forEach((key) => {
-    //       notToDisplay.push(key.field);
-    //     });
-    //   });
-
-    //   fieldsNotPrinsentInGroup = this.fieldsOfCurrentItem.filter(
-    //     (item) => !notToDisplay.includes(item)
-    //   );
-    //   return fieldsNotPrinsentInGroup;
-    // },
   },
   watch: {
     currentItem(newValue) {
@@ -447,7 +411,6 @@ export default {
       "setProjectPreferencesTypes",
       "setProjectPreferencesFields",
       "setProjectPreferencesBase64",
-      "fetchPreferences",
       "fetchIdigTrenchesNames",
       "fetchProjectTrenchesNamesFromFile",
     ]),
