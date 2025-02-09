@@ -7,6 +7,29 @@ export function lsStoreConnection() {
   localStorage.setItem("project", project);
   localStorage.setItem("username", username);
   localStorage.setItem("password", password);
+  // Retrieve existing connections array or initialize an empty one
+  const connections = localStorage.getItem("connections")
+    ? JSON.parse(localStorage.getItem("connections"))
+    : [];
+
+  // Create a new connection object with the current credentials
+  if (
+    connections.some(
+      (conn) =>
+        conn.server === server &&
+        conn.project === project &&
+        conn.username === username
+    )
+  ) {
+    return;
+  }
+  const newConnection = { server, project, username, password };
+
+  // Add the new connection to the array
+  connections.push(newConnection);
+
+  // Save the updated array back to local storage
+  localStorage.setItem("connections", JSON.stringify(connections));
 }
 export const lsLoadUsername = () => {
   return localStorage.getItem("username") ?? "";
@@ -70,5 +93,40 @@ export function lsLoadCheckedFieldNames() {
     // else we check the Identifier checkbox by default.
     // ("Identifier" may not exist, but it's fine, and much more simple like that)
     setCheckedFieldNames(["Identifier"]);
+  }
+}
+
+export function lsStoreProjectsPreferencesBase64(preferencesBase64) {
+  const { project } = useAppStore();
+
+  // 1st, get ProjectsPreferencesBase64 in local storage, if any :
+  let ProjectsPreferencesBase64 = localStorage.getItem(
+    "lsProjectsPreferencesBase64"
+  )
+    ? JSON.parse(localStorage.getItem("lsProjectsPreferencesBase64"))
+    : {};
+
+  // 2nd add or replace preferences for current project
+  ProjectsPreferencesBase64[project] = preferencesBase64;
+
+  // 3rd, store it in local storage :
+  localStorage.setItem(
+    "lsProjectsPreferencesBase64",
+    JSON.stringify(ProjectsPreferencesBase64)
+  );
+}
+
+export function lsLoadProjectsPreferencesBase64() {
+  const { project } = useAppStore();
+
+  if (
+    localStorage.getItem("lsProjectsPreferencesBase64") &&
+    JSON.parse(localStorage.getItem("lsProjectsPreferencesBase64"))?.[project]
+  ) {
+    return JSON.parse(localStorage.getItem("lsProjectsPreferencesBase64"))?.[
+      project
+    ];
+  } else {
+    console.log("No preferences found for ", project);
   }
 }

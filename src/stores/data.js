@@ -8,7 +8,10 @@ import {
 import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
 import { useAppStore } from "@/stores/app";
 import { Notify } from "quasar";
-import { lsLoadCheckedTrenchesVersion } from "@/services/localStorageManager";
+import {
+  lsLoadCheckedTrenchesVersion,
+  lsStoreProjectsPreferencesBase64,
+} from "@/services/localStorageManager";
 import {
   openDB,
   storeDataInIndexedDB,
@@ -274,9 +277,9 @@ export const useDataStore = defineStore("data", {
       this.setProjectTrenchesNames(projectTrenchesNames);
     },
 
-    async fetchPreferences(trench) {
+    async fetchAndLoadPreferences(trench) {
       const { setIsLoaded } = useAppStore();
-      const processPreferences = (base64Preferences) => {
+      const parseAndLoadPreferences = (base64Preferences) => {
         let preferences = "";
         try {
           preferences = JSON.parse(
@@ -304,38 +307,17 @@ export const useDataStore = defineStore("data", {
         this.setProjectPreferencesFields(preferences.fields);
       };
 
-      await apiFetchTrenchVersion(trench).then((response) => {
-        if (response.data[0].version !== this.checkedTrenchesVersion[trench]) {
-          // case curent version and preferences not present locally = fetch from server
-          return apiFetchPreferences(trench).then((response) => {
-            // Store locally preferences in case of pushing trenches
-            this.setProjectPreferencesBase64(response.data.preferences);
-            // Store preferences also in localStorage for next session
-            localStorage.setItem(
-              "projectPreferencesBase64",
-              response.data.preferences
-            );
+      return apiFetchPreferences(trench).then((response) => {
+        // Store locally preferences in case of pushing trenches
+        this.setProjectPreferencesBase64(response.data.preferences);
+        // Store preferences also in localStorage for next session
+        lsStoreProjectsPreferencesBase64(response.data.preferences);
 
-            let preferences = decodeURIComponent(
-              escape(window.atob(response.data.preferences))
-            );
-            processPreferences(preferences);
-            setIsLoaded(true);
-          });
-        } else {
-          // case curent version and preferences present locally
-          this.setProjectPreferencesBase64(
-            localStorage.getItem("projectPreferencesBase64")
-          );
-          let preferences = decodeURIComponent(
-            escape(
-              window.atob(localStorage.getItem("projectPreferencesBase64"))
-            )
-          );
-
-          processPreferences(preferences);
-          setIsLoaded(true);
-        }
+        let preferences = decodeURIComponent(
+          escape(window.atob(response.data.preferences))
+        );
+        parseAndLoadPreferences(preferences);
+        setIsLoaded(true);
       });
     },
 

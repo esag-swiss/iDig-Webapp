@@ -45,7 +45,7 @@ export default {
       "setProjectPreferencesTypes",
       "setProjectPreferencesFields",
       "setProjectPreferencesBase64",
-      "fetchPreferences",
+      "fetchAndLoadPreferences",
       "fetchIdigTrenchesNames",
       "fetchProjectTrenchesNamesFromFile",
     ]),
@@ -61,13 +61,13 @@ export default {
         this.setServer(this.cleanServerUserEntry(this.server));
         try {
           await this.fetchIdigTrenchesNames();
-          await this.fetchPreferences(this.firstTrench);
+          await this.fetchAndLoadPreferences(this.firstTrench);
           lsStoreConnection();
         } catch (e) {
           try {
             // si erreur, essaie de charger les données depuis un fichier
             this.fetchProjectTrenchesNamesFromFile();
-            await this.fetchPreferences(this.firstTrench);
+            await this.fetchAndLoadPreferences(this.firstTrench);
             lsStoreConnection();
           } catch (e) {
             /* empty */
