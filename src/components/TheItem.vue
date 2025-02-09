@@ -19,7 +19,7 @@
           @click="pushSurvey()"
         />
         <q-tooltip class="bg-accent"
-          >upload modification to iDig server</q-tooltip
+          >upload curent trench modification to iDig server</q-tooltip
         >
       </div>
       <div class="mx-1">
@@ -34,9 +34,13 @@
       </div>
     </div>
     <div class="TheItem center-block mx-auto">
-      <!--Formulaire-->
+      <!-------------------------------------------------------------------------------->
+      <!--------------------------------  FORM    -------------------------------------->
 
+      <!-------------------------------------------------------------------------------->
       <!--   IMAGE DISPLAY SECTION (for RelationAttachments and RelationIncludesUUID) -->
+      <!-------------------------------------------------------------------------------->
+
       <ul v-if="!editMode" class="list-group">
         <div v-if="relatedImageUrls.length > 0" class="col-12 p-1">
           <div v-if="!selectedImageUrl" class="thumbnails-container">
@@ -125,7 +129,7 @@
           <!--                -->
           <!-- FIELDS LABEL   -->
           <!--                -->
-          <div class="text-right text-dark border-right p-1 col-2">
+          <div class="text-right text-dark p-1 col-2">
             {{
               // labels from types.groups.fields.labels.[lang] except if empty
               field.labels?.[lang] ||
@@ -134,337 +138,121 @@
               field.field
             }}
             <q-tooltip
-              anchor="center left"
-              self="bottom middle"
+              v-if="fieldType(field.field, group)?.tips?.[lang]"
+              anchor="bottom left"
+              self="top left"
               class="bg-accent"
-              >{{ field.field }}
-            </q-tooltip>
+              >({{ field.field }})
+              {{ fieldType(field.field, group).tips[lang] }}</q-tooltip
+            >
           </div>
 
-          <!--                     -->
-          <!-- VALUE : many cases  -->
-          <!--                     -->
-          <div class="col-10 border-none p-0">
+          <!------------------------------------------------------->
+          <!--------------- VALUE : /!\ many cases  --------------->
+          <!------------------------------------------------------->
+          <div class="col-10 p-0 border-left">
             <!-- TYPE  -->
-            <div v-if="field.field === 'Type'" class="col-12 p-1">
-              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
-                <q-select
-                  v-model="selectedTypeSubtype"
-                  dense
-                  options-dense
-                  filled
-                  :options="projectPreferencesTypesForOption"
-                  emit-value
-                  map-options
-                  class="select"
-                  :label="
-                    projectPreferencesTypesTranslation[currentItem.Subtype] ||
-                    projectPreferencesTypesTranslation[currentItem[field.field]]
-                  "
-                  @update:model-value="updateTypeAndSubtype"
-                />
-              </div>
-              <div v-else>
-                {{
-                  projectPreferencesTypesTranslation[currentItem.Subtype] ||
-                  projectPreferencesTypesTranslation[currentItem[field.field]]
-                }}
-              </div>
-            </div>
+            <TheItemType
+              v-if="field.field === 'Type'"
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+            />
             <!-- RightsStatus  TODO voir option value et label -->
-            <div v-else-if="field.field === 'RightsStatus'" class="col-12 p-1">
-              <div class="col-12 p-1 m-0 border-none">
-                <q-select
-                  v-model="currentItem[field.field]"
-                  dense
-                  options-dense
-                  filled
-                  :options="fieldsSchema.RightsStatus.valuelists"
-                  option-value="en"
-                  option-label="fr"
-                  :disable="!editMode"
-                  emit-value
-                  map-options
-                  class="select"
-                /><q-tooltip
-                  v-if="fieldType(field.field, group)?.tips?.[lang]"
-                  anchor="bottom left"
-                  self="top left"
-                  class="bg-accent"
-                  >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-                >
-              </div>
-            </div>
-
+            <TheItemRightsStatus
+              v-else-if="field.field === 'RightsStatus'"
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :disable="!editMode"
+            />
             <!-- CoverageSerialized -->
-            <div
+            <TheItemCoverageSerialezed
               v-else-if="field.field === 'CoverageSerialized'"
               class="col-12 p-1"
-            >
-              <div>
-                {{ determineTypeGeo(currentItem[field.field]) }}
-              </div>
-            </div>
+              :field="field"
+              :currentItem="currentItem"
+            />
             <!-- BOOLEAN -->
-            <div
+            <TheItemBoolean
               v-else-if="fieldsSchema[field.field]?.type === 'boolean'"
               class="col-12 p-1"
-            >
-              <q-toggle
-                v-model="currentItem[field.field]"
-                false-value="0"
-                true-value="1"
-                color="green"
-                :disable="!editMode"
-              /><q-tooltip
-                v-if="fieldType(field.field, group)?.tips?.[lang]"
-                anchor="bottom left"
-                self="top left"
-                class="bg-accent"
-                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-              >
-            </div>
-            <!-- RELATIONS-->
-            <div
-              v-else-if="
-                fieldsSchema[field.field]?.type === 'link' &&
-                currentItem[field.field]
-              "
-              class="col-12 p-1 flex-grow-1"
-            >
-              <q-chip
-                v-for="item in itemsInChips(currentItem[field.field])"
-                clickable
-                @click="
-                  currentItem = item.fullItem;
-                  fetchImages();
-                "
-                :key="item"
-                color="primary"
-                text-color="white"
-                class="q-chip"
-              >
-                {{ item.chipText }}
-              </q-chip>
-              <q-tooltip
-                v-if="fieldType(field.field, group)?.tips?.[lang]"
-                anchor="bottom left"
-                self="top left"
-                class="bg-accent"
-                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-              >
-            </div>
+              :field="field"
+              :currentItem="currentItem"
+              :disable="!editMode"
+            />
             <!-- DATE -->
-            <div
+            <TheItemDateUTC
               v-else-if="fieldsSchema[field.field]?.type === 'DateUTC'"
               class="col-12 p-1"
-            >
-              {{ format_date(currentItem[field.field]) }}
-              <q-tooltip
-                v-if="fieldType(field.field, group)?.tips?.[lang]"
-                anchor="bottom left"
-                self="top left"
-                class="bg-accent"
-                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-              >
-            </div>
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+            />
+            <!-- RELATIONS-->
+            <TheItemLink
+              v-else-if="fieldsSchema[field.field]?.type === 'link'"
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+              @update:currentItem="handleUpdateCurrentItem"
+            />
             <!-- MULTILINE -->
-            <div
+            <TheItemMultiline
               v-else-if="
                 fieldType(field.field, group)?.hasOwnProperty('multiline')
               "
               class="col-12 p-1"
-            >
-              <textarea
-                v-if="editMode"
-                v-model="currentItem[field.field]"
-                class="col-12 p-0 border-none"
-              ></textarea>
-              <div v-else>{{ currentItem[field.field] }}</div>
-              <q-tooltip
-                v-if="fieldType(field.field, group)?.tips?.[lang]"
-                anchor="bottom left"
-                self="top left"
-                class="bg-accent"
-                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-              >
-            </div>
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+            />
             <!-- MULTIVALUE && VALUELIST NOT EMPTY   -->
-            <div
+            <TheItemMultivalue
               v-else-if="
                 fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
-                fieldType(field.field, group)?.hasOwnProperty('multivalue') &&
-                fieldType(field.field, group)?.valuelist?.length !== 0
+                fieldType(field.field, group)?.hasOwnProperty('multivalue')
               "
-              class="col-12 p-1 border-none"
-            >
-              <div class="col-12 p-1 border-none">
-                {{ currentItem[field.field] }}
-              </div>
-              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
-                <q-select
-                  v-model="
-                    arrayForMultivalueFields[
-                      index.toString() + indexGroup.toString()
-                    ]
-                  "
-                  use-input
-                  @update:model-value="
-                    updateMultiArray(
-                      field.field,
-                      arrayForMultivalueFields[
-                        index.toString() + indexGroup.toString()
-                      ]
-                    )
-                  "
-                  dense
-                  options-dense
-                  filled
-                  :options="fieldType(field.field, group).valuelist"
-                  class="select"
-                /><q-tooltip
-                  v-if="fieldType(field.field, group)?.tips?.[lang]"
-                  anchor="bottom left"
-                  self="top left"
-                  class="bg-accent"
-                  >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-                >
-              </div>
-            </div>
-            <!-- MULTIVALUE && VALUELIST EMPTY   -->
-            <div
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+              :group="group"
+              TheItemMultivalue
+              :indexGroup="indexGroup"
+              :index="index"
+            />
+            <!-- VALUELIST -->
+            <TheItemValuelist
               v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
-                fieldType(field.field, group)?.hasOwnProperty('multivalue') &&
-                fieldType(field.field, group)?.valuelist.length == 0
+                fieldType(field.field, group)?.hasOwnProperty('valuelist')
               "
-              class="col-12 p-1 m-0 border-none"
-            >
-              <div class="col-12 p-1 m-0 border-none">
-                {{ currentItem[field.field] }}
-              </div>
-              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
-                <q-select
-                  v-model="
-                    arrayForMultivalueFields[
-                      index.toString() + indexGroup.toString()
-                    ]
-                  "
-                  use-input
-                  @update:model-value="
-                    updateMultiArray(
-                      field.field,
-                      arrayForMultivalueFields[
-                        index.toString() + indexGroup.toString()
-                      ]
-                    )
-                  "
-                  dense
-                  options-dense
-                  new-value-mode="add"
-                  filled
-                  :options="listValueInField(field.field)"
-                  class="select"
-                /><q-tooltip
-                  v-if="fieldType(field.field, group)?.tips?.[lang]"
-                  anchor="bottom left"
-                  self="top left"
-                  class="bg-accent"
-                  >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-                >
-              </div>
-            </div>
-            <!-- VALUELIST NOT EMPTY-->
-            <div
-              v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
-                fieldType(field.field, group)?.valuelist.length !== 0
-              "
-              class="col-12 p-1 border-none"
-            >
-              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
-                <q-select
-                  v-model="currentItem[field.field]"
-                  use-input
-                  dense
-                  options-dense
-                  filled
-                  :options="fieldType(field.field, group).valuelist"
-                  class="select"
-                /><q-tooltip
-                  v-if="fieldType(field.field, group)?.tips?.[lang]"
-                  anchor="bottom left"
-                  self="top left"
-                  class="bg-accent"
-                  >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-                >
-              </div>
-              <div v-else class="col-12 p-1 m-0 border-none">
-                {{ currentItem[field.field] }}
-              </div>
-              <q-tooltip
-                v-if="fieldType(field.field, group)?.tips?.[lang]"
-                anchor="bottom left"
-                self="top left"
-                class="bg-accent"
-                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-              >
-            </div>
-            <!-- VALUELIST EMPTY (DYNAMIQUE)-->
-            <div
-              v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
-                fieldType(field.field, group)?.valuelist.length == 0
-              "
-              class="col-12 p-1 border-none"
-            >
-              <div v-if="editMode" class="col-12 p-1 m-0 border-none">
-                <q-select
-                  v-model="currentItem[field.field]"
-                  use-input
-                  dense
-                  options-dense
-                  filled
-                  :options="listValueInField(field.field)"
-                  class="select"
-                  new-value-mode="add"
-                /><q-tooltip
-                  v-if="fieldType(field.field, group)?.tips?.[lang]"
-                  anchor="bottom left"
-                  self="top left"
-                  class="bg-accent"
-                  >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-                >
-              </div>
-              <div v-else class="col-12 p-1 m-0 border-none">
-                {{ currentItem[field.field] }}
-              </div>
-            </div>
-            <!-- STRING -->
-            <div v-else class="col-12 p-1 border-none">
-              <input
-                v-if="editMode"
-                v-model="currentItem[field.field]"
-                type="text"
-                class="col-12 p-1 border-none"
-              />
-              <div v-else>{{ currentItem[field.field] }}</div>
-              <q-tooltip
-                v-if="fieldType(field.field, group)?.tips?.[lang]"
-                anchor="bottom left"
-                self="top left"
-                class="bg-accent"
-                >{{ fieldType(field.field, group).tips[lang] }}</q-tooltip
-              >
-            </div>
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+              :group="group"
+            />
+            <!-- STRING all other cases-->
+            <TheItemInput
+              v-else
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+            />
           </div>
         </div>
       </ul>
       <!--  CASES NO GROUPS HEADER -->
       <ul class="list-group">
         <li
-          class="list-group-item text-uppercase accordion p-1 border-bottom"
-        ></li>
+          class="list-group-item text-uppercase accordion p-1 pl-2 border-bottom"
+        >
+          Fields not included in groups
+        </li>
         <!-- ROWS -->
         <div
           v-for="field in listFieldsNotIncludedInGroups"
@@ -486,19 +274,25 @@
             </q-tooltip>
           </div>
 
-          <div
-            v-if="fieldsSchema[field]?.type === 'DateUTC'"
-            class="col-10 p-1"
-          >
-            {{ format_date(currentItem[field]) }}
+          <div class="col-10 p-1">
+            <!-- DATE -->
+            <TheItemDateUTC
+              v-if="fieldsSchema[field.field]?.type === 'DateUTC'"
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+            />
+
+            <TheItemInput
+              v-else-if="editMode && field !== 'IdentifierUUID'"
+              class="col-12 p-1"
+              :field="field"
+              :currentItem="currentItem"
+              :editMode="editMode"
+            />
+            <div v-else class="col-12 p-1">{{ currentItem[field] }}</div>
           </div>
-          <input
-            v-else-if="editMode"
-            v-model="currentItem[field]"
-            type="text"
-            class="col-10 p-1 border-none"
-          />
-          <div v-else class="col-10 p-1">{{ currentItem[field] }}</div>
         </div>
       </ul>
     </div>
@@ -511,17 +305,38 @@ import { apiPushTrench, apiFetchImageSRC } from "@/services/ApiClient";
 import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
-import dayjs from "dayjs";
 import { fieldsSchema } from "@/assets/nativeFields";
-import { determineGeoType } from "@/services/json2geojson";
 import {
   openDB,
   addPlanToDB,
   getImageFromDB,
 } from "@/services/indexedDbManager";
+import TheItemType from "@/components/TheItemType.vue";
+import TheItemRightsStatus from "@/components/TheItemRightsStatus.vue";
+import TheItemBoolean from "@/components/TheItemBoolean.vue";
+import TheItemCoverageSerialezed from "@/components/TheItemCoverageSerialezed.vue";
+import TheItemDateUTC from "@/components/TheItemDateUTC.vue";
+import TheItemLink from "@/components/TheItemLink.vue";
+import TheItemMultiline from "@/components/TheItemMultiline.vue";
+import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
+import TheItemValuelist from "@/components/TheItemValuelist.vue";
+import TheItemInput from "@/components/TheItemInput.vue";
 
 export default {
   name: "TheItem",
+  components: {
+    TheItemType,
+    TheItemRightsStatus,
+    TheItemBoolean,
+    TheItemCoverageSerialezed,
+    TheItemDateUTC,
+    TheItemLink,
+    TheItemMultiline,
+    TheItemMultivalue,
+    TheItemValuelist,
+    TheItemInput,
+  },
+
   props: {
     currentItem: {
       type: Object,
@@ -531,7 +346,6 @@ export default {
   data() {
     return {
       fieldsSchema: fieldsSchema,
-      selectedTypeSubtype: null,
       editMode: false,
       arrayForMultivalueFields: [],
       relatedImageUrls: [], // Tableau pour stocker les URLs d'images récupérées
@@ -543,7 +357,6 @@ export default {
     ...mapState(useDataStore, [
       "projectPreferencesTypes",
       "projectPreferencesTypesForSelect",
-      "projectPreferencesTypesForOption",
       "projectPreferencesTypesTranslation",
       "projectPreferencesFields",
       "projectPreferencesBase64",
@@ -684,6 +497,16 @@ export default {
       return fieldsNotPrinsentInGroup;
     },
   },
+
+  watch: {
+    currentItem: {
+      handler() {
+        this.fetchImages();
+      },
+      immediate: true,
+      deep: true,
+    },
+  },
   mounted() {
     this.fetchImages();
   },
@@ -695,15 +518,6 @@ export default {
       "setSyncNewVersion",
       "UpdateSyncTrenchData",
     ]),
-    format_date(value) {
-      if (value) {
-        return dayjs(value).format("DD/MM/YYYY");
-      }
-    },
-    updateTypeAndSubtype(value) {
-      this.currentItem.Type = value.type;
-      this.currentItem.Subtype = value.subtype;
-    },
 
     fieldType(field, groupObject) {
       let groupName = groupObject.group ?? "";
@@ -736,15 +550,15 @@ export default {
       return fieldSchema;
     },
 
-    listValueInField(field) {
-      let valeursField = this.checkedTrenchesItemsSelectedType.map(
-        (objet) => objet[field]
-      );
-      // Filtrer les doublons
-      return valeursField
-        .filter((valeur, index, self) => self.indexOf(valeur) === index)
-        .sort();
-    },
+    // listValueInField(field) {
+    //   let valeursField = this.checkedTrenchesItemsSelectedType.map(
+    //     (objet) => objet[field]
+    //   );
+    //   // Filtrer les doublons
+    //   return valeursField
+    //     .filter((valeur, index, self) => self.indexOf(valeur) === index)
+    //     .sort();
+    // },
 
     async pushSurvey() {
       const head = this.checkedTrenchesVersion[this.currentItem.Trench];
@@ -784,26 +598,18 @@ export default {
       }
     },
 
-    determineTypeGeo(e) {
-      if (e) {
-        return determineGeoType(e);
-      } else {
-        return null;
-      }
-    },
-
-    updateMultiArray(field, value) {
-      if (this.currentItem[field]?.includes(value)) {
-        this.currentItem[field] = this.currentItem[field].replace(
-          value + "\n",
-          ""
-        );
-      } else {
-        this.currentItem[field] = this.currentItem[field]
-          ? this.currentItem[field] + "\n" + value
-          : value;
-      }
-    },
+    // updateMultiArray(field, value) {
+    //   if (this.currentItem[field]?.includes(value)) {
+    //     this.currentItem[field] = this.currentItem[field].replace(
+    //       value + "\n",
+    //       ""
+    //     );
+    //   } else {
+    //     this.currentItem[field] = this.currentItem[field]
+    //       ? this.currentItem[field] + "\n" + value
+    //       : value;
+    //   }
+    // },
 
     async fetchImages() {
       let relatedItems = [];
@@ -858,25 +664,25 @@ export default {
       }
     },
 
-    async fetchURLsOLD(RelationAttachments) {
-      try {
-        const response = await apiFetchImageSRC(
-          RelationAttachments,
-          this.currentItem.Trench
-        );
-        if (response && response.data) {
-          let blob = new Blob([response.data], {
-            type: response.headers["content-type"],
-          });
-          return URL.createObjectURL(blob); // Retourne l'URL de l'image
-        } else {
-          return "/path/to/placeholder.jpg"; // Retourne une image de remplacement en cas d'erreur
-        }
-      } catch (error) {
-        console.error("Erreur lors de la récupération de l'image :", error);
-        return "/path/to/placeholder.jpg"; // Placeholder en cas d'erreur
-      }
-    },
+    // async fetchURLsOLD(RelationAttachments) {
+    //   try {
+    //     const response = await apiFetchImageSRC(
+    //       RelationAttachments,
+    //       this.currentItem.Trench
+    //     );
+    //     if (response && response.data) {
+    //       let blob = new Blob([response.data], {
+    //         type: response.headers["content-type"],
+    //       });
+    //       return URL.createObjectURL(blob); // Retourne l'URL de l'image
+    //     } else {
+    //       return "/path/to/placeholder.jpg"; // Retourne une image de remplacement en cas d'erreur
+    //     }
+    //   } catch (error) {
+    //     console.error("Erreur lors de la récupération de l'image :", error);
+    //     return "/path/to/placeholder.jpg"; // Placeholder en cas d'erreur
+    //   }
+    // },
 
     async fetchURLs(RelationAttachments) {
       try {
@@ -933,36 +739,9 @@ export default {
       this.selectedImageUrl = null; // Réinitialiser l'URL pour masquer l'image
     },
 
-    itemsInChips(IdentifierUUIDs) {
-      if (IdentifierUUIDs.includes("\n")) {
-        let relatedItems = IdentifierUUIDs.split("\n");
-        relatedItems = relatedItems.map((obj) => this.chipText(obj));
-        return relatedItems;
-      } else {
-        return [this.chipText(IdentifierUUIDs)];
-      }
-    },
-
-    chipText(IdentifierUUID) {
-      const filteredItems = this.checkedTrenchesData[
-        this.currentItem.Trench
-      ].filter((x) => x.IdentifierUUID.includes(IdentifierUUID));
-
-      if (filteredItems.length > 0) {
-        const item = filteredItems[0];
-        return {
-          chipText:
-            this.projectPreferencesTypesTranslation[item.Type] +
-            ": " +
-            item.Title,
-          fullItem: item,
-        };
-      }
-
-      return {
-        chipText: "Unknown Item", // Valeur par défaut si aucun élément correspondant n'est trouvé
-        fullItem: null,
-      };
+    handleUpdateCurrentItem(updatedItem) {
+      Object.assign(this.currentItem, updatedItem);
+      // Additional logic to handle the updated item
     },
   },
 };
@@ -997,12 +776,12 @@ export default {
   background-color: #eee;
   cursor: default;
 }
-.border-none {
+/* .border-none {
   border: none;
-}
-.select {
+} */
+/* .select {
   margin: -5px;
-}
+} */
 /* Style pour la miniature */
 .img-thumbnail {
   max-width: 100px;

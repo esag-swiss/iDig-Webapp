@@ -117,6 +117,7 @@ export const fieldsSchema = {
     },
     tips: {
       en: "determines if you can edit the item or not",
+      fr: "Détermine si l'élément peut être édité ou non",
     },
   },
   RightsTrashed: {
@@ -175,6 +176,7 @@ export const fieldsSchema = {
     },
     tips: {
       en: "a path to an image representation",
+      fr: "un chemin vers une représentation d'image",
     },
   },
   FormatImageHeight: {
@@ -184,6 +186,7 @@ export const fieldsSchema = {
     },
     tips: {
       en: "height of the image",
+      fr: "hauteur de l'image",
     },
   },
   FormatImageWidth: {
@@ -193,24 +196,27 @@ export const fieldsSchema = {
     },
     tips: {
       en: "width of the image",
+      fr: "largeur de l'image",
     },
   },
   FormatImageAnnotations: {
-    field: "[FormatImageAnnotations",
+    field: "FormatImageAnnotations",
     labels: {
       en: "annotations",
     },
     tips: {
       en: "annotations for the item",
+      fr: "annotations pour l'élément",
     },
   },
   FormatPDF: {
-    field: "[FormatPDF",
+    field: "FormatPDF",
     labels: {
       en: "PDF representation",
     },
     tips: {
       en: "a path to a pdf representation",
+      fr: "un chemin vers une représentation pdf",
     },
   },
   RelationAttachments: {
@@ -232,6 +238,7 @@ export const fieldsSchema = {
     },
     tips: {
       en: "URLs to other representations of the item",
+      fr: "URLs vers d'autres représentations de l'élément",
     },
   },
   FormatImageTransformXYZ: {
@@ -392,7 +399,7 @@ export const fieldsSchema = {
   },
   CoverageTemporal: {
     type: "Date?",
-    field: "[CoverageTemporal/Temporal]",
+    field: "CoverageTemporal/Temporal",
     typeiDig: "ExtraFields",
     labels: {
       en: "coverage temporelle",
@@ -405,7 +412,7 @@ export const fieldsSchema = {
   },
   CoverageEarliest: {
     type: "optionalAutomatedFields",
-    field: "[CoverageEarliest/TemporalEarliest]",
+    field: "CoverageEarliest/TemporalEarliest",
     labels: {
       en: "couverture la plus ancienne",
       fr: "couverture la plus ancienne",
@@ -417,7 +424,7 @@ export const fieldsSchema = {
   },
   CoverageLatest: {
     type: "optionalAutomatedFields",
-    field: "[CoverageLatest/TemporalLatest]",
+    field: "CoverageLatest/TemporalLatest",
     labels: {
       en: "couverture la plus récente",
       fr: "couverture la plus récente",
