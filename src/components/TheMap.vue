@@ -36,8 +36,6 @@ export default {
       map: null,
       itemsLayer: null,
       overlayLayers: null,
-      // baseLayers: null,
-      // layerControl: null,
       baseLayersTree: null,
       overlaysTree: null,
       treeLayerControl: null,
@@ -77,24 +75,15 @@ export default {
         this.loadItemsLayer();
       }
     },
-
     // reload overlays tree when changing trenches
     checkedTrenchesItemsPlans: async function () {
       if (this.map && !this.isProcessingTrenchItemsPlans) {
         this.isProcessingTrenchItemsPlans = true;
         try {
-          await this.treeLayerControl.remove();
-          this.treeLayerControl.removeAllOverlays(this.map);
-
-          this.overlaysTree = await createMapsOverlaysTree(
-            this.checkedTrenchesItemsPlans,
-            this.projectPreferencesCRS
-          );
-          this.treeLayerControl = L.control.layers.tree(
-            baseLayersTree,
-            this.overlaysTree
-          );
-          this.treeLayerControl.addTo(this.map);
+          // Remove the current map instance
+          this.map.remove();
+          // Reinitialize the map
+          await this.initMap();
         } catch (error) {
           console.error(error);
         } finally {
@@ -171,8 +160,6 @@ export default {
   stroke-opacity: 1;
   stroke-width: 4;
 }
-/* .leaflet-popup-content {
-} */
 
 .leaflet-popup-content-wrapper:hover {
   background-color: #f8f9fab4;
