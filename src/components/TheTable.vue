@@ -26,7 +26,7 @@
             :key="col.name"
             :props="props"
             :style="{
-              width: col.colWidth + col.colWidthType,
+              maxWidth: col.colWidth + col.colWidthType,
             }"
             class="th-container dropzone"
             @dragover="onDragOver"
@@ -147,23 +147,43 @@ export default {
       currentItem.value = null;
       appStore.setIsItemSelected(false);
     };
+
     const dragStart = (event) => {
       startX.value = event.clientX;
     };
 
     const dragEnd = (event, colName) => {
+      // Calcul du delta de la souris depuis le début du drag
       deltaX.value = event.clientX - startX.value;
 
-      // Recherche de la colonne correspondant au nom
-      const columnIndex = columns.value.findIndex(
+      const selectedColumnIndex = columns.value.findIndex(
         (column) => column.name === colName
       );
-      if (columnIndex !== -1) {
-        // Mise à jour de la taille de la colonne spécifique
-        columns.value[columnIndex].colWidth =
-          columns.value[columnIndex].colWidth + deltaX.value > 19
-            ? columns.value[columnIndex].colWidth + deltaX.value
-            : 20;
+
+      // Calcul de la nouvelle largeur pour la colonne sélectionnée
+      let newWidth = columns.value[selectedColumnIndex].colWidth + deltaX.value;
+
+      console.log(
+        columns.value[selectedColumnIndex].colWidth + " " + deltaX.value
+      );
+
+      // Calcul du delta réellement appliqué (au cas où newWidth aurait été limité)
+      const actualDelta =
+        newWidth - columns.value[selectedColumnIndex].colWidth;
+      columns.value[selectedColumnIndex].colWidth = newWidth;
+
+      // Ajustement des autres colonnes pour conserver la largeur totale
+      const totalColumns = columns.value.length;
+
+      const otherColumnsCount = totalColumns - 1;
+      if (otherColumnsCount > 0 && actualDelta !== 0) {
+        const subtractPerColumn = actualDelta / otherColumnsCount;
+        columns.value.forEach((col, index) => {
+          if (index !== selectedColumnIndex) {
+            let updatedWidth = col.colWidth - subtractPerColumn;
+            col.colWidth = updatedWidth;
+          }
+        });
       }
       startX.value = 0;
       deltaX.value = 0;
@@ -238,11 +258,18 @@ export default {
 
       const Copy = document.createElement("div");
       Copy.innerText = "Copy to Clipboard";
-      Copy.onclick = () => {
+      Copy.onclick = async () => {
         // copy to clipboard
         const rowText = JSON.stringify(row, null, 2); // Convertir l'objet row en texte lisible
-        navigator.clipboard.writeText(rowText);
-        document.body.removeChild(popup);
+        try {
+          await navigator.clipboard.writeText(rowText);
+          alert("Copied to clipboard");
+        } catch (err) {
+          console.error("Failed to copy: ", err);
+        }
+        if (document.body.contains(popup)) {
+          document.body.removeChild(popup);
+        }
       };
 
       popup.appendChild(openNewTabButton);
@@ -281,6 +308,9 @@ export default {
 }
 .custom-popup div:hover {
   background-color: #f0f0f0;
+}
+.q-table__sort-icon {
+  visibility: hidden;
 }
 </style>
 
