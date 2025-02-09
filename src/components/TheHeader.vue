@@ -1,65 +1,15 @@
 <template>
-  <nav class="navbar navbar-dark bg-dark p-0">
-    <!-- Navbar content -->
-    <div class="container-fluid">
-      <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav pt-2 py-md-0">
-        <!-- Title -->
-        <div class="navbar-brand" href="#">iDig webapp</div>
-      </ul>
+  <q-toolbar class="bg-black text-white">
+    <q-btn stretch label="iDig webapp" />
+    <q-toolbar-title v-if="isLoaded"> {{ project }} </q-toolbar-title>
 
-      <div v-if="isLoaded">
-        <span class="text-white d-none d-md-inline">
-          {{ project }} - {{ username }}@{{ server }}
-        </span>
-        <TheHeaderLang />
-        <button
-          type="button"
-          class="btn btn-outline-secondary m-2 px-1 py-0"
-          @click="resetStores"
-        >
-          déconnexion
-        </button>
-      </div>
-
-      <form v-else class="form-inline my-0">
-        <div class="navbar-text text-light p-2">server:</div>
-        <input
-          :value="server"
-          placeholder=" url complet "
-          class="my-2 text-light input-header-lg"
-          @input="(event) => setServer(event.target.value)"
-        />
-        <a class="navbar-text text-light p-2">project:</a>
-        <input
-          :value="project"
-          class="m-2 text-light input-header"
-          @input="(event) => setProject(event.target.value)"
-        />
-        <a class="navbar-text text-light p-2">user:</a>
-        <input
-          :value="username"
-          class="m-2 text-light input-header"
-          @input="(event) => setUsername(event.target.value)"
-        />
-        <input
-          :value="password"
-          type="password"
-          class="m-2 text-light input-header-small"
-          placeholder="Password"
-          @input="(event) => setPassword(event.target.value)"
-        />
-        <TheHeaderLang />
-
-        <button
-          type="button"
-          class="connexion btn btn-outline-secondary m-2 px-1 py-0"
-          @click="connect()"
-        >
-          connexion
-        </button>
-      </form>
+    <div v-if="isLoaded">
+      {{ server }}
     </div>
-  </nav>
+    <q-space />
+    <TheHeaderLang />
+    <TheHeaderProfile @connect="connect" />
+  </q-toolbar>
 </template>
 <script>
 import { lsStoreConnection } from "@/services/localStorageManager";
@@ -67,9 +17,10 @@ import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
 import TheHeaderLang from "@/components/TheHeaderLang.vue";
+import TheHeaderProfile from "@/components/TheHeaderProfile.vue";
 
 export default {
-  components: { TheHeaderLang },
+  components: { TheHeaderLang, TheHeaderProfile },
   computed: {
     ...mapState(useAppStore, [
       "server",
@@ -98,25 +49,29 @@ export default {
       "fetchIdigTrenchesNames",
       "fetchProjectTrenchesNamesFromFile",
     ]),
-    resetStores() {
-      const dataStore = useDataStore();
-      dataStore.$reset();
-      const appStore = useAppStore();
-      appStore.$reset();
-    },
+
     async connect() {
-      this.setServer(this.cleanServerUserEntry(this.server));
-      try {
-        await this.fetchIdigTrenchesNames();
-        await this.fetchPreferences(this.firstTrench);
-        lsStoreConnection();
-      } catch (e) {
+      if (this.isLoaded) {
+        const dataStore = useDataStore();
+        dataStore.$reset();
+        const appStore = useAppStore();
+        appStore.$reset();
+      } else {
+        // teste la connexion et charge les données
+        this.setServer(this.cleanServerUserEntry(this.server));
         try {
-          this.fetchProjectTrenchesNamesFromFile();
+          await this.fetchIdigTrenchesNames();
           await this.fetchPreferences(this.firstTrench);
           lsStoreConnection();
         } catch (e) {
-          /* empty */
+          try {
+            // si erreur, essaie de charger les données depuis un fichier
+            this.fetchProjectTrenchesNamesFromFile();
+            await this.fetchPreferences(this.firstTrench);
+            lsStoreConnection();
+          } catch (e) {
+            /* empty */
+          }
         }
       }
     },
