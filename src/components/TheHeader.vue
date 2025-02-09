@@ -1,12 +1,14 @@
 <template>
   <q-toolbar class="bg-black text-white">
-    <q-btn stretch label="iDig webapp" />
-    <q-toolbar-title v-if="isLoaded"> {{ project }} </q-toolbar-title>
+    <q-toolbar-title>iDig webapp</q-toolbar-title>
+    <q-toolbar-title v-if="isLoaded">
+      {{ project }}
+    </q-toolbar-title>
 
     <div v-if="isLoaded">
-      {{ server }}
+      <span>{{ server.replace(/^https?:\/\//, "").replace(/:\d+$/, "") }}</span>
     </div>
-    <q-space />
+    <q-space /> <q-space /> <q-space /> <q-space /><q-space /> <q-space />
     <TheHeaderLang />
     <TheHeaderProfile @connect="connect" />
   </q-toolbar>

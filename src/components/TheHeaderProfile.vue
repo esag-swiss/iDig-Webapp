@@ -1,28 +1,29 @@
 <template>
   <div class="q-pa-xs">
     <q-btn-dropdown
+      size="0.8em"
       split
       rounded
       :outline="!isLoaded"
       :disable-dropdown="isLoaded"
+      :disable-main-btn="username === ''"
       size:xs
       color="secondary"
-      icon="account_circle"
-      @click="$emit('connect')"
+      :icon="isLoaded ? 'logout' : 'login'"
+      @click="if (username !== '') $emit('connect');"
     >
       <template v-slot:label>
-        <div class="row items-center no-wrap">
-          <div class="text-center">{{ username }}</div>
-          <q-tooltip v-if="isLoaded" class="bg-accent">log out</q-tooltip>
-
-          <q-tooltip v-else class="bg-accent"
-            >last login: {{ username }}<br />{{ project }}
-            {{ server }}</q-tooltip
-          >
-        </div>
+        <div class="q-pl-md">{{ username }}</div>
+        <q-tooltip v-if="isLoaded" class="bg-accent">log out</q-tooltip>
+        <q-tooltip v-else-if="username === ''" class="bg-accent"
+          >create a connection first</q-tooltip
+        >
+        <q-tooltip v-else class="bg-accent"
+          >last login: {{ username }}<br />{{ project }} {{ server }}</q-tooltip
+        >
       </template>
       <q-list>
-        <q-item dense>Select a previous connection: </q-item>
+        <q-item class="q-pt-md" dense>Select a previous connection: </q-item>
         <q-item
           v-for="profile in connectionProfiles"
           :key="profile.server"
@@ -54,7 +55,7 @@
         </q-item>
 
         <q-separator />
-        <q-item dense>Create a new connection: </q-item>
+        <q-item class="q-pt-md" dense>Create a new connection: </q-item>
         <q-item>
           <q-item-section>
             <q-input dense standout v-model="newServer" label="Server" />
@@ -90,13 +91,6 @@ import { useDataStore } from "@/stores/data";
 
 export default {
   emits: ["connect"],
-  setup() {
-    return {
-      onMainClick() {
-        // console.log('Clicked on main button')
-      },
-    };
-  },
   data() {
     return {
       newServer: null,
@@ -144,7 +138,7 @@ export default {
       this.setProject(profile.project);
       this.setUsername(profile.username);
       this.setPassword(profile.password);
-      //   this.$emit("connect");
+      this.$emit("connect");
     },
 
     onFormClick() {
@@ -159,23 +153,6 @@ export default {
         this.setUsername(this.newUsername);
         this.setPassword(this.newPassword);
         this.$emit("connect");
-        // const newProfile = {
-        //   server: this.newServer,
-        //   project: this.newProject,
-        //   username: this.newUsername,
-        //   password: this.newPassword,
-        // };
-        // const connections = JSON.parse(
-        //   localStorage.getItem("connections") || "[]"
-        // );
-        // connections.push(newProfile);
-        // localStorage.setItem("connections", JSON.stringify(connections));
-        // this.connectionProfiles = connections;
-        // this.newServer =
-        //   this.newProject =
-        //   this.newUsername =
-        //   this.newPassword =
-        //     "";
       }
     },
   },
