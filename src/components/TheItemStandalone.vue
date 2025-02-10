@@ -412,7 +412,6 @@ export default {
       "setProjectPreferencesFields",
       "setProjectPreferencesBase64",
       "fetchIdigTrenchesNames",
-      "fetchProjectTrenchesNamesFromFile",
     ]),
     async fetchImages() {
       let relatedItems = [];
