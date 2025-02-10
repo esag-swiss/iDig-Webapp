@@ -5,7 +5,6 @@ import {
   apiFetchSurvey,
   apiFetchTrenchVersion,
 } from "@/services/ApiClient";
-import { allTrenchesPerProject } from "@/assets/allTrenchesPerProject";
 import { useAppStore } from "@/stores/app";
 import { Notify } from "quasar";
 import {
@@ -265,16 +264,6 @@ export const useDataStore = defineStore("data", {
           TrenchesNamesForCurrentProject.map((trench) => trench.name)
         );
       });
-    },
-
-    fetchProjectTrenchesNamesFromFile() {
-      const { project } = useAppStore();
-      const projectTrenchesNames = allTrenchesPerProject[project];
-      if (!projectTrenchesNames) {
-        alert(`Trenches for project ${project} not found.`);
-        throw Error(`Trenches for project ${project} not found.`);
-      }
-      this.setProjectTrenchesNames(projectTrenchesNames);
     },
 
     async fetchAndLoadPreferences(trench) {

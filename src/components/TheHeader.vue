@@ -49,7 +49,6 @@ export default {
       "setProjectPreferencesBase64",
       "fetchAndLoadPreferences",
       "fetchIdigTrenchesNames",
-      "fetchProjectTrenchesNamesFromFile",
     ]),
 
     async connect() {
@@ -66,14 +65,8 @@ export default {
           await this.fetchAndLoadPreferences(this.firstTrench);
           lsStoreConnection();
         } catch (e) {
-          try {
-            // si erreur, essaie de charger les données depuis un fichier
-            this.fetchProjectTrenchesNamesFromFile();
-            await this.fetchAndLoadPreferences(this.firstTrench);
-            lsStoreConnection();
-          } catch (e) {
-            /* empty */
-          }
+          console.error(e);
+          this.setIsLoaded(false);
         }
       }
     },
