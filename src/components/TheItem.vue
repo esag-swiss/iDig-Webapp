@@ -25,11 +25,17 @@
       <div class="mx-1">
         <q-toggle
           v-model="editMode"
-          :disable="username === 'Readonly'"
+          :disable="projectTrenchesRights[currentItem.Trench]"
           color="red"
         />
         <q-tooltip class="bg-accent"
-          >{{ editMode ? "disable edit mode" : "enable edit mode" }}
+          >{{
+            editMode
+              ? "disable edit mode"
+              : projectTrenchesRights[currentItem.Trench]
+              ? "you are not allowed to edit this trench"
+              : "enable edit mode"
+          }}
         </q-tooltip>
       </div>
     </div>
@@ -360,6 +366,7 @@ export default {
       "projectPreferencesTypesTranslation",
       "projectPreferencesFields",
       "projectPreferencesBase64",
+      "projectTrenchesRights",
       "projectPreferencesFieldsWithTranslation",
       "checkedTrenchesData",
       "checkedTrenchesVersion",
@@ -550,16 +557,6 @@ export default {
       return fieldSchema;
     },
 
-    // listValueInField(field) {
-    //   let valeursField = this.checkedTrenchesItemsSelectedType.map(
-    //     (objet) => objet[field]
-    //   );
-    //   // Filtrer les doublons
-    //   return valeursField
-    //     .filter((valeur, index, self) => self.indexOf(valeur) === index)
-    //     .sort();
-    // },
-
     async pushSurvey() {
       const head = this.checkedTrenchesVersion[this.currentItem.Trench];
       const surveys = this.trenchtoUpdateWithoutTrenchProp;
@@ -597,19 +594,6 @@ export default {
         });
       }
     },
-
-    // updateMultiArray(field, value) {
-    //   if (this.currentItem[field]?.includes(value)) {
-    //     this.currentItem[field] = this.currentItem[field].replace(
-    //       value + "\n",
-    //       ""
-    //     );
-    //   } else {
-    //     this.currentItem[field] = this.currentItem[field]
-    //       ? this.currentItem[field] + "\n" + value
-    //       : value;
-    //   }
-    // },
 
     async fetchImages() {
       let relatedItems = [];
@@ -663,26 +647,6 @@ export default {
         return "null"; // Si aucun élément n'est trouvé, retournez null
       }
     },
-
-    // async fetchURLsOLD(RelationAttachments) {
-    //   try {
-    //     const response = await apiFetchImageSRC(
-    //       RelationAttachments,
-    //       this.currentItem.Trench
-    //     );
-    //     if (response && response.data) {
-    //       let blob = new Blob([response.data], {
-    //         type: response.headers["content-type"],
-    //       });
-    //       return URL.createObjectURL(blob); // Retourne l'URL de l'image
-    //     } else {
-    //       return "/path/to/placeholder.jpg"; // Retourne une image de remplacement en cas d'erreur
-    //     }
-    //   } catch (error) {
-    //     console.error("Erreur lors de la récupération de l'image :", error);
-    //     return "/path/to/placeholder.jpg"; // Placeholder en cas d'erreur
-    //   }
-    // },
 
     async fetchURLs(RelationAttachments) {
       try {
@@ -776,12 +740,7 @@ export default {
   background-color: #eee;
   cursor: default;
 }
-/* .border-none {
-  border: none;
-} */
-/* .select {
-  margin: -5px;
-} */
+
 /* Style pour la miniature */
 .img-thumbnail {
   max-width: 100px;

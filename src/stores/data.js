@@ -25,6 +25,7 @@ export const useDataStore = defineStore("data", {
     projectPreferencesFields: null,
     projectPreferencesBase64: null,
     projectTrenchesNames: null,
+    projectTrenchesRights: null,
     checkedTrenchesNames: [],
     checkedTrenchesData: {},
     checkedTrenchesVersion: lsLoadCheckedTrenchesVersion(),
@@ -263,6 +264,12 @@ export const useDataStore = defineStore("data", {
         this.setProjectTrenchesNames(
           TrenchesNamesForCurrentProject.map((trench) => trench.name)
         );
+        this.setProjectTrenchesRights(
+          TrenchesNamesForCurrentProject.reduce((acc, trench) => {
+            acc[trench.name] = trench.read_only;
+            return acc;
+          }, {})
+        );
       });
     },
 
@@ -431,6 +438,9 @@ export const useDataStore = defineStore("data", {
 
     setProjectTrenchesNames(projectTrenchesNames) {
       this.projectTrenchesNames = projectTrenchesNames;
+    },
+    setProjectTrenchesRights(projectTrenchesRights) {
+      this.projectTrenchesRights = projectTrenchesRights;
     },
 
     setCheckedTrenchesNames(checkedTrenchesNames) {
