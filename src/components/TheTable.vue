@@ -4,7 +4,7 @@
     class="TheItemframe"
     @click="clearTheItem(), setSyncPatches('')"
   ></div>
-  <ThePatches v-if="syncPatches"></ThePatches>
+  <ThePatches v-if="syncPatches" @clearTheItem="clearTheItem"></ThePatches>></ThePatches>
   <TheItem v-if="currentItem" :currentItem="currentItem"> </TheItem>
   <div class="q-pa-xs">
     <q-table

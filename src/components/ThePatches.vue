@@ -4,62 +4,71 @@
     <div
       class="sticky-top q-fixed bg-grey-1 q-px-sm full-width row items-center justify-between"
     >
-      <q-btn
-        round
-        color="secondary"
-        class="m-1 pl-3"
-        icon="undo"
-        :size="'sm'"
-        @click="setSyncPatches('')"
-      />
+      <div>
+        <q-btn
+          round
+          color="secondary"
+          class="q-my-sm"
+          icon="undo"
+          :size="'sm'"
+          @click="setSyncPatches('')"
+        /><q-tooltip class="bg-accent">abort uploading</q-tooltip>
+      </div>
 
       {{
         syncPatches.length > 1
-          ? syncPatches.length + " Modifications on iDig server"
-          : syncPatches.length + " Modification on iDig server"
+          ? syncPatches.length + " conflicts to manage"
+          : syncPatches.length + " conflict to manage"
       }}
-      <q-btn
-        round
-        color="secondary"
-        class="m-1 pl-3"
-        icon="cloud_upload"
-        :size="'sm'"
-        @click="syncSurvey()"
-      />
+      <div>
+        <q-btn
+          round
+          color="secondary"
+          class="q-my-sm"
+          icon="cloud_upload"
+          :size="'sm'"
+          @click="syncSurvey()"
+        />
+        <q-tooltip class="bg-accent">upload to iDig server</q-tooltip>
+      </div>
     </div>
 
     <div id="main" class="q-px-sm">
       <q-list separator class="q-px-sm">
         <q-item
-          v-for="patche in patchesInConflict"
-          :key="patche.id"
+          v-for="item in finalVersionItems"
+          :key="item.IdentifierUUID"
           class="q-px-sm"
         >
           <q-item-section>
             <q-item-label
-              >{{ projectPreferencesTypesTranslation[patche.new.Type] }}
-              {{ patche.new.Identifier }} {{ patche.new.Title }}</q-item-label
+              ><strong
+                >{{ projectPreferencesTypesTranslation[item.Type] }}
+                {{ item.Identifier }}
+              </strong></q-item-label
             >
             <q-item-label
-              v-for="[key, value] of Object.entries(
-                compareObjects(patche.old, patche.new)
-              )"
+              v-for="key in keyModified[item.IdentifierUUID]"
               :key="key"
-              caption
+              class="q-pl-md"
             >
-              {{ projectPreferencesFieldsWithTranslation[key] ?? key }}:
-              {{ value.old + " -> " + value.new }}
+              <strong
+                >{{
+                  projectPreferencesFieldsWithTranslation[key] ?? key
+                }}:</strong
+              >
+
+              {{ item[key] }}
             </q-item-label>
           </q-item-section>
           <q-item-section side class="q-px-sm">
-            <q-toggle
-              v-model="toggleArrayOfValues"
-              :val="patche.new.IdentifierUUID"
-              :color="patche.Conflict ? 'red' : 'blue'"
-              class="q-px-sm"
-            /><q-tooltip class="bg-accent">{{
-              "reject or accept the modification from server"
-            }}</q-tooltip>
+            <q-option-group
+              v-model="UUIDsWithSelectedOptions[item.IdentifierUUID]"
+              :options="versionOptions"
+              inline
+              dense
+              borderless
+            />
           </q-item-section>
         </q-item>
       </q-list>
@@ -72,16 +81,17 @@ import { mapState, mapActions } from "pinia";
 import { Notify } from "quasar";
 import { useDataStore } from "@/stores/data";
 import { apiPushTrench } from "@/services/ApiClient";
-import { openDB, readDataInIndexedDB } from "@/services/indexedDbManager";
 
 export default {
   name: "ThePatches",
   data() {
     return {
-      toggleArrayOfValues: [],
-      newItems: [],
-      oldTrenchData: [],
-      locallyChangedIdentifierUUID: [],
+      UUIDsWithSelectedOptions: {},
+      versionOptions: [
+        { label: "Server", value: "server" },
+        { label: "Local", value: "local" },
+        { label: "Merged", value: "merged" },
+      ],
     };
   },
   computed: {
@@ -96,40 +106,61 @@ export default {
       "projectPreferencesBase64",
     ]),
 
-    patchesInConflict() {
-      return this.syncPatches
-        .map((obj) => {
-          return {
-            ...obj,
-            Conflict: this.locallyChangedIdentifierUUID.includes(obj.id),
-          };
-        })
-        .sort((a, b) => b.Conflict - a.Conflict);
+    UUIDsSyncPatches() {
+      return this.syncPatches.map((obj) => obj.id);
+    },
+
+    itemsEdited() {
+      return this.checkedTrenchesData[this.syncTrench]
+        .filter((item) => this.UUIDsSyncPatches.includes(item.IdentifierUUID))
+        .map((item) => item);
+    },
+
+    totalPatches() {
+      return this.syncPatches.map((patche) => {
+        const local = this.itemsEdited.find(
+          (item) => item.IdentifierUUID === patche.id
+        );
+        return { ...patche, local };
+      });
+    },
+
+    keyModified() {
+      const result = {};
+      this.totalPatches.forEach((patche) => {
+        result[patche.id] = Object.keys(
+          this.compareObjectsThree(patche.old, patche.new, patche.local || {})
+        );
+      });
+      return result;
+    },
+
+    finalVersionItems() {
+      let results = [];
+      this.totalPatches.forEach((patche) => {
+        const uuid = patche.new.IdentifierUUID;
+
+        const choice = this.UUIDsWithSelectedOptions[uuid];
+        if (choice === "server") {
+          results.push(patche.new);
+        } else if (choice === "local") {
+          results.push(patche.local);
+        } else if (choice === "merged") {
+          results.push(
+            this.mergeVersions(patche.old, patche.new, patche.local)
+          );
+        } else {
+          results.push(patche.new);
+        }
+      });
+      return results;
     },
   },
 
   async mounted() {
-    this.toggleArrayOfValues = this.syncPatches.map((obj) => obj.id);
-    const db = await openDB();
-    const oldTrenchData = JSON.parse(
-      await readDataInIndexedDB(db, this.syncTrench)
-    );
-    const currentTrenchData = this.checkedTrenchesData[this.syncTrench];
-    let difInTrench = [];
-
-    for (let i = 0; i < oldTrenchData.length; i++) {
-      const differences = this.compareTrenches(
-        oldTrenchData[i],
-        currentTrenchData[i]
-      );
-      if (Object.keys(differences).length > 0) {
-        difInTrench.push(oldTrenchData[i].IdentifierUUID);
-      }
-    }
-    // console.log(difInTrench);
-    this.locallyChangedIdentifierUUID = difInTrench;
-    // console.log(currentTrenchData[0]);
-    // console.log(oldTrenchData); // Si vous voulez voir le résultat
+    this.syncPatches.forEach((patche) => {
+      this.UUIDsWithSelectedOptions[patche.new.IdentifierUUID] = "merged";
+    });
   },
 
   methods: {
@@ -139,26 +170,34 @@ export default {
       "UpdateSyncTrenchData",
     ]),
 
-    compareObjects(oldObj, newObj) {
+    compareObjectsThree(obj1, obj2, obj3) {
       const differences = {};
-      const allKeys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
+      const allKeys = new Set([
+        ...Object.keys(obj1 || {}),
+        ...Object.keys(obj2 || {}),
+        ...Object.keys(obj3 || {}),
+      ]);
+      allKeys.delete("Trench");
       allKeys.forEach((key) => {
-        if (oldObj[key] !== newObj[key]) {
-          differences[key] = { new: newObj[key], old: oldObj[key] };
+        if (!(obj1[key] === obj2[key] && obj2[key] === obj3[key])) {
+          differences[key] = {
+            old: obj1[key],
+            server: obj2[key],
+            local: obj3[key],
+          };
         }
       });
       return differences;
     },
 
-    compareTrenches(oldObj, newObj) {
-      const differences = {};
-      const allKeys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
-      allKeys.forEach((key) => {
-        if (oldObj[key] !== newObj[key]) {
-          differences[key] = newObj[key];
+    mergeVersions(oldObj, serverObj, localObj) {
+      const merged = { ...serverObj };
+      Object.keys(localObj).forEach((key) => {
+        if (oldObj[key] !== localObj[key]) {
+          merged[key] = localObj[key];
         }
       });
-      return differences;
+      return merged;
     },
 
     async syncSurvey() {
@@ -166,15 +205,11 @@ export default {
       let surveys = [];
       const preferences = this.projectPreferencesBase64;
 
-      this.newItems = this.syncPatches
-        .filter((item) => this.toggleArrayOfValues.includes(item.id))
-        .map((item) => item.new);
-
       surveys = [
         ...this.trenchtoSync(this.syncTrench).filter(
-          (item) => !this.toggleArrayOfValues.includes(item.IdentifierUUID)
+          (item) => !this.UUIDsSyncPatches.includes(item.IdentifierUUID)
         ),
-        ...this.newItems,
+        ...this.finalVersionItems,
       ];
       let resp = await apiPushTrench(
         this.syncTrench,
@@ -183,8 +218,7 @@ export default {
         preferences
       );
 
-      if (resp.data.status === "pushed") {
-        // mettre les lignes suivantes conccernant version dans data.js
+      if (resp.data.status === "pushed" || resp.data.status === "ok") {
         this.checkedTrenchesVersion[this.syncTrench] = resp.data.version;
         // Update localStorage
         localStorage.setItem(
@@ -199,6 +233,7 @@ export default {
           message: `The item was saved`,
         });
         this.setSyncPatches("");
+        this.$emit("clearTheItem");
       } else if (resp.data.status === "pull") {
         this.setSyncPatches(resp.data.updates);
         Notify.create({
@@ -207,8 +242,8 @@ export default {
         });
       } else {
         Notify.create({
-          type: "positive",
-          message: `sync ok`,
+          type: "warning",
+          message: `iDig server returned : ${resp.data.status}`,
         });
       }
     },
