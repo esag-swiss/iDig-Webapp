@@ -34,6 +34,7 @@ export const useDataStore = defineStore("data", {
     syncTrench: "",
     syncNewVersion: "",
     selectedType: "Artifact",
+    selectedItem: null,
     checkedFieldNames: [],
   }),
 
@@ -430,6 +431,10 @@ export const useDataStore = defineStore("data", {
 
     setSelectedType(selectedType) {
       this.selectedType = selectedType;
+    },
+
+    setSelectedItem(selectedItem) {
+      this.selectedItem = selectedItem;
     },
 
     setCheckedFieldNames(checkedFieldNames) {
