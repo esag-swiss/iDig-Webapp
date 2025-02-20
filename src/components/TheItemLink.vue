@@ -2,7 +2,7 @@
   <q-chip
     v-for="item in itemsInChips(currentItem[field.field])"
     clickable
-    @click="$emit('update:currentItem', item.fullItem)"
+    @click="setSelectedItem(item.fullItem)"
     :key="item"
     color="primary"
     text-color="white"
@@ -13,13 +13,17 @@
 </template>
 
 <script>
-import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
+import { mapActions, mapState } from "pinia";
 
 export default {
   name: "TheItemLink",
+  inheritAttrs: false,
   props: {
-    field: Object,
+    field: {
+      type: Object,
+      required: true,
+    },
     currentItem: {
       type: Object,
       required: true,
@@ -33,9 +37,12 @@ export default {
     ...mapState(useDataStore, [
       "checkedTrenchesData",
       "projectPreferencesTypesTranslation",
+      "selectedItem",
     ]),
   },
+
   methods: {
+    ...mapActions(useDataStore, ["setSelectedItem"]),
     itemsInChips(IdentifierUUIDs) {
       if (IdentifierUUIDs && IdentifierUUIDs.includes("\n")) {
         let relatedItems = IdentifierUUIDs.split("\n");
@@ -72,4 +79,11 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.q-chip {
+  /* max-width: 200px; Limite la largeur */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Affiche des points de suspension si le texte est trop long */
+}
+</style>

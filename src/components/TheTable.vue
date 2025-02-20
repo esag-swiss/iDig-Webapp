@@ -1,11 +1,14 @@
 <template>
   <div
-    v-show="currentItem"
+    v-show="selectedItem"
     class="TheItemframe"
-    @click="clearTheItem(), setSyncPatches('')"
+    @click="clearTheItem(), setSyncPatches(''), setSelectedItem(null)"
   ></div>
-  <ThePatches v-if="syncPatches" @clearTheItem="clearTheItem"></ThePatches>></ThePatches>
-  <TheItem v-if="currentItem" :currentItem="currentItem"> </TheItem>
+  <ThePatches
+    v-if="syncPatches"
+    @clearTheItem="clearTheItem, setSelectedItem(null)"
+  ></ThePatches>
+  <TheItem v-if="selectedItem"> </TheItem>
   <div class="q-pa-xs">
     <q-table
       v-model:pagination="pagination"
@@ -62,9 +65,9 @@
 import { ref, watch } from "vue";
 import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
+import { useAppStore } from "@/stores/app";
 import TheItem from "@/components/TheItem.vue";
 import ThePatches from "@/components/ThePatches.vue";
-import { useAppStore } from "@/stores/app";
 
 export default {
   name: "TheQTable",
@@ -73,7 +76,6 @@ export default {
     const dataStore = useDataStore();
     const appStore = useAppStore();
     const rows = ref(dataStore.checkedTrenchesItemsSelectedTypeAndSearched);
-    const currentItem = ref();
     const startX = ref(0);
     const deltaX = ref(0);
     const columns = ref(
@@ -140,11 +142,11 @@ export default {
     };
 
     const onRowClick = (evt, row) => {
-      currentItem.value = row;
+      dataStore.setSelectedItem(row);
       appStore.setIsItemSelected(true);
     };
     const clearTheItem = () => {
-      currentItem.value = null;
+      dataStore.setSelectedItem(null);
       appStore.setIsItemSelected(false);
     };
 
@@ -162,10 +164,6 @@ export default {
 
       // Calcul de la nouvelle largeur pour la colonne sélectionnée
       let newWidth = columns.value[selectedColumnIndex].colWidth + deltaX.value;
-
-      console.log(
-        columns.value[selectedColumnIndex].colWidth + " " + deltaX.value
-      );
 
       // Calcul du delta réellement appliqué (au cas où newWidth aurait été limité)
       const actualDelta =
@@ -209,7 +207,6 @@ export default {
       initialPagination,
       columns,
       rows,
-      currentItem,
       onRowClick,
       removeColumn,
       moveColumn,
@@ -221,10 +218,14 @@ export default {
     };
   },
   computed: {
-    ...mapState(useDataStore, ["syncPatches", "setCheckedFieldNames"]),
+    ...mapState(useDataStore, [
+      "syncPatches",
+      "setCheckedFieldNames",
+      "selectedItem",
+    ]),
   },
   methods: {
-    ...mapActions(useDataStore, ["setSyncPatches"]),
+    ...mapActions(useDataStore, ["setSyncPatches", "setSelectedItem"]),
     openInNewTab(eve, row) {
       // Prevent the default context menu from opening
       eve.preventDefault();
@@ -280,7 +281,7 @@ export default {
 
       // Gérer les clics en dehors pour fermer le popup
       const handleClickOutside = (event) => {
-        if (!popup.contains(event.target)) {
+        if (document.body.contains(popup) && !popup.contains(event.target)) {
           document.body.removeChild(popup);
           document.removeEventListener("click", handleClickOutside);
         }

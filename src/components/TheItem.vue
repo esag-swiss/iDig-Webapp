@@ -1,12 +1,12 @@
 <template>
-  <div v-if="currentItem" class="TheItemwrapper justify-content-center">
+  <div v-if="selectedItem" class="TheItemwrapper justify-content-center">
     <!--header-->
     <div
       class="sticky-top q-fixed bg-grey-1 q-px-sm full-width row items-center justify-between"
     >
       <div class="col text-uppercase text-h6">
-        {{ projectPreferencesTypesTranslation[currentItem.Type] }}
-        {{ currentItem.Identifier }}
+        {{ projectPreferencesTypesTranslation[selectedItem.Type] }}
+        {{ selectedItem.Identifier }}
       </div>
 
       <div class="mx-1">
@@ -25,14 +25,14 @@
       <div class="mx-1">
         <q-toggle
           v-model="editMode"
-          :disable="projectTrenchesRights[currentItem.Trench]"
+          :disable="projectTrenchesRights[selectedItem.Trench]"
           color="red"
         />
         <q-tooltip class="bg-accent"
           >{{
             editMode
               ? "disable edit mode"
-              : projectTrenchesRights[currentItem.Trench]
+              : projectTrenchesRights[selectedItem.Trench]
               ? "you are not allowed to edit this trench"
               : "enable edit mode"
           }}
@@ -162,7 +162,7 @@
               v-if="field.field === 'Type'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="currentItem"
+              :currentItem="selectedItem"
               :editMode="editMode"
             />
             <!-- RightsStatus  TODO voir option value et label -->
@@ -170,7 +170,7 @@
               v-else-if="field.field === 'RightsStatus'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="currentItem"
+              :currentItem="selectedItem"
               :disable="!editMode"
             />
             <!-- CoverageSerialized -->
@@ -178,14 +178,14 @@
               v-else-if="field.field === 'CoverageSerialized'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="currentItem"
+              :currentItem="selectedItem"
             />
             <!-- BOOLEAN -->
             <TheItemBoolean
               v-else-if="fieldsSchema[field.field]?.type === 'boolean'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="currentItem"
+              :currentItem="selectedItem"
               :disable="!editMode"
             />
             <!-- DATE -->
@@ -193,17 +193,16 @@
               v-else-if="fieldsSchema[field.field]?.type === 'DateUTC'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="currentItem"
+              :currentItem="selectedItem"
               :editMode="editMode"
             />
-            <!-- RELATIONS-->
+            <!-- RELATIONS   ATTENTION VIRER L ACTION -->
             <TheItemLink
               v-else-if="fieldsSchema[field.field]?.type === 'link'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="currentItem"
+              :currentItem="selectedItem"
               :editMode="editMode"
-              @update:currentItem="handleUpdateCurrentItem"
             />
             <!-- MULTILINE -->
             <TheItemMultiline
@@ -212,7 +211,7 @@
               "
               class="col-12 p-1"
               :field="field"
-              :currentItem="currentItem"
+              :currentItem="selectedItem"
               :editMode="editMode"
             />
             <!-- MULTIVALUE && VALUELIST NOT EMPTY   -->
@@ -223,7 +222,7 @@
               "
               class="col-12 p-1"
               :field="field"
-              :currentItem="currentItem"
+              :currentItem="selectedItem"
               :editMode="editMode"
               :group="group"
               TheItemMultivalue
@@ -237,7 +236,7 @@
               "
               class="col-12 p-1"
               :field="field"
-              :currentItem="currentItem"
+              :currentItem="selectedItem"
               :editMode="editMode"
               :group="group"
             />
@@ -246,7 +245,7 @@
               v-else
               class="col-12 p-1"
               :field="field"
-              :currentItem="currentItem"
+              :currentItem="selectedItem"
               :editMode="editMode"
             />
           </div>
@@ -286,7 +285,7 @@
               v-if="fieldsSchema[field.field]?.type === 'DateUTC'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="currentItem"
+              :currentItem="selectedItem"
               :editMode="editMode"
             />
 
@@ -294,10 +293,10 @@
               v-else-if="editMode && field !== 'IdentifierUUID'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="currentItem"
+              :currentItem="selectedItem"
               :editMode="editMode"
             />
-            <div v-else class="col-12 p-1">{{ currentItem[field] }}</div>
+            <div v-else class="col-12 p-1">{{ selectedItem[field] }}</div>
           </div>
         </div>
       </ul>
@@ -343,12 +342,6 @@ export default {
     TheItemInput,
   },
 
-  props: {
-    currentItem: {
-      type: Object,
-      required: true,
-    },
-  },
   data() {
     return {
       fieldsSchema: fieldsSchema,
@@ -371,17 +364,18 @@ export default {
       "checkedTrenchesData",
       "checkedTrenchesVersion",
       "checkedTrenchesItemsSelectedType",
+      "selectedItem",
     ]),
     ...mapState(useAppStore, ["username", "lang"]),
 
     //  array of fields presents in current item
     fieldsOfCurrentItem() {
-      return Object.getOwnPropertyNames(this.currentItem);
+      return Object.getOwnPropertyNames(this.selectedItem);
     },
 
     // TODO consider removing the following  --------------------
     trenchtoUpdateWithoutTrenchProp() {
-      return this.checkedTrenchesData[this.currentItem.Trench].map((obj) => {
+      return this.checkedTrenchesData[this.selectedItem.Trench].map((obj) => {
         const { Trench, ...newObj } = obj;
         return newObj;
       });
@@ -393,8 +387,8 @@ export default {
       let groups = [];
       groups = this.projectPreferencesTypes.filter((x) => {
         return (
-          x.type.includes(this.currentItem.Type) ||
-          (x.subtype && x.subtype.includes(this.currentItem.Subtype))
+          x.type.includes(this.selectedItem.Type) ||
+          (x.subtype && x.subtype.includes(this.selectedItem.Subtype))
         );
       })[0].groups;
       return groups.filter((obj) => obj.group !== "Attachments");
@@ -506,9 +500,11 @@ export default {
   },
 
   watch: {
-    currentItem: {
+    selectedItem: {
       handler() {
-        this.fetchImages();
+        if (!this.selectedItem) {
+          this.fetchImages();
+        }
       },
       immediate: true,
       deep: true,
@@ -535,8 +531,8 @@ export default {
       let fieldSchemaFromGroups = this.projectPreferencesTypes
         .filter((x) => {
           return (
-            x.type.includes(this.currentItem.Type) ||
-            (x.subtype && x.subtype.includes(this.currentItem.Subtype))
+            x.type.includes(this.selectedItem.Type) ||
+            (x.subtype && x.subtype.includes(this.selectedItem.Subtype))
           );
         })[0]
         ?.groups.filter((x) => {
@@ -558,19 +554,23 @@ export default {
     },
 
     async pushSurvey() {
-      const head = this.checkedTrenchesVersion[this.currentItem.Trench];
-      const surveys = this.trenchtoUpdateWithoutTrenchProp;
+      const head = this.checkedTrenchesVersion[this.selectedItem.Trench];
+      let surveys = this.trenchtoUpdateWithoutTrenchProp;
+      // surveys = this.trenchtoUpdateWithoutTrenchProp.filter(
+      //   (survey) => survey.IdentifierUUID !== this.selectedItem.IdentifierUUID
+      // );
+      // surveys.push(this.selectedItem);
       const preferences = this.projectPreferencesBase64;
 
       let resp = await apiPushTrench(
-        this.currentItem.Trench,
+        this.selectedItem.Trench,
         head,
         surveys,
         preferences
       );
 
       if (resp.data.status === "pushed") {
-        this.checkedTrenchesVersion[this.currentItem.Trench] =
+        this.checkedTrenchesVersion[this.selectedItem.Trench] =
           resp.data.version;
 
         localStorage.setItem(
@@ -578,7 +578,7 @@ export default {
           JSON.stringify(this.checkedTrenchesVersion)
         );
 
-        this.UpdateSyncTrenchData(this.currentItem.Trench, surveys);
+        this.UpdateSyncTrenchData(this.selectedItem.Trench, surveys);
 
         Notify.create({
           type: "positive",
@@ -586,7 +586,7 @@ export default {
         });
       } else if (resp.data.status === "pull") {
         this.setSyncPatches(resp.data.updates);
-        this.setSyncTrench(this.currentItem.Trench);
+        this.setSyncTrench(this.selectedItem.Trench);
         this.setSyncNewVersion(resp.data.version);
         Notify.create({
           type: "warning",
@@ -597,8 +597,8 @@ export default {
 
     async fetchImages() {
       let relatedItems = [];
-      if (this.currentItem.RelationAttachments) {
-        relatedItems = [this.currentItem.IdentifierUUID];
+      if (this.selectedItem?.RelationAttachments) {
+        relatedItems = [this.selectedItem.IdentifierUUID];
         // Récupérer les URL d'images pour chaque UUID trouvé
         const imagePromises = relatedItems.map((uuid) =>
           this.findObjectByUuid(uuid)
@@ -609,11 +609,11 @@ export default {
         // Filtrer les résultats pour ne garder que les valeurs non nulles
         this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
       }
-      if (this.currentItem.RelationIncludesUUID && this.currentItem.Trench) {
-        if (this.currentItem.RelationIncludesUUID.includes("\n")) {
-          relatedItems = this.currentItem.RelationIncludesUUID.split("\n");
+      if (this.selectedItem?.RelationIncludesUUID && this.selectedItem.Trench) {
+        if (this.selectedItem.RelationIncludesUUID.includes("\n")) {
+          relatedItems = this.selectedItem.RelationIncludesUUID.split("\n");
         } else {
-          relatedItems = [this.currentItem.RelationIncludesUUID];
+          relatedItems = [this.selectedItem.RelationIncludesUUID];
         }
 
         // Récupérer les URL d'images pour chaque UUID trouvé
@@ -630,7 +630,7 @@ export default {
 
     findObjectByUuid(IdentifierUUID) {
       // Vérifie si les données existent pour la tranchée actuelle
-      const trenchData = this.checkedTrenchesData[this.currentItem.Trench];
+      const trenchData = this.checkedTrenchesData[this.selectedItem.Trench];
 
       if (!trenchData) {
         return null; // Retourne null si aucune donnée n'est disponible
@@ -667,7 +667,7 @@ export default {
           // Si l'image n'est pas dans IndexedDB, la récupérer via l'API
           const response = await apiFetchImageSRC(
             RelationAttachments,
-            this.currentItem.Trench
+            this.selectedItem.Trench
           );
 
           if (response && response.data) {
@@ -701,11 +701,6 @@ export default {
     // Fermer l'image agrandie
     closeImage() {
       this.selectedImageUrl = null; // Réinitialiser l'URL pour masquer l'image
-    },
-
-    handleUpdateCurrentItem(updatedItem) {
-      Object.assign(this.currentItem, updatedItem);
-      // Additional logic to handle the updated item
     },
   },
 };
@@ -816,11 +811,5 @@ export default {
 .q-field__label {
   left: 5px;
   color: black;
-}
-.q-chip {
-  /* max-width: 200px; Limite la largeur */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; /* Affiche des points de suspension si le texte est trop long */
 }
 </style>
