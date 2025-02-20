@@ -165,10 +165,6 @@ export default {
       // Calcul de la nouvelle largeur pour la colonne sélectionnée
       let newWidth = columns.value[selectedColumnIndex].colWidth + deltaX.value;
 
-      console.log(
-        columns.value[selectedColumnIndex].colWidth + " " + deltaX.value
-      );
-
       // Calcul du delta réellement appliqué (au cas où newWidth aurait été limité)
       const actualDelta =
         newWidth - columns.value[selectedColumnIndex].colWidth;
