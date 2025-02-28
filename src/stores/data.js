@@ -80,6 +80,21 @@ export const useDataStore = defineStore("data", {
       return options;
     },
 
+    projectPreferencesTypesTranslationPlurals(state) {
+      const { lang } = useAppStore();
+      let options = {};
+      state.projectPreferencesTypes.forEach((field) => {
+        options[field.type] = field.plurals[lang];
+        // Si un subtype est défini, ajout de la traduction pour le subtype
+        if (field.subtype) {
+          options[field.subtype] =
+            field.plurals[lang] ?? options[field.subtype];
+        }
+      });
+
+      return options;
+    },
+
     projectPreferencesFieldsWithTranslation(state) {
       const { lang } = useAppStore();
       if (!state.projectPreferencesFields) {
@@ -101,6 +116,25 @@ export const useDataStore = defineStore("data", {
         const subtypeLabel = fieldsSchema.Subtype.labels?.[lang] ?? "Subtype";
         langKeys = { ...langKeys, Subtype: subtypeLabel };
       }
+      const translationObj = {};
+      state.projectPreferencesTypes.forEach((typeObj) => {
+        if (typeObj.groups && Array.isArray(typeObj.groups)) {
+          typeObj.groups.forEach((group) => {
+            if (group.fields && Array.isArray(group.fields)) {
+              group.fields.forEach((fieldObj) => {
+                translationObj[fieldObj.field] =
+                  (fieldObj.labels && fieldObj.labels[lang]) || "";
+              });
+            }
+          });
+        }
+        Object.keys(translationObj).forEach((key) => {
+          if (!langKeys[key] || langKeys[key] === "") {
+            langKeys[key] = translationObj[key];
+          }
+        });
+      });
+
       return langKeys;
     },
 
