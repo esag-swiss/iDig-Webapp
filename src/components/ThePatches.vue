@@ -222,7 +222,7 @@ export default {
         this.checkedTrenchesVersion[this.syncTrench] = resp.data.version;
         // Update localStorage
         localStorage.setItem(
-          "localTrenchesVersion",
+          "lsLocalTrenchesVersion",
           JSON.stringify(this.checkedTrenchesVersion)
         );
 

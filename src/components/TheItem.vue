@@ -574,7 +574,7 @@ export default {
           resp.data.version;
 
         localStorage.setItem(
-          "localTrenchesVersion",
+          "lsLocalTrenchesVersion",
           JSON.stringify(this.checkedTrenchesVersion)
         );
 
