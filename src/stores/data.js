@@ -40,59 +40,68 @@ export const useDataStore = defineStore("data", {
 
   getters: {
     projectPreferencesTypesForSelect(state) {
-      const { lang } = useAppStore();
-      let options = state.projectPreferencesTypes.map((field) => {
-        return {
-          value: field.type,
-          label: field.labels[lang],
-          subtype: field.subtype,
-        };
-      });
-      return options;
+      if (state.projectPreferencesTypes) {
+        const { lang } = useAppStore();
+        let options = state.projectPreferencesTypes.map((field) => {
+          return {
+            value: field.type,
+            label: field.labels[lang],
+            subtype: field.subtype,
+          };
+        });
+        return options;
+      }
     },
 
     projectPreferencesTypesForOption(state) {
-      const { lang } = useAppStore();
-      let options = state.projectPreferencesTypes.map((field) => {
-        return {
-          label: field.labels[lang],
-          value: {
-            type: field.type,
+      if (state.projectPreferencesTypes) {
+        const { lang } = useAppStore();
+        let options = state.projectPreferencesTypes.map((field) => {
+          return {
+            label: field.labels[lang],
+            value: {
+              type: field.type,
 
-            subtype: field.subtype,
-          },
-        };
-      });
-      return options;
+              subtype: field.subtype,
+            },
+          };
+        });
+        return options;
+      }
     },
 
     projectPreferencesTypesTranslation(state) {
-      const { lang } = useAppStore();
-      let options = {};
-      state.projectPreferencesTypes.forEach((field) => {
-        options[field.type] = field.labels[lang];
-        // Si un subtype est défini, ajout de la traduction pour le subtype
-        if (field.subtype) {
-          options[field.subtype] = field.labels[lang] ?? options[field.subtype];
-        }
-      });
+      if (state.projectPreferencesTypes) {
+        const { lang } = useAppStore();
+        let options = {};
+        state.projectPreferencesTypes.forEach((field) => {
+          options[field.type] = field.labels[lang];
+          // Si un subtype est défini, ajout de la traduction pour le subtype
+          if (field.subtype) {
+            options[field.subtype] =
+              field.labels[lang] ?? options[field.subtype];
+          }
+        });
 
-      return options;
+        return options;
+      }
     },
 
     projectPreferencesTypesTranslationPlurals(state) {
-      const { lang } = useAppStore();
-      let options = {};
-      state.projectPreferencesTypes.forEach((field) => {
-        options[field.type] = field.plurals[lang];
-        // Si un subtype est défini, ajout de la traduction pour le subtype
-        if (field.subtype) {
-          options[field.subtype] =
-            field.plurals[lang] ?? options[field.subtype];
-        }
-      });
+      if (state.projectPreferencesTypes) {
+        const { lang } = useAppStore();
+        let options = {};
+        state.projectPreferencesTypes.forEach((field) => {
+          options[field.type] = field.plurals[lang];
+          // Si un subtype est défini, ajout de la traduction pour le subtype
+          if (field.subtype) {
+            options[field.subtype] =
+              field.plurals[lang] ?? options[field.subtype];
+          }
+        });
 
-      return options;
+        return options;
+      }
     },
 
     projectPreferencesFieldsWithTranslation(state) {
@@ -294,7 +303,7 @@ export const useDataStore = defineStore("data", {
       const { project } = useAppStore();
       return apiFetchIdigTrenchesNames().then((response) => {
         const TrenchesNamesForCurrentProject = response.data.trenches.filter(
-          (trench) => trench.project === project
+          (trench) => trench.project === project && trench.name !== "undefined"
         );
         this.setProjectTrenchesNames(
           TrenchesNamesForCurrentProject.map((trench) => trench.name)
@@ -392,7 +401,7 @@ export const useDataStore = defineStore("data", {
 
           // Update localStorage
           localStorage.setItem(
-            "localTrenchesVersion",
+            "lsLocalTrenchesVersion",
             JSON.stringify(this.checkedTrenchesVersion)
           );
 

@@ -10,58 +10,60 @@
   ></ThePatches>
   <TheItem v-if="selectedItem"> </TheItem>
 
-  <q-bar Class=" q-fixed bg-grey-1 q-px-sm full-width row items-right">
-    <q-btn
-      align="right"
-      size="10px"
-      padding="2px 5px"
-      color="secondary"
-      label=".json"
-      @click="exportFile('json')"
-      ><q-tooltip class="bg-accent"
-        >download items as .json file</q-tooltip
-      ></q-btn
-    >
-    <q-btn
-      align="right"
-      size="10px"
-      padding="2px 5px"
-      color="secondary"
-      label=".csv"
-      @click="exportFile('csv')"
-      ><q-tooltip class="bg-accent"
-        >download items as .csv file</q-tooltip
-      ></q-btn
-    >
-    <q-btn
-      align="right"
-      size="10px"
-      padding="2px 5px"
-      color="secondary"
-      label=".pdf"
-      @click="exportFile('pdf')"
-      ><q-tooltip class="bg-accent"
-        >download items as .PDF file</q-tooltip
-      ></q-btn
-    >
-    <q-space />
-    <!-- <div>
+  <q-bar Class="bg-grey-1 full-width row ">
+    <div class="q-align-center">
       <q-btn
-        v-if="tableEditMode"
+        :size="'sm'"
+        color="secondary"
+        label=".json"
+        @click="exportFile('json')"
+        ><q-tooltip class="bg-accent"
+          >download items as .json file</q-tooltip
+        ></q-btn
+      >
+      <q-btn
+        :size="'sm'"
+        color="secondary"
+        label=".csv"
+        @click="exportFile('csv')"
+        ><q-tooltip class="bg-accent"
+          >download items as .csv file</q-tooltip
+        ></q-btn
+      >
+      <q-btn
+        :size="'sm'"
+        color="secondary"
+        label=".pdf"
+        @click="exportFile('pdf')"
+        ><q-tooltip class="bg-accent"
+          >download items as .PDF file</q-tooltip
+        ></q-btn
+      >
+    </div>
+    <q-space />
+    <div>
+      <q-btn
+        v-if="tableEditMode && editedCells.length > 0"
         round
         color="secondary"
         icon="cloud_upload"
         :size="'sm'"
-        @click="pushSurvey()"
+        @click="pushSurveyHandler()"
       />
       <q-tooltip class="bg-accent"
-        >upload curent trench modification to iDig server</q-tooltip
+        >upload {{ editedCells.length }} modification(s) to iDig
+        server</q-tooltip
       >
-    </div> -->
-    <!-- <div class="mx-1">
-      <q-toggle v-model="tableEditMode" color="red" />
+    </div>
+    <div>
+      <q-toggle
+        v-if="userHasRwRightsOnAtLeastOneTrench"
+        v-model="tableEditMode"
+        :size="'sm'"
+        color="red"
+      />
       <q-tooltip class="bg-accent">"enable edit mode" </q-tooltip>
-    </div> -->
+    </div>
   </q-bar>
   <div ref="table" class="q-pa-xs"></div>
 </template>
@@ -79,6 +81,8 @@ import { avrileSansRegularNormal } from "@/assets/AvrileSans-Regular-normal.js";
 import jsPDF from "jspdf";
 import { applyPlugin } from "jspdf-autotable";
 applyPlugin(jsPDF);
+import { openDB, readDataInIndexedDB } from "@/services/indexedDbManager";
+import { pushSurvey } from "@/services/pushSurveyService";
 
 export default {
   name: "TheTable",
@@ -87,7 +91,8 @@ export default {
   data() {
     return {
       tabulator: null, //variable to hold table
-      // tableEditMode: false,
+      tableEditMode: false,
+      editedCells: [],
     };
   },
 
@@ -99,12 +104,16 @@ export default {
       "setCheckedFieldNames",
       "selectedItem",
       "selectedType",
+      "checkedTrenchesVersion",
       "checkedTrenchesNames",
+      "checkedTrenchesData",
       "checkedFieldNames",
       "projectPreferencesFieldsWithTranslation",
       "projectPreferencesTypesTranslation",
+      "projectTrenchesRights",
       "projectPreferencesTypesTranslationPlurals",
       "checkedTrenchesItemsSelectedTypeAndSearched",
+      "projectPreferencesBase64",
     ]),
 
     columnsTabulator() {
@@ -125,8 +134,14 @@ export default {
         headerFilter: "input",
         field: fieldName,
         headerMenu: headerMenu,
-        // editor: "input",
+        editor: "input",
       }));
+    },
+    userHasRwRightsOnAtLeastOneTrench() {
+      return this.checkedTrenchesNames.some(
+        (trench) => this.projectTrenchesRights[trench] === false
+      );
+      // Removed getEditedCellsHandler computed property as it's replaced by a reactive data property.
     },
   },
 
@@ -137,12 +152,12 @@ export default {
         jspdf: jsPDF,
       },
       data: this.checkedTrenchesItemsSelectedTypeAndSearched, //link data to table
-      // reactiveData: true, //turn on data reactivity
+      reactiveData: true, //turn on data reactivity
       layout: "fitColumns", //fit columns to width of table (optional)
       movableColumns: true,
       columns: this.columnsTabulator, //define table columns
       height: "98%",
-      // editTriggerEvent: "dblclick",
+      editTriggerEvent: "dblclick",
       rowContextMenu: [
         {
           label: "Copy to clipboard",
@@ -188,9 +203,15 @@ export default {
       { deep: true }
     );
 
+    this.tabulator.on("cellEdited", (cell) => {
+      this.editedCells = this.tabulator.getEditedCells();
+    });
+
     this.tabulator.on("rowClick", (e, row) => {
-      this.setSelectedItem(row.getData());
-      this.setIsItemSelected(true);
+      if (!this.tableEditMode) {
+        this.setSelectedItem(row.getData());
+        this.setIsItemSelected(true);
+      }
     });
   },
   methods: {
@@ -200,6 +221,7 @@ export default {
       this.setSelectedItem(null);
       this.setIsItemSelected(false);
     },
+
     openInNewTab2(row) {
       const link = this.$router.resolve({
         name: "TheItemStandalone",
@@ -227,7 +249,6 @@ export default {
             // },
             autoTable: (doc) => {
               //doc - the jsPDF document object
-
               doc.autoTable({ html: "#title" });
               var pageSize = doc.internal.pageSize;
               var pageWidth = pageSize.width
@@ -259,7 +280,53 @@ export default {
           }
         );
       } else {
-        this.tabulator.download(fileType, this.selectedType + "." + fileType);
+        this.tabulator.download(
+          fileType,
+          this.projectPreferencesTypesTranslationPlurals[this.selectedType] +
+            " " +
+            this.checkedTrenchesNames.join(", ") +
+            "." +
+            fileType
+        );
+      }
+    },
+
+    async compareAllCheckedTrenchesData() {
+      const editedTrenches = [];
+      const trenchNames = Object.keys(this.checkedTrenchesData);
+      const db = await openDB();
+      let compte = 0;
+
+      // On utilise Promise.all pour traiter toutes les comparaisons en parallèle.
+      await Promise.all(
+        trenchNames.map(async (trenchName) => {
+          const localData = JSON.stringify(
+            this.checkedTrenchesData[trenchName]
+          );
+          // readDataInIndexedDB renvoie le clonableData (chaine JSON) ou null s'il n'existe pas
+          const storedData = await readDataInIndexedDB(db, trenchName);
+          // Si aucune donnée n'est stockée ou si les données diffèrent, on considère la trench comme éditée.
+          if (!storedData || storedData !== localData) {
+            compte += 1;
+            console.log(compte);
+            editedTrenches.push(trenchName);
+          }
+        })
+      );
+
+      return editedTrenches;
+    },
+
+    async pushSurveyHandler() {
+      const editedTrenches = await this.compareAllCheckedTrenchesData();
+
+      for (let trench of editedTrenches) {
+        await pushSurvey({
+          trenchName: trench,
+          trenchVersion: this.checkedTrenchesVersion[trench],
+          trenchSurvey: this.checkedTrenchesData[trench],
+          projectPreferencesBase64: this.projectPreferencesBase64,
+        });
       }
     },
   },

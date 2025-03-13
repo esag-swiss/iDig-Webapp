@@ -1,37 +1,56 @@
 import { apiPushTrench } from "@/services/ApiClient";
 import { Notify } from "quasar";
+import { setActivePinia, createPinia } from "pinia";
+import { useDataStore } from "@/stores/data";
 
-export async function pushSurvey({
-  Trench,
-  checkedTrenchesVersion, // version of the trench
-  trenchtoUpdateWithoutTrenchProp, // survey data
-  projectPreferencesBase64, // preferences
+setActivePinia(createPinia());
 
+const {
   UpdateSyncTrenchData,
   setSyncPatches,
   setSyncTrench,
   setSyncNewVersion,
+} = useDataStore();
+
+function removeTrenchProp(trenchData) {
+  return trenchData.map((obj) => {
+    const { trench, ...newObj } = obj;
+    return newObj;
+  });
+}
+
+export async function pushSurvey({
+  trenchName,
+  trenchVersion,
+  trenchSurvey,
+  projectPreferencesBase64,
 }) {
-  const head = checkedTrenchesVersion[Trench];
-  let surveys = trenchtoUpdateWithoutTrenchProp;
-  const preferences = projectPreferencesBase64;
+  let surveys = removeTrenchProp(trenchSurvey);
+  let resp = await apiPushTrench(
+    trenchName,
+    trenchVersion,
+    surveys,
+    projectPreferencesBase64
+  );
 
-  let resp = await apiPushTrench(Trench, head, surveys, preferences);
+  if (resp.data.status === "pushed" || resp.data.status === "ok") {
+    const dataStore = useDataStore();
+    dataStore.checkedTrenchesVersion[trenchName] = resp.data.version;
 
-  if (resp.data.status === "pushed") {
-    checkedTrenchesVersion[Trench] = resp.data.version;
     localStorage.setItem(
-      "localTrenchesVersion",
-      JSON.stringify(checkedTrenchesVersion)
+      "lsLocalTrenchesVersion",
+      JSON.stringify(dataStore.checkedTrenchesVersion)
     );
-    UpdateSyncTrenchData(Trench, surveys);
+
+    UpdateSyncTrenchData(trenchName, surveys);
     Notify.create({
       type: "positive",
-      message: "The item was saved",
+      message: trenchName + " saved",
     });
+    // gérer status 'FORBIDDEN'
   } else if (resp.data.status === "pull") {
     setSyncPatches(resp.data.updates);
-    setSyncTrench(Trench);
+    setSyncTrench(trenchName);
     setSyncNewVersion(resp.data.version);
     Notify.create({
       type: "warning",
