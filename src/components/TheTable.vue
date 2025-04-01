@@ -30,14 +30,8 @@
           >download items as .csv file</q-tooltip
         ></q-btn
       >
-      <q-btn
-        :size="'sm'"
-        color="secondary"
-        label=".pdf"
-        @click="exportFile('pdf')"
-        ><q-tooltip class="bg-accent"
-          >download items as .PDF file</q-tooltip
-        ></q-btn
+      <q-btn :size="'sm'" color="secondary" label="print" @click="printTable()"
+        ><q-tooltip class="bg-accent">you may print as .PDF</q-tooltip></q-btn
       >
     </div>
     <q-space />
@@ -83,6 +77,7 @@ import { applyPlugin } from "jspdf-autotable";
 applyPlugin(jsPDF);
 import { openDB, readDataInIndexedDB } from "@/services/indexedDbManager";
 import { pushSurvey } from "@/services/pushSurveyService";
+import { DateTime } from "luxon";
 
 export default {
   name: "TheTable",
@@ -112,6 +107,7 @@ export default {
       "projectPreferencesTypesTranslation",
       "projectTrenchesRights",
       "projectPreferencesTypesTranslationPlurals",
+      "projectPreferencesTypesTranslation",
       "checkedTrenchesItemsSelectedTypeAndSearched",
       "projectPreferencesBase64",
     ]),
@@ -129,19 +125,35 @@ export default {
           },
         },
       ];
+      function printFormatter(cell, formatterParams, onRendered) {
+        if (
+          cell.getField() === "DateEarliest" ||
+          cell.getField() === "DateLatest"
+        ) {
+          const value = cell.getValue();
+          if (!value) {
+            return "";
+          }
+          const date = new Date(value);
+          return date.toLocaleDateString("fr-FR");
+        }
+        return cell.getValue();
+      }
       return this.checkedFieldNames.map((fieldName) => ({
         title: this.projectPreferencesFieldsWithTranslation[fieldName],
         headerFilter: "input",
         field: fieldName,
         headerMenu: headerMenu,
         editor: "input",
+        formatter: this.getColumnFormatter(fieldName),
+        formatterParams: this.getColumnFormatterParams(fieldName),
+        formatterPrint: printFormatter,
       }));
     },
     userHasRwRightsOnAtLeastOneTrench() {
       return this.checkedTrenchesNames.some(
         (trench) => this.projectTrenchesRights[trench] === false
       );
-      // Removed getEditedCellsHandler computed property as it's replaced by a reactive data property.
     },
   },
 
@@ -152,8 +164,18 @@ export default {
         jspdf: jsPDF,
       },
       data: this.checkedTrenchesItemsSelectedTypeAndSearched, //link data to table
-      reactiveData: true, //turn on data reactivity
+      // reactiveData: true, //turn on data reactivity
       layout: "fitColumns", //fit columns to width of table (optional)
+      printAsHtml: true,
+      printHeader:
+        "<h3>" +
+        this.project.toUpperCase() +
+        " " +
+        this.checkedTrenchesNames.join(", ") +
+        "</h3>" +
+        this.projectPreferencesTypesTranslationPlurals[this.selectedType] +
+        "",
+      printFooter: new Date().toLocaleDateString("fr-FR"),
       movableColumns: true,
       columns: this.columnsTabulator, //define table columns
       height: "98%",
@@ -230,6 +252,9 @@ export default {
 
       window.open(link, "_blank");
     },
+    printTable() {
+      this.tabulator.print(false, true);
+    },
     exportFile(fileType) {
       if (fileType === "pdf") {
         this.tabulator.download(
@@ -244,12 +269,11 @@ export default {
               this.project.toUpperCase() +
               " " +
               this.projectPreferencesTypesTranslationPlurals[this.selectedType], //add title to report
-            //           jsPDF:{
-            //     unit:"in", //set units to inches
-            // },
+
             autoTable: (doc) => {
-              //doc - the jsPDF document object
-              doc.autoTable({ html: "#title" });
+              doc.autoTable({
+                html: "#title",
+              });
               var pageSize = doc.internal.pageSize;
               var pageWidth = pageSize.width
                 ? pageSize.width
@@ -289,6 +313,47 @@ export default {
             fileType
         );
       }
+    },
+
+    getColumnFormatter(fieldName) {
+      if (fieldName === "Type") {
+        return (cell, formatterParams, onRendered) => {
+          const value = cell.getValue();
+          return this.projectPreferencesTypesTranslation[value] ?? value;
+        };
+      }
+      // Ajoutez ici d'autres cas de formatage pour d'autres champs
+      else if (
+        fieldName === "DateEarliest" ||
+        fieldName === "DateLatest" ||
+        fieldName === "Date"
+      ) {
+        var formatterParams = {
+          outputFormat: "DD/MM/YYYY",
+          invalidPlaceholder: "(invalid date)",
+        };
+        return (cell, formatterParams, onRendered) => {
+          const value = cell.getValue();
+          // Exemple de formatage pour une date
+          return new Date(value).toLocaleDateString();
+        };
+      }
+      // Vous pouvez ajouter d'autres conditions ou retourner undefined pour le cas par défaut
+      return undefined;
+    },
+    getColumnFormatterParams(fieldName) {
+      if (
+        fieldName === "DateEarliest" ||
+        fieldName === "DateLatest" ||
+        fieldName === "Date"
+      ) {
+        return {
+          outputFormat: "DD/MM/YYYY",
+          invalidPlaceholder: "(invalid date)",
+        };
+      }
+
+      return undefined;
     },
 
     async compareAllCheckedTrenchesData() {
