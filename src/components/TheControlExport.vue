@@ -9,7 +9,8 @@
       label=".json"
       @click="exportFile('json')"
       ><q-tooltip class="bg-accent"
-        >filtered items with all non empty fields as .json file</q-tooltip
+        >items from selected trenches with all non empty fields as .json
+        file</q-tooltip
       ></q-btn
     >
     <q-btn
@@ -20,7 +21,7 @@
       label=".tab"
       @click="exportFile('tab')"
       ><q-tooltip class="bg-accent"
-        >filtered items with all fields use in the set of data as .tab
+        >items of selected type with all fields use in the set of data as .tab
         file</q-tooltip
       ></q-btn
     >
@@ -62,7 +63,7 @@ export default {
     exportFile: function (fileType) {
       if (fileType === "tab") {
         this.fileName = this.selectedType;
-        const items = this.checkedTrenchesItemsSelectedType;
+        const items = this.checkedTrenchesItems;
         const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
         const uniqueKeys = new Set();
 
@@ -81,7 +82,7 @@ export default {
         ].join("\r\n");
       } else if (fileType === "json") {
         this.fileName = this.selectedType;
-        this.fileData = JSON.stringify(this.checkedTrenchesItemsSelectedType);
+        this.fileData = JSON.stringify(this.checkedTrenchesItems);
       } else if (fileType === "geojson") {
         this.fileName = "Trenches";
         this.fileData = JSON.stringify(
