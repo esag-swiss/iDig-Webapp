@@ -161,6 +161,7 @@ export default {
     this.syncPatches.forEach((patche) => {
       this.UUIDsWithSelectedOptions[patche.new.IdentifierUUID] = "merged";
     });
+    navigator.clipboard.writeText(JSON.stringify(this.syncPatches)); // Copy to clipboard for debugging
   },
 
   methods: {
