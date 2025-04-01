@@ -70,8 +70,11 @@
             @click="selectedImageUrl = null"
           >
             <!-- Bouton gauche -->
-            <div
-              class="nav-button left"
+            <q-btn
+              :size="sm"
+              round
+              color="secondary"
+              icon="west"
               @click.stop="
                 relatedImageUrlsselectedIndex =
                   (relatedImageUrlsselectedIndex -
@@ -81,23 +84,23 @@
                 selectedImageUrl =
                   relatedImageUrls[relatedImageUrlsselectedIndex];
               "
-            >
-              <span>&lt;</span>
-            </div>
+            ></q-btn>
             <!-- Image affichée -->
             <img :src="selectedImageUrl" class="img-fullscreen" alt="Image" />
             <!-- Bouton droit -->
-            <div
-              class="nav-button right"
+
+            <q-btn
+              :size="sm"
+              round
+              color="secondary"
+              icon="east"
               @click.stop="
                 relatedImageUrlsselectedIndex =
                   (relatedImageUrlsselectedIndex + 1) % relatedImageUrls.length;
                 selectedImageUrl =
                   relatedImageUrls[relatedImageUrlsselectedIndex];
               "
-            >
-              <span>&gt;</span>
-            </div>
+            ></q-btn>
           </div>
         </div>
       </ul>
@@ -774,34 +777,6 @@ export default {
   max-height: 90%; /* Hauteur maximale de 90% de l'écran */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optionnel, ajoute une ombre */
   cursor: pointer;
-}
-
-.nav-button {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 10;
-  transition: background-color 0.3s ease;
-}
-
-.nav-button:hover {
-  background-color: rgba(0, 0, 0, 0.7);
-}
-
-.nav-button.left {
-  left: 0;
-}
-
-.nav-button.right {
-  right: 0;
 }
 </style>
 <style>
