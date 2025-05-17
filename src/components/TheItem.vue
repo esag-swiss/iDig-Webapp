@@ -25,7 +25,10 @@
       <div class="mx-1">
         <q-toggle
           v-model="editMode"
-          :disable="projectTrenchesRights[selectedItem.Trench]"
+          :disable="
+            projectTrenchesRights[selectedItem.Trench] ||
+            selectedItem.RightsStatus === 'Archived'
+          "
           color="red"
         />
         <q-tooltip class="bg-accent"
