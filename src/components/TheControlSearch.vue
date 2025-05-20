@@ -7,11 +7,15 @@
       field by mentioning the label in the current language before the colon.<br />
       <i>e.g.</i>: 'Titre:"Fusaï" OR spindle'.
     </q-tooltip>
-    <input
-      :value="searchText"
-      class="form-control form-control-sm"
+    <q-input
+      v-model="searchTextValue"
+      square
+      filled
+      dense
+      :clearable="searchText !== null"
       placeholder="Search..."
-      @keyup.enter="(event) => setSearchText(event.target.value)"
+      @clear="setSearchText('')"
+      @update:model-value="setSearchText(searchTextValue)"
     />
   </div>
 </template>
@@ -22,6 +26,11 @@ import { useDataStore } from "@/stores/data";
 
 export default {
   name: "TheControlSearch",
+  data() {
+    return {
+      searchTextValue: "",
+    };
+  },
   computed: {
     ...mapState(useDataStore, ["searchText"]),
   },

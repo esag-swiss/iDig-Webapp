@@ -9,7 +9,8 @@
       label=".json"
       @click="exportFile('json')"
       ><q-tooltip class="bg-accent"
-        >filtered items with all non empty fields as .json file</q-tooltip
+        >items from selected trenches with all non empty fields as .json
+        file</q-tooltip
       ></q-btn
     >
     <q-btn
@@ -20,19 +21,8 @@
       label=".tab"
       @click="exportFile('tab')"
       ><q-tooltip class="bg-accent"
-        >filtered items with all fields use in the set of data as .tab
+        >items of selected type with all fields use in the set of data as .tab
         file</q-tooltip
-      ></q-btn
-    >
-    <q-btn
-      align="left"
-      size="10px"
-      padding="2px 5px"
-      color="secondary"
-      label=".Pdf"
-      @click="generatePDF()"
-      ><q-tooltip class="bg-accent"
-        >PDF report of displayed items</q-tooltip
       ></q-btn
     >
     <q-btn
@@ -47,19 +37,15 @@
       ></q-btn
     >
   </div>
-  <ThePdfGenerator ref="ThePdfGenerator" class="py-2" r></ThePdfGenerator>
 </template>
 <script>
 import { geoSerializedToGeojson } from "@/services/json2geojson";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
-import ThePdfGenerator from "@/components/ThePdfGenerator.vue";
 
 export default {
   name: "TheControlExport",
-  components: {
-    ThePdfGenerator,
-  },
+
   data() {
     return {
       fileData: "",
@@ -74,13 +60,10 @@ export default {
     ]),
   },
   methods: {
-    generatePDF() {
-      this.$refs.ThePdfGenerator.generatePDF();
-    },
     exportFile: function (fileType) {
       if (fileType === "tab") {
         this.fileName = this.selectedType;
-        const items = this.checkedTrenchesItemsSelectedType;
+        const items = this.checkedTrenchesItems;
         const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
         const uniqueKeys = new Set();
 
@@ -99,7 +82,7 @@ export default {
         ].join("\r\n");
       } else if (fileType === "json") {
         this.fileName = this.selectedType;
-        this.fileData = JSON.stringify(this.checkedTrenchesItemsSelectedType);
+        this.fileData = JSON.stringify(this.checkedTrenchesItems);
       } else if (fileType === "geojson") {
         this.fileName = "Trenches";
         this.fileData = JSON.stringify(

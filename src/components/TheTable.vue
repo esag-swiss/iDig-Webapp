@@ -2,318 +2,401 @@
   <div
     v-show="selectedItem"
     class="TheItemframe"
-    @click="clearTheItem(), setSyncPatches(''), setSelectedItem(null)"
+    @click="clearTheItem2, setSyncPatches(''), setSelectedItem(null)"
   ></div>
   <ThePatches
     v-if="syncPatches"
-    @clearTheItem="clearTheItem, setSelectedItem(null)"
+    @clearTheItem="clearTheItem2, setSelectedItem(null)"
   ></ThePatches>
   <TheItem v-if="selectedItem"> </TheItem>
-  <div class="q-pa-xs">
-    <q-table
-      v-model:pagination="pagination"
-      row-key="name"
-      :rows="rows"
-      :columns="columns"
-      virtual-scroll
-      :rows-per-page-options="[0]"
-      dense
-      class="q-table"
-      separator="vertical"
-      @row-click="onRowClick"
-      @row-contextmenu="openInNewTab"
-      ><template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-            :style="{
-              maxWidth: col.colWidth + col.colWidthType,
-            }"
-            class="th-container dropzone"
-            @dragover="onDragOver"
-          >
-            <span
-              class="arrow-left"
-              @click.stop="moveColumn(col.name, 'left')"
-            ></span>
-            <span>{{ col.label }}</span>
-            <span
-              class="arrow-right"
-              @click.stop="moveColumn(col.name, 'right')"
-            ></span>
-            <span class="cross-th" @click.stop="removeColumn(col.name)"></span>
-            <span
-              class="column__resize-handler"
-              draggable="true"
-              @dragstart="dragStart($event, col.name)"
-              @dragend="dragEnd($event, col.name)"
-              >&nbsp;</span
-            >
-          </q-th>
-        </q-tr>
-      </template>
-      <template v-slot:pagination="props">
-        <div class="pagination">Total : {{ rows.length }}</div>
-      </template>
-    </q-table>
-  </div>
+
+  <q-bar Class="bg-grey-1 full-width row ">
+    <div class="q-align-center">
+      <q-btn
+        :size="'sm'"
+        color="secondary"
+        label=".json"
+        @click="exportFile('json')"
+        ><q-tooltip class="bg-accent"
+          >download items as .json file</q-tooltip
+        ></q-btn
+      >
+      <q-btn
+        :size="'sm'"
+        color="secondary"
+        label=".csv"
+        @click="exportFile('csv')"
+        ><q-tooltip class="bg-accent"
+          >download items as .csv file</q-tooltip
+        ></q-btn
+      >
+      <q-btn :size="'sm'" color="secondary" label="print" @click="printTable()"
+        ><q-tooltip class="bg-accent">you may print as .PDF</q-tooltip></q-btn
+      >
+    </div>
+    <q-space />
+    <div>
+      <q-btn
+        v-if="tableEditMode && editedCells.length > 0"
+        round
+        color="secondary"
+        icon="cloud_upload"
+        :size="'sm'"
+        @click="pushSurveyHandler()"
+      />
+      <q-tooltip class="bg-accent"
+        >upload {{ editedCells.length }} modification(s) to iDig
+        server</q-tooltip
+      >
+    </div>
+    <div>
+      <q-toggle
+        v-if="userHasRwRightsOnAtLeastOneTrench"
+        v-model="tableEditMode"
+        :size="'sm'"
+        color="red"
+      />
+      <q-tooltip class="bg-accent">"enable edit mode" </q-tooltip>
+    </div>
+  </q-bar>
+  <div ref="table" class="q-pa-xs"></div>
 </template>
 
 <script>
-import { ref, watch } from "vue";
+import "tabulator-tables/dist/css/tabulator_simple.min.css";
 import { mapActions, mapState } from "pinia";
+import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
 import TheItem from "@/components/TheItem.vue";
 import ThePatches from "@/components/ThePatches.vue";
 
+import { avrileSansRegularNormal } from "@/assets/AvrileSans-Regular-normal.js";
+import jsPDF from "jspdf";
+import { applyPlugin } from "jspdf-autotable";
+applyPlugin(jsPDF);
+import { openDB, readDataInIndexedDB } from "@/services/indexedDbManager";
+import { pushSurvey } from "@/services/pushSurveyService";
+import { DateTime } from "luxon";
+
 export default {
-  name: "TheQTable",
+  name: "TheTable",
   components: { TheItem, ThePatches },
-  setup() {
-    const dataStore = useDataStore();
-    const appStore = useAppStore();
-    const rows = ref(dataStore.checkedTrenchesItemsSelectedTypeAndSearched);
-    const startX = ref(0);
-    const deltaX = ref(0);
-    const columns = ref(
-      dataStore.checkedFieldNames.map((fieldName) => ({
-        name: fieldName,
-        required: true,
-        label: dataStore.projectPreferencesFieldsWithTranslation[fieldName],
-        align: "left",
-        field: fieldName,
-        sortable: true,
-        colWidth: 200,
-        colWidthType: "px",
-      }))
-    );
 
-    watch(
-      () => dataStore.checkedTrenchesItemsSelectedTypeAndSearched,
-      (newRows) => {
-        rows.value = newRows;
-      }
-    );
-    watch(
-      () => dataStore.checkedFieldNames,
-      (newFieldNames) => {
-        columns.value = newFieldNames.map((fieldName) => ({
-          name: fieldName,
-          required: true,
-          label: dataStore.projectPreferencesFieldsWithTranslation[fieldName],
-          align: "left",
-          field: fieldName,
-          sortable: true,
-          colWidth: 200,
-          colWidthType: "px",
-        }));
-      }
-    );
-    const removeColumn = (colName) => {
-      dataStore.setCheckedFieldNames(
-        dataStore.checkedFieldNames.filter((fieldName) => fieldName !== colName)
-      );
-    };
-    const moveColumn = (colName, leftOrRight) => {
-      // Obtenir l'index actuel de la colonne
-      const currentIndex = dataStore.checkedFieldNames.indexOf(colName);
-
-      if (currentIndex === -1) {
-        console.error(`Colonne ${colName} introuvable`);
-        return;
-      }
-
-      // Calculer le nouvel index
-      const newIndex =
-        leftOrRight === "left"
-          ? Math.max(0, currentIndex - 1) // Déplacement à gauche
-          : Math.min(dataStore.checkedFieldNames.length - 1, currentIndex + 1); // Déplacement à droite
-
-      // Réorganiser les colonnes
-      const NewData = [...dataStore.checkedFieldNames];
-      const [movedColumn] = NewData.splice(currentIndex, 1); // Retirer la colonne
-      NewData.splice(newIndex, 0, movedColumn); // Insérer à la nouvelle position
-
-      // Mettre à jour les colonnes dans le store
-      dataStore.setCheckedFieldNames(NewData);
-    };
-
-    const onRowClick = (evt, row) => {
-      dataStore.setSelectedItem(row);
-      appStore.setIsItemSelected(true);
-    };
-    const clearTheItem = () => {
-      dataStore.setSelectedItem(null);
-      appStore.setIsItemSelected(false);
-    };
-
-    const dragStart = (event) => {
-      startX.value = event.clientX;
-    };
-
-    const dragEnd = (event, colName) => {
-      // Calcul du delta de la souris depuis le début du drag
-      deltaX.value = event.clientX - startX.value;
-
-      const selectedColumnIndex = columns.value.findIndex(
-        (column) => column.name === colName
-      );
-
-      // Calcul de la nouvelle largeur pour la colonne sélectionnée
-      let newWidth = columns.value[selectedColumnIndex].colWidth + deltaX.value;
-
-      // Calcul du delta réellement appliqué (au cas où newWidth aurait été limité)
-      const actualDelta =
-        newWidth - columns.value[selectedColumnIndex].colWidth;
-      columns.value[selectedColumnIndex].colWidth = newWidth;
-
-      // Ajustement des autres colonnes pour conserver la largeur totale
-      const totalColumns = columns.value.length;
-
-      const otherColumnsCount = totalColumns - 1;
-      if (otherColumnsCount > 0 && actualDelta !== 0) {
-        const subtractPerColumn = actualDelta / otherColumnsCount;
-        columns.value.forEach((col, index) => {
-          if (index !== selectedColumnIndex) {
-            let updatedWidth = col.colWidth - subtractPerColumn;
-            col.colWidth = updatedWidth;
-          }
-        });
-      }
-      startX.value = 0;
-      deltaX.value = 0;
-    };
-
-    const onDragOver = (event) => {
-      event.preventDefault();
-    };
-
-    const initialPagination = ref({
-      sortBy: "desc",
-      descending: false,
-      page: 1,
-      rowsPerPage: 20,
-    });
-
-    const pagination = ref({
-      rowsPerPage: 0,
-    });
-
+  data() {
     return {
-      selected: ref([]),
-      initialPagination,
-      columns,
-      rows,
-      onRowClick,
-      removeColumn,
-      moveColumn,
-      pagination,
-      clearTheItem,
-      dragStart,
-      dragEnd,
-      onDragOver,
+      tabulator: null, //variable to hold table
+      tableEditMode: false,
+      editedCells: [],
     };
   },
+
   computed: {
+    ...mapState(useAppStore, ["project"]),
     ...mapState(useDataStore, [
+      "lang",
       "syncPatches",
       "setCheckedFieldNames",
       "selectedItem",
+      "selectedType",
+      "checkedTrenchesVersion",
+      "checkedTrenchesNames",
+      "checkedTrenchesData",
+      "checkedFieldNames",
+      "projectPreferencesFieldsWithTranslation",
+      "projectPreferencesTypesTranslation",
+      "projectTrenchesRights",
+      "projectPreferencesTypesTranslationPlurals",
+      "projectPreferencesTypesTranslation",
+      "checkedTrenchesItemsSelectedTypeAndSearched",
+      "projectPreferencesBase64",
     ]),
+
+    columnsTabulator() {
+      var headerMenu = [
+        {
+          label: "Hide Column",
+          action: (e, column) => {
+            this.setCheckedFieldNames(
+              this.checkedFieldNames.filter(
+                (fieldName) => fieldName !== column.getField()
+              )
+            );
+          },
+        },
+      ];
+      function printFormatter(cell, formatterParams, onRendered) {
+        if (
+          cell.getField() === "DateEarliest" ||
+          cell.getField() === "DateLatest"
+        ) {
+          const value = cell.getValue();
+          if (!value) {
+            return "";
+          }
+          const date = new Date(value);
+          return date.toLocaleDateString("fr-FR");
+        }
+        return cell.getValue();
+      }
+      return this.checkedFieldNames.map((fieldName) => ({
+        title: this.projectPreferencesFieldsWithTranslation[fieldName],
+        headerFilter: "input",
+        field: fieldName,
+        headerMenu: headerMenu,
+        editor: "input",
+        formatter: this.getColumnFormatter(fieldName),
+        formatterParams: this.getColumnFormatterParams(fieldName),
+        formatterPrint: printFormatter,
+      }));
+    },
+    userHasRwRightsOnAtLeastOneTrench() {
+      return this.checkedTrenchesNames.some(
+        (trench) => this.projectTrenchesRights[trench] === false
+      );
+    },
+  },
+
+  mounted() {
+    //instantiate Tabulator when element is mounted
+    this.tabulator = new Tabulator(this.$refs.table, {
+      dependencies: {
+        jspdf: jsPDF,
+      },
+      data: this.checkedTrenchesItemsSelectedTypeAndSearched, //link data to table
+      // reactiveData: true, //turn on data reactivity
+      layout: "fitColumns", //fit columns to width of table (optional)
+      printAsHtml: true,
+      printHeader:
+        "<h3>" +
+        this.project.toUpperCase() +
+        " " +
+        this.checkedTrenchesNames.join(", ") +
+        "</h3>" +
+        this.projectPreferencesTypesTranslationPlurals[this.selectedType] +
+        "",
+      printFooter: new Date().toLocaleDateString("fr-FR"),
+      movableColumns: true,
+      columns: this.columnsTabulator, //define table columns
+      height: "98%",
+      editTriggerEvent: "dblclick",
+      rowContextMenu: [
+        {
+          label: "Copy to clipboard",
+
+          action: function (e, row) {
+            const rowData = row.getData();
+            const text = JSON.stringify(rowData, null, 2);
+            navigator.clipboard
+              .writeText(text)
+              .catch((err) => console.error("Failed to copy: ", err));
+          },
+        },
+        {
+          separator: true,
+        },
+        {
+          disabled: false,
+          label: "Open to new tab",
+          action: (e, row) => {
+            this.openInNewTab2(row.getData());
+          },
+        },
+      ],
+    });
+
+    this.$watch(
+      () => this.checkedTrenchesItemsSelectedTypeAndSearched,
+      (newRows) => {
+        if (this.tabulator) {
+          this.tabulator.replaceData(newRows);
+        }
+      },
+      { deep: true }
+    );
+
+    this.$watch(
+      () => this.columnsTabulator,
+      (newCols) => {
+        if (this.tabulator) {
+          this.tabulator.setColumns(newCols);
+        }
+      },
+      { deep: true }
+    );
+
+    this.tabulator.on("cellEdited", (cell) => {
+      this.editedCells = this.tabulator.getEditedCells();
+    });
+
+    this.tabulator.on("rowClick", (e, row) => {
+      if (!this.tableEditMode) {
+        this.setSelectedItem(row.getData());
+        this.setIsItemSelected(true);
+      }
+    });
   },
   methods: {
     ...mapActions(useDataStore, ["setSyncPatches", "setSelectedItem"]),
-    openInNewTab(eve, row) {
-      // Prevent the default context menu from opening
-      eve.preventDefault();
+    ...mapActions(useAppStore, ["setIsItemSelected"]),
+    clearTheItem2() {
+      this.setSelectedItem(null);
+      this.setIsItemSelected(false);
+    },
 
-      // Vérifier et fermer tout popup existant avant d'en créer un nouveau
-      const existingPopup = document.querySelector(".custom-popup");
-      if (existingPopup) {
-        document.body.removeChild(existingPopup);
-      }
-
-      // Create a small popup window
-      const left = eve.clientX;
-      const top = eve.clientY;
-
-      const popup = document.createElement("div");
-      popup.className = "custom-popup"; // Ajouter une classe pour identifier ce popup
-      popup.style.left = `${left}px`;
-      popup.style.top = `${top}px`;
-
+    openInNewTab2(row) {
       const link = this.$router.resolve({
         name: "TheItemStandalone",
         params: { itemId: row.IdentifierUUID, trenchSource: row.Trench },
       }).href;
 
-      const openNewTabButton = document.createElement("div");
-      openNewTabButton.innerText = "Open in New Tab";
-      openNewTabButton.onclick = () => {
-        window.open(link, "_blank");
-        document.body.removeChild(popup);
-      };
+      window.open(link, "_blank");
+    },
+    printTable() {
+      this.tabulator.print(false, true);
+    },
+    exportFile(fileType) {
+      if (fileType === "pdf") {
+        this.tabulator.download(
+          "pdf",
+          this.projectPreferencesTypesTranslationPlurals[this.selectedType] +
+            " " +
+            this.checkedTrenchesNames.join(", ") +
+            ".pdf",
+          {
+            orientation: "portrait",
+            title:
+              this.project.toUpperCase() +
+              " " +
+              this.projectPreferencesTypesTranslationPlurals[this.selectedType], //add title to report
 
-      const Copy = document.createElement("div");
-      Copy.innerText = "Copy to Clipboard";
-      Copy.onclick = async () => {
-        // copy to clipboard
-        const rowText = JSON.stringify(row, null, 2); // Convertir l'objet row en texte lisible
-        try {
-          await navigator.clipboard.writeText(rowText);
-          alert("Copied to clipboard");
-        } catch (err) {
-          console.error("Failed to copy: ", err);
-        }
-        if (document.body.contains(popup)) {
-          document.body.removeChild(popup);
-        }
-      };
+            autoTable: (doc) => {
+              doc.autoTable({
+                html: "#title",
+              });
+              var pageSize = doc.internal.pageSize;
+              var pageWidth = pageSize.width
+                ? pageSize.width
+                : pageSize.getWidth();
+              var text = doc.splitTextToSize(
+                this.checkedTrenchesNames.join(", "),
+                pageWidth + 350,
+                {}
+              );
+              doc.setFontSize(8).text(text, 40, doc.lastAutoTable.finalY + 5);
+              doc.addFileToVFS(
+                "Avrile-SansRegular-Normal.ttf",
+                avrileSansRegularNormal
+              );
+              doc.addFont(
+                "Avrile-SansRegular-Normal.ttf",
+                "avrileSansRegularNormal",
+                "normal"
+              );
+              doc.setFont("avrileSansRegularNormal");
+              return {
+                styles: {
+                  font: "avrileSansRegularNormal",
+                  fontStyle: "normal",
+                },
+              };
+            },
+          }
+        );
+      } else {
+        this.tabulator.download(
+          fileType,
+          this.projectPreferencesTypesTranslationPlurals[this.selectedType] +
+            " " +
+            this.checkedTrenchesNames.join(", ") +
+            "." +
+            fileType
+        );
+      }
+    },
 
-      popup.appendChild(openNewTabButton);
-      popup.appendChild(Copy);
+    getColumnFormatter(fieldName) {
+      if (fieldName === "Type") {
+        return (cell, formatterParams, onRendered) => {
+          const value = cell.getValue();
+          return this.projectPreferencesTypesTranslation[value] ?? value;
+        };
+      }
+      // Ajoutez ici d'autres cas de formatage pour d'autres champs
+      else if (
+        fieldName === "DateEarliest" ||
+        fieldName === "DateLatest" ||
+        fieldName === "Date"
+      ) {
+        var formatterParams = {
+          outputFormat: "DD/MM/YYYY",
+          invalidPlaceholder: "(invalid date)",
+        };
+        return (cell, formatterParams, onRendered) => {
+          const value = cell.getValue();
+          // Exemple de formatage pour une date
+          return new Date(value).toLocaleDateString();
+        };
+      }
+      // Vous pouvez ajouter d'autres conditions ou retourner undefined pour le cas par défaut
+      return undefined;
+    },
+    getColumnFormatterParams(fieldName) {
+      if (
+        fieldName === "DateEarliest" ||
+        fieldName === "DateLatest" ||
+        fieldName === "Date"
+      ) {
+        return {
+          outputFormat: "DD/MM/YYYY",
+          invalidPlaceholder: "(invalid date)",
+        };
+      }
 
-      // Append the popup to the body
-      document.body.appendChild(popup);
+      return undefined;
+    },
 
-      // Gérer les clics en dehors pour fermer le popup
-      const handleClickOutside = (event) => {
-        if (document.body.contains(popup) && !popup.contains(event.target)) {
-          document.body.removeChild(popup);
-          document.removeEventListener("click", handleClickOutside);
-        }
-      };
+    async compareAllCheckedTrenchesData() {
+      const editedTrenches = [];
+      const trenchNames = Object.keys(this.checkedTrenchesData);
+      const db = await openDB();
+      let compte = 0;
 
-      // Ajouter l'événement
-      document.addEventListener("click", handleClickOutside);
+      // On utilise Promise.all pour traiter toutes les comparaisons en parallèle.
+      await Promise.all(
+        trenchNames.map(async (trenchName) => {
+          const localData = JSON.stringify(
+            this.checkedTrenchesData[trenchName]
+          );
+          // readDataInIndexedDB renvoie le clonableData (chaine JSON) ou null s'il n'existe pas
+          const storedData = await readDataInIndexedDB(db, trenchName);
+          // Si aucune donnée n'est stockée ou si les données diffèrent, on considère la trench comme éditée.
+          if (!storedData || storedData !== localData) {
+            compte += 1;
+            console.log(compte);
+            editedTrenches.push(trenchName);
+          }
+        })
+      );
+
+      return editedTrenches;
+    },
+
+    async pushSurveyHandler() {
+      const editedTrenches = await this.compareAllCheckedTrenchesData();
+
+      for (let trench of editedTrenches) {
+        await pushSurvey({
+          trenchName: trench,
+          trenchVersion: this.checkedTrenchesVersion[trench],
+          trenchSurvey: this.checkedTrenchesData[trench],
+          projectPreferencesBase64: this.projectPreferencesBase64,
+        });
+      }
     },
   },
 };
 </script>
-<style>
-.custom-popup {
-  position: fixed;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  z-index: 9999;
-  cursor: pointer;
-  background-color: white;
-  border: 1px solid #e0e0e0;
-}
-.custom-popup div {
-  padding: 5px 1px;
-  margin: 3px;
-}
-.custom-popup div:hover {
-  background-color: #f0f0f0;
-}
-.q-table__sort-icon {
-  visibility: hidden;
-}
-</style>
 
 <style scoped>
 .TheItemframe {
@@ -327,89 +410,5 @@ export default {
 }
 .TheItemframe:hover {
   background: rgba(0, 0, 0, 0.5);
-}
-
-.q-table {
-  table-layout: fixed;
-  max-height: 93vh;
-}
-
-.q-table__bottom {
-  padding: 4px 24px 4px 16px;
-}
-.pagination {
-  margin-right: 30px;
-}
-
-.q-table td,
-.q-table th {
-  overflow: hidden;
-}
-
-.column__resize-handler {
-  position: absolute;
-  right: -10px;
-  min-width: 15px;
-  cursor: col-resize;
-}
-
-.q-table th {
-  position: relative;
-  transition: background-color 0.3s ease;
-}
-
-.q-table th:hover {
-  background-color: #f0f0f0;
-}
-
-.cross-th,
-.arrow-left,
-.arrow-right {
-  cursor: pointer;
-
-  margin: 0 8px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.cross-th {
-  right: 0px;
-  position: absolute;
-}
-
-.arrow-left,
-.arrow-right {
-  padding: 5px;
-}
-
-.cross-th:hover,
-.arrow-right:hover,
-.arrow-left:hover {
-  background-color: rgba(
-    0,
-    0,
-    0,
-    0.1
-  ); /* Couleur de fond plus foncée (semi-transparente) */
-}
-
-.cross-th::before {
-  content: "\2716"; /* Code Unicode pour une croix (✖) */
-}
-
-.arrow-right::before {
-  content: "\25B6";
-}
-
-.arrow-left::before {
-  content: "\25C0";
-}
-
-.q-table th:hover .cross-th,
-.q-table th:hover .arrow-left,
-.q-table th:hover .arrow-right {
-  opacity: 1; /* Rendre les ellipses visibles au survol du <q-th>*/
-  visibility: visible; /* Permettre l'interaction */
 }
 </style>

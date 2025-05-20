@@ -44,8 +44,8 @@ export const lsLoadProject = () => {
   return localStorage.getItem("project") ?? "";
 };
 export const lsLoadCheckedTrenchesVersion = () => {
-  return localStorage.getItem("localTrenchesVersion")
-    ? JSON.parse(localStorage.getItem("localTrenchesVersion"))
+  return localStorage.getItem("lsLocalTrenchesVersion")
+    ? JSON.parse(localStorage.getItem("lsLocalTrenchesVersion"))
     : {};
 };
 export function lsStoreLang() {
