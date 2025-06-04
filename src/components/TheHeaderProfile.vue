@@ -79,6 +79,23 @@
             />
           </q-item-section>
         </q-item>
+        <q-separator />
+        <q-item clickable @click="exportConnections">
+          <q-item-section avatar>
+            <q-icon name="file_download" color="secondary" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Export connections</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable @click="importConnections">
+          <q-item-section avatar>
+            <q-icon name="file_upload" color="secondary" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Import connections</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-btn-dropdown>
   </div>
@@ -87,7 +104,6 @@
 <script>
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
-import { useDataStore } from "@/stores/data";
 
 export default {
   emits: ["connect"],
@@ -154,6 +170,57 @@ export default {
         this.setPassword(this.newPassword);
         this.$emit("connect");
       }
+    },
+
+    exportConnections() {
+      const connections = JSON.parse(
+        localStorage.getItem("connections") || "[]"
+      );
+      const dataStr =
+        "data:text/json;charset=utf-8," +
+        encodeURIComponent(JSON.stringify(connections));
+      const downloadAnchorNode = document.createElement("a");
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", "connections.json");
+      document.body.appendChild(downloadAnchorNode);
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    },
+    importConnections() {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "application/json";
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const imported = JSON.parse(reader.result);
+            const existing = JSON.parse(
+              localStorage.getItem("connections") || "[]"
+            );
+            const merged = [...existing];
+            imported.forEach((item) => {
+              if (
+                !existing.some(
+                  (e) =>
+                    e.server === item.server &&
+                    e.project === item.project &&
+                    e.username === item.username
+                )
+              ) {
+                merged.push(item);
+              }
+            });
+            localStorage.setItem("connections", JSON.stringify(merged));
+            this.connectionProfiles = merged;
+          } catch (err) {
+            console.error("Invalid JSON file");
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
     },
   },
 };
