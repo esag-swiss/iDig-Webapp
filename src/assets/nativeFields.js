@@ -116,7 +116,7 @@ export const fieldsSchema = {
       fr: "Sécurisé",
     },
     tips: {
-      en: "determines if you can edit the item or not",
+      en: "Determines if you can edit the item or not",
       fr: "Détermine si l'élément peut être édité ou non",
     },
   },
@@ -159,7 +159,7 @@ export const fieldsSchema = {
       { fr: "Clos", en: "Closed" },
       { fr: "Indéterminé", en: "Undefined" },
       { fr: "A cataloguer", en: "Will Catalog" },
-      // { fr: "Archivé", en: "Archived" }, // only used on iPad
+      { fr: "Archivé", en: "Archived" },
     ],
     valuelist: ["Ready", "All Done", "Attention", "Will Process", "Waiting"],
     tips: {
