@@ -179,6 +179,11 @@ export default {
       movableColumns: true,
       columns: this.columnsTabulator, //define table columns
       height: "98%",
+      rowFormatter: function (row) {
+        if (row.getData().RightsStatus === "Archived") {
+          row.getElement().style.backgroundColor = "rgba(128, 128, 153, 0.376)";
+        }
+      },
       editTriggerEvent: "dblclick",
       rowContextMenu: [
         {
