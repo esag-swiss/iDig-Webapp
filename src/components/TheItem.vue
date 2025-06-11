@@ -27,7 +27,8 @@
           v-model="editMode"
           :disable="
             projectTrenchesRights[selectedItem.Trench] ||
-            selectedItem.RightsStatus === 'Archived'
+            selectedItem.RightsStatus === 'Archived' ||
+            selectedItem.RightsLocked === '1'
           "
           color="red"
         />
