@@ -124,6 +124,38 @@ export default {
             );
           },
         },
+        {
+          label: "Group by",
+          action: (e, column) => {
+            this.tabulator.setGroupBy(column.getField());
+            let groups = this.tabulator.getGroups();
+            groups.forEach((group) => {
+              console.log(
+                `Group ${group.getKey()} has ${group.getRows().length} rows`
+              );
+            });
+          },
+        },
+        {
+          label: "Find duplicates",
+          action: (e, column) => {
+            this.tabulator.setGroupBy(column.getField());
+            let groups = this.tabulator.getGroups();
+            const duplicateKeys = groups
+              .filter((group) => group.getRows().length > 1)
+              .map((group) => group.getKey());
+            this.tabulator.setFilter((data) =>
+              duplicateKeys.includes(data[column.getField()])
+            );
+          },
+        },
+        {
+          label: "Ungroup or clear",
+          action: (e, column) => {
+            this.tabulator.setGroupBy(false);
+            this.tabulator.clearFilter();
+          },
+        },
       ];
       function printFormatter(cell, formatterParams, onRendered) {
         if (
