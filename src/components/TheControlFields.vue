@@ -18,7 +18,7 @@
       :key="type"
       :value="type.subtype || type.type"
     >
-      {{ type.plurals[lang] ?? type.type }}
+      {{ type.plurals?.[lang] ?? type.type }}
     </option>
   </select>
 
@@ -54,7 +54,16 @@
               fieldsSchema?.[field.field]?.labels?.[lang] ||
               field.field
             }}</label
-          >
+          ><q-toggle
+            v-if="field.field === 'RightsStatus'"
+            @update:model-value="(val) => SetIsArchivedItemsHided(val)"
+            v-model="hideArchived"
+            :size="'sm'"
+            color="red"
+          />
+          <q-tooltip v-if="field.field === 'RightsStatus'" class="bg-accent"
+            >"hide arrchived items"
+          </q-tooltip>
         </div>
       </div>
     </ul>
@@ -75,6 +84,7 @@ export default {
     return {
       defaultColumns: {},
       isDisplayedArray: [true],
+      hideArchived: false, // for the q-toggle
     };
   },
   computed: {
@@ -130,6 +140,10 @@ export default {
   },
   methods: {
     ...mapActions(useDataStore, ["setSelectedType"]),
+    ...mapActions(useAppStore, ["SetIsArchivedItemsHided"]),
+    changeLang(lang) {
+      this.setLang(lang);
+    },
   },
 };
 </script>

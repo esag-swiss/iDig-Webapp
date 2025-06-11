@@ -92,11 +92,11 @@ export const useDataStore = defineStore("data", {
         const { lang } = useAppStore();
         let options = {};
         state.projectPreferencesTypes.forEach((field) => {
-          options[field.type] = field.plurals[lang];
+          options[field.type] = field.plurals?.[lang];
           // Si un subtype est défini, ajout de la traduction pour le subtype
           if (field.subtype) {
             options[field.subtype] =
-              field.plurals[lang] ?? options[field.subtype];
+              field.plurals?.[lang] ?? options[field.subtype];
           }
         });
 
@@ -177,10 +177,22 @@ export const useDataStore = defineStore("data", {
       return filteredItems;
     },
 
+    checkedTrenchesItemsSelectedTypeFiltered(state) {
+      // Filtrage par RightsStatus
+      const { isArchivedItemsHided } = useAppStore();
+      if (!isArchivedItemsHided) {
+        return state.checkedTrenchesItemsSelectedType;
+      }
+      let filteredItems = state.checkedTrenchesItemsSelectedType.filter(
+        (item) => item?.RightsStatus != "Archived"
+      );
+      return filteredItems;
+    },
+
     checkedTrenchesItemsSelectedTypeAndSearched(state) {
       // Early exit if no search text provided
       if (state.searchText.trim() === "") {
-        return state.checkedTrenchesItemsSelectedType;
+        return state.checkedTrenchesItemsSelectedTypeFiltered;
       }
 
       const searchText = state.searchText.trim();
