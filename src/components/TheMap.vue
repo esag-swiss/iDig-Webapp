@@ -143,8 +143,8 @@ export default {
 <style scoped>
 #exportButtons {
   position: fixed;
-  bottom: 10px;
-  right: 43px;
+  bottom: 15px;
+  right: 38px;
   z-index: 1000;
 }
 #mapContainer {

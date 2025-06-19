@@ -125,8 +125,8 @@ export default {
 <style scoped>
 .mapbtn {
   position: fixed;
-  bottom: 10px;
-  right: 10px;
+  bottom: 15px;
+  right: 2px;
   display: flex;
   flex-direction: column;
   gap: 5px;

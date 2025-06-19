@@ -2,12 +2,9 @@
   <div
     v-show="selectedItem"
     class="TheItemframe"
-    @click="clearTheItem2, setSyncPatches(''), setSelectedItem(null)"
+    @click="clearTheItem(), setSyncPatches('')"
   ></div>
-  <ThePatches
-    v-if="syncPatches"
-    @clearTheItem="clearTheItem2, setSelectedItem(null)"
-  ></ThePatches>
+  <ThePatches v-if="syncPatches" @clearTheItem="clearTheItem()"></ThePatches>
   <TheItem v-if="selectedItem"> </TheItem>
 
   <q-bar Class="bg-grey-1 full-width row ">
@@ -210,12 +207,14 @@ export default {
       printFooter: new Date().toLocaleDateString("fr-FR"),
       movableColumns: true,
       columns: this.columnsTabulator, //define table columns
-      height: "98%",
+      height: "97%",
       rowFormatter: function (row) {
         if (row.getData().RightsStatus === "Archived") {
           row.getElement().style.backgroundColor = "rgba(128, 128, 153, 0.376)";
         }
       },
+      pagination: true,
+      paginationCounter: "rows",
       editTriggerEvent: "dblclick",
       rowContextMenu: [
         {
@@ -236,7 +235,7 @@ export default {
           disabled: false,
           label: "Open to new tab",
           action: (e, row) => {
-            this.openInNewTab2(row.getData());
+            this.openInNewTab(row.getData());
           },
         },
       ],
@@ -276,12 +275,13 @@ export default {
   methods: {
     ...mapActions(useDataStore, ["setSyncPatches", "setSelectedItem"]),
     ...mapActions(useAppStore, ["setIsItemSelected"]),
-    clearTheItem2() {
+    clearTheItem() {
       this.setSelectedItem(null);
+
       this.setIsItemSelected(false);
     },
 
-    openInNewTab2(row) {
+    openInNewTab(row) {
       const link = this.$router.resolve({
         name: "TheItemStandalone",
         params: { itemId: row.IdentifierUUID, trenchSource: row.Trench },
@@ -358,6 +358,11 @@ export default {
           const value = cell.getValue();
           return this.projectPreferencesTypesTranslation[value] ?? value;
         };
+      } else if (
+        fieldName === "RightsSidelined" ||
+        fieldName === "RightsLocked"
+      ) {
+        return "tickCross";
       }
       // Ajoutez ici d'autres cas de formatage pour d'autres champs
       else if (
