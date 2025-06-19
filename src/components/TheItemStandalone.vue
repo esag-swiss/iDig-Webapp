@@ -221,30 +221,6 @@ export default {
       return Object.getOwnPropertyNames(this.currentItem);
     },
 
-    groupOfFieldsAccordingToType() {
-      // all groups according to type from Preferences
-      // except Attachments since photo are managed elsewhere
-      let groups = [];
-      groups = this.projectPreferencesTypes.filter((x) => {
-        return (
-          x.type.includes(this.currentItem.Type) ||
-          (x.subtype && x.subtype.includes(this.currentItem.Subtype))
-        );
-      })[0].groups;
-      return groups.filter((obj) => obj.group !== "Attachments");
-    },
-
-    groupsOfFieldsAccordingToItem() {
-      // used to display only groups where items has fields
-      let groups = this.groupOfFieldsAccordingToTypeAndNative;
-      groups = groups.filter((obj) =>
-        obj.fields.some((field) =>
-          this.fieldsOfCurrentItem.includes(field.field)
-        )
-      );
-      return groups;
-    },
-
     groupOfFieldsAccordingToTypeAndNative() {
       // all groups according to type from Preferences + natives fields or groups
       let groups = [...this.groupOfFieldsAccordingToType];
@@ -314,6 +290,52 @@ export default {
         }
       });
       return groups;
+    },
+
+    groupOfFieldsAccordingToType() {
+      // all groups according to type from Preferences, include subtype if exists, otherwise type
+      let typeObj = this.projectPreferencesTypes.find((x) => {
+        if (x.subtype && x.subtype.length > 0) {
+          return x.subtype.includes(this.selectedItem.Subtype);
+        }
+        return x.type.includes(this.selectedItem.Type);
+      });
+      let groups = typeObj ? typeObj.groups : [];
+      // except Attachments since photos are managed elsewhere
+      return groups.filter((obj) => obj.group !== "Attachments");
+    },
+
+    groupsOfFieldsAccordingToItem() {
+      // used to display only groups where items has fields
+      let groups = this.groupOfFieldsAccordingToTypeAndNative;
+      groups = groups.filter((obj) =>
+        obj.fields.some((field) =>
+          this.fieldsOfCurrentItem.includes(field.field)
+        )
+      );
+      return groups;
+    },
+
+    listFieldsNotIncludedInGroups() {
+      let notToDisplay = [
+        // "IdentifierUUID",
+        "Trench",
+        "RightsTrashed",
+        "RightsDeleted",
+        "DateTimeZone",
+      ];
+      let fieldsNotPrinsentInGroup = [];
+
+      this.groupOfFieldsAccordingToTypeAndNative.forEach((obj) => {
+        obj.fields.forEach((key) => {
+          notToDisplay.push(key.field);
+        });
+      });
+
+      fieldsNotPrinsentInGroup = this.fieldsOfCurrentItem.filter(
+        (item) => !notToDisplay.includes(item)
+      );
+      return fieldsNotPrinsentInGroup;
     },
   },
   watch: {
