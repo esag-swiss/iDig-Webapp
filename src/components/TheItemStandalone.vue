@@ -193,13 +193,14 @@ export default {
     },
     trenchSource: {
       type: String,
-      required: true, // Assure que l'ID est transmis via la route
+      required: true,
     },
   },
   data() {
     return {
       fieldsSchema: fieldsSchema,
       currentItem: null, // Contiendra les données chargées
+      projectsPreferencesBase64: null,
       projectPreferencesBase64: null,
       trenchData: null,
       relatedImageUrls: [], // Tableau pour stocker les URLs d'images récupérées
@@ -211,7 +212,7 @@ export default {
     ...mapState(useDataStore, [
       "projectPreferencesTypes",
       "projectPreferencesTypesTranslation",
-      "projectPreferencesBase64",
+      // "projectPreferencesBase64",
       "projectPreferencesFieldsWithTranslation",
     ]),
     ...mapState(useAppStore, ["username", "lang"]),
@@ -296,9 +297,9 @@ export default {
       // all groups according to type from Preferences, include subtype if exists, otherwise type
       let typeObj = this.projectPreferencesTypes.find((x) => {
         if (x.subtype && x.subtype.length > 0) {
-          return x.subtype.includes(this.selectedItem.Subtype);
+          return x.subtype.includes(this.currentItem.Subtype);
         }
-        return x.type.includes(this.selectedItem.Type);
+        return x.type.includes(this.currentItem.Type);
       });
       let groups = typeObj ? typeObj.groups : [];
       // except Attachments since photos are managed elsewhere
@@ -367,23 +368,23 @@ export default {
           });
           throw e;
         }
-        if (preferences.crs) {
-          this.setProjectPreferencesCrs(preferences.crs);
-        } else if (preferences.project === "Agora") {
-          // Agora project doesn't have property CRS
-          this.setProjectPreferencesCrs(preferences.project);
-        }
+
         this.setProjectPreferencesTypes(preferences.types);
         this.setProjectPreferencesFields(preferences.fields);
       };
-      this.setProjectPreferencesBase64(
-        localStorage.getItem("projectPreferencesBase64")
-      );
-      let preferences = decodeURIComponent(
-        escape(window.atob(localStorage.getItem("projectPreferencesBase64")))
+
+      this.projectsPreferencesBase64 = JSON.parse(
+        localStorage.getItem("lsProjectsPreferencesBase64")
       );
 
-      processPreferences(preferences);
+      this.projectPreferencesBase64 = decodeURIComponent(
+        escape(
+          window.atob(
+            this.projectsPreferencesBase64[localStorage.getItem("project")]
+          )
+        )
+      );
+      processPreferences(this.projectPreferencesBase64);
     } catch (error) {
       console.error("Erreur lors de la lecture des données :", error);
     }
