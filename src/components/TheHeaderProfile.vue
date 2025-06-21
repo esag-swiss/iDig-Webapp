@@ -5,7 +5,6 @@
       split
       rounded
       :outline="!isLoaded"
-      :disable-dropdown="isLoaded"
       :disable-main-btn="username === ''"
       size:xs
       color="secondary"
@@ -22,7 +21,8 @@
           >last login: {{ username }}<br />{{ project }} {{ server }}</q-tooltip
         >
       </template>
-      <q-list>
+
+      <q-list v-if="!isLoaded">
         <q-item class="q-pt-md" dense>Select a previous connection: </q-item>
         <q-item
           v-for="profile in connectionProfiles"
@@ -97,6 +97,14 @@
           </q-item-section>
         </q-item>
       </q-list>
+      <q-item v-if="isLoaded" clickable @click="importPreferences">
+        <q-item-section avatar>
+          <q-icon name="file_upload" color="secondary" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Upload local preferences file</q-item-label>
+        </q-item-section>
+      </q-item>
     </q-btn-dropdown>
   </div>
 </template>
@@ -104,6 +112,8 @@
 <script>
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
+import { useDataStore } from "@/stores/data";
+import { lsStoreProjectsPreferencesBase64 } from "@/services/localStorageManager";
 
 export default {
   emits: ["connect"],
@@ -133,6 +143,12 @@ export default {
       "setProject",
       "setUsername",
       "setPassword",
+    ]),
+    ...mapActions(useDataStore, [
+      "setProjectPreferencesCrs",
+      "setProjectPreferencesTypes",
+      "setProjectPreferencesFields",
+      "setProjectPreferencesBase64",
     ]),
     onSideClick(profile) {
       const connections = JSON.parse(
@@ -214,6 +230,49 @@ export default {
             });
             localStorage.setItem("connections", JSON.stringify(merged));
             this.connectionProfiles = merged;
+          } catch (err) {
+            console.error("Invalid JSON file");
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    },
+    importPreferences() {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "application/json";
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const base64 = btoa(unescape(encodeURIComponent(reader.result)));
+
+            // 1 Store locally preferences in case of pushing trenches
+            this.setProjectPreferencesBase64(base64);
+            // 2 Store preferences also in localStorage for next session
+            lsStoreProjectsPreferencesBase64(base64);
+
+            // 3 Parse the JSON to extract and aplly preferences
+            let preferences = "";
+            try {
+              // Attempt to parse the JSON, handling potential formatting issues
+              const original = reader.result;
+              const cleaned = original.replace(/,\s*(?=[}\]])/g, "");
+              if (original !== cleaned) {
+                console.warn(
+                  " Removed trailing commas from JSON input to ensure valid format."
+                );
+              }
+              preferences = JSON.parse(cleaned);
+            } catch (e) {
+              console.error("Error parsing preferences JSON:", e);
+            }
+
+            this.setProjectPreferencesCrs(preferences.crs || "EPSG:4326");
+            this.setProjectPreferencesTypes(preferences.types || []);
+            this.setProjectPreferencesFields(preferences.fields || []);
           } catch (err) {
             console.error("Invalid JSON file");
           }
