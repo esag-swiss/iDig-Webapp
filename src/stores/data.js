@@ -331,14 +331,10 @@ export const useDataStore = defineStore("data", {
 
     async fetchAndLoadPreferences(trench) {
       const { setIsLoaded } = useAppStore();
-      const parseAndLoadPreferences = (base64Preferences) => {
-        let preferences = "";
+      const parseAndLoadPreferences = (rawPref) => {
+        let cleanPreferences = "";
         try {
-          preferences = JSON.parse(
-            base64Preferences
-              .replace(/},\n\t+}/g, "}}")
-              .replace(/},\n\t+]/g, "}]")
-          );
+          cleanPreferences = JSON.parse(rawPref.replace(/,\s*(?=[}\]])/g, ""));
         } catch (e) {
           let message = `error: default preference file is not a valid json<br/>${e?.message}<br/>`;
           Notify.create({
@@ -349,14 +345,14 @@ export const useDataStore = defineStore("data", {
           });
           throw e;
         }
-        if (preferences.crs) {
-          this.setProjectPreferencesCrs(preferences.crs);
-        } else if (preferences.project === "Agora") {
+        if (cleanPreferences.crs) {
+          this.setProjectPreferencesCrs(cleanPreferences.crs);
+        } else if (cleanPreferences.project === "Agora") {
           // Agora project doesn't have property CRS
-          this.setProjectPreferencesCrs(preferences.project);
+          this.setProjectPreferencesCrs(cleanPreferences.project);
         }
-        this.setProjectPreferencesTypes(preferences.types);
-        this.setProjectPreferencesFields(preferences.fields);
+        this.setProjectPreferencesTypes(cleanPreferences.types);
+        this.setProjectPreferencesFields(cleanPreferences.fields);
       };
 
       return apiFetchPreferences(trench).then((response) => {
@@ -365,10 +361,10 @@ export const useDataStore = defineStore("data", {
         // Store preferences also in localStorage for next session
         lsStoreProjectsPreferencesBase64(response.data.preferences);
 
-        let preferences = decodeURIComponent(
+        let decodedPref = decodeURIComponent(
           escape(window.atob(response.data.preferences))
         );
-        parseAndLoadPreferences(preferences);
+        parseAndLoadPreferences(decodedPref);
         setIsLoaded(true);
       });
     },
