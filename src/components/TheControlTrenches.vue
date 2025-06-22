@@ -1,7 +1,7 @@
 <template>
   <div name="secteurs" class="p-1 m-1 bg-light border-0">
     <div>
-      <span class="text-bold pseudoh3">Secteurs</span>
+      <span class="text-bold pseudoh3">{{ $t("app.trenches") }}</span>
       <q-checkbox
         v-if="isAllChecked !== false"
         @update:model-value="handleCheckboxUpdate"

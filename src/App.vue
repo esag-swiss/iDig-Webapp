@@ -27,7 +27,7 @@
         </div>
 
         <div v-else class="d-flex justify-content-center mt-5">
-          Pas de données sélectionnées
+          {{ $t("app.no data") }}
         </div>
 
         <div
@@ -54,7 +54,7 @@
               anchor="top middle"
               self="center right"
               :offset="[100, 20]"
-              >map view</q-tooltip
+              >{{ $t("app.map") }}</q-tooltip
             ></q-btn
           >
           <q-btn
@@ -72,7 +72,7 @@
       </div>
     </div>
     <div v-else class="d-flex justify-content-center mt-5">
-      Veuillez vous connecter
+      {{ $t("app.connect") }}
     </div>
   </div>
 </template>
@@ -103,7 +103,12 @@ export default {
     TheMap,
   },
   computed: {
-    ...mapState(useAppStore, ["isLoaded", "isMapMinimized", "isItemSelected"]),
+    ...mapState(useAppStore, [
+      "isLoaded",
+      "isMapMinimized",
+      "isItemSelected",
+      "lang",
+    ]),
     ...mapState(useDataStore, ["checkedTrenchesItemsSelectedType"]),
   },
   watch: {
@@ -111,6 +116,9 @@ export default {
       if (Object.keys(this.checkedTrenchesItemsSelectedType).length === 0) {
         this.setIsMapMinimized(true);
       }
+    },
+    lang() {
+      this.$i18n.locale = this.lang;
     },
   },
   methods: {

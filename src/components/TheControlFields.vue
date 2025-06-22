@@ -4,7 +4,11 @@
     <h3
       title="filter table data and show only fields available for the selected type"
     >
-      Type
+      {{
+        projectPreferencesFieldsWithTranslation["Type"]
+          ? projectPreferencesFieldsWithTranslation["Type"]
+          : "Type"
+      }}
     </h3>
   </div>
   <!-- dropdown for types and sub-types -->
@@ -24,7 +28,9 @@
 
   <!-- FIELDS -->
   <div class="p-1 m-1 border-0">
-    <h3 title="display only fields for the selected type">Champs</h3>
+    <h3 title="display only fields for the selected type">
+      {{ $t("app.fields") }}
+    </h3>
     <!-- liste les groupes pour le type sélectionné -->
     <ul
       v-for="(group, index) in groupOfFieldsAccordingToTypeAndSubtype"

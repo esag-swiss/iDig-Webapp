@@ -1,0 +1,9 @@
+{
+  "app": {
+    "fields": "Campi",
+    "trenches": "Settori",
+    "no data": "Nessun dato selezionato",
+    "connect": "Connetti prima",
+    "map": "mappa"
+  }
+}
