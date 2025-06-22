@@ -1,0 +1,9 @@
+{
+  "app": {
+    "fields": "Champs",
+    "trenches": "Secteurs",
+    "no data": "Pas de données sélectionnées",
+    "connect": "Connectez-vous",
+    "map": " carte"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "app": {
+    "fields": "Fields",
+    "trenches": "Sectors",
+    "no data": " No data selected",
+    "map": "map",
+    "connect": "Connect first"
+  }
+}
