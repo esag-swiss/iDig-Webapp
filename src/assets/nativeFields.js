@@ -54,9 +54,17 @@ export const fieldsSchema = {
     field: "IdentifierUUID",
     labels: {
       en: "universally unique identifier",
+      fr: "identifiant unique universel",
+      it: "identificatore univoco universale",
+      de: "universell eindeutiger Bezeichner",
+      el: "παγκοσμίως μοναδικό αναγνωριστικό",
     },
     tips: {
       en: "universally unique identifier",
+      fr: "identifiant unique universel",
+      it: "identificatore univoco universale",
+      de: "universell eindeutiger Bezeichner",
+      el: "παγκοσμίως μοναδικό αναγνωριστικό",
     },
   },
   Source: {
@@ -65,10 +73,16 @@ export const fieldsSchema = {
     labels: {
       en: "Source",
       fr: "Source",
+      it: "Fonte",
+      de: "Quelle",
+      el: "Πηγή",
     },
     tips: {
       en: "original Trench of the iTems",
       fr: "Secteur d'origine de l'élément",
+      it: "Settore di origine dell'elemento",
+      de: "Ursprünglicher Sektor des Elements",
+      el: "Αρχικό τμήμα του αντικειμένου",
     },
   },
   Subtype: {
@@ -95,18 +109,18 @@ export const fieldsSchema = {
     type: "boolean",
     group: "Status Section",
     labels: {
+      en: "Sidelined",
       fr: "Invisible",
       it: "Invisibile",
       de: "Unsichtbar",
-      en: "Sidelined",
-      el: "",
+      el: "Παραμερισμένο",
     },
     tips: {
-      fr: "Permet de ne pas faire figurer les polygones ou points sur le plan",
-      it: "Rende invisibili poligoni e punti sulla pianta",
-      de: "Ermöglicht es, Polygone oder Punkte auf dem Plan auszublenden",
       en: "Allows to sideline polygons or points so that they are not displayed on the map",
-      el: "",
+      fr: "Permet de ne pas faire figurer les polygones ou points sur le plan",
+      it: "Consente di escludere poligoni o punti in modo che non vengano visualizzati sulla mappa",
+      de: "Ermöglicht es, Polygone oder Punkte auszublenden, sodass sie nicht auf der Karte angezeigt werden",
+      el: "Επιτρέπει την παράβλεψη πολυγώνων ή σημείων ώστε να μην εμφανίζονται στον χάρτη",
     },
   },
   RightsLocked: {
@@ -114,10 +128,16 @@ export const fieldsSchema = {
     labels: {
       en: "Locked",
       fr: "Sécurisé",
+      it: "Bloccato",
+      de: "Gesperrt",
+      el: "Κλειδωμένο",
     },
     tips: {
       en: "Determines if you can edit the item or not",
       fr: "Détermine si l'élément peut être édité ou non",
+      it: "Determina se l'elemento può essere modificato o meno",
+      de: "Legt fest, ob das Element bearbeitet werden kann oder nicht",
+      el: "Καθορίζει εάν μπορεί να επεξεργαστεί το αντικείμενο ή όχι",
     },
   },
   RightsTrashed: {
@@ -125,10 +145,16 @@ export const fieldsSchema = {
     labels: {
       en: "Trashed",
       fr: "Ecarté",
+      it: "Nel cestino",
+      de: "Im Papierkorb",
+      el: "Στον κάδο",
     },
     tips: {
-      en: "if the item is in the trash or not  (use by iDig app)",
+      en: "if the item is in the trash or not (used by iDig app)",
       fr: "si l'élément est dans la corbeille de l'iPad ou non",
+      it: "se l'elemento è nel cestino o no (utilizzato dall'app iDig)",
+      de: "Ob das Element im Papierkorb ist oder nicht (verwendet von der iDig-App)",
+      el: "Εάν το αντικείμενο βρίσκεται στον κάδο ανακύκλωσης ή όχι (χρήση από εφαρμογή iDig)",
     },
   },
   RightsDeleted: {
@@ -136,10 +162,16 @@ export const fieldsSchema = {
     labels: {
       en: "Deleted",
       fr: "Supprimé",
+      it: "Eliminato",
+      de: "Gelöscht",
+      el: "Διαγραμμένο",
     },
     tips: {
-      en: "is deleted (use by iDig app)",
+      en: "is deleted (used by iDig app)",
       fr: "est supprimé (utilisé par iDig app)",
+      it: "è eliminato (utilizzato dall'app iDig)",
+      de: "Ist gelöscht (verwendet von der iDig-App)",
+      el: "έχει διαγραφεί (χρήση από εφαρμογή iDig)",
     },
   },
   RightsStatus: {
@@ -148,23 +180,75 @@ export const fieldsSchema = {
       it: "Status",
       de: "Status",
       en: "Status",
+      el: "Κατάσταση",
     },
     valuelists: [
-      { fr: "Prêt", en: "Ready" },
-      { fr: "Terminé", en: "All Done" },
-      { fr: "Attention", en: "Attention" },
-      { fr: "A traiter", en: "Will Process" },
-      { fr: "En attente", en: "Waiting" },
-      { fr: "En cours", en: "Open" },
-      { fr: "Clos", en: "Closed" },
-      { fr: "Indéterminé", en: "Undefined" },
-      { fr: "A cataloguer", en: "Will Catalog" },
-      { fr: "Archivé", en: "Archived" },
+      { fr: "Prêt", en: "Ready", it: "Pronto", de: "Bereit", el: "Έτοιμο" },
+      {
+        fr: "Terminé",
+        en: "All Done",
+        it: "Fatto tutto",
+        de: "Alles erledigt",
+        el: "Ολοκληρώθηκε",
+      },
+      {
+        fr: "Attention",
+        en: "Attention",
+        it: "Attenzione",
+        de: "Achtung",
+        el: "Προσοχή",
+      },
+      {
+        fr: "A traiter",
+        en: "Will Process",
+        it: "Da elaborare",
+        de: "Wird bearbeitet",
+        el: "Θα επεξεργαστεί",
+      },
+      {
+        fr: "En attente",
+        en: "Waiting",
+        it: "In attesa",
+        de: "Warten",
+        el: "Αναμονή",
+      },
+      { fr: "En cours", en: "Open", it: "Aperto", de: "Offen", el: "Ανοιχτό" },
+      {
+        fr: "Clos",
+        en: "Closed",
+        it: "Chiuso",
+        de: "Geschlossen",
+        el: "Κλειστό",
+      },
+      {
+        fr: "Indéterminé",
+        en: "Undefined",
+        it: "Indeterminato",
+        de: "Unbestimmt",
+        el: "Απροσδιόριστο",
+      },
+      {
+        fr: "A cataloguer",
+        en: "Will Catalog",
+        it: "Da catalogare",
+        de: "Wird katalogisiert",
+        el: "Θα κατατάξω",
+      },
+      {
+        fr: "Archivé",
+        en: "Archived",
+        it: "Archiviato",
+        de: "Archiviert",
+        el: "Αρχειοθετημένο",
+      },
     ],
     valuelist: ["Ready", "All Done", "Attention", "Will Process", "Waiting"],
     tips: {
       en: "Used for filtering and coloring items by status",
       fr: "Utilisé pour colorer et filtrer les éléments par status",
+      it: "Utilizzato per filtrare e colorare gli elementi per stato",
+      de: "Wird verwendet, um Elemente nach Status zu filtern und zu färben",
+      el: "Χρησιμοποιείται για φιλτράρισμα και χρωματισμό αντικειμένων ανά κατάσταση",
     },
   },
 
@@ -173,6 +257,7 @@ export const fieldsSchema = {
     field: "FormatImage",
     labels: {
       en: "image representation",
+      fr: "représentation d'image",
     },
     tips: {
       en: "a path to an image representation",
@@ -183,6 +268,7 @@ export const fieldsSchema = {
     field: "FormatImageHeight",
     labels: {
       en: "image height",
+      fr: "hauteur de l'image",
     },
     tips: {
       en: "height of the image",
@@ -193,6 +279,7 @@ export const fieldsSchema = {
     field: "FormatImageWidth",
     labels: {
       en: "image width",
+      fr: "largeur de l'image",
     },
     tips: {
       en: "width of the image",
@@ -203,6 +290,7 @@ export const fieldsSchema = {
     field: "FormatImageAnnotations",
     labels: {
       en: "annotations",
+      fr: "annotations",
     },
     tips: {
       en: "annotations for the item",
@@ -213,6 +301,7 @@ export const fieldsSchema = {
     field: "FormatPDF",
     labels: {
       en: "PDF representation",
+      fr: "représentation PDF",
     },
     tips: {
       en: "a path to a pdf representation",
@@ -235,6 +324,7 @@ export const fieldsSchema = {
     type: "ExtraFields",
     labels: {
       en: "URLs",
+      fr: "URLs",
     },
     tips: {
       en: "URLs to other representations of the item",
