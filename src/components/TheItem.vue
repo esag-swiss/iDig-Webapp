@@ -19,7 +19,7 @@
           color="secondary"
           icon="cloud_upload"
           :size="'sm'"
-          @click="pushSurvey()"
+          @click="pushSurveyHandler()"
         />
         <q-tooltip class="bg-accent"
           >upload curent trench modification to iDig server</q-tooltip
@@ -336,6 +336,7 @@ import TheItemMultiline from "@/components/TheItemMultiline.vue";
 import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
 import TheItemValuelist from "@/components/TheItemValuelist.vue";
 import TheItemInput from "@/components/TheItemInput.vue";
+import { pushSurvey } from "@/services/pushSurveyService";
 
 export default {
   name: "TheItem",
@@ -498,14 +499,6 @@ export default {
       );
       return fieldsNotPrinsentInGroup;
     },
-
-    // TODO consider removing the following  --------------------
-    trenchtoUpdateWithoutTrenchProp() {
-      return this.checkedTrenchesData[this.selectedItem.Trench].map((obj) => {
-        const { Trench, ...newObj } = obj;
-        return newObj;
-      });
-    },
   },
 
   watch: {
@@ -562,46 +555,13 @@ export default {
       return fieldSchema;
     },
 
-    async pushSurvey() {
-      const head = this.checkedTrenchesVersion[this.selectedItem.Trench];
-      let surveys = this.trenchtoUpdateWithoutTrenchProp;
-      // surveys = this.trenchtoUpdateWithoutTrenchProp.filter(
-      //   (survey) => survey.IdentifierUUID !== this.selectedItem.IdentifierUUID
-      // );
-      // surveys.push(this.selectedItem);
-      const preferences = this.projectPreferencesBase64;
-
-      let resp = await apiPushTrench(
-        this.selectedItem.Trench,
-        head,
-        surveys,
-        preferences
-      );
-
-      if (resp.data.status === "pushed") {
-        this.checkedTrenchesVersion[this.selectedItem.Trench] =
-          resp.data.version;
-
-        localStorage.setItem(
-          "lsLocalTrenchesVersion",
-          JSON.stringify(this.checkedTrenchesVersion)
-        );
-
-        this.UpdateSyncTrenchData(this.selectedItem.Trench, surveys);
-
-        Notify.create({
-          type: "positive",
-          message: `The item was saved`,
-        });
-      } else if (resp.data.status === "pull") {
-        this.setSyncPatches(resp.data.updates);
-        this.setSyncTrench(this.selectedItem.Trench);
-        this.setSyncNewVersion(resp.data.version);
-        Notify.create({
-          type: "warning",
-          message: `There is a newer version on server`,
-        });
-      }
+    pushSurveyHandler() {
+      pushSurvey({
+        trenchName: this.selectedItem.Trench,
+        trenchVersion: this.checkedTrenchesVersion[this.selectedItem.Trench],
+        trenchSurvey: this.trenchtoUpdateWithoutTrenchProp,
+        projectPreferencesBase64: this.projectPreferencesBase64,
+      });
     },
 
     async fetchImages() {
