@@ -169,7 +169,10 @@ export default {
         return cell.getValue();
       }
       return this.checkedFieldNames.map((fieldName) => ({
-        title: this.projectPreferencesFieldsWithTranslation[fieldName],
+        title:
+          this.projectPreferencesFieldsWithTranslation?.[fieldName] ||
+          this.fieldsSchema?.[fieldName]?.labels?.[this.lang] ||
+          fieldName,
         headerFilter: "input",
         field: fieldName,
         headerMenu: headerMenu,
@@ -353,7 +356,7 @@ export default {
     },
 
     getColumnFormatter(fieldName) {
-      if (fieldName === "Type") {
+      if (fieldName === "Type" || fieldName === "Subtype") {
         return (cell, formatterParams, onRendered) => {
           const value = cell.getValue();
           return this.projectPreferencesTypesTranslation[value] ?? value;

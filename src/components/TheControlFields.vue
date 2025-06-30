@@ -1,15 +1,14 @@
 <template>
   <!-- TYPES -->
   <div class="p-1 m-1 border-0">
-    <h3
-      title="filter table data and show only fields available for the selected type"
-    >
+    <h3>
       {{
         projectPreferencesFieldsWithTranslation["Type"]
           ? projectPreferencesFieldsWithTranslation["Type"]
           : "Type"
       }}
     </h3>
+    <q-tooltip class="bg-accent"> {{ $t("app.typeTip") }} </q-tooltip>
   </div>
   <!-- dropdown for types and sub-types -->
   <select
@@ -22,14 +21,19 @@
       :key="type"
       :value="type.subtype || type.type"
     >
-      {{ type.plurals?.[lang] ?? type.type }}
+      {{
+        type.subtype
+          ? type.plurals?.[lang] ?? type.subtype
+          : type.plurals?.[lang] ?? type.type
+      }}
     </option>
   </select>
 
   <!-- FIELDS -->
   <div class="p-1 m-1 border-0">
-    <h3 title="display only fields for the selected type">
-      {{ $t("app.fields") }}
+    <h3>
+      {{ $t("app.fields")
+      }}<q-tooltip class="bg-accent"> {{ $t("app.fieldTip") }} </q-tooltip>
     </h3>
     <!-- liste les groupes pour le type sélectionné -->
     <ul

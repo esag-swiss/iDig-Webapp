@@ -5,7 +5,10 @@
       class="sticky-top q-fixed bg-grey-1 q-px-sm full-width row items-center justify-between"
     >
       <div class="col text-uppercase text-h6">
-        {{ projectPreferencesTypesTranslation[selectedItem.Type] }}
+        {{
+          projectPreferencesTypesTranslation[selectedItem.Subtype] ??
+          projectPreferencesTypesTranslation[selectedItem.Type]
+        }}
         {{ selectedItem.Identifier }}
       </div>
 
@@ -362,7 +365,6 @@ export default {
   computed: {
     ...mapState(useDataStore, [
       "projectPreferencesTypes",
-      "projectPreferencesTypesForSelect",
       "projectPreferencesTypesTranslation",
       "projectPreferencesFields",
       "projectPreferencesBase64",
