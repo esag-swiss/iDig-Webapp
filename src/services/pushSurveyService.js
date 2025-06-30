@@ -14,7 +14,7 @@ const {
 
 function removeTrenchProp(trenchData) {
   return trenchData.map((obj) => {
-    const { trench, ...newObj } = obj;
+    const { Trench, ...newObj } = obj;
     return newObj;
   });
 }
@@ -47,11 +47,12 @@ export async function pushSurvey({
       type: "positive",
       message: trenchName + " saved",
     });
-    // gérer status 'FORBIDDEN'
+    // TODO gérer status 'FORBIDDEN' 'OK'
   } else if (resp.data.status === "pull") {
-    setSyncPatches(resp.data.updates);
-    setSyncTrench(trenchName);
-    setSyncNewVersion(resp.data.version);
+    const dataStore = useDataStore();
+    dataStore.setSyncPatches(resp.data.updates);
+    dataStore.setSyncTrench(trenchName);
+    dataStore.setSyncNewVersion(resp.data.version);
     Notify.create({
       type: "warning",
       message: "There is a newer version on server",
