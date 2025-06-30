@@ -1,6 +1,6 @@
 <template>
   <div
-    v-show="selectedItem"
+    v-show="selectedItem || syncPatches"
     class="TheItemframe"
     @click="clearTheItem(), setSyncPatches('')"
   ></div>
