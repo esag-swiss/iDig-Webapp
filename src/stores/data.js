@@ -39,20 +39,6 @@ export const useDataStore = defineStore("data", {
   }),
 
   getters: {
-    projectPreferencesTypesForSelect(state) {
-      if (state.projectPreferencesTypes) {
-        const { lang } = useAppStore();
-        let options = state.projectPreferencesTypes.map((field) => {
-          return {
-            value: field.type,
-            label: field.labels[lang],
-            subtype: field.subtype,
-          };
-        });
-        return options;
-      }
-    },
-
     projectPreferencesTypesForOption(state) {
       if (state.projectPreferencesTypes) {
         const { lang } = useAppStore();
@@ -75,14 +61,13 @@ export const useDataStore = defineStore("data", {
         const { lang } = useAppStore();
         let options = {};
         state.projectPreferencesTypes.forEach((field) => {
-          options[field.type] = field.labels[lang];
-          // Si un subtype est défini, ajout de la traduction pour le subtype
           if (field.subtype) {
             options[field.subtype] =
               field.labels[lang] ?? options[field.subtype];
+          } else {
+            options[field.type] = field.labels[lang];
           }
         });
-
         return options;
       }
     },
@@ -92,14 +77,13 @@ export const useDataStore = defineStore("data", {
         const { lang } = useAppStore();
         let options = {};
         state.projectPreferencesTypes.forEach((field) => {
-          options[field.type] = field.plurals?.[lang];
-          // Si un subtype est défini, ajout de la traduction pour le subtype
           if (field.subtype) {
             options[field.subtype] =
               field.plurals?.[lang] ?? options[field.subtype];
+          } else {
+            options[field.type] = field.plurals?.[lang];
           }
         });
-
         return options;
       }
     },
@@ -120,11 +104,11 @@ export const useDataStore = defineStore("data", {
           translatedLabels[this.projectPreferencesFields.indexOf(field)];
       }
 
-      if (fieldsSchema.Subtype) {
-        //
-        const subtypeLabel = fieldsSchema.Subtype.labels?.[lang] ?? "Subtype";
-        langKeys = { ...langKeys, Subtype: subtypeLabel };
-      }
+      // if (fieldsSchema.Subtype) {
+      //   //
+      //   const subtypeLabel = fieldsSchema.Subtype.labels?.[lang] ?? "Subtype";
+      //   langKeys = { ...langKeys, Subtype: subtypeLabel };
+      // }
       const translationObj = {};
       state.projectPreferencesTypes.forEach((typeObj) => {
         if (typeObj.groups && Array.isArray(typeObj.groups)) {

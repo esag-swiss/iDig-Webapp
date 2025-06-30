@@ -63,8 +63,11 @@ export default {
         const item = filteredItems[0];
         return {
           chipText:
-            this.projectPreferencesTypesTranslation[item.Type] +
-            ": " +
+            (this.projectPreferencesTypesTranslation[item.Subtype] ??
+              this.projectPreferencesTypesTranslation[item.Type]) +
+            " " +
+            item.Identifier +
+            " : " +
             item.Title,
           fullItem: item,
         };

@@ -3,7 +3,10 @@
     <!--header-->
     <div class="sticky-top bg-grey-5">
       <div class="text-uppercase text-h6 accordion p-2">
-        {{ projectPreferencesTypesTranslation[currentItem.Type] }}
+        {{
+          projectPreferencesTypesTranslation[currentItem.Subtype] ??
+          projectPreferencesTypesTranslation[currentItem.Type]
+        }}
         {{ currentItem.Identifier }}
       </div>
     </div>
