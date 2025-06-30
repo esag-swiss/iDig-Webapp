@@ -4,6 +4,8 @@
     "trenches": "Settori",
     "no data": "Nessun dato selezionato",
     "connect": "Connetti prima",
-    "map": "mappa"
+    "map": "mappa",
+    "typeTip": "filtrare i dati e mostrare solo i campi disponibili per il tipo o sottotipo selezionato",
+    "fieldTip": "campi disponibili per il tipo o sottotipo selezionato"
   }
 }

@@ -4,6 +4,8 @@
     "trenches": "Sectors",
     "no data": " No data selected",
     "map": "map",
-    "connect": "Connect first"
+    "connect": "Connect first",
+    "typeTip": "filter data and show only fields available for the selected type or subtype",
+    "fieldTip": "fields available for the selected type or subtype"
   }
 }

@@ -4,6 +4,8 @@
     "trenches": "Sektoren",
     "no data": "Keine Daten ausgewählt",
     "connect": "Zuerst verbinden",
-    "map": " Karte"
+    "map": " Karte",
+    "typeTip": "Daten filtern und nur Felder anzeigen, die für den ausgewählten Typ oder Untertyp verfügbar sind",
+    "fieldTip": "Verfügbare Felder für den ausgewählten Typ oder Untertyp"
   }
 }
