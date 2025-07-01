@@ -559,7 +559,7 @@ export default {
       pushSurvey({
         trenchName: this.selectedItem.Trench,
         trenchVersion: this.checkedTrenchesVersion[this.selectedItem.Trench],
-        trenchSurvey: this.trenchtoUpdateWithoutTrenchProp,
+        trenchSurvey: this.checkedTrenchesData[this.selectedItem.Trench],
         projectPreferencesBase64: this.projectPreferencesBase64,
       });
     },
