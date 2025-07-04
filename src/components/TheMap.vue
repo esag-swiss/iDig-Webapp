@@ -26,7 +26,7 @@ import {
   baseLayersTree,
 } from "@/services/mapOverlays.js";
 import { loadItemsLayer } from "@/services/mapItemsLayers.js";
-import { exportMapAsPNG } from "@/services/mapExport.js";
+import { exportMapAsCompositeSVG } from "@/services/mapExport.js";
 import CustomLayersTree from "@/services/CustomLayersTree.js";
 
 export default {
@@ -134,7 +134,7 @@ export default {
     },
 
     exportMapAsPNG() {
-      exportMapAsPNG(this.map);
+      exportMapAsCompositeSVG(this.map);
     },
   },
 };
