@@ -1,22 +1,4 @@
 <template>
-  <!-- VALUELIST NOT EMPTY (RESTRICTED)-->
-  <!-- <q-select
-    v-if="editMode && fieldType(field.field, group)?.valuelist.length !== 0"
-    v-model="currentItem[field.field]"
-    use-input
-    square
-    dense
-    options-dense
-    filled
-    clearable
-    input-debounce="0"
-    :label="isFocused ? previousValue : ''"
-    @focus="isFocused = true"
-    @blur="isFocused = false"
-    :options="fieldType(field.field, group).valuelist"
-    @clear="currentItem[field.field] = previousValue"
-  /> -->
-  <!-- VALUELIST EMPTY (DYNAMIQUE)-->
   <q-select
     v-if="editMode"
     v-model="currentItem[field.field]"
@@ -25,9 +7,10 @@
     dense
     options-dense
     filled
+    fill-input
+    hide-selected
     clearable
     input-debounce="0"
-    :label="previousValue"
     :options="options"
     new-value-mode="add"
     @clear="currentItem[field.field] = previousValue"
