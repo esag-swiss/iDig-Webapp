@@ -366,60 +366,116 @@ export const fieldsSchema = {
   },
 
   // "group": "Relationships",
-  // les relations c'est uniquement dans la même trench ?
-  // [sur, sous, à côté de, coupe, coupé par, postérieur à, antérieur à, contemporain de, appartient à, inclue]
-  // Can be also :     "RelationIsAbove:",     "RelationIsBelow:",     "RelationIsNextTo:",    "RelationIsAfter:",    "RelationIsBefore:",    RelationIsCoevalWith:",     "RelationBelongsTo:",    "RelationIncludes:",    "[RelationCuts:]",    "[RelationIsCutBy:]",
-  RelationIsAboveUUID: {
-    labels: { fr: "Sur" },
-    type: "link",
-    goupe: "Relationships",
-  },
-  RelationIsBelowUUID: {
-    labels: { fr: "sous" },
-    type: "link",
-    goupe: "Relationships",
-  },
-  RelationIsNextToUUID: {
-    labels: { fr: "à côté de" },
+  RelationBelongsToUUID: {
+    labels: {
+      fr: "appartient à",
+      en: "belongs to",
+      it: "appartiene a",
+      de: "gehört zu",
+      el: "ανήκει σε",
+    },
     type: "link",
     goupe: "Relationships",
   },
   RelationCutsUUID: {
-    labels: { fr: "coupe" },
-    type: "link",
-    goupe: "Relationships",
-  },
-  RelationIsCutByUUID: {
-    labels: { fr: "coupé par" },
-    type: "link",
-    goupe: "Relationships",
-  },
-  RelationIsAfterUUID: {
-    labels: { fr: "postérieur à" },
-    type: "link",
-    goupe: "Relationships",
-  },
-  RelationIsBeforeUUID: {
-    labels: { fr: "antérieur à" },
-    type: "link",
-    goupe: "Relationships",
-  },
-  RelationIsCoevalWithUUID: {
-    labels: { fr: "contemporain de" },
-    type: "link",
-    goupe: "Relationships",
-  },
-  RelationBelongsToUUID: {
-    labels: { fr: "appartient à" },
+    labels: {
+      fr: "coupe",
+      en: "cuts",
+      it: "taglia",
+      de: "schneidet",
+      el: "κόβει",
+    },
     type: "link",
     goupe: "Relationships",
   },
   RelationIncludesUUID: {
-    labels: { fr: "inclue" },
+    labels: {
+      fr: "inclut",
+      en: "includes",
+      it: "include",
+      de: "beinhaltet",
+      el: "περιλαμβάνει",
+    },
     type: "link",
     goupe: "Relationships",
   },
-
+  RelationIsAboveUUID: {
+    labels: {
+      fr: "Sur",
+      en: "is above",
+      it: "si trova sopra",
+      de: "ist über",
+      el: "βρίσκεται πάνω",
+    },
+    type: "link",
+    goupe: "Relationships",
+  },
+  RelationIsBeforeUUID: {
+    labels: {
+      fr: "antérieur à",
+      en: "is before",
+      it: "è prima di",
+      de: "ist vor",
+      el: "είναι πριν",
+    },
+    type: "link",
+    goupe: "Relationships",
+  },
+  RelationIsBelowUUID: {
+    labels: {
+      fr: "sous",
+      en: "is below",
+      it: "si trova sotto",
+      de: "ist unter",
+      el: "βρίσκεται κάτω",
+    },
+    type: "link",
+    goupe: "Relationships",
+  },
+  RelationIsCoevalWithUUID: {
+    labels: {
+      fr: "contemporain de",
+      en: "is coeval with",
+      it: "è coevo con",
+      de: "ist gleichzeitig mit",
+      el: "είναι σύγχρονος με",
+    },
+    type: "link",
+    goupe: "Relationships",
+  },
+  RelationIsCutByUUID: {
+    labels: {
+      fr: "coupé par",
+      en: "is cut by",
+      it: "è tagliato da",
+      de: "wird geschnitten von",
+      el: "κόβεται από",
+    },
+    type: "link",
+    goupe: "Relationships",
+  },
+  RelationIsNextToUUID: {
+    labels: {
+      fr: "à côté de",
+      en: "is next to",
+      it: "è accanto a",
+      de: "ist neben",
+      el: "είναι δίπλα σε",
+    },
+    type: "link",
+    goupe: "Relationships",
+  },
+  RelationIsAfterUUID: {
+    labels: {
+      fr: "postérieur à",
+      en: "is after",
+      it: "è dopo",
+      de: "ist nach",
+      el: "είναι μετά",
+    },
+    type: "link",
+    goupe: "Relationships",
+  },
   // COVERAGE TEMPORAL DATE
   CoverageUTC: {
     type: "DateUTC",

@@ -2,10 +2,16 @@
   "app": {
     "fields": "Felder",
     "trenches": "Sektoren",
+    "trenche": "Sektor",
+    "loaded": "Geladen",
+    "preferences": "Einstellungen",
+    "preferencesLoaded": "Einstellungen aus dem Sektor geladen",
     "no data": "Keine Daten ausgewählt",
     "connect": "Zuerst verbinden",
     "map": " Karte",
     "typeTip": "Daten filtern und nur Felder anzeigen, die für den ausgewählten Typ oder Untertyp verfügbar sind",
-    "fieldTip": "Verfügbare Felder für den ausgewählten Typ oder Untertyp"
+    "fieldTip": "Verfügbare Felder für den ausgewählten Typ oder Untertyp",
+    "upload local pref": "Lokale Einstellungen hochladen",
+    "upload pref from trench": " Einstellungen aus dem Sektor hochladen"
   }
 }
