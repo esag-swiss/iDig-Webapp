@@ -15,6 +15,7 @@
 </template>
 <script>
 import { lsStoreConnection } from "@/services/localStorageManager";
+import { Notify } from "quasar";
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
@@ -42,11 +43,6 @@ export default {
       "setPassword",
     ]),
     ...mapActions(useDataStore, [
-      // "setProjectTrenchesNames",
-      // "setProjectPreferencesCrs",
-      // "setProjectPreferencesTypes",
-      // "setProjectPreferencesFields",
-      // "setProjectPreferencesBase64",
       "fetchAndLoadPreferences",
       "fetchIdigTrenchesNames",
     ]),
@@ -64,6 +60,15 @@ export default {
           await this.fetchIdigTrenchesNames();
           await this.fetchAndLoadPreferences(this.firstTrench);
           lsStoreConnection();
+          let message = `${this.$t("app.preferencesLoaded")} : ${
+            this.firstTrench
+          }`;
+          Notify.create({
+            type: "positive",
+            message,
+            html: true,
+            timeout: 10000,
+          });
         } catch (e) {
           console.error(e);
           this.setIsLoaded(false);
