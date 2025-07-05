@@ -2,10 +2,16 @@
   "app": {
     "fields": "Champs",
     "trenches": "Secteurs",
+    "trenche": "Secteur",
+    "loaded": "chargé",
+    "preferences": "Préférences",
+    "preferencesLoaded": "Préférences chargées depuis le secteur",
     "no data": "Pas de données sélectionnées",
     "connect": "Connectez-vous",
     "map": " carte",
     "typeTip": "filtrer les données et afficher uniquement les champs disponibles pour le type ou le sous-type sélectionné",
-    "fieldTip": "champs disponibles pour le type ou le sous-type sélectionné"
+    "fieldTip": "champs disponibles pour le type ou le sous-type sélectionné",
+    "upload local pref": "Charger les préférences d'un fichier local",
+    "upload pref from trench": "Charger les préférences depuis un secteur choisi"
   }
 }

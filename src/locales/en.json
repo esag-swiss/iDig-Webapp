@@ -2,10 +2,16 @@
   "app": {
     "fields": "Fields",
     "trenches": "Sectors",
+    "trenche": "Sector",
+    "loaded": "loaded",
+    "preferences": "Preferences",
+    "preferencesLoaded": "Preferences loaded from sector",
     "no data": " No data selected",
-    "map": "map",
     "connect": "Connect first",
+    "map": "map",
     "typeTip": "filter data and show only fields available for the selected type or subtype",
-    "fieldTip": "fields available for the selected type or subtype"
+    "fieldTip": "fields available for the selected type or subtype",
+    "upload local pref": "Upload local preferences file",
+    "upload pref from trench": "Upload preferences from a chosen sector"
   }
 }

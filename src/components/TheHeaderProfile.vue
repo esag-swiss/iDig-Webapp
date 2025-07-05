@@ -45,11 +45,11 @@
           </q-item-section>
           <q-item-section side>
             <q-icon
-              clickable
               v-close-popup
-              @click="onSideClick(profile)"
               name="delete_forever"
               color="grey"
+              clickable
+              @click="onSideClick(profile)"
             />
           </q-item-section>
         </q-item>
@@ -58,24 +58,24 @@
         <q-item class="q-pt-md" dense>Create a new connection: </q-item>
         <q-item>
           <q-item-section>
-            <q-input dense standout v-model="newServer" label="Server" />
-            <q-input dense standout v-model="newProject" label="Project" />
-            <q-input dense standout v-model="newUsername" label="Username" />
+            <q-input v-model="newServer" dense standout label="Server" />
+            <q-input v-model="newProject" dense standout label="Project" />
+            <q-input v-model="newUsername" dense standout label="Username" />
             <q-input
+              v-model="newPassword"
               dense
               standout
-              v-model="newPassword"
               label="Password"
               type="password"
             />
           </q-item-section>
           <q-item-section side>
             <q-icon
-              @click="onFormClick()"
-              clickable
               v-close-popup
+              clickable
               name="add_circle_outline"
               color="primary"
+              @click="onFormClick()"
             />
           </q-item-section>
         </q-item>
@@ -97,12 +97,42 @@
           </q-item-section>
         </q-item>
       </q-list>
-      <q-item v-if="isLoaded" clickable @click="importPreferences">
+      <q-item
+        v-if="isLoaded"
+        v-close-popup
+        clickable
+        @click="importPreferences"
+      >
         <q-item-section avatar>
           <q-icon name="file_upload" color="secondary" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>Upload local preferences file</q-item-label>
+          <q-item-label>{{ $t("app.upload local pref") }}</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item v-if="isLoaded">
+        <q-item-section avatar>
+          <q-icon name="file_upload" color="secondary" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ $t("app.upload pref from trench") }}</q-item-label>
+        </q-item-section>
+        <q-item-section>
+          <q-btn-dropdown>
+            <q-list dense>
+              <q-item
+                v-for="trenchName in projectTrenchesNames"
+                :key="trenchName"
+                v-close-popup
+                clickable
+                @click="importTrenchPreferences(trenchName)"
+              >
+                <q-item-section>
+                  <q-item-label>{{ trenchName }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </q-item-section>
       </q-item>
     </q-btn-dropdown>
@@ -114,6 +144,7 @@ import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
 import { lsStoreProjectsPreferencesBase64 } from "@/services/localStorageManager";
+import { Notify } from "quasar";
 
 export default {
   emits: ["connect"],
@@ -136,6 +167,7 @@ export default {
       "password",
       "isLoaded",
     ]),
+    ...mapState(useDataStore, ["projectTrenchesNames"]),
   },
   methods: {
     ...mapActions(useAppStore, [
@@ -149,6 +181,7 @@ export default {
       "setProjectPreferencesTypes",
       "setProjectPreferencesFields",
       "setProjectPreferencesBase64",
+      "fetchAndLoadPreferences",
     ]),
     onSideClick(profile) {
       const connections = JSON.parse(
@@ -280,6 +313,22 @@ export default {
         reader.readAsText(file);
       };
       input.click();
+    },
+    async importTrenchPreferences(trench) {
+      await this.fetchAndLoadPreferences(trench);
+      try {
+        await this.fetchAndLoadPreferences(trench);
+        let message = `${this.$t("app.preferencesLoaded")} : ${trench}`;
+        Notify.create({
+          type: "positive",
+          message,
+          html: true,
+          timeout: 10000,
+        });
+      } catch (e) {
+        console.error(e);
+        this.setIsLoaded(false);
+      }
     },
   },
 };
