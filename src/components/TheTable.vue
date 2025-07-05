@@ -12,15 +12,6 @@
       <q-btn
         :size="'sm'"
         color="secondary"
-        label=".json"
-        @click="exportFile('json')"
-        ><q-tooltip class="bg-accent"
-          >download items as .json file</q-tooltip
-        ></q-btn
-      >
-      <q-btn
-        :size="'sm'"
-        color="secondary"
         label=".csv"
         @click="exportFile('csv')"
         ><q-tooltip class="bg-accent"
