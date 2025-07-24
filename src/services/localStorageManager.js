@@ -1,12 +1,20 @@
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
+import { Notify } from "quasar";
 
 export function lsStoreConnection() {
-  const { server, project, username, password } = useAppStore();
+  // Store the current connection details in local storage
+  // This is used to persist the connection state across sessions
+  // and to allow the user to reconnect without re-entering credentials.
+  const { currentProfile, server, project, username, password } = useAppStore();
+  localStorage.setItem("currentProfile", currentProfile);
   localStorage.setItem("server", server);
   localStorage.setItem("project", project);
   localStorage.setItem("username", username);
   localStorage.setItem("password", password);
+}
+
+export function lsStoreProfiles(profile, server, project, username, password) {
   // Retrieve existing connections array or initialize an empty one
   const connections = localStorage.getItem("connections")
     ? JSON.parse(localStorage.getItem("connections"))
@@ -21,16 +29,49 @@ export function lsStoreConnection() {
         conn.username === username
     )
   ) {
-    return;
+    Notify.create({
+      message: "Connection already exists",
+      type: "positive",
+    });
+  } else {
+    const newConnection = {
+      profile,
+      server,
+      project,
+      username,
+      password,
+    };
+
+    connections.push(newConnection);
+
+    // Save the updated array back to local storage
+    localStorage.setItem("connections", JSON.stringify(connections));
   }
-  const newConnection = { server, project, username, password };
-
-  // Add the new connection to the array
-  connections.push(newConnection);
-
-  // Save the updated array back to local storage
-  localStorage.setItem("connections", JSON.stringify(connections));
 }
+export function lsUpdateProfile(profile, key, value) {
+  // Retrieve existing connections array or initialize an empty one
+  const connections = localStorage.getItem("connections")
+    ? JSON.parse(localStorage.getItem("connections"))
+    : [];
+
+  // Find the index of the connection to update
+  const index = connections.findIndex(
+    (localStorage) => localStorage.profile === profile
+  );
+
+  // If the connection exists, update it
+  if (index !== -1) {
+    connections[index] = {
+      ...connections[index],
+      [key]: value,
+    };
+    localStorage.setItem("connections", JSON.stringify(connections));
+  }
+}
+
+export const lsLoadCurrentProfile = () => {
+  return localStorage.getItem("currentProfile") ?? "";
+};
 export const lsLoadUsername = () => {
   return localStorage.getItem("username") ?? "";
 };

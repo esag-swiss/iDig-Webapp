@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import {
+  lsLoadCurrentProfile,
   lsLoadLang,
   lsLoadPassword,
   lsLoadProject,
@@ -14,7 +15,8 @@ export const useAppStore = defineStore("app", {
     isMapMinimized: true,
     isItemSelected: false,
     isArchivedItemsHided: false,
-    // Load local storage values for these elements, or empty string if not exist :
+    // Load local storage values lastly used for these elements, or empty string if not exist :
+    currentProfile: lsLoadCurrentProfile(),
     lang: lsLoadLang(),
     username: lsLoadUsername(),
     password: lsLoadPassword(),
@@ -30,6 +32,9 @@ export const useAppStore = defineStore("app", {
       this.loadingCount -= 1;
     },
 
+    setCurrentProfile(value) {
+      this.currentProfile = value;
+    },
     setUsername(value) {
       this.username = value;
     },

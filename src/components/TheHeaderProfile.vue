@@ -14,16 +14,19 @@
       <template v-slot:label>
         <div class="q-pl-md">{{ username }}</div>
         <q-tooltip v-if="isLoaded" class="bg-accent">log out</q-tooltip>
-        <q-tooltip v-else-if="username === ''" class="bg-accent"
-          >create a connection first</q-tooltip
-        >
+        <q-tooltip v-else-if="username === ''" class="bg-accent">{{
+          $t("app.createProfile")
+        }}</q-tooltip>
         <q-tooltip v-else class="bg-accent"
-          >last login: {{ username }}<br />{{ project }} {{ server }}</q-tooltip
+          >{{ $t("app.lastLogin") }} {{ username }}<br />{{ project }}
+          {{ server }}</q-tooltip
         >
       </template>
 
       <q-list v-if="!isLoaded">
-        <q-item class="q-pt-md" dense>Select a previous connection: </q-item>
+        <q-item class="q-pt-md" dense>
+          {{ $t("app.selectProfile") }}
+        </q-item>
         <q-item
           v-for="profile in connectionProfiles"
           :key="profile.server"
@@ -34,9 +37,13 @@
           <q-item-section avatar>
             <q-avatar color="primary" text-color="white">
               <q-tooltip>
-                {{ profile.username }}
+                {{ profile.profile ?? profile.username }}
               </q-tooltip>
-              {{ profile.username.charAt(0).toUpperCase() }}
+              {{
+                profile.profile
+                  ? profile.profile.toUpperCase()
+                  : profile.username.charAt(0).toUpperCase()
+              }}
             </q-avatar>
           </q-item-section>
           <q-item-section>
@@ -55,9 +62,10 @@
         </q-item>
 
         <q-separator />
-        <q-item class="q-pt-md" dense>Create a new connection: </q-item>
+        <q-item class="q-pt-md" dense>{{ $t("app.createProfile") }}</q-item>
         <q-item>
           <q-item-section>
+            <q-input v-model="newProfile" dense standout label="Profile Name" />
             <q-input v-model="newServer" dense standout label="Server" />
             <q-input v-model="newProject" dense standout label="Project" />
             <q-input v-model="newUsername" dense standout label="Username" />
@@ -85,7 +93,7 @@
             <q-icon name="file_download" color="secondary" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Export connections</q-item-label>
+            <q-item-label>{{ $t("app.exportProfiles") }}</q-item-label>
           </q-item-section>
         </q-item>
         <q-item clickable @click="importConnections">
@@ -93,7 +101,7 @@
             <q-icon name="file_upload" color="secondary" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Import connections</q-item-label>
+            <q-item-label>{{ $t("app.importProfiles") }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -143,13 +151,17 @@
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
-import { lsStoreProjectsPreferencesBase64 } from "@/services/localStorageManager";
+import {
+  lsStoreProfiles,
+  lsStoreProjectsPreferencesBase64,
+} from "@/services/localStorageManager";
 import { Notify } from "quasar";
 
 export default {
   emits: ["connect"],
   data() {
     return {
+      newProfile: null,
       newServer: null,
       newProject: null,
       newUsername: null,
@@ -171,6 +183,7 @@ export default {
   },
   methods: {
     ...mapActions(useAppStore, [
+      "setCurrentProfile",
       "setServer",
       "setProject",
       "setUsername",
@@ -199,6 +212,7 @@ export default {
     },
 
     onItemClick(profile) {
+      this.setCurrentProfile(profile.profile || profile.username);
       this.setServer(profile.server);
       this.setProject(profile.project);
       this.setUsername(profile.username);
@@ -208,16 +222,25 @@ export default {
 
     onFormClick() {
       if (
+        this.newProfile &&
         this.newServer &&
         this.newProject &&
         this.newUsername &&
         this.newPassword
       ) {
+        this.setCurrentProfile(this.newProfile);
         this.setServer(this.newServer);
         this.setProject(this.newProject);
         this.setUsername(this.newUsername);
         this.setPassword(this.newPassword);
         this.$emit("connect");
+        lsStoreProfiles(
+          this.newProfile,
+          this.newServer,
+          this.newProject,
+          this.newUsername,
+          this.newPassword
+        );
       }
     },
 

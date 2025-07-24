@@ -12,6 +12,11 @@
     "typeTip": "filtrer les données et afficher uniquement les champs disponibles pour le type ou le sous-type sélectionné",
     "fieldTip": "champs disponibles pour le type ou le sous-type sélectionné",
     "upload local pref": "Charger les préférences d'un fichier local",
-    "upload pref from trench": "Charger les préférences depuis un secteur choisi"
+    "upload pref from trench": "Charger les préférences depuis un secteur choisi",
+    "selectProfile": "Choisir un profil",
+    "lastLogin": "Dernière connexion",
+    "createProfile": "Créer un profil",
+    "exportProfiles": "Exporter les profils",
+    "importProfiles": "Importer les profils"
   }
 }
