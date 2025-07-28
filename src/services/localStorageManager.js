@@ -90,7 +90,8 @@ export const lsLoadCheckedTrenchesVersion = () => {
     : {};
 };
 export function lsStoreLang() {
-  const { lang } = useAppStore();
+  const { lang, currentProfile } = useAppStore();
+  lsUpdateProfile(currentProfile, "lang", lang);
   localStorage.setItem("lang", lang);
 }
 export const lsLoadLang = () => {
