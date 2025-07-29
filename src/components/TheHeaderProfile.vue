@@ -32,7 +32,7 @@
           :key="profile.server"
           clickable
           v-close-popup
-          @click="onItemClick(profile)"
+          @click="onProfileClick(profile)"
         >
           <q-item-section avatar>
             <q-avatar color="primary" text-color="white">
@@ -56,7 +56,7 @@
               name="delete_forever"
               color="grey"
               clickable
-              @click="onSideClick(profile)"
+              @click.stop="onProfileDeleteClick(profile)"
             />
           </q-item-section>
         </q-item>
@@ -83,12 +83,12 @@
               clickable
               name="add_circle_outline"
               color="primary"
-              @click="onFormClick()"
+              @click="onAddProfileClick()"
             />
           </q-item-section>
         </q-item>
         <q-separator />
-        <q-item clickable @click="exportConnections">
+        <q-item clickable @click="exportProfiles">
           <q-item-section avatar>
             <q-icon name="file_download" color="secondary" />
           </q-item-section>
@@ -96,7 +96,7 @@
             <q-item-label>{{ $t("app.exportProfiles") }}</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable @click="importConnections">
+        <q-item clickable @click="importProfiles">
           <q-item-section avatar>
             <q-icon name="file_upload" color="secondary" />
           </q-item-section>
@@ -167,7 +167,9 @@ export default {
       newUsername: null,
       newPassword: null,
       connectionProfiles: JSON.parse(
-        localStorage.getItem("connections") || "[]"
+        localStorage.getItem("profiles") ||
+          localStorage.getItem("connections") ||
+          "[]"
       ),
     };
   },
@@ -196,22 +198,24 @@ export default {
       "setProjectPreferencesBase64",
       "fetchAndLoadPreferences",
     ]),
-    onSideClick(profile) {
-      const connections = JSON.parse(
-        localStorage.getItem("connections") || "[]"
-      );
 
-      const updatedConnections = connections.filter(
+    onProfileDeleteClick(profile) {
+      const profiles = JSON.parse(
+        localStorage.getItem("profiles") ||
+          localStorage.getItem("connections") || // for backward compatibility
+          "[]"
+      );
+      const updatedProfiles = profiles.filter(
         (item) =>
           item.server !== profile.server ||
           item.project !== profile.project ||
           item.username !== profile.username
       );
-      localStorage.setItem("connections", JSON.stringify(updatedConnections));
-      this.connectionProfiles = updatedConnections;
+      localStorage.setItem("profiles", JSON.stringify(updatedProfiles));
+      this.connectionProfiles = updatedProfiles;
     },
 
-    onItemClick(profile) {
+    onProfileClick(profile) {
       this.setCurrentProfile(profile.profile || profile.username);
       this.setServer(profile.server);
       this.setProject(profile.project);
@@ -220,7 +224,7 @@ export default {
       this.$emit("connect");
     },
 
-    onFormClick() {
+    onAddProfileClick() {
       if (
         this.newProfile &&
         this.newServer &&
@@ -244,21 +248,23 @@ export default {
       }
     },
 
-    exportConnections() {
-      const connections = JSON.parse(
-        localStorage.getItem("connections") || "[]"
+    exportProfiles() {
+      const profiles = JSON.parse(
+        localStorage.getItem("profiles") ||
+          localStorage.getItem("connections") || // for backward compatibility
+          "[]"
       );
       const dataStr =
         "data:text/json;charset=utf-8," +
-        encodeURIComponent(JSON.stringify(connections));
+        encodeURIComponent(JSON.stringify(profiles));
       const downloadAnchorNode = document.createElement("a");
       downloadAnchorNode.setAttribute("href", dataStr);
-      downloadAnchorNode.setAttribute("download", "connections.json");
+      downloadAnchorNode.setAttribute("download", "profiles.json");
       document.body.appendChild(downloadAnchorNode);
       downloadAnchorNode.click();
       downloadAnchorNode.remove();
     },
-    importConnections() {
+    importProfiles() {
       const input = document.createElement("input");
       input.type = "file";
       input.accept = "application/json";
@@ -269,7 +275,9 @@ export default {
           try {
             const imported = JSON.parse(reader.result);
             const existing = JSON.parse(
-              localStorage.getItem("connections") || "[]"
+              localStorage.getItem("profiles") ||
+                localStorage.getItem("connections") || // for backward compatibility
+                "[]"
             );
             const merged = [...existing];
             imported.forEach((item) => {
@@ -284,7 +292,7 @@ export default {
                 merged.push(item);
               }
             });
-            localStorage.setItem("connections", JSON.stringify(merged));
+            localStorage.setItem("profiles", JSON.stringify(merged));
             this.connectionProfiles = merged;
           } catch (err) {
             console.error("Invalid JSON file");
@@ -294,6 +302,7 @@ export default {
       };
       input.click();
     },
+
     importPreferences() {
       const input = document.createElement("input");
       input.type = "file";

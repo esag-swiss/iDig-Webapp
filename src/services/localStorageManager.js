@@ -15,15 +15,18 @@ export function lsStoreConnection() {
 }
 
 export function lsStoreProfiles(profile, server, project, username, password) {
-  // Retrieve existing connections array or initialize an empty one
-  const connections = localStorage.getItem("connections")
-    ? JSON.parse(localStorage.getItem("connections"))
-    : [];
+  // Retrieve existing profiles array or initialize an empty one
+  const profiles = JSON.parse(
+    localStorage.getItem("profiles") ||
+      localStorage.getItem("connections") || // for backward compatibility
+      "[]"
+  );
 
   // Create a new connection object with the current credentials
   if (
-    connections.some(
+    profiles.some(
       (conn) =>
+        conn.profile === profile &&
         conn.server === server &&
         conn.project === project &&
         conn.username === username
@@ -34,7 +37,7 @@ export function lsStoreProfiles(profile, server, project, username, password) {
       type: "positive",
     });
   } else {
-    const newConnection = {
+    const newProfile = {
       profile,
       server,
       project,
@@ -42,30 +45,32 @@ export function lsStoreProfiles(profile, server, project, username, password) {
       password,
     };
 
-    connections.push(newConnection);
+    profiles.push(newProfile);
 
     // Save the updated array back to local storage
-    localStorage.setItem("connections", JSON.stringify(connections));
+    localStorage.setItem("profiles", JSON.stringify(profiles));
   }
 }
 export function lsUpdateProfile(profile, key, value) {
-  // Retrieve existing connections array or initialize an empty one
-  const connections = localStorage.getItem("connections")
-    ? JSON.parse(localStorage.getItem("connections"))
-    : [];
+  // Retrieve existing profiles array or initialize an empty one
+  const profiles = JSON.parse(
+    localStorage.getItem("profiles") ||
+      localStorage.getItem("connections") || // for backward compatibility
+      "[]"
+  );
 
   // Find the index of the connection to update
-  const index = connections.findIndex(
+  const index = profiles.findIndex(
     (localStorage) => localStorage.profile === profile
   );
 
   // If the connection exists, update it
   if (index !== -1) {
-    connections[index] = {
-      ...connections[index],
+    profiles[index] = {
+      ...profiles[index],
       [key]: value,
     };
-    localStorage.setItem("connections", JSON.stringify(connections));
+    localStorage.setItem("profiles", JSON.stringify(profiles));
   }
 }
 
