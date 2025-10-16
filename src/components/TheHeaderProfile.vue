@@ -41,14 +41,16 @@
               </q-tooltip>
               {{
                 profile.profile
-                  ? profile.profile.toUpperCase()
+                  ? profile.profile.charAt(0).toUpperCase()
                   : profile.username.charAt(0).toUpperCase()
               }}
             </q-avatar>
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ profile.project }}</q-item-label>
-            <q-item-label caption>{{ profile.server }}</q-item-label>
+            <q-item-label caption>{{
+              profile.server.replace(/^https?:\/\//, "")
+            }}</q-item-label>
           </q-item-section>
           <q-item-section side>
             <q-icon
@@ -183,6 +185,11 @@ export default {
     ]),
     ...mapState(useDataStore, ["projectTrenchesNames"]),
   },
+  mounted() {
+    if (!localStorage.getItem("profiles")) {
+      this.lsConnections2Profiles(); // for backward compatibility
+    }
+  },
   methods: {
     ...mapActions(useAppStore, [
       "setCurrentProfile",
@@ -190,6 +197,7 @@ export default {
       "setProject",
       "setUsername",
       "setPassword",
+      "setLang",
     ]),
     ...mapActions(useDataStore, [
       "setProjectPreferencesCrs",
@@ -198,7 +206,30 @@ export default {
       "setProjectPreferencesBase64",
       "fetchAndLoadPreferences",
     ]),
+    lsConnections2Profiles() {
+      // Convert old connections format to profiles
+      const connections = JSON.parse(
+        localStorage.getItem("connections") || "[]"
+      );
+      const nameCounts = {};
+      const profiles = connections.map((conn) => {
+        const base = conn.profile || conn.username;
+        const count = nameCounts[base] || 1;
+        nameCounts[base] = count + 1;
+        const uniqueProfile = count > 1 ? `${base}${count}` : base;
 
+        return {
+          profile: uniqueProfile,
+          server: conn.server,
+          project: conn.project,
+          username: conn.username,
+          password: conn.password,
+        };
+      });
+      localStorage.setItem("profiles", JSON.stringify(profiles));
+      // localStorage.removeItem("connections")
+      this.connectionProfiles = profiles;
+    },
     onProfileDeleteClick(profile) {
       const profiles = JSON.parse(
         localStorage.getItem("profiles") ||
@@ -221,6 +252,7 @@ export default {
       this.setProject(profile.project);
       this.setUsername(profile.username);
       this.setPassword(profile.password);
+      this.setLang(profile.lang || "en");
       this.$emit("connect");
     },
 
@@ -282,14 +314,19 @@ export default {
             const merged = [...existing];
             imported.forEach((item) => {
               if (
-                !existing.some(
-                  (e) =>
-                    e.server === item.server &&
-                    e.project === item.project &&
-                    e.username === item.username
-                )
+                item.profile !== undefined &&
+                item.server !== undefined &&
+                item.project !== undefined &&
+                item.username !== undefined
               ) {
                 merged.push(item);
+              } else {
+                Notify.create({
+                  type: "negative",
+                  message: "Invalid profile format in imported file.",
+                  html: true,
+                  timeout: 5000,
+                });
               }
             });
             localStorage.setItem("profiles", JSON.stringify(merged));

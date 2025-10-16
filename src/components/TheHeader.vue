@@ -49,6 +49,7 @@ export default {
 
     async connect() {
       if (this.isLoaded) {
+        // vide les données et les préférences (deconnection)
         const dataStore = useDataStore();
         dataStore.$reset();
         const appStore = useAppStore();
