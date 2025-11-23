@@ -12,6 +12,11 @@
     "typeTip": "filter data and show only fields available for the selected type or subtype",
     "fieldTip": "fields available for the selected type or subtype",
     "upload local pref": "Upload local preferences file",
-    "upload pref from trench": "Upload preferences from a chosen sector"
+    "upload pref from trench": "Upload preferences from a chosen sector",
+    "selectProfile": "Select a profile",
+    "lastLogin": "Last login",
+    "createProfile": "Create a profile to connect to the server",
+    "exportProfiles": "Export profiles",
+    "importProfiles": "Import profiles"
   }
 }

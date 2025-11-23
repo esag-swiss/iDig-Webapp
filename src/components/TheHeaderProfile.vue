@@ -14,34 +14,43 @@
       <template v-slot:label>
         <div class="q-pl-md">{{ username }}</div>
         <q-tooltip v-if="isLoaded" class="bg-accent">log out</q-tooltip>
-        <q-tooltip v-else-if="username === ''" class="bg-accent"
-          >create a connection first</q-tooltip
-        >
+        <q-tooltip v-else-if="username === ''" class="bg-accent">{{
+          $t("app.createProfile")
+        }}</q-tooltip>
         <q-tooltip v-else class="bg-accent"
-          >last login: {{ username }}<br />{{ project }} {{ server }}</q-tooltip
+          >{{ $t("app.lastLogin") }} {{ username }}<br />{{ project }}
+          {{ server }}</q-tooltip
         >
       </template>
 
       <q-list v-if="!isLoaded">
-        <q-item class="q-pt-md" dense>Select a previous connection: </q-item>
+        <q-item class="q-pt-md" dense>
+          {{ $t("app.selectProfile") }}
+        </q-item>
         <q-item
           v-for="profile in connectionProfiles"
           :key="profile.server"
           clickable
           v-close-popup
-          @click="onItemClick(profile)"
+          @click="onProfileClick(profile)"
         >
           <q-item-section avatar>
             <q-avatar color="primary" text-color="white">
               <q-tooltip>
-                {{ profile.username }}
+                {{ profile.profile ?? profile.username }}
               </q-tooltip>
-              {{ profile.username.charAt(0).toUpperCase() }}
+              {{
+                profile.profile
+                  ? profile.profile.charAt(0).toUpperCase()
+                  : profile.username.charAt(0).toUpperCase()
+              }}
             </q-avatar>
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ profile.project }}</q-item-label>
-            <q-item-label caption>{{ profile.server }}</q-item-label>
+            <q-item-label caption>{{
+              profile.server.replace(/^https?:\/\//, "")
+            }}</q-item-label>
           </q-item-section>
           <q-item-section side>
             <q-icon
@@ -49,15 +58,16 @@
               name="delete_forever"
               color="grey"
               clickable
-              @click="onSideClick(profile)"
+              @click.stop="onProfileDeleteClick(profile)"
             />
           </q-item-section>
         </q-item>
 
         <q-separator />
-        <q-item class="q-pt-md" dense>Create a new connection: </q-item>
+        <q-item class="q-pt-md" dense>{{ $t("app.createProfile") }}</q-item>
         <q-item>
           <q-item-section>
+            <q-input v-model="newProfile" dense standout label="Profile Name" />
             <q-input v-model="newServer" dense standout label="Server" />
             <q-input v-model="newProject" dense standout label="Project" />
             <q-input v-model="newUsername" dense standout label="Username" />
@@ -75,25 +85,25 @@
               clickable
               name="add_circle_outline"
               color="primary"
-              @click="onFormClick()"
+              @click="onAddProfileClick()"
             />
           </q-item-section>
         </q-item>
         <q-separator />
-        <q-item clickable @click="exportConnections">
+        <q-item clickable @click="exportProfiles">
           <q-item-section avatar>
             <q-icon name="file_download" color="secondary" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Export connections</q-item-label>
+            <q-item-label>{{ $t("app.exportProfiles") }}</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable @click="importConnections">
+        <q-item clickable @click="importProfiles">
           <q-item-section avatar>
             <q-icon name="file_upload" color="secondary" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Import connections</q-item-label>
+            <q-item-label>{{ $t("app.importProfiles") }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -143,19 +153,25 @@
 import { mapActions, mapState } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
-import { lsStoreProjectsPreferencesBase64 } from "@/services/localStorageManager";
+import {
+  lsStoreProfiles,
+  lsStoreProjectsPreferencesBase64,
+} from "@/services/localStorageManager";
 import { Notify } from "quasar";
 
 export default {
   emits: ["connect"],
   data() {
     return {
+      newProfile: null,
       newServer: null,
       newProject: null,
       newUsername: null,
       newPassword: null,
       connectionProfiles: JSON.parse(
-        localStorage.getItem("connections") || "[]"
+        localStorage.getItem("profiles") ||
+          localStorage.getItem("connections") ||
+          "[]"
       ),
     };
   },
@@ -169,12 +185,19 @@ export default {
     ]),
     ...mapState(useDataStore, ["projectTrenchesNames"]),
   },
+  mounted() {
+    if (!localStorage.getItem("profiles")) {
+      this.lsConnections2Profiles(); // for backward compatibility
+    }
+  },
   methods: {
     ...mapActions(useAppStore, [
+      "setCurrentProfile",
       "setServer",
       "setProject",
       "setUsername",
       "setPassword",
+      "setLang",
     ]),
     ...mapActions(useDataStore, [
       "setProjectPreferencesCrs",
@@ -183,59 +206,97 @@ export default {
       "setProjectPreferencesBase64",
       "fetchAndLoadPreferences",
     ]),
-    onSideClick(profile) {
+    lsConnections2Profiles() {
+      // Convert old connections format to profiles
       const connections = JSON.parse(
         localStorage.getItem("connections") || "[]"
       );
+      const nameCounts = {};
+      const profiles = connections.map((conn) => {
+        const base = conn.profile || conn.username;
+        const count = nameCounts[base] || 1;
+        nameCounts[base] = count + 1;
+        const uniqueProfile = count > 1 ? `${base}${count}` : base;
 
-      const updatedConnections = connections.filter(
+        return {
+          profile: uniqueProfile,
+          server: conn.server,
+          project: conn.project,
+          username: conn.username,
+          password: conn.password,
+        };
+      });
+      localStorage.setItem("profiles", JSON.stringify(profiles));
+      // localStorage.removeItem("connections")
+      this.connectionProfiles = profiles;
+    },
+    onProfileDeleteClick(profile) {
+      const profiles = JSON.parse(
+        localStorage.getItem("profiles") ||
+          localStorage.getItem("connections") || // for backward compatibility
+          "[]"
+      );
+      const updatedProfiles = profiles.filter(
         (item) =>
           item.server !== profile.server ||
           item.project !== profile.project ||
           item.username !== profile.username
       );
-      localStorage.setItem("connections", JSON.stringify(updatedConnections));
-      this.connectionProfiles = updatedConnections;
+      localStorage.setItem("profiles", JSON.stringify(updatedProfiles));
+      this.connectionProfiles = updatedProfiles;
     },
 
-    onItemClick(profile) {
+    onProfileClick(profile) {
+      this.setCurrentProfile(profile.profile || profile.username);
       this.setServer(profile.server);
       this.setProject(profile.project);
       this.setUsername(profile.username);
       this.setPassword(profile.password);
+      this.setLang(profile.lang || "en");
       this.$emit("connect");
     },
 
-    onFormClick() {
+    onAddProfileClick() {
       if (
+        this.newProfile &&
         this.newServer &&
         this.newProject &&
         this.newUsername &&
         this.newPassword
       ) {
+        this.setCurrentProfile(this.newProfile);
         this.setServer(this.newServer);
         this.setProject(this.newProject);
         this.setUsername(this.newUsername);
         this.setPassword(this.newPassword);
         this.$emit("connect");
+        lsStoreProfiles(
+          this.newProfile,
+          this.newServer,
+          this.newProject,
+          this.newUsername,
+          this.newPassword
+        );
       }
     },
 
-    exportConnections() {
-      const connections = JSON.parse(
-        localStorage.getItem("connections") || "[]"
+    exportProfiles() {
+      const profiles = JSON.parse(
+        localStorage.getItem("profiles") ||
+          localStorage.getItem("connections") || // for backward compatibility
+          "[]"
       );
       const dataStr =
         "data:text/json;charset=utf-8," +
-        encodeURIComponent(JSON.stringify(connections));
+        encodeURIComponent(JSON.stringify(profiles));
       const downloadAnchorNode = document.createElement("a");
       downloadAnchorNode.setAttribute("href", dataStr);
-      downloadAnchorNode.setAttribute("download", "connections.json");
+      downloadAnchorNode.setAttribute("download", "profiles.json");
       document.body.appendChild(downloadAnchorNode);
       downloadAnchorNode.click();
       downloadAnchorNode.remove();
     },
-    importConnections() {
+    importProfiles() {
       const input = document.createElement("input");
       input.type = "file";
       input.accept = "application/json";
@@ -246,22 +307,29 @@ export default {
           try {
             const imported = JSON.parse(reader.result);
             const existing = JSON.parse(
-              localStorage.getItem("connections") || "[]"
+              localStorage.getItem("profiles") ||
+                localStorage.getItem("connections") || // for backward compatibility
+                "[]"
             );
             const merged = [...existing];
             imported.forEach((item) => {
               if (
-                !existing.some(
-                  (e) =>
-                    e.server === item.server &&
-                    e.project === item.project &&
-                    e.username === item.username
-                )
+                item.profile !== undefined &&
+                item.server !== undefined &&
+                item.project !== undefined &&
+                item.username !== undefined
               ) {
                 merged.push(item);
+              } else {
+                Notify.create({
+                  type: "negative",
+                  message: "Invalid profile format in imported file.",
+                  html: true,
+                  timeout: 5000,
+                });
               }
             });
-            localStorage.setItem("connections", JSON.stringify(merged));
+            localStorage.setItem("profiles", JSON.stringify(merged));
             this.connectionProfiles = merged;
           } catch (err) {
             console.error("Invalid JSON file");
@@ -271,6 +339,7 @@ export default {
       };
       input.click();
     },
+
     importPreferences() {
       const input = document.createElement("input");
       input.type = "file";

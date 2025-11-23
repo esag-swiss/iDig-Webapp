@@ -424,13 +424,13 @@ export default {
   },
 
   methods: {
-    ...mapActions(useAppStore, [
-      "setIsLoaded",
-      "setServer",
-      "setProject",
-      "setUsername",
-      "setPassword",
-    ]),
+    // ...mapActions(useAppStore, [
+    //   "setIsLoaded",
+    //   "setServer",
+    //   "setProject",
+    //   "setUsername",
+    //   "setPassword",
+    // ]),
     ...mapActions(useDataStore, [
       "setProjectTrenchesNames",
       "setProjectPreferencesCrs",
@@ -552,8 +552,11 @@ export default {
         const item = filteredItems[0];
         return {
           chipText:
-            this.projectPreferencesTypesTranslation[item.Type] +
-            ": " +
+            (this.projectPreferencesTypesTranslation[item.Subtype] ??
+              this.projectPreferencesTypesTranslation[item.Type]) +
+            " " +
+            item.Identifier +
+            " : " +
             item.Title,
           fullItem: item,
         };

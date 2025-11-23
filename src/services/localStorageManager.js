@@ -1,36 +1,82 @@
 import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
+import { Notify } from "quasar";
 
 export function lsStoreConnection() {
-  const { server, project, username, password } = useAppStore();
+  // Store the current connection details in local storage
+  // This is used to persist the connection state across sessions
+  // and to allow the user to reconnect without re-entering credentials.
+  const { currentProfile, server, project, username, password } = useAppStore();
+  localStorage.setItem("currentProfile", currentProfile);
   localStorage.setItem("server", server);
   localStorage.setItem("project", project);
   localStorage.setItem("username", username);
   localStorage.setItem("password", password);
-  // Retrieve existing connections array or initialize an empty one
-  const connections = localStorage.getItem("connections")
-    ? JSON.parse(localStorage.getItem("connections"))
-    : [];
+}
+
+export function lsStoreProfiles(profile, server, project, username, password) {
+  // Retrieve existing profiles array or initialize an empty one
+  const profiles = JSON.parse(
+    localStorage.getItem("profiles") ||
+      localStorage.getItem("connections") || // for backward compatibility
+      "[]"
+  );
 
   // Create a new connection object with the current credentials
   if (
-    connections.some(
+    profiles.some(
       (conn) =>
+        conn.profile === profile &&
         conn.server === server &&
         conn.project === project &&
         conn.username === username
     )
   ) {
-    return;
+    Notify.create({
+      message: "Connection already exists",
+      type: "positive",
+    });
+  } else {
+    const newProfile = {
+      profile,
+      server,
+      project,
+      username,
+      password,
+    };
+
+    profiles.push(newProfile);
+
+    // Save the updated array back to local storage
+    localStorage.setItem("profiles", JSON.stringify(profiles));
   }
-  const newConnection = { server, project, username, password };
-
-  // Add the new connection to the array
-  connections.push(newConnection);
-
-  // Save the updated array back to local storage
-  localStorage.setItem("connections", JSON.stringify(connections));
 }
+export function lsUpdateProfile(profile, key, value) {
+  // Retrieve existing profiles array or initialize an empty one
+  const profiles = JSON.parse(
+    localStorage.getItem("profiles") ||
+      localStorage.getItem("connections") || // for backward compatibility
+      "[]"
+  );
+
+  // Find the index of the connection to update
+  const index = profiles.findIndex(
+    (localStorage) => localStorage.profile === profile
+  );
+
+  // If the connection exists, update it
+  if (index !== -1) {
+    profiles[index] = {
+      ...profiles[index],
+      [key]: value,
+    };
+    localStorage.setItem("profiles", JSON.stringify(profiles));
+  }
+}
+
+export const lsLoadCurrentProfile = () => {
+  return localStorage.getItem("currentProfile") ?? "";
+};
 export const lsLoadUsername = () => {
   return localStorage.getItem("username") ?? "";
 };
@@ -49,7 +95,8 @@ export const lsLoadCheckedTrenchesVersion = () => {
     : {};
 };
 export function lsStoreLang() {
-  const { lang } = useAppStore();
+  const { lang, currentProfile } = useAppStore();
+  lsUpdateProfile(currentProfile, "lang", lang);
   localStorage.setItem("lang", lang);
 }
 export const lsLoadLang = () => {
