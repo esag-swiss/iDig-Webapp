@@ -265,9 +265,33 @@ export default {
         this.setIsItemSelected(true);
       }
     });
+
+    // When Tabulator filters change, push the currently displayed rows
+    // to the store so other components (map, exports...) can react.
+    this.tabulator.on("dataFiltered", (filters, rows) => {
+      // Use the `rows` argument from Tabulator's event — it's the
+      // list of RowComponent objects that match the active filters.
+      // Mapping `rows` -> row.getData() is more reliable than
+      // `getData(true)` which can return unexpected results
+      // depending on Tabulator version/timing.
+      let activeData = null;
+      if (rows && rows.length) {
+        try {
+          activeData = rows.map((r) => r.getData());
+        } catch (e) {
+          activeData = null;
+        }
+      }
+
+      if (!filters || filters.length === 0) {
+        this.setTableFilteredCheckedTrenchesItems(null);
+      } else {
+        this.setTableFilteredCheckedTrenchesItems(activeData);
+      }
+    });
   },
   methods: {
-    ...mapActions(useDataStore, ["setSyncPatches", "setSelectedItem"]),
+    ...mapActions(useDataStore, ["setSyncPatches", "setSelectedItem", "setTableFilteredCheckedTrenchesItems"]),
     ...mapActions(useAppStore, ["setIsItemSelected"]),
     clearTheItem() {
       this.setSelectedItem(null);
@@ -348,7 +372,7 @@ export default {
 
     getColumnFormatter(fieldName) {
       if (fieldName === "Type" || fieldName === "Subtype") {
-        return (cell, formatterParams, onRendered) => {
+        return (cell) => {
           const value = cell.getValue();
           return this.projectPreferencesTypesTranslation[value] ?? value;
         };
@@ -364,11 +388,7 @@ export default {
         fieldName === "DateLatest" ||
         fieldName === "Date"
       ) {
-        var formatterParams = {
-          outputFormat: "DD/MM/YYYY",
-          invalidPlaceholder: "(invalid date)",
-        };
-        return (cell, formatterParams, onRendered) => {
+        return (cell) => {
           const value = cell.getValue();
           // Exemple de formatage pour une date
           return new Date(value).toLocaleDateString();
