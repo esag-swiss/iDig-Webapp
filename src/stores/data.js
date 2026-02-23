@@ -36,6 +36,9 @@ export const useDataStore = defineStore("data", {
     selectedType: "Artifact",
     selectedItem: null,
     checkedFieldNames: [],
+    // Holds the subset of items currently visible in the Tabulator table
+    // (set by TheTable component when the user applies client-side filters)
+    tableFilteredCheckedTrenchesItems: null,
   }),
 
   getters: {
@@ -237,7 +240,7 @@ export const useDataStore = defineStore("data", {
         } // Si la propriété n'existe pas, retourner un tableau vide
 
         return items.filter((item) => {
-          if (!item.hasOwnProperty(propertyName)) {
+          if (!Object.prototype.hasOwnProperty.call(item, propertyName)) {
             return false;
           }
           const value = String(item[propertyName]);
@@ -442,7 +445,8 @@ export const useDataStore = defineStore("data", {
     trenchtoSync(trenchName) {
       return this.checkedTrenchesData[trenchName].map((obj) => {
         // remove property "Trench" before pushing data. It was added temporarly for helping webapp identifying items
-        const { Trench, ...newObj } = obj;
+        const newObj = Object.assign({}, obj);
+        delete newObj.Trench;
         return newObj;
       });
     },
@@ -489,6 +493,10 @@ export const useDataStore = defineStore("data", {
 
     setSearchText(searchText) {
       this.searchText = searchText;
+    },
+
+    setTableFilteredCheckedTrenchesItems(items) {
+      this.tableFilteredCheckedTrenchesItems = items;
     },
 
     setSyncPatches(syncPatches) {

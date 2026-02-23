@@ -53,7 +53,12 @@ export default {
       "checkedTrenchesItemsPlans",
       "checkedTrenchesItemsSelectedTypeAndSearched",
       "projectPreferencesCRS",
+      "tableFilteredCheckedTrenchesItems",
     ]),
+    itemsForMap() {
+      return this.tableFilteredCheckedTrenchesItems ??
+        this.checkedTrenchesItemsSelectedTypeAndSearched;
+    },
   },
   watch: {
     // initialize map when first toggled on
@@ -69,8 +74,8 @@ export default {
         this.loadItemsLayer();
       }
     },
-    // reload items layer when removing trenches
-    checkedTrenchesItemsSelectedTypeAndSearched: function () {
+    // reload items layer when removing trenches or when table pushes filtered data
+    itemsForMap: function () {
       if (this.loadingCount === 0 && this.map) {
         this.loadItemsLayer();
       }
@@ -126,10 +131,11 @@ export default {
     },
 
     loadItemsLayer() {
+      // Prefer Tabulator visible data when available (set by TheTable.vue)
       this.itemsLayer = loadItemsLayer(
         this.map,
         this.itemsLayer, // Passe l'ancien layer pour suppression
-        this.checkedTrenchesItemsSelectedTypeAndSearched
+        this.itemsForMap
       );
     },
 
