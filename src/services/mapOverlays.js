@@ -1,5 +1,6 @@
 import { convertToEPSG4326 } from "@/services/coordinateUtils";
 import L from "leaflet";
+import { fromBlob as geotiffFromBlob } from "geotiff";
 import {
   openDB,
   addPlanToDB,
@@ -78,19 +79,68 @@ async function createMapsOverlayTree(
     imageUrl = URL.createObjectURL(result.imageBlob);
     planlatLngBounds = result.planlatLngBounds;
   } else {
+    const relationAttachmentData = (() => {
+      const image =
+        RelationAttachments.split(/\r?\n/)
+          .filter((line) => line.startsWith("n="))
+          .map((line) => line.slice(2).trim())
+          .find((name) => !name.toLowerCase().endsWith(".wld")) ||
+        RelationAttachments
+          .split(/\r?\n/)
+          .find((line) => line.startsWith("n="))
+          ?.slice(2)
+          .trim() ||
+        null;
+
+      const bounds =
+        RelationAttachments.match(/\(([^)]+)\)/)?.[1] ?? null;
+
+      return { image, bounds };
+    })();
+
     const fetchImage = async () => {
       const response = await apiFetchImageSRC(RelationAttachments, Trench);
-      imageBlob = new Blob([response.data], {
-        type: response.headers["content-type"],
+      if (!response?.data) {
+        throw new Error("Image non récupérée depuis l'API");
+      }
+
+      const rawBlob = new Blob([response.data], {
+        type: response.headers["content-type"] || "application/octet-stream",
       });
+
+      const isTiff =
+        /tiff/i.test(rawBlob.type) ||
+        /\.tiff?$/i.test(relationAttachmentData?.image || "");
+
+      if (isTiff) {
+        const { pngBlob, width, height } = await convertGeoTiffBlobToPngBlob(rawBlob);
+        imageBlob = pngBlob; // on stocke le PNG décodé pour Leaflet/IndexedDB
+        imageWidth = width;
+        imageHeight = height;
+      } else {
+        imageBlob = rawBlob;
+      }
+
       imageUrl = URL.createObjectURL(imageBlob);
 
-      // Charger les dimensions de l'image
-      const img = new Image();
-      img.src = imageUrl;
-      await new Promise((resolve) => (img.onload = resolve));
-      imageWidth = img.width;
-      imageHeight = img.height;
+      // si non tiff, on récupère dimensions via <img>
+      if (!isTiff) {
+        const img = new Image();
+        img.src = imageUrl;
+
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = () =>
+            reject(
+              new Error(
+                `Format image non supporté par le navigateur pour imageOverlay: ${imageBlob.type || "unknown"}`
+              )
+            );
+        });
+
+        imageWidth = img.width;
+        imageHeight = img.height;
+      }
     };
 
     const fetchBounds = async () => {
@@ -189,4 +239,58 @@ export async function createMapsOverlaysTree(
   };
 
   return result;
+}
+
+function toByte(value, bitsPerSample = 8) {
+  if (!Number.isFinite(value)) return 0;
+  const max = Math.max(1, Math.pow(2, bitsPerSample) - 1);
+  return Math.max(0, Math.min(255, Math.round((value / max) * 255)));
+}
+
+async function convertGeoTiffBlobToPngBlob(tiffBlob) {
+  const tiff = await geotiffFromBlob(tiffBlob);
+  const image = await tiff.getImage();
+
+  const width = image.getWidth();
+  const height = image.getHeight();
+  const samplesPerPixel =
+    image.getSamplesPerPixel?.() ?? image.fileDirectory?.SamplesPerPixel ?? 1;
+
+  const bitsRaw = image.getBitsPerSample?.() ?? image.fileDirectory?.BitsPerSample ?? 8;
+  const bits = Array.isArray(bitsRaw) ? bitsRaw : [bitsRaw];
+
+  const raster = await image.readRasters({ interleave: true });
+  const rgba = new Uint8ClampedArray(width * height * 4);
+
+  for (let i = 0, p = 0; i < width * height; i++, p += 4) {
+    const base = i * samplesPerPixel;
+
+    if (samplesPerPixel === 1) {
+      const g = toByte(raster[base], bits[0] ?? 8);
+      rgba[p] = g;
+      rgba[p + 1] = g;
+      rgba[p + 2] = g;
+      rgba[p + 3] = 255;
+    } else {
+      rgba[p] = toByte(raster[base], bits[0] ?? 8);
+      rgba[p + 1] = toByte(raster[base + 1], bits[1] ?? bits[0] ?? 8);
+      rgba[p + 2] = toByte(raster[base + 2], bits[2] ?? bits[0] ?? 8);
+      rgba[p + 3] =
+        samplesPerPixel >= 4
+          ? toByte(raster[base + 3], bits[3] ?? bits[0] ?? 8)
+          : 255;
+    }
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  ctx.putImageData(new ImageData(rgba, width, height), 0, 0);
+
+  const pngBlob = await new Promise((resolve, reject) =>
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob failed"))), "image/png")
+  );
+
+  return { pngBlob, width, height };
 }
