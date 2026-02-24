@@ -57,7 +57,62 @@ export const baseLayersTree = {
 
 // OVERLAYS TREE ------------------------------
 
-async function createMapsOverlayTree(
+export async function createMapsOverlaysTree(
+  checkedTrenchesItemsPlans,
+  projectPreferencesCRS
+) {
+  const groupedOverlays = {};
+
+  for (const obj of checkedTrenchesItemsPlans) {
+    // il y a deux façon dont les plans sont attachés : soit avec un RelationAttachments contruit avec le champ FormatImage (aka file name) qui contient les coordonnées entre parenthèses (ΒΓ West (408,300,421,315).png) et le checksum (un timestamp) soit avec un RelationAttachments construit de la sorte : n=AMA15-Stoa nord sond.png\nd=2015-07-27T11:00:18Z\n\nn=AMA15-Stoa nord sond.wld\nd=2017-02-14T08:16:50Z c'est à dire avec un champ FormatImage qui contient le nom du fichier et un champ FormatWld qui contient le nom du fichier wld et son checksum. On vérifie la présence de "\n\n" ou de ")." pour différencier les deux formats.
+    if (
+      obj.RelationAttachments?.includes(".wld") ||
+      obj.RelationAttachments?.includes(").")
+    ) {
+      const overlay = await createOverlay(
+        obj.RelationAttachments,
+        obj.Trench,
+        projectPreferencesCRS,
+        obj.Title
+      );
+
+      if (!overlay) {
+        continue;
+      }
+
+      // Extraire le préfixe des 5 premières lettres de `Title`
+      const prefix = obj.Title.substring(0, 5);
+
+      // Créer un groupe pour chaque préfixe si nécessaire
+      if (!groupedOverlays[prefix]) {
+        groupedOverlays[prefix] = {
+          label: prefix,
+          selectAllCheckbox: true,
+          collapsed: true,
+          children: [],
+        };
+      }
+
+      // Ajouter l'overlay à l'entrée correspondante
+      groupedOverlays[prefix].children.push(overlay);
+    }
+  }
+
+  // Trier les groupedOverlays par ordre alphabétique des labels
+  const sortedGroupedOverlays = Object.values(groupedOverlays).sort((a, b) =>
+    a.label.localeCompare(b.label)
+  );
+
+  const result = {
+    label: "Plans Orthophotos",
+    selectAllCheckbox: "Un/select all",
+    children: sortedGroupedOverlays,
+  };
+
+  return result;
+}
+
+async function createOverlay(
   RelationAttachments,
   Trench,
   projectPreferencesCRS,
@@ -70,8 +125,12 @@ async function createMapsOverlayTree(
   let imageHeight;
   let planlatLngBounds;
 
-  // Vérification et récupération des détails depuis IndexedDB
-  imageName = RelationAttachments.split("\n")[0].split("=")[1].split(".")[0];
+  const parsedRelationAttachments =
+    parseRelationAttachments(RelationAttachments);
+
+
+  // récupération des détails depuis IndexedDB si existent sinon fetch depuis API et stockage dans IndexedDB pour la prochaine fois
+  imageName = parsedRelationAttachments.imageEntry.name.split(".")[0];
   const db = await openDB();
   const result = await getImageFromDB(db, imageName);
 
@@ -79,26 +138,15 @@ async function createMapsOverlayTree(
     imageUrl = URL.createObjectURL(result.imageBlob);
     planlatLngBounds = result.planlatLngBounds;
   } else {
-    const relationAttachmentData = (() => {
-      const image =
-        RelationAttachments.split(/\r?\n/)
-          .filter((line) => line.startsWith("n="))
-          .map((line) => line.slice(2).trim())
-          .find((name) => !name.toLowerCase().endsWith(".wld")) ||
-        RelationAttachments.split(/\r?\n/)
-          .find((line) => line.startsWith("n="))
-          ?.slice(2)
-          .trim() ||
-        null;
-
-      // cas où les coordonnées sont dans le champ FormatImage entre parenthèses, ex : ΒΓ West (408,300,421,315).png
-      const bounds = RelationAttachments.match(/\(([^)]+)\)/)?.[1] ?? null;
-
-      return { image, bounds };
-    })();
+    const imageRelationAttachments = buildImageRelationAttachments(
+      parsedRelationAttachments
+    );
+    const wldRelationAttachments = buildWldRelationAttachments(
+      parsedRelationAttachments
+    );
 
     const fetchImage = async () => {
-      const response = await apiFetchImageSRC(RelationAttachments, Trench);
+      const response = await apiFetchImageSRC(imageRelationAttachments, Trench);
       if (!response?.data) {
         throw new Error("Image non récupérée depuis l'API");
       }
@@ -109,7 +157,7 @@ async function createMapsOverlayTree(
 
       const isTiff =
         /tiff/i.test(rawBlob.type) ||
-        /\.tiff?$/i.test(relationAttachmentData?.image || "");
+        /\.tiff?$/i.test(parsedRelationAttachments.imageEntry?.name || "");
 
       if (isTiff) {
         const { pngBlob, width, height } = await convertGeoTiffBlobToPngBlob(
@@ -147,9 +195,19 @@ async function createMapsOverlayTree(
     };
 
     const fetchBounds = async () => {
-      if (RelationAttachments.includes(".wld")) {
-        const textContent = await apiFetchPlanWld(RelationAttachments, Trench);
-        const wldCoefficients = textContent.split("\n").map(parseFloat);
+      if (parsedRelationAttachments.hasWld && wldRelationAttachments) {
+        const textContent = await apiFetchPlanWld(
+          wldRelationAttachments,
+          Trench
+        );
+        const wldCoefficients = textContent
+          .split(/\r?\n/)
+          .map((value) => Number.parseFloat(value))
+          .filter(Number.isFinite);
+
+        if (wldCoefficients.length < 6) {
+          return null;
+        }
 
         const [scaleX, rotationY, rotationX, scaleY, West, North] =
           wldCoefficients;
@@ -157,34 +215,42 @@ async function createMapsOverlayTree(
         const South = rotationY * imageWidth + scaleY * imageHeight + North;
 
         return { SW: [West, South], NE: [East, North] };
-      } else if (RelationAttachments.includes(").")) {
-        const NESW = RelationAttachments.split("\n")[0]
-          .split("=")[1]
-          .match(/\(([^)]+)\)/)[1]
-          .split(",")
-          .map(parseFloat);
+      }
+
+      if (parsedRelationAttachments.boundsNESW) {
+        const NESW = parsedRelationAttachments.boundsNESW;
         return { SW: [NESW[2], NESW[3]], NE: [NESW[0], NESW[1]] };
       }
+      return null;
     };
 
-    await fetchImage();
-    planlatLngBounds = await fetchBounds();
+    try {
+      await fetchImage();
+      planlatLngBounds = await fetchBounds();
+    } catch (error) {
+      console.log(
+        `[Overlay] skipped: échec fetch/decode (Trench: ${Trench}, Title: ${imageTitle})`,
+        error
+      );
+      return null;
+    }
 
     // Stocker les détails dans IndexedDB
-    addPlanToDB(db, imageName, imageBlob, planlatLngBounds);
+    await addPlanToDB(db, imageName, imageBlob, planlatLngBounds);
   }
 
   // Conversion des coordonnées pour Leaflet
-  const leafletLatLngBounds = L.latLngBounds([
-    convertToEPSG4326(
-      planlatLngBounds.SW,
-      projectPreferencesCRS
-    ).coords.reverse(),
-    convertToEPSG4326(
-      planlatLngBounds.NE,
-      projectPreferencesCRS
-    ).coords.reverse(),
-  ]);
+  const leafletLatLngBounds = buildLeafletBounds(
+    planlatLngBounds,
+    projectPreferencesCRS
+  );
+
+  if (!leafletLatLngBounds || !leafletLatLngBounds.isValid()) {
+    console.log(
+      `[Overlay] skipped: conversion CRS invalide (Trench: ${Trench}, Title: ${imageTitle})`
+    );
+    return null;
+  }
 
   // Création de l'overlay
   const imageOverlay = L.imageOverlay(imageUrl, leafletLatLngBounds, {
@@ -194,59 +260,107 @@ async function createMapsOverlayTree(
   return { label: imageTitle, layer: imageOverlay };
 }
 
-export async function createMapsOverlaysTree(
-  checkedTrenchesItemsPlans,
-  projectPreferencesCRS
-) {
-  const groupedOverlays = {};
+function parseRelationAttachments(RelationAttachments) {
+  // passe les bloc en array propre
+  const lines = RelationAttachments.split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
 
-  for (const obj of checkedTrenchesItemsPlans) {
-    // il y a deux façon dont les plans sont attachés : soit avec un RelationAttachments contruit avec le champ FormatImage (aka file name) qui contient les coordonnées entre parenthèses (ΒΓ West (408,300,421,315).png) et le checksum (un timestamp) soit avec un RelationAttachments construit de la sorte : n=AMA15-Stoa nord sond.png\nd=2015-07-27T11:00:18Z\n\nn=AMA15-Stoa nord sond.wld\nd=2017-02-14T08:16:50Z c'est à dire avec un champ FormatImage qui contient le nom du fichier et un champ FormatWld qui contient le nom du fichier wld et son checksum. On vérifie la présence de "\n\n" ou de ")." pour différencier les deux formats.
-    if (
-      obj.RelationAttachments?.includes(".wld") ||
-      obj.RelationAttachments?.includes(").")
-    ) {
-      const overlay = await createMapsOverlayTree(
-        obj.RelationAttachments,
-        obj.Trench,
-        projectPreferencesCRS,
-        obj.Title
-      );
+  const entries = [];
+  let pendingName = null;
 
-      // Extraire le préfixe des 5 premières lettres de `Title`
-      const prefix = obj.Title.substring(0, 5);
+  for (const line of lines) {
+    if (line.startsWith("n=")) {
+      pendingName = line.slice(2).trim();
+      continue;
+    }
 
-      // Créer un groupe pour chaque préfixe si nécessaire
-      if (!groupedOverlays[prefix]) {
-        groupedOverlays[prefix] = {
-          label: prefix,
-          selectAllCheckbox: true,
-          collapsed: true,
-          children: [],
-        };
-      }
-
-      // Ajouter l'overlay à l'entrée correspondante
-      groupedOverlays[prefix].children.push(overlay);
+    if (line.startsWith("d=") && pendingName) {
+      entries.push({
+        name: pendingName,
+        checksum: line.slice(2).trim(),
+      });
+      pendingName = null;
     }
   }
 
-  // Trier les groupedOverlays par ordre alphabétique des labels
-  const sortedGroupedOverlays = Object.values(groupedOverlays).sort((a, b) =>
-    a.label.localeCompare(b.label)
+  const imageEntry = entries.find(
+    (entry) => entry.name.toLowerCase().endsWith(".png") || entry.name.toLowerCase().endsWith(".tif") || entry.name.toLowerCase().endsWith(".tiff") || entry.name.toLowerCase().endsWith(".jpg") || entry.name.toLowerCase().endsWith(".jpeg")
   );
 
-  const result = {
-    label: "Plans Orthophotos",
-    selectAllCheckbox: "Un/select all",
-    children: sortedGroupedOverlays,
-  };
+  const wldEntry = entries.find((entry) =>
+    entry.name.toLowerCase().endsWith(".wld") || entry.name.toLowerCase().endsWith(".tfw")
+  );
 
-  return result;
+  const boundsMatch = RelationAttachments.match(/\(([^)]+)\)/)?.[1] ?? null;
+  const parsedBounds = boundsMatch
+    ? boundsMatch
+        .split(",")
+        .map((value) => Number.parseFloat(value.trim()))
+        .filter(Number.isFinite)
+    : null;
+
+  const boundsNESW = parsedBounds?.length === 4 ? parsedBounds : null;
+
+  const hasWld = Boolean(
+    wldEntry || RelationAttachments.toLowerCase().includes(".wld") || RelationAttachments.toLowerCase().includes(".tfw")
+  );
+
+  return {
+    imageEntry,
+    wldEntry,
+    boundsNESW,
+    hasWld,
+  };
+}
+
+function toRelationAttachmentsBlock(entry) {
+  return `n=${entry.name}\nd=${entry.checksum ?? ""}`;
+}
+
+function buildImageRelationAttachments(parsed) {
+  if (!parsed?.imageEntry) {
+    return null;
+  }
+
+  return toRelationAttachmentsBlock(parsed.imageEntry);
+}
+
+function buildWldRelationAttachments(parsed) {
+  if (!parsed?.imageEntry || !parsed?.wldEntry) {
+    return null;
+  }
+
+  return `${toRelationAttachmentsBlock(
+    parsed.imageEntry
+  )}\n\n${toRelationAttachmentsBlock(parsed.wldEntry)}`;
+}
+
+function buildLeafletBounds(planlatLngBounds, projectPreferencesCRS) {
+  const swConverted = convertToEPSG4326(
+    planlatLngBounds.SW,
+    projectPreferencesCRS
+  )?.coords;
+  const neConverted = convertToEPSG4326(
+    planlatLngBounds.NE,
+    projectPreferencesCRS
+  )?.coords;
+
+  if (!Array.isArray(swConverted) || !Array.isArray(neConverted)) {
+    return null;
+  }
+
+  if (![...swConverted, ...neConverted].every(Number.isFinite)) {
+    return null;
+  }
+
+  return L.latLngBounds([swConverted.reverse(), neConverted.reverse()]);
 }
 
 function toByte(value, bitsPerSample = 8) {
-  if (!Number.isFinite(value)) return 0;
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
   const max = Math.max(1, Math.pow(2, bitsPerSample) - 1);
   return Math.max(0, Math.min(255, Math.round((value / max) * 255)));
 }
