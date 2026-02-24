@@ -181,7 +181,7 @@ export function apiFetchImageSRC(RelationAttachments, trench) {
     .finally(() => decrementLoadingCount());
 }
 
-export function apiFetchPlanWld(RelationAttachments, trench) {
+export function apiFetchImage(filename, checksum, trench) {
   const {
     server,
     project,
@@ -190,10 +190,34 @@ export function apiFetchPlanWld(RelationAttachments, trench) {
     incrementLoadingCount,
     decrementLoadingCount,
   } = useAppStore();
-  let name = RelationAttachments.split("\n\n")[1].split("\n")[0].split("=")[1];
-  let checksum = RelationAttachments.split("\n\n")[1]
-    .split("\n")[1]
-    .split("=")[1];
+  incrementLoadingCount();
+  return axios({
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    method: "get",
+    url: `${server}/idig/${project}/${trench}/attachments/${filename}?checksum=${checksum}`,
+    responseType: "blob",
+    auth: { username, password },
+    data: {},
+  })
+    .catch((error) => {
+      alert(
+        `Error: ${error}\nSomething went wrong with fetching image!\nPlease check the filename and checksum.`
+      );
+    })
+    .finally(() => decrementLoadingCount());
+}
+
+export function apiFetchWld(filename, checksum, trench) {
+  const {
+    server,
+    project,
+    username,
+    password,
+    incrementLoadingCount,
+    decrementLoadingCount,
+  } = useAppStore();
   incrementLoadingCount();
 
   return axios({
@@ -201,7 +225,7 @@ export function apiFetchPlanWld(RelationAttachments, trench) {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     method: "get",
-    url: `${server}/idig/${project}/${trench}/attachments/${name}?checksum=${checksum}`,
+    url: `${server}/idig/${project}/${trench}/attachments/${filename}?checksum=${checksum}`,
     responseType: "blob",
     auth: { username, password },
     data: {},
@@ -221,7 +245,7 @@ export function apiFetchPlanWld(RelationAttachments, trench) {
     })
     .catch((error) => {
       alert(
-        `Error: ${error}\nSomething went wrong with fetching wld!\nPlease check the RelationAttachments field. ${RelationAttachments}`
+        `Error: ${error}\nSomething went wrong with fetching bounds!\nPlease check the filename and checksum.`
       );
       throw error; // Rethrow the error to maintain consistency in handling errors
     })

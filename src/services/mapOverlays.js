@@ -6,7 +6,7 @@ import {
   addPlanToDB,
   getImageFromDB,
 } from "@/services/indexedDbManager";
-import { apiFetchImageSRC, apiFetchPlanWld } from "@/services/ApiClient";
+import { apiFetchImage, apiFetchWld } from "@/services/ApiClient";
 
 // BASE LAYERS or TILES LAYERS
 let osmLayer = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
@@ -128,7 +128,6 @@ async function createOverlay(
   const parsedRelationAttachments =
     parseRelationAttachments(RelationAttachments);
 
-
   // récupération des détails depuis IndexedDB si existent sinon fetch depuis API et stockage dans IndexedDB pour la prochaine fois
   imageName = parsedRelationAttachments.imageEntry.name.split(".")[0];
   const db = await openDB();
@@ -138,15 +137,10 @@ async function createOverlay(
     imageUrl = URL.createObjectURL(result.imageBlob);
     planlatLngBounds = result.planlatLngBounds;
   } else {
-    const imageRelationAttachments = buildImageRelationAttachments(
-      parsedRelationAttachments
-    );
-    const wldRelationAttachments = buildWldRelationAttachments(
-      parsedRelationAttachments
-    );
 
     const fetchImage = async () => {
-      const response = await apiFetchImageSRC(imageRelationAttachments, Trench);
+      const response = await apiFetchImage(parsedRelationAttachments.imageEntry.name,
+          parsedRelationAttachments.imageEntry.checksum, Trench);
       if (!response?.data) {
         throw new Error("Image non récupérée depuis l'API");
       }
@@ -195,11 +189,14 @@ async function createOverlay(
     };
 
     const fetchBounds = async () => {
-      if (parsedRelationAttachments.hasWld && wldRelationAttachments) {
-        const textContent = await apiFetchPlanWld(
-          wldRelationAttachments,
+      // Priorité au fichier WLD s'il est présent
+      if (parsedRelationAttachments.hasWld) {
+        const textContent = await apiFetchWld(
+          parsedRelationAttachments.wldEntry.name,
+          parsedRelationAttachments.wldEntry.checksum,
           Trench
         );
+        // convertit le contenu du WLD en coordonnées géographiques
         const wldCoefficients = textContent
           .split(/\r?\n/)
           .map((value) => Number.parseFloat(value))
@@ -261,7 +258,7 @@ async function createOverlay(
 }
 
 function parseRelationAttachments(RelationAttachments) {
-  // passe les bloc en array propre
+  // passe les blocs en array propre
   const lines = RelationAttachments.split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean);
@@ -285,11 +282,12 @@ function parseRelationAttachments(RelationAttachments) {
   }
 
   const imageEntry = entries.find(
-    (entry) => entry.name.toLowerCase().endsWith(".png") || entry.name.toLowerCase().endsWith(".tif") || entry.name.toLowerCase().endsWith(".tiff") || entry.name.toLowerCase().endsWith(".jpg") || entry.name.toLowerCase().endsWith(".jpeg")
-  );
-
-  const wldEntry = entries.find((entry) =>
-    entry.name.toLowerCase().endsWith(".wld") || entry.name.toLowerCase().endsWith(".tfw")
+    (entry) =>
+      entry.name.toLowerCase().endsWith(".png") ||
+      entry.name.toLowerCase().endsWith(".tif") ||
+      entry.name.toLowerCase().endsWith(".tiff") ||
+      entry.name.toLowerCase().endsWith(".jpg") ||
+      entry.name.toLowerCase().endsWith(".jpeg")
   );
 
   const boundsMatch = RelationAttachments.match(/\(([^)]+)\)/)?.[1] ?? null;
@@ -302,9 +300,12 @@ function parseRelationAttachments(RelationAttachments) {
 
   const boundsNESW = parsedBounds?.length === 4 ? parsedBounds : null;
 
-  const hasWld = Boolean(
-    wldEntry || RelationAttachments.toLowerCase().includes(".wld") || RelationAttachments.toLowerCase().includes(".tfw")
+  const wldEntry = entries.find(
+    (entry) =>
+      entry.name.toLowerCase().endsWith(".wld") ||
+      entry.name.toLowerCase().endsWith(".tfw")
   );
+  const hasWld = Boolean(wldEntry);
 
   return {
     imageEntry,
@@ -312,28 +313,6 @@ function parseRelationAttachments(RelationAttachments) {
     boundsNESW,
     hasWld,
   };
-}
-
-function toRelationAttachmentsBlock(entry) {
-  return `n=${entry.name}\nd=${entry.checksum ?? ""}`;
-}
-
-function buildImageRelationAttachments(parsed) {
-  if (!parsed?.imageEntry) {
-    return null;
-  }
-
-  return toRelationAttachmentsBlock(parsed.imageEntry);
-}
-
-function buildWldRelationAttachments(parsed) {
-  if (!parsed?.imageEntry || !parsed?.wldEntry) {
-    return null;
-  }
-
-  return `${toRelationAttachmentsBlock(
-    parsed.imageEntry
-  )}\n\n${toRelationAttachmentsBlock(parsed.wldEntry)}`;
 }
 
 function buildLeafletBounds(planlatLngBounds, projectPreferencesCRS) {
