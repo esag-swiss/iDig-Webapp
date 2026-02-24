@@ -85,15 +85,14 @@ async function createMapsOverlayTree(
           .filter((line) => line.startsWith("n="))
           .map((line) => line.slice(2).trim())
           .find((name) => !name.toLowerCase().endsWith(".wld")) ||
-        RelationAttachments
-          .split(/\r?\n/)
+        RelationAttachments.split(/\r?\n/)
           .find((line) => line.startsWith("n="))
           ?.slice(2)
           .trim() ||
         null;
 
-      const bounds =
-        RelationAttachments.match(/\(([^)]+)\)/)?.[1] ?? null;
+      // cas où les coordonnées sont dans le champ FormatImage entre parenthèses, ex : ΒΓ West (408,300,421,315).png
+      const bounds = RelationAttachments.match(/\(([^)]+)\)/)?.[1] ?? null;
 
       return { image, bounds };
     })();
@@ -113,7 +112,9 @@ async function createMapsOverlayTree(
         /\.tiff?$/i.test(relationAttachmentData?.image || "");
 
       if (isTiff) {
-        const { pngBlob, width, height } = await convertGeoTiffBlobToPngBlob(rawBlob);
+        const { pngBlob, width, height } = await convertGeoTiffBlobToPngBlob(
+          rawBlob
+        );
         imageBlob = pngBlob; // on stocke le PNG décodé pour Leaflet/IndexedDB
         imageWidth = width;
         imageHeight = height;
@@ -133,7 +134,9 @@ async function createMapsOverlayTree(
           img.onerror = () =>
             reject(
               new Error(
-                `Format image non supporté par le navigateur pour imageOverlay: ${imageBlob.type || "unknown"}`
+                `Format image non supporté par le navigateur pour imageOverlay: ${
+                  imageBlob.type || "unknown"
+                }`
               )
             );
         });
@@ -257,7 +260,8 @@ async function convertGeoTiffBlobToPngBlob(tiffBlob) {
   const samplesPerPixel =
     image.getSamplesPerPixel?.() ?? image.fileDirectory?.SamplesPerPixel ?? 1;
 
-  const bitsRaw = image.getBitsPerSample?.() ?? image.fileDirectory?.BitsPerSample ?? 8;
+  const bitsRaw =
+    image.getBitsPerSample?.() ?? image.fileDirectory?.BitsPerSample ?? 8;
   const bits = Array.isArray(bitsRaw) ? bitsRaw : [bitsRaw];
 
   const raster = await image.readRasters({ interleave: true });
@@ -290,7 +294,10 @@ async function convertGeoTiffBlobToPngBlob(tiffBlob) {
   ctx.putImageData(new ImageData(rgba, width, height), 0, 0);
 
   const pngBlob = await new Promise((resolve, reject) =>
-    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob failed"))), "image/png")
+    canvas.toBlob(
+      (b) => (b ? resolve(b) : reject(new Error("toBlob failed"))),
+      "image/png"
+    )
   );
 
   return { pngBlob, width, height };
