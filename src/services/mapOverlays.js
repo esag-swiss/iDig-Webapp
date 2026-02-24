@@ -62,8 +62,13 @@ export async function createMapsOverlaysTree(
   projectPreferencesCRS
 ) {
   const groupedOverlays = {};
+  const seenTitles = new Set();
 
   for (const obj of checkedTrenchesItemsPlans) {
+    if (!obj?.Title) continue;
+    if (seenTitles.has(obj.Title)) continue;
+    seenTitles.add(obj.Title);
+
     // il y a deux façon dont les plans sont attachés : soit avec un RelationAttachments contruit avec le champ FormatImage (aka file name) qui contient les coordonnées entre parenthèses (ΒΓ West (408,300,421,315).png) et le checksum (un timestamp) soit avec un RelationAttachments construit de la sorte : n=AMA15-Stoa nord sond.png\nd=2015-07-27T11:00:18Z\n\nn=AMA15-Stoa nord sond.wld\nd=2017-02-14T08:16:50Z c'est à dire avec un champ FormatImage qui contient le nom du fichier et un champ FormatWld qui contient le nom du fichier wld et son checksum. On vérifie la présence de "\n\n" ou de ")." pour différencier les deux formats.
     if (
       obj.RelationAttachments?.includes(".wld") ||
