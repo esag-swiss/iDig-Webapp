@@ -1,83 +1,120 @@
 import { convertToEPSG4326 } from "@/services/coordinateUtils";
 import { useDataStore } from "@/stores/data";
 
+const LEVEL_2_SEPARATOR = "\n\n";
+const LEVEL_3_SEPARATOR = "\n\n\n";
+const FEATURE_COLLECTION_NAME = "trenches";
+const COVERAGE_KEY = "CoverageSerialized";
+const COORDINATE_PREFIXES = ["x", "y", "z"];
+
 export function determineGeoType(coverageSerialized) {
-  let GeoTypeArray = "";
-  let level3 = cleanMulti(coverageSerialized);
+  let geoType = "";
+  const level3 = cleanMulti(coverageSerialized);
+
   if (level3.length > 1) {
-    GeoTypeArray = "MultiPolygon";
+    geoType = "MultiPolygon";
   } // prevoir aussi MultiLineString
   else {
-    level3.map((x) =>
-      x.split("\n\n").length < 2
-        ? (GeoTypeArray = "Point")
-        : x.split("\n\n").length < 4
-        ? (GeoTypeArray = "LineString")
-        : (GeoTypeArray = "Polygon")
-    );
+    level3.forEach((geometryBlock) => {
+      const level2Blocks = geometryBlock.split(LEVEL_2_SEPARATOR).length;
+
+      if (level2Blocks < 2) {
+        geoType = "Point";
+      } else if (level2Blocks < 4) {
+        geoType = "LineString";
+      } else {
+        geoType = "Polygon";
+      }
+    });
   }
-  return GeoTypeArray;
+
+  return geoType;
 }
 
 function cleanMulti(coverageSerialized) {
-  return coverageSerialized.split("\n\n\n").reduce((res, or) => {
-    if (or.includes("x=")) {
-      res.push(or);
+  return coverageSerialized.split(LEVEL_3_SEPARATOR).reduce((result, block) => {
+    if (block.includes("x=")) {
+      result.push(block);
     }
-    return res;
+    return result;
   }, []);
 }
 
-function ProcessLevel2(CoverageSerialized2ndLevel) {
-  let level2 = CoverageSerialized2ndLevel.split("\n\n");
+function processLevel2(coverageSerialized2ndLevel) {
+  let level2 = coverageSerialized2ndLevel.split(LEVEL_2_SEPARATOR);
+
   if (level2.length < 2) {
-    if (CoverageSerialized2ndLevel.includes("x=")) {
-      return CoverageSerializedXYZToGeojsonPosition(CoverageSerialized2ndLevel);
-    } else {
-      return level2;
+    if (coverageSerialized2ndLevel.includes("x=")) {
+      return CoverageSerializedXYZToGeojsonPosition(coverageSerialized2ndLevel);
     }
-  } else if (level2.length < 4) {
-    return level2.map((v) => CoverageSerializedXYZToGeojsonPosition(v));
-  } else {
-    level2 = ProcessPolygon(level2);
+
+    return level2;
   }
+
+  if (level2.length < 4) {
+    return level2.map((v) => CoverageSerializedXYZToGeojsonPosition(v));
+  }
+
+  level2 = processPolygon(level2);
   return level2;
 }
 
-function ProcessPolygon(CoverageSerialized2ndLevel) {
+function processPolygon(coverageSerialized2ndLevel) {
   return [
     makePolyClockwise(
-      CoverageSerialized2ndLevel.map((v) =>
+      coverageSerialized2ndLevel.map((v) =>
         CoverageSerializedXYZToGeojsonPosition(v)
       )
     ),
   ];
 }
+
+function buildFeature(item, geoType, geojsonCoordinates) {
+  return {
+    type: "Feature",
+    geometry: {
+      type: geoType,
+      coordinates: geojsonCoordinates,
+    },
+    properties: {
+      id: item.Identifier,
+      type: item.Type,
+      title: item.Title,
+      Trench: item.Trench,
+      IdentifierUUID: item.IdentifierUUID,
+    },
+  };
+}
+
 export function geoSerializedToGeojson(json) {
-  let geojson = {
+  const geojson = {
     type: "FeatureCollection",
-    name: "trenches",
+    name: FEATURE_COLLECTION_NAME,
     features: [],
   };
+
   for (let i = 0; i < json.length; i++) {
+    const item = json[i];
+
     if (
-      json[i] &&
-      Object.prototype.hasOwnProperty.call(json[i], "CoverageSerialized") &&
-      json[i].CoverageSerialized.includes("x=")
+      item &&
+      Object.prototype.hasOwnProperty.call(item, COVERAGE_KEY) &&
+      item.CoverageSerialized.includes("x=")
     ) {
       let geojsonCoordinates = "";
       let geoType = ""; // Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon. and GeometryCollection?
-      let polyStrings = json[i].CoverageSerialized;
-      if (polyStrings.includes("\n\n\n")) {
+      let polyStrings = item.CoverageSerialized;
+
+      if (polyStrings.includes(LEVEL_3_SEPARATOR)) {
         polyStrings = cleanMulti(polyStrings);
 
-        if (polyStrings[0].includes("\n\n")) {
+        if (polyStrings[0].includes(LEVEL_2_SEPARATOR)) {
           geoType = "MultiPolygon";
           geojsonCoordinates = polyStrings.map((v) => [
             makePolyClockwise(
-              v
-                .split("\n\n")
-                .map((v) => CoverageSerializedXYZToGeojsonPosition(v))
+              v.split(LEVEL_2_SEPARATOR).map((coordinateRow) =>
+                CoverageSerializedXYZToGeojsonPosition(coordinateRow)
+              )
             ),
           ]);
         } else {
@@ -89,30 +126,18 @@ export function geoSerializedToGeojson(json) {
         }
       } else {
         geoType = determineGeoType(polyStrings);
-        geojsonCoordinates = ProcessLevel2(polyStrings);
+        geojsonCoordinates = processLevel2(polyStrings);
       }
 
       if (geojsonCoordinates !== null) {
-        geojson.features.push({
-          type: "Feature",
-          geometry: {
-            type: geoType,
-            coordinates: geojsonCoordinates,
-          },
-          // As properties we only send back few fields to produce a lighter output
-          properties: {
-            id: json[i].Identifier,
-            type: json[i].Type,
-            title: json[i].Title,
-            Trench: json[i].Trench,
-            IdentifierUUID: json[i].IdentifierUUID,
-          },
-        });
+        // As properties we only send back few fields to produce a lighter output
+        geojson.features.push(buildFeature(item, geoType, geojsonCoordinates));
       } else {
-        console.log("coord error on : " + json[i].CoverageSerialized);
+        console.log("coord error on : " + item.CoverageSerialized);
       }
     }
   }
+
   return geojson;
 }
 
@@ -120,23 +145,25 @@ export function geoSerializedToGeojson(json) {
 // Geojson position is the fundamental geometry construct
 export function CoverageSerializedXYZToGeojsonPosition(XYZ) {
   let coordinates = XYZ.split("\n");
-  coordinates = coordinates.reduce((v, or) => {
-    if (
-      or.split("=")[0] == "x" ||
-      or.split("=")[0] == "y" ||
-      or.split("=")[0] == "z"
-    ) {
-      v.push(hexToDecimal(or.split("=")[1]));
+  coordinates = coordinates.reduce((values, rawCoordinate) => {
+    const [key, value] = rawCoordinate.split("=");
+
+    if (COORDINATE_PREFIXES.includes(key)) {
+      values.push(hexToDecimal(value));
     }
-    return v;
+
+    return values;
   }, []);
+
   // convert coords if valid else apply null and will handle at next step
   const { projectPreferencesCRS } = useDataStore();
+
   if (coordinates.length > 1) {
     coordinates = convertToEPSG4326(coordinates, projectPreferencesCRS).coords;
   } else {
     coordinates = null;
   }
+
   return coordinates;
 }
 
@@ -175,15 +202,6 @@ function hexToDecimal(hex) {
 }
 
 // to be a valid geojson we need coordinates of polygones to be clockwise
-function makePolyCCW(poly) {
-  let sum = 0;
-  for (let i = 0; i < poly.length - 1; i++) {
-    let cur = poly[i],
-      next = poly[i + 1];
-    sum += (next[0] - cur[0]) * (next[1] + cur[1]);
-  }
-  return sum < 0 ? poly.slice().reverse() : poly;
-}
 function makePolyClockwise(poly) {
   let sum = 0;
   for (let i = 0; i < poly.length - 1; i++) {
