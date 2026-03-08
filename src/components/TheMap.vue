@@ -27,7 +27,6 @@ import {
 } from "@/services/mapOverlays.js";
 import { loadItemsLayer } from "@/services/mapItemsLayers.js";
 import { exportMapAsCompositeSVG } from "@/services/mapExport.js";
-import CustomLayersTree from "@/services/CustomLayersTree.js";
 
 export default {
   name: "TheMap",
@@ -41,6 +40,9 @@ export default {
       treeLayerControl: null,
       firstMapShowed: true,
       isProcessingTrenchItemsPlans: false,
+      enableScrollWheelZoom: true,
+      wheelDebounceTime: 140,
+      wheelPxPerZoomLevel: 180,
     };
   },
   computed: {
@@ -63,21 +65,34 @@ export default {
   watch: {
     // initialize map when first toggled on
     isMapMinimized: async function () {
-      if (this.firstMapShowed) {
-        this.initMap();
-        this.firstMapShowed = false;
-      }
+ try {
+          this.destroyMap();
+          await this.$nextTick();
+          // Reinitialize the map
+          await this.initMap();
+        } catch (error) {
+          console.error(error);
+        }
     },
-    // load items layer only when all selected trenches are loaded
+    // load items layer after all selected trenches are loaded
     loadingCount: function (newLoadingCount, oldLoadingCount) {
-      if (oldLoadingCount === 1 && newLoadingCount === 0 && this.map) {
-        this.loadItemsLayer();
+      if (
+        oldLoadingCount === 1 &&
+        newLoadingCount === 0 &&
+        this.map &&
+        !this.isProcessingTrenchItemsPlans
+      ) {
+        this.loadItemsLayer(false);
       }
     },
-    // reload items layer when removing trenches or when table pushes filtered data
+    // reload items layer after removing trenches or when table pushes filtered data
     itemsForMap: function () {
-      if (this.loadingCount === 0 && this.map) {
-        this.loadItemsLayer();
+      if (
+        this.loadingCount === 0 &&
+        this.map &&
+        !this.isProcessingTrenchItemsPlans
+      ) {
+        this.loadItemsLayer(false);
       }
     },
     // reload overlays tree when changing trenches
@@ -85,8 +100,8 @@ export default {
       if (this.map && !this.isProcessingTrenchItemsPlans) {
         this.isProcessingTrenchItemsPlans = true;
         try {
-          // Remove the current map instance
-          this.map.remove();
+          this.destroyMap();
+          await this.$nextTick();
           // Reinitialize the map
           await this.initMap();
         } catch (error) {
@@ -97,7 +112,36 @@ export default {
       }
     },
   },
+  beforeUnmount() {
+    this.destroyMap();
+  },
   methods: {
+    destroyMap() {
+      if (!this.map) {
+        return;
+      }
+
+      try {
+        this.map.stop();
+      } catch (error) {
+        // noop
+      }
+
+      if (this.itemsLayer) {
+        this.itemsLayer.remove();
+        this.itemsLayer = null;
+      }
+
+      if (this.treeLayerControl) {
+        this.treeLayerControl.remove();
+        this.treeLayerControl = null;
+      }
+
+      this.map.off();
+      this.map.remove();
+      this.map = null;
+    },
+
     async initMap() {
       this.baseLayersTree = baseLayersTree;
       this.overlaysTree = await createMapsOverlaysTree(
@@ -111,6 +155,12 @@ export default {
         zoomControl: true,
         zoomDelta: 0.25,
         zoomSnap: 0,
+        zoomAnimation: false,
+        fadeAnimation: false,
+        markerZoomAnimation: false,
+        scrollWheelZoom: this.enableScrollWheelZoom,
+        wheelDebounceTime: this.wheelDebounceTime,
+        wheelPxPerZoomLevel: this.wheelPxPerZoomLevel,
         layers: this.baseLayersTree.children[3].layer,
       });
 
@@ -127,15 +177,19 @@ export default {
         .addTo(this.map);
 
       // Ajout des items
-      this.loadItemsLayer();
+      this.loadItemsLayer(true);
     },
 
-    loadItemsLayer() {
+    loadItemsLayer(shouldFitBounds = false) {
       // Prefer Tabulator visible data when available (set by TheTable.vue)
       this.itemsLayer = loadItemsLayer(
         this.map,
         this.itemsLayer, // Passe l'ancien layer pour suppression
-        this.itemsForMap
+        this.itemsForMap,
+        {
+          fitBounds: shouldFitBounds,
+          fitBoundsOnEmpty: true,
+        }
       );
     },
 

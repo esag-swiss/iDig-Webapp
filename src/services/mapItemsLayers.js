@@ -2,6 +2,11 @@ import L from "leaflet";
 import { geoSerializedToGeojson } from "@/services/json2geojson";
 import { colorForSurvey } from "@/services/coloring.js";
 
+const DEFAULT_BOUNDS = L.latLngBounds([
+  [35, 20], // Greece south west corner
+  [42, 30], // Greece north east corner
+]);
+
 // style for GeoJSON features
 function getFeatureStyle(feature) {
   const col = colorForSurvey(feature.properties.type, "type");
@@ -40,29 +45,39 @@ function bindFeatureCallbacks(feature, layer) {
 export function loadItemsLayer(
   map,
   currentItemsLayer,
-  checkedTrenchesItemsSelectedTypeAndSearched
+  checkedTrenchesItemsSelectedTypeAndSearched,
+  options = {}
 ) {
+  const { fitBounds = true, fitBoundsOnEmpty = true } = options;
+  const geojsonData = geoSerializedToGeojson(
+    checkedTrenchesItemsSelectedTypeAndSearched || []
+  );
+  
+  let itemsLayer = currentItemsLayer;
   // Vérifier si un layer existant doit être retiré
-  if (currentItemsLayer && map.hasLayer(currentItemsLayer)) {
-    map.removeLayer(currentItemsLayer);
-  }
-  const newItemsLayer = L.geoJSON(
-    geoSerializedToGeojson(checkedTrenchesItemsSelectedTypeAndSearched),
-    {
+  if (!itemsLayer) {
+    itemsLayer = L.geoJSON(geojsonData, {
       onEachFeature: bindFeatureCallbacks,
       style: getFeatureStyle,
       pointToLayer: getPointToLayer,
+    });
+    itemsLayer.addTo(map);
+  } else {
+    itemsLayer.clearLayers();
+    itemsLayer.addData(geojsonData);
+    if (!map.hasLayer(itemsLayer)) {
+      itemsLayer.addTo(map);
     }
-  );
-  const bounds = newItemsLayer.getBounds();
-  map.fitBounds(
-    bounds.isValid()
-      ? bounds
-      : L.latLngBounds([
-          [35, 20], // Greece south west corner
-          [42, 30], // Greece north east corner
-        ])
-  );
-  newItemsLayer.addTo(map);
-  return newItemsLayer; // Retourne le nouveau layer pour mise à jour
+  }
+
+  if (fitBounds) {
+    const bounds = itemsLayer.getBounds();
+    if (bounds.isValid()) {
+      map.fitBounds(bounds);
+    } else if (fitBoundsOnEmpty) {
+      map.fitBounds(DEFAULT_BOUNDS);
+    }
+  }
+
+  return itemsLayer; // Retourne le nouveau layer pour mise à jour
 }
