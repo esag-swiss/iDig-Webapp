@@ -55,7 +55,7 @@ export default {
         const appStore = useAppStore();
         appStore.$reset();
       } else {
-        // teste la connexion et charge les données
+        // teste la connexion et charge les données du premier secteur
         this.setServer(this.cleanServerUserEntry(this.server));
         try {
           await this.fetchIdigTrenchesNames();
@@ -71,6 +71,7 @@ export default {
             timeout: 10000,
           });
         } catch (e) {
+          // pas de message affiché car l'erreur est déjà affichée dans ApiClient
           console.error(e);
           this.setIsLoaded(false);
         }
