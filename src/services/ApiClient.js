@@ -2,16 +2,13 @@ import axios from "axios";
 import { useAppStore } from "@/stores/app";
 import { Notify } from "quasar";
 
-function displayError(error) {
-  let message =
-    `message: ${error?.message}<br/>` +
-    `response.data: ${error?.response?.data}<br/>` +
-    `response.statusText: ${error?.response?.statusText}<br/>`;
-
+function displayError(message, error, type = "negative") {
+  console.error(`Error in ${message}:`, error);
   Notify.create({
-    type: "negative",
+    type,
     message,
     html: true,
+    timeout: 10000,
   });
 }
 
@@ -35,13 +32,27 @@ export function apiFetchIdigTrenchesNames() {
     url: `${server}/idig`,
     auth: { username, password },
   })
+      .then((response) => {
+     
+        const data = response?.data;
+        const hasEmptyArrayValue =
+          data &&
+          typeof data === "object" &&
+          Object.values(data).some(
+            (value) => Array.isArray(value) && value.length === 0
+          );
+        if (hasEmptyArrayValue) {
+          displayError(`Aucun secteur disponible.<br/>` +
+              `Vous n'avez peut-etre pas les droits de lecture.`, null, "warning");
+
+        }
+        return response;
+      })
     .catch((error) => {
-      Notify.create({
-        type: "negative",
-        message:
-          "Impossible de charger les trenches depuis le serveur, chargement de la liste par défaut",
-        html: true,
-      });
+      displayError(
+        `La liste des secteurs ne peut pas être établie car le serveur ne répond pas.<br/>Assurez-vous que le serveur <strong>${server}</strong> est correctement orthographié et accessible.`,
+        error
+      );
       throw error;
     })
     .finally(() => decrementLoadingCount());
@@ -64,7 +75,7 @@ export function apiFetchTrenchVersion(trench) {
     auth: { username, password },
   })
     .catch((error) => {
-      displayError(error);
+      displayError("Context : fetchTrenchVersion", error);
       throw error;
     })
     .finally(() => decrementLoadingCount());
@@ -89,7 +100,22 @@ export function apiFetchPreferences(trench) {
     data: JSON.stringify({ head: "", surveys: [] }),
   })
     .catch((error) => {
-      displayError(error);
+      const errorMessage = String(error?.response?.data?.error || "");
+      if (errorMessage.includes("Invalid version")) {
+        displayError(
+          `Le secteur <strong>${trench}</strong> est introuvable sur le serveur.<br/>` +
+            `Vérifiez le nom du secteur et réessayez.`,
+          error
+        );
+      } else if (errorMessage.includes("Invalid users file")) {
+        displayError(
+          `Le projet <strong>${project}</strong> est introuvable sur le serveur.<br/>` +
+            `Vérifiez le nom du projet et réessayez.`,
+          error
+        );
+      } else {
+        displayError("Context : fetchPreferences", error);
+      }
       throw error;
     })
     .finally(() => decrementLoadingCount());
@@ -114,7 +140,7 @@ export function apiFetchSurvey(trench) {
     data: JSON.stringify({}),
   })
     .catch((error) => {
-      displayError(error);
+      displayError("Context : fetchSurvey", error);
       throw error;
     })
     .finally(() => decrementLoadingCount());
@@ -145,7 +171,7 @@ export function apiPushTrench(trench, head, surveys, preferences) {
     }),
   })
     .catch((error) => {
-      displayError(error);
+      displayError("Context : pushTrench", error);
       throw error;
     })
     .finally(() => decrementLoadingCount());
