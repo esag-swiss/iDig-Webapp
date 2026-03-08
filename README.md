@@ -1,4 +1,4 @@
-# idig
+# Contributing
 
 This template should help get you started developing with Vue 3 in Vite.
 
@@ -40,7 +40,6 @@ npm run test:unit
 npm run lint
 ```
 
-### Configuration
+# Using iDig webapp
 
-First fillin the header with the settings 'server', 'project', 'user' and "password" then click on connexion.
-If connexion is valid settings will be stored localy to be used in the future until change is made by user.
+iDig webapp is an application to visualize and manage iDig data provided by an iDig server, then IDig server is mandatory. You may test and use iDig webapp at https://idig.archaiodata.com/. First fillin the conection details of your iDig server then click on connexion. If connexion is valid settings will be stored localy.
