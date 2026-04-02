@@ -456,13 +456,20 @@ export default {
 
     groupOfFieldsAccordingToType() {
       // all groups according to type from Preferences, include subtype if exists, otherwise type
-      let typeObj = this.projectPreferencesTypes.find((x) => {
-        if (x.subtype && x.subtype.length > 0) {
-          return x.subtype.includes(this.selectedItem.Subtype);
-        }
-        return x.type.includes(this.selectedItem.Type);
+      const bySubtype = this.projectPreferencesTypes.find((x) => {
+        if (!x.subtype) return false;
+        const subtypes = Array.isArray(x.subtype) ? x.subtype : [x.subtype];
+        return subtypes.includes(this.selectedItem.Subtype);
       });
-      let groups = typeObj ? typeObj.groups : [];
+
+      const byType = this.projectPreferencesTypes.find((x) => {
+        if (x.subtype) return false;
+        const types = Array.isArray(x.type) ? x.type : [x.type];
+        return types.includes(this.selectedItem.Type);
+      });
+
+      const typeObj = bySubtype || byType;
+      const groups = typeObj ? typeObj.groups : [];
       // except Attachments since photos are managed elsewhere
       return groups.filter((obj) => obj.group !== "Attachments");
     },
