@@ -457,13 +457,17 @@ export default {
     groupOfFieldsAccordingToType() {
       // all groups according to type from Preferences, include subtype if exists, otherwise type
       const bySubtype = this.projectPreferencesTypes.find((x) => {
-        if (!x.subtype) return false;
+        if (!x.subtype) {
+          return false;
+        }
         const subtypes = Array.isArray(x.subtype) ? x.subtype : [x.subtype];
         return subtypes.includes(this.selectedItem.Subtype);
       });
 
       const byType = this.projectPreferencesTypes.find((x) => {
-        if (x.subtype) return false;
+        if (x.subtype) {
+          return false;
+        }
         const types = Array.isArray(x.type) ? x.type : [x.type];
         return types.includes(this.selectedItem.Type);
       });
@@ -532,34 +536,45 @@ export default {
     ]),
 
     fieldType(field, groupObject) {
-      let groupName = groupObject.group ?? "";
-      let fieldSchema = this.projectPreferencesFields.filter(
-        (x) => x.field == field
-      )[0];
+      const groupName = groupObject.group ?? "";
 
-      let fieldSchemaFromGroups = this.projectPreferencesTypes
-        .filter((x) => {
-          return (
-            x.type.includes(this.selectedItem.Type) ||
-            (x.subtype && x.subtype.includes(this.selectedItem.Subtype))
-          );
-        })[0]
-        ?.groups.filter((x) => {
-          return x.group.includes(groupName);
-        })[0]
-        ?.fields.filter((x) => {
-          return x.field.includes(field);
-        })[0];
+      // Resolve type definition with subtype priority over generic type.
+      const typeBySubtype = this.projectPreferencesTypes.find((x) => {
+        if (!x.subtype) {
+          return false;
+        }
+        const subtypes = Array.isArray(x.subtype) ? x.subtype : [x.subtype];
+        return subtypes.includes(this.selectedItem.Subtype);
+      });
 
-      if (fieldSchemaFromGroups) {
-        fieldSchema = { ...fieldSchema, ...fieldSchemaFromGroups };
-      }
+      const typeByType = this.projectPreferencesTypes.find((x) => {
+        if (x.subtype) {
+          return false;
+        }
+        const types = Array.isArray(x.type) ? x.type : [x.type];
+        return types.includes(this.selectedItem.Type);
+      });
 
-      if (this.fieldsSchema[field]) {
-        fieldSchema = { ...this.fieldsSchema[field], ...fieldSchema };
-      }
+      const matchedType = typeBySubtype || typeByType;
 
-      return fieldSchema;
+      // 1) projectPreferencesTypes (highest priority)
+      const fieldSchemaFromType =
+        matchedType?.groups
+          ?.find((x) => x.group === groupName)
+          ?.fields.find((x) => x.field === field) || {};
+
+      // 2) projectPreferencesFields (fallback/defaults)
+      const fieldSchemaFromProjectFields =
+        this.projectPreferencesFields.find((x) => x.field === field) || {};
+
+      // 3) native fields (lowest fallback)
+      const fieldSchemaFromNative = this.fieldsSchema[field] || {};
+
+      return {
+        ...fieldSchemaFromNative,
+        ...fieldSchemaFromProjectFields,
+        ...fieldSchemaFromType,
+      };
     },
 
     pushSurveyHandler() {
