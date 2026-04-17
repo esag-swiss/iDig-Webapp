@@ -1,6 +1,6 @@
 <template>
   <!-- <q-select
-    v-if="editMode && fieldType(field.field, group)?.valuelist?.length !== 0"
+    v-if="editMode && fieldDefinition(field.field, group)?.valuelist?.length !== 0"
     v-model="model"
     square
     dense
@@ -12,7 +12,7 @@
     clearable
     input-debounce="0"
     class="select"
-    :options="fieldType(field.field, group).valuelist"
+    :options="fieldDefinition(field.field, group).valuelist"
     @update:model-value="updateMultiArrayNew(field.field, model)"
     @clear="resetValue"
   /> -->
@@ -44,6 +44,7 @@
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { fieldsSchema } from "@/assets/nativeFields";
+import { resolveFieldDefinition } from "@/services/fieldDefinition";
 export default {
   name: "TheItemMultivalue",
   props: {
@@ -118,35 +119,15 @@ export default {
         }
       });
     },
-    fieldType(field, groupObject) {
-      let groupName = groupObject.group ?? "";
-      let fieldSchema = this.projectPreferencesFields.filter(
-        (x) => x.field == field
-      )[0];
-
-      let fieldSchemaFromGroups = this.projectPreferencesTypes
-        .filter((x) => {
-          return (
-            x.type.includes(this.currentItem.Type) ||
-            (x.subtype && x.subtype.includes(this.currentItem.Subtype))
-          );
-        })[0]
-        ?.groups.filter((x) => {
-          return x.group.includes(groupName);
-        })[0]
-        ?.fields.filter((x) => {
-          return x.field.includes(field);
-        })[0];
-
-      if (fieldSchemaFromGroups) {
-        fieldSchema = { ...fieldSchema, ...fieldSchemaFromGroups };
-      }
-
-      if (this.fieldsSchema[field]) {
-        fieldSchema = { ...this.fieldsSchema[field], ...fieldSchema };
-      }
-
-      return fieldSchema;
+    fieldDefinition(field, groupObject) {
+      return resolveFieldDefinition({
+        field,
+        groupObject,
+        item: this.currentItem,
+        projectPreferencesTypes: this.projectPreferencesTypes,
+        projectPreferencesFields: this.projectPreferencesFields,
+        fieldsSchema: this.fieldsSchema,
+      });
     },
 
     listValueInField(field) {
@@ -154,7 +135,7 @@ export default {
         (objet) => objet[field]
       );
       let valuelistItems =
-        this.fieldType(this.field.field, this.group).valuelist || [];
+        this.fieldDefinition(this.field.field, this.group).valuelist || [];
       valeursField = valeursField.concat(valuelistItems);
       // Filtrer les doublons
       return valeursField

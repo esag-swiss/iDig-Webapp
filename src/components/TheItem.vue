@@ -154,12 +154,13 @@
               field.field
             }}
             <q-tooltip
-              v-if="fieldType(field.field, group)?.tips?.[lang]"
+              v-if="fieldDefinition(field.field, group)?.tips?.[lang]"
               anchor="bottom left"
               self="top left"
               class="bg-accent"
-              >({{ field.field }})
-              {{ fieldType(field.field, group).tips[lang] }}</q-tooltip
+              style="white-space: pre-line"
+              >({{ field.field }})<br>
+              {{ fieldDefinition(field.field, group).tips[lang] }}</q-tooltip
             >
           </div>
 
@@ -217,7 +218,7 @@
             <!-- MULTILINE -->
             <TheItemMultiline
               v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('multiline')
+                fieldDefinition(field.field, group)?.hasOwnProperty('multiline')
               "
               class="col-12 p-1"
               :field="field"
@@ -227,8 +228,8 @@
             <!-- MULTIVALUE && VALUELIST NOT EMPTY   -->
             <TheItemMultivalue
               v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
-                fieldType(field.field, group)?.hasOwnProperty('multivalue')
+                fieldDefinition(field.field, group)?.hasOwnProperty('valuelist') &&
+                fieldDefinition(field.field, group)?.hasOwnProperty('multivalue')
               "
               class="col-12 p-1"
               :field="field"
@@ -242,7 +243,7 @@
             <!-- VALUELIST -->
             <TheItemValuelist
               v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('valuelist')
+                fieldDefinition(field.field, group)?.hasOwnProperty('valuelist')
               "
               class="col-12 p-1"
               :field="field"
@@ -337,6 +338,7 @@ import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
 import TheItemValuelist from "@/components/TheItemValuelist.vue";
 import TheItemInput from "@/components/TheItemInput.vue";
 import { pushSurvey } from "@/services/pushSurveyService";
+import { resolveFieldDefinition } from "@/services/fieldDefinition";
 
 export default {
   name: "TheItem",
@@ -535,46 +537,15 @@ export default {
       "UpdateSyncTrenchData",
     ]),
 
-    fieldType(field, groupObject) {
-      const groupName = groupObject.group ?? "";
-
-      // Resolve type definition with subtype priority over generic type.
-      const typeBySubtype = this.projectPreferencesTypes.find((x) => {
-        if (!x.subtype) {
-          return false;
-        }
-        const subtypes = Array.isArray(x.subtype) ? x.subtype : [x.subtype];
-        return subtypes.includes(this.selectedItem.Subtype);
+    fieldDefinition(field, groupObject) {
+      return resolveFieldDefinition({
+        field,
+        groupObject,
+        item: this.selectedItem,
+        projectPreferencesTypes: this.projectPreferencesTypes,
+        projectPreferencesFields: this.projectPreferencesFields,
+        fieldsSchema: this.fieldsSchema,
       });
-
-      const typeByType = this.projectPreferencesTypes.find((x) => {
-        if (x.subtype) {
-          return false;
-        }
-        const types = Array.isArray(x.type) ? x.type : [x.type];
-        return types.includes(this.selectedItem.Type);
-      });
-
-      const matchedType = typeBySubtype || typeByType;
-
-      // 1) projectPreferencesTypes (highest priority)
-      const fieldSchemaFromType =
-        matchedType?.groups
-          ?.find((x) => x.group === groupName)
-          ?.fields.find((x) => x.field === field) || {};
-
-      // 2) projectPreferencesFields (fallback/defaults)
-      const fieldSchemaFromProjectFields =
-        this.projectPreferencesFields.find((x) => x.field === field) || {};
-
-      // 3) native fields (lowest fallback)
-      const fieldSchemaFromNative = this.fieldsSchema[field] || {};
-
-      return {
-        ...fieldSchemaFromNative,
-        ...fieldSchemaFromProjectFields,
-        ...fieldSchemaFromType,
-      };
     },
 
     pushSurveyHandler() {

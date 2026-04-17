@@ -33,6 +33,7 @@
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { fieldsSchema } from "@/assets/nativeFields";
+import { resolveFieldDefinition } from "@/services/fieldDefinition";
 
 export default {
   name: "TheItemValuelist",
@@ -80,42 +81,22 @@ export default {
         );
       });
     },
-    fieldType(field, groupObject) {
-      let groupName = groupObject.group ?? "";
-      let fieldSchema = this.projectPreferencesFields.filter(
-        (x) => x.field == field
-      )[0];
-
-      let fieldSchemaFromGroups = this.projectPreferencesTypes
-        .filter((x) => {
-          return (
-            x.type.includes(this.currentItem.Type) ||
-            (x.subtype && x.subtype.includes(this.currentItem.Subtype))
-          );
-        })[0]
-        ?.groups.filter((x) => {
-          return x.group.includes(groupName);
-        })[0]
-        ?.fields.filter((x) => {
-          return x.field.includes(field);
-        })[0];
-
-      if (fieldSchemaFromGroups) {
-        fieldSchema = { ...fieldSchema, ...fieldSchemaFromGroups };
-      }
-
-      if (this.fieldsSchema[field]) {
-        fieldSchema = { ...this.fieldsSchema[field], ...fieldSchema };
-      }
-
-      return fieldSchema;
+    fieldDefinition(field, groupObject) {
+      return resolveFieldDefinition({
+        field,
+        groupObject,
+        item: this.currentItem,
+        projectPreferencesTypes: this.projectPreferencesTypes,
+        projectPreferencesFields: this.projectPreferencesFields,
+        fieldsSchema: this.fieldsSchema,
+      });
     },
     listValueInField(field) {
       let valeursField = this.checkedTrenchesItemsSelectedType.map(
         (objet) => objet[field]
       );
       let valuelistItems =
-        this.fieldType(this.field.field, this.group).valuelist || [];
+        this.fieldDefinition(this.field.field, this.group).valuelist || [];
       valeursField = valeursField.concat(valuelistItems);
       // Filtrer les doublons
       return valeursField
