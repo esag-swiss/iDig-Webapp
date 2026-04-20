@@ -186,6 +186,8 @@ export default {
       dependencies: {
         jspdf: jsPDF,
       },
+      // Treat field names as literal keys (do not parse dots as nested paths).
+      nestedFieldSeparator: false,
       data: this.checkedTrenchesItemsSelectedTypeAndSearched, //link data to table
       // reactiveData: true, //turn on data reactivity
       layout: "fitColumns", //fit columns to width of table (optional)
@@ -249,10 +251,24 @@ export default {
       () => this.columnsTabulator,
       (newCols) => {
         if (this.tabulator) {
+          // setColumns resets header filter UI values; persist and restore them.
+          const headerFilters = this.tabulator.getHeaderFilters?.() ?? [];
+          const headerFilterValues = headerFilters.reduce((acc, filter) => {
+            if (filter?.field) {
+              acc[filter.field] = filter.value;
+            }
+            return acc;
+          }, {});
+
           this.tabulator.setColumns(newCols);
+
+          Object.entries(headerFilterValues).forEach(([field, value]) => {
+            if (value !== undefined && value !== null) {
+              this.tabulator.setHeaderFilterValue(field, value);
+            }
+          });
         }
-      },
-      { deep: true }
+      }
     );
 
     this.tabulator.on("cellEdited", (cell) => {
