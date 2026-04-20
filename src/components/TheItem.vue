@@ -154,12 +154,13 @@
               field.field
             }}
             <q-tooltip
-              v-if="fieldType(field.field, group)?.tips?.[lang]"
+              v-if="fieldDefinition(field.field, group)?.tips?.[lang]"
               anchor="bottom left"
               self="top left"
               class="bg-accent"
-              >({{ field.field }})
-              {{ fieldType(field.field, group).tips[lang] }}</q-tooltip
+              style="white-space: pre-line"
+              >({{ field.field }})<br>
+              {{ fieldDefinition(field.field, group).tips[lang] }}</q-tooltip
             >
           </div>
 
@@ -217,7 +218,7 @@
             <!-- MULTILINE -->
             <TheItemMultiline
               v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('multiline')
+                fieldDefinition(field.field, group)?.hasOwnProperty('multiline')
               "
               class="col-12 p-1"
               :field="field"
@@ -227,8 +228,8 @@
             <!-- MULTIVALUE && VALUELIST NOT EMPTY   -->
             <TheItemMultivalue
               v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('valuelist') &&
-                fieldType(field.field, group)?.hasOwnProperty('multivalue')
+                fieldDefinition(field.field, group)?.hasOwnProperty('valuelist') &&
+                fieldDefinition(field.field, group)?.hasOwnProperty('multivalue')
               "
               class="col-12 p-1"
               :field="field"
@@ -242,7 +243,7 @@
             <!-- VALUELIST -->
             <TheItemValuelist
               v-else-if="
-                fieldType(field.field, group)?.hasOwnProperty('valuelist')
+                fieldDefinition(field.field, group)?.hasOwnProperty('valuelist')
               "
               class="col-12 p-1"
               :field="field"
@@ -337,6 +338,7 @@ import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
 import TheItemValuelist from "@/components/TheItemValuelist.vue";
 import TheItemInput from "@/components/TheItemInput.vue";
 import { pushSurvey } from "@/services/pushSurveyService";
+import { resolveFieldDefinition } from "@/services/fieldDefinition";
 
 export default {
   name: "TheItem",
@@ -456,13 +458,24 @@ export default {
 
     groupOfFieldsAccordingToType() {
       // all groups according to type from Preferences, include subtype if exists, otherwise type
-      let typeObj = this.projectPreferencesTypes.find((x) => {
-        if (x.subtype && x.subtype.length > 0) {
-          return x.subtype.includes(this.selectedItem.Subtype);
+      const bySubtype = this.projectPreferencesTypes.find((x) => {
+        if (!x.subtype) {
+          return false;
         }
-        return x.type.includes(this.selectedItem.Type);
+        const subtypes = Array.isArray(x.subtype) ? x.subtype : [x.subtype];
+        return subtypes.includes(this.selectedItem.Subtype);
       });
-      let groups = typeObj ? typeObj.groups : [];
+
+      const byType = this.projectPreferencesTypes.find((x) => {
+        if (x.subtype) {
+          return false;
+        }
+        const types = Array.isArray(x.type) ? x.type : [x.type];
+        return types.includes(this.selectedItem.Type);
+      });
+
+      const typeObj = bySubtype || byType;
+      const groups = typeObj ? typeObj.groups : [];
       // except Attachments since photos are managed elsewhere
       return groups.filter((obj) => obj.group !== "Attachments");
     },
@@ -524,35 +537,15 @@ export default {
       "UpdateSyncTrenchData",
     ]),
 
-    fieldType(field, groupObject) {
-      let groupName = groupObject.group ?? "";
-      let fieldSchema = this.projectPreferencesFields.filter(
-        (x) => x.field == field
-      )[0];
-
-      let fieldSchemaFromGroups = this.projectPreferencesTypes
-        .filter((x) => {
-          return (
-            x.type.includes(this.selectedItem.Type) ||
-            (x.subtype && x.subtype.includes(this.selectedItem.Subtype))
-          );
-        })[0]
-        ?.groups.filter((x) => {
-          return x.group.includes(groupName);
-        })[0]
-        ?.fields.filter((x) => {
-          return x.field.includes(field);
-        })[0];
-
-      if (fieldSchemaFromGroups) {
-        fieldSchema = { ...fieldSchema, ...fieldSchemaFromGroups };
-      }
-
-      if (this.fieldsSchema[field]) {
-        fieldSchema = { ...this.fieldsSchema[field], ...fieldSchema };
-      }
-
-      return fieldSchema;
+    fieldDefinition(field, groupObject) {
+      return resolveFieldDefinition({
+        field,
+        groupObject,
+        item: this.selectedItem,
+        projectPreferencesTypes: this.projectPreferencesTypes,
+        projectPreferencesFields: this.projectPreferencesFields,
+        fieldsSchema: this.fieldsSchema,
+      });
     },
 
     pushSurveyHandler() {

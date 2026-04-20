@@ -375,7 +375,7 @@ export const fieldsSchema = {
       el: "ανήκει σε",
     },
     type: "link",
-    goupe: "Relationships",
+    group: "Relationships",
   },
   RelationCutsUUID: {
     labels: {
@@ -386,7 +386,7 @@ export const fieldsSchema = {
       el: "κόβει",
     },
     type: "link",
-    goupe: "Relationships",
+    group: "Relationships",
   },
   RelationIncludesUUID: {
     labels: {
@@ -397,7 +397,7 @@ export const fieldsSchema = {
       el: "περιλαμβάνει",
     },
     type: "link",
-    goupe: "Relationships",
+    group: "Relationships",
   },
   RelationIsAboveUUID: {
     labels: {
@@ -408,7 +408,7 @@ export const fieldsSchema = {
       el: "βρίσκεται πάνω",
     },
     type: "link",
-    goupe: "Relationships",
+    group: "Relationships",
   },
   RelationIsBeforeUUID: {
     labels: {
@@ -419,7 +419,7 @@ export const fieldsSchema = {
       el: "είναι πριν",
     },
     type: "link",
-    goupe: "Relationships",
+    group: "Relationships",
   },
   RelationIsBelowUUID: {
     labels: {
@@ -430,7 +430,7 @@ export const fieldsSchema = {
       el: "βρίσκεται κάτω",
     },
     type: "link",
-    goupe: "Relationships",
+    group: "Relationships",
   },
   RelationIsCoevalWithUUID: {
     labels: {
@@ -441,7 +441,7 @@ export const fieldsSchema = {
       el: "είναι σύγχρονος με",
     },
     type: "link",
-    goupe: "Relationships",
+    group: "Relationships",
   },
   RelationIsCutByUUID: {
     labels: {
@@ -452,7 +452,7 @@ export const fieldsSchema = {
       el: "κόβεται από",
     },
     type: "link",
-    goupe: "Relationships",
+    group: "Relationships",
   },
   RelationIsNextToUUID: {
     labels: {
@@ -463,7 +463,7 @@ export const fieldsSchema = {
       el: "είναι δίπλα σε",
     },
     type: "link",
-    goupe: "Relationships",
+    group: "Relationships",
   },
   RelationIsAfterUUID: {
     labels: {
@@ -474,7 +474,7 @@ export const fieldsSchema = {
       el: "είναι μετά",
     },
     type: "link",
-    goupe: "Relationships",
+    group: "Relationships",
   },
   // COVERAGE TEMPORAL DATE
   CoverageUTC: {
