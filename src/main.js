@@ -1,4 +1,5 @@
 import { createApp } from "vue";
+import * as Sentry from "@sentry/vue";
 import { Quasar, Notify } from "quasar";
 import { createPinia } from "pinia";
 import { createI18n } from "vue-i18n";
@@ -40,6 +41,14 @@ const i18n = createI18n({
   },
 });
 const myApp = createApp(App);
+
+if (import.meta.env.VITE_SENTRY_DSN) {
+  Sentry.init({
+    app: myApp,
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+  });
+}
+
 myApp.use(router);
 myApp.use(pinia);
 myApp.use(i18n);

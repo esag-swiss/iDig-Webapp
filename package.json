@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.18.0",
+    "@sentry/vue": "^10.52.0",
     "axios": "^1.15.2",
     "big-integer": "^1.6.52",
     "dayjs": "^1.11.20",
