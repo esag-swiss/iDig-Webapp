@@ -20,4 +20,13 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  css: {
+    preprocessorOptions: {
+      // @quasar/vite-plugin injects `@import 'src/quasar-variables.sass'`,
+      // a path relative to the project root. Modern Dart Sass no longer
+      // resolves the cwd implicitly, so we add it explicitly.
+      sass: { loadPaths: [fileURLToPath(new URL(".", import.meta.url))] },
+      scss: { loadPaths: [fileURLToPath(new URL(".", import.meta.url))] },
+    },
+  },
 });

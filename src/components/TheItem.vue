@@ -40,8 +40,8 @@
             editMode
               ? "disable edit mode"
               : projectTrenchesRights[selectedItem.Trench]
-              ? "you are not allowed to edit this trench"
-              : "enable edit mode"
+                ? "you are not allowed to edit this trench"
+                : "enable edit mode"
           }}
         </q-tooltip>
       </div>
@@ -132,12 +132,12 @@
           v-for="(field, index) in editMode
             ? group.fields.filter(
                 (item) =>
-                  item.field !== 'CoverageSpatial' && item.field !== 'Subtype'
+                  item.field !== 'CoverageSpatial' && item.field !== 'Subtype',
               )
             : group.fields.filter(
                 (item) =>
                   fieldsOfCurrentItem.includes(item.field) &&
-                  item.field !== 'Subtype'
+                  item.field !== 'Subtype',
               )"
           :key="field"
           class="d-flex align-items-start border-bottom"
@@ -159,7 +159,7 @@
               self="top left"
               class="bg-accent"
               style="white-space: pre-line"
-              >({{ field.field }})<br>
+              >({{ field.field }})<br />
               {{ fieldDefinition(field.field, group).tips[lang] }}</q-tooltip
             >
           </div>
@@ -173,15 +173,15 @@
               v-if="field.field === 'Type'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="selectedItem"
-              :editMode="editMode"
+              :current-item="selectedItem"
+              :edit-mode="editMode"
             />
             <!-- RightsStatus  TODO voir option value et label -->
             <TheItemRightsStatus
               v-else-if="field.field === 'RightsStatus'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="selectedItem"
+              :current-item="selectedItem"
               :disable="!editMode"
             />
             <!-- CoverageSerialized -->
@@ -189,14 +189,14 @@
               v-else-if="field.field === 'CoverageSerialized'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="selectedItem"
+              :current-item="selectedItem"
             />
             <!-- BOOLEAN -->
             <TheItemBoolean
               v-else-if="fieldsSchema[field.field]?.type === 'boolean'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="selectedItem"
+              :current-item="selectedItem"
               :disable="!editMode"
             />
             <!-- DATE -->
@@ -204,16 +204,16 @@
               v-else-if="fieldsSchema[field.field]?.type === 'DateUTC'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="selectedItem"
-              :editMode="editMode"
+              :current-item="selectedItem"
+              :edit-mode="editMode"
             />
             <!-- RELATIONS   ATTENTION VIRER L ACTION -->
             <TheItemLink
               v-else-if="fieldsSchema[field.field]?.type === 'link'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="selectedItem"
-              :editMode="editMode"
+              :current-item="selectedItem"
+              :edit-mode="editMode"
             />
             <!-- MULTILINE -->
             <TheItemMultiline
@@ -222,22 +222,26 @@
               "
               class="col-12 p-1"
               :field="field"
-              :currentItem="selectedItem"
-              :editMode="editMode"
+              :current-item="selectedItem"
+              :edit-mode="editMode"
             />
             <!-- MULTIVALUE && VALUELIST NOT EMPTY   -->
             <TheItemMultivalue
               v-else-if="
-                fieldDefinition(field.field, group)?.hasOwnProperty('valuelist') &&
-                fieldDefinition(field.field, group)?.hasOwnProperty('multivalue')
+                fieldDefinition(field.field, group)?.hasOwnProperty(
+                  'valuelist',
+                ) &&
+                fieldDefinition(field.field, group)?.hasOwnProperty(
+                  'multivalue',
+                )
               "
               class="col-12 p-1"
               :field="field"
-              :currentItem="selectedItem"
-              :editMode="editMode"
+              :current-item="selectedItem"
+              :edit-mode="editMode"
               :group="group"
               TheItemMultivalue
-              :indexGroup="indexGroup"
+              :index-group="indexGroup"
               :index="index"
             />
             <!-- VALUELIST -->
@@ -247,8 +251,8 @@
               "
               class="col-12 p-1"
               :field="field"
-              :currentItem="selectedItem"
-              :editMode="editMode"
+              :current-item="selectedItem"
+              :edit-mode="editMode"
               :group="group"
             />
             <!-- STRING all other cases-->
@@ -256,8 +260,8 @@
               v-else
               class="col-12 p-1"
               :field="field"
-              :currentItem="selectedItem"
-              :editMode="editMode"
+              :current-item="selectedItem"
+              :edit-mode="editMode"
             />
           </div>
         </div>
@@ -296,16 +300,16 @@
               v-if="fieldsSchema[field.field]?.type === 'DateUTC'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="selectedItem"
-              :editMode="editMode"
+              :current-item="selectedItem"
+              :edit-mode="editMode"
             />
 
             <TheItemInput
               v-else-if="editMode && field !== 'IdentifierUUID'"
               class="col-12 p-1"
               :field="field"
-              :currentItem="selectedItem"
-              :editMode="editMode"
+              :current-item="selectedItem"
+              :edit-mode="editMode"
             />
             <div v-else class="col-12 p-1">{{ selectedItem[field] }}</div>
           </div>
@@ -394,7 +398,7 @@ export default {
           fieldsToAdd.forEach((field) => {
             if (
               !obj.fields.some(
-                (existingField) => existingField.field === field.field
+                (existingField) => existingField.field === field.field,
               )
             ) {
               obj.fields.push(field);
@@ -417,7 +421,7 @@ export default {
           fieldsToAdd.forEach((field) => {
             if (
               !obj.fields.some(
-                (existingField) => existingField.field === field.field
+                (existingField) => existingField.field === field.field,
               )
             ) {
               obj.fields.push(field);
@@ -429,7 +433,7 @@ export default {
           fieldsToAdd.forEach((field) => {
             if (
               !obj.fields.some(
-                (existingField) => existingField.field === field.field
+                (existingField) => existingField.field === field.field,
               )
             ) {
               obj.fields.push(field);
@@ -445,7 +449,7 @@ export default {
           fieldsToAdd.forEach((field) => {
             if (
               !obj.fields.some(
-                (existingField) => existingField.field === field.field
+                (existingField) => existingField.field === field.field,
               )
             ) {
               obj.fields.push(field);
@@ -485,8 +489,8 @@ export default {
       let groups = this.groupOfFieldsAccordingToTypeAndNative;
       groups = groups.filter((obj) =>
         obj.fields.some((field) =>
-          this.fieldsOfCurrentItem.includes(field.field)
-        )
+          this.fieldsOfCurrentItem.includes(field.field),
+        ),
       );
       return groups;
     },
@@ -508,7 +512,7 @@ export default {
       });
 
       fieldsNotPrinsentInGroup = this.fieldsOfCurrentItem.filter(
-        (item) => !notToDisplay.includes(item)
+        (item) => !notToDisplay.includes(item),
       );
       return fieldsNotPrinsentInGroup;
     },
@@ -563,7 +567,7 @@ export default {
         relatedItems = [this.selectedItem.IdentifierUUID];
         // Récupérer les URL d'images pour chaque UUID trouvé
         const imagePromises = relatedItems.map((uuid) =>
-          this.findObjectByUuid(uuid)
+          this.findObjectByUuid(uuid),
         );
         // Attendre la résolution de toutes les promesses d'URL d'images
         const resolvedImages = await Promise.all(imagePromises);
@@ -580,7 +584,7 @@ export default {
 
         // Récupérer les URL d'images pour chaque UUID trouvé
         const imagePromises = relatedItems.map((uuid) =>
-          this.findObjectByUuid(uuid)
+          this.findObjectByUuid(uuid),
         );
         // Attendre la résolution de toutes les promesses d'URL d'images
         const resolvedImages = await Promise.all(imagePromises);
@@ -600,7 +604,7 @@ export default {
 
       // Filtrer les éléments correspondant à l'UUID
       const filteredItems = trenchData.filter(
-        (x) => x.IdentifierUUID === IdentifierUUID && x.Type === "Image"
+        (x) => x.IdentifierUUID === IdentifierUUID && x.Type === "Image",
       );
 
       if (filteredItems.length > 0) {
@@ -629,7 +633,7 @@ export default {
           // Si l'image n'est pas dans IndexedDB, la récupérer via l'API
           const response = await apiFetchImageSRC(
             RelationAttachments,
-            this.selectedItem.Trench
+            this.selectedItem.Trench,
           );
 
           if (response && response.data) {

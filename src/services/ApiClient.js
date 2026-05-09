@@ -32,26 +32,28 @@ export function apiFetchIdigTrenchesNames() {
     url: `${server}/idig`,
     auth: { username, password },
   })
-      .then((response) => {
-     
-        const data = response?.data;
-        const hasEmptyArrayValue =
-          data &&
-          typeof data === "object" &&
-          Object.values(data).some(
-            (value) => Array.isArray(value) && value.length === 0
-          );
-        if (hasEmptyArrayValue) {
-          displayError(`Aucun secteur disponible.<br/>` +
-              `Vous n'avez peut-etre pas les droits de lecture.`, null, "warning");
-
-        }
-        return response;
-      })
+    .then((response) => {
+      const data = response?.data;
+      const hasEmptyArrayValue =
+        data &&
+        typeof data === "object" &&
+        Object.values(data).some(
+          (value) => Array.isArray(value) && value.length === 0,
+        );
+      if (hasEmptyArrayValue) {
+        displayError(
+          `Aucun secteur disponible.<br/>` +
+            `Vous n'avez peut-etre pas les droits de lecture.`,
+          null,
+          "warning",
+        );
+      }
+      return response;
+    })
     .catch((error) => {
       displayError(
         `La liste des secteurs ne peut pas être établie car le serveur ne répond pas.<br/>Assurez-vous que le serveur <strong>${server}</strong> est correctement orthographié et accessible.`,
-        error
+        error,
       );
       throw error;
     })
@@ -105,13 +107,13 @@ export function apiFetchPreferences(trench) {
         displayError(
           `Le secteur <strong>${trench}</strong> est introuvable sur le serveur.<br/>` +
             `Vérifiez le nom du secteur et réessayez.`,
-          error
+          error,
         );
       } else if (errorMessage.includes("Invalid users file")) {
         displayError(
           `Le projet <strong>${project}</strong> est introuvable sur le serveur.<br/>` +
             `Vérifiez le nom du projet et réessayez.`,
-          error
+          error,
         );
       } else {
         displayError("Context : fetchPreferences", error);
@@ -201,7 +203,7 @@ export function apiFetchImageSRC(RelationAttachments, trench) {
   })
     .catch((error) => {
       alert(
-        `Error: ${error}\nSomething went wrong with fetching layer!\nPlease check the RelationAttachments field. ${RelationAttachments}`
+        `Error: ${error}\nSomething went wrong with fetching layer!\nPlease check the RelationAttachments field. ${RelationAttachments}`,
       );
     })
     .finally(() => decrementLoadingCount());
@@ -229,7 +231,7 @@ export function apiFetchImage(filename, checksum, trench) {
   })
     .catch((error) => {
       alert(
-        `Error: ${error}\nSomething went wrong with fetching image!\nPlease check the filename and checksum.`
+        `Error: ${error}\nSomething went wrong with fetching image!\nPlease check the filename and checksum.`,
       );
     })
     .finally(() => decrementLoadingCount());
@@ -271,7 +273,7 @@ export function apiFetchWld(filename, checksum, trench) {
     })
     .catch((error) => {
       alert(
-        `Error: ${error}\nSomething went wrong with fetching bounds!\nPlease check the filename and checksum.`
+        `Error: ${error}\nSomething went wrong with fetching bounds!\nPlease check the filename and checksum.`,
       );
       throw error; // Rethrow the error to maintain consistency in handling errors
     })

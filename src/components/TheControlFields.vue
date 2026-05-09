@@ -23,8 +23,8 @@
     >
       {{
         type.subtype
-          ? type.plurals?.[lang] ?? type.subtype
-          : type.plurals?.[lang] ?? type.type
+          ? (type.plurals?.[lang] ?? type.subtype)
+          : (type.plurals?.[lang] ?? type.type)
       }}
     </option>
   </select>
@@ -66,10 +66,10 @@
             }}</label
           ><q-toggle
             v-if="field.field === 'RightsStatus'"
-            @update:model-value="(val) => SetIsArchivedItemsHided(val)"
             v-model="hideArchived"
             :size="'sm'"
             color="red"
+            @update:model-value="(val) => SetIsArchivedItemsHided(val)"
           />
           <q-tooltip v-if="field.field === 'RightsStatus'" class="bg-accent"
             >"hide arrchived items"
@@ -126,7 +126,7 @@ export default {
           fieldsToAdd.forEach((field) => {
             if (
               !obj.fields.some(
-                (existingField) => existingField.field === field.field
+                (existingField) => existingField.field === field.field,
               )
             ) {
               obj.fields.push(field);

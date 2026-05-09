@@ -29,8 +29,8 @@
     clearable
     input-debounce="0"
     class="select"
-    @new-value="createValue"
     :options="filterOptions"
+    @new-value="createValue"
     @filter="filterFn"
     @update:model-value="updateMultiArrayNew(field.field, model)"
     @clear="resetValue"
@@ -114,7 +114,7 @@ export default {
         } else {
           const needle = val.toLowerCase();
           this.filterOptions = this.listValueInField(this.field.field).filter(
-            (v) => v && v.toLowerCase().indexOf(needle) > -1
+            (v) => v && v.toLowerCase().indexOf(needle) > -1,
           );
         }
       });
@@ -132,7 +132,7 @@ export default {
 
     listValueInField(field) {
       let valeursField = this.checkedTrenchesItemsSelectedType.map(
-        (objet) => objet[field]
+        (objet) => objet[field],
       );
       let valuelistItems =
         this.fieldDefinition(this.field.field, this.group).valuelist || [];

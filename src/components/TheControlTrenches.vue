@@ -4,18 +4,18 @@
       <span class="text-bold pseudoh3">{{ $t("app.trenches") }}</span>
       <q-checkbox
         v-if="isAllChecked !== false"
-        @update:model-value="handleCheckboxUpdate"
         v-model="isAllChecked"
         size="xs"
         toggle-order="ft"
         indeterminate-value="maybe"
+        @update:model-value="handleCheckboxUpdate"
         ><q-tooltip class="bg-accent"> Select none </q-tooltip></q-checkbox
       >
       <q-checkbox
         v-if="isAllChecked !== true"
-        @update:model-value="handleCheckboxUpdate"
-        size="xs"
         v-model="toAllChecked"
+        size="xs"
+        @update:model-value="handleCheckboxUpdate"
         ><q-tooltip class="bg-accent"> Select all </q-tooltip></q-checkbox
       >
     </div>
@@ -33,15 +33,15 @@
 
         <q-card-actions>
           <q-btn
+            v-close-popup
             flat
             label="Cancel"
             @click="
               isAllChecked = 'maybe';
               toAllChecked = false;
             "
-            v-close-popup
           />
-          <q-btn flat label="Ok" @click="checkAll()" v-close-popup />
+          <q-btn v-close-popup flat label="Ok" @click="checkAll()" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -143,10 +143,10 @@ export default {
   watch: {
     checkedTrenchesNames(newTrenchList, oldTrenchList) {
       const addedTrenches = newTrenchList.filter(
-        (item) => !oldTrenchList.includes(item)
+        (item) => !oldTrenchList.includes(item),
       );
       const removedTrenches = oldTrenchList.filter(
-        (item) => !newTrenchList.includes(item)
+        (item) => !newTrenchList.includes(item),
       );
       this.removeCheckedTrenchesData(removedTrenches);
       this.addCheckedTrenchesData(addedTrenches);
@@ -189,13 +189,13 @@ export default {
     checkGroup(checkGroup, checked) {
       if (checked) {
         let newCheckedTrenchesNames = this.checkedTrenchesNames.concat(
-          this.projectTrenchesNames.filter((item) => item.includes(checkGroup))
+          this.projectTrenchesNames.filter((item) => item.includes(checkGroup)),
         );
         this.setCheckedTrenchesNames(newCheckedTrenchesNames);
       } else {
         // Removes items from checkGroup and checkedTrenchesNames
         let filteredCheckedTrenchesNames = this.checkedTrenchesNames.filter(
-          (item) => !item.includes(checkGroup)
+          (item) => !item.includes(checkGroup),
         );
         this.setCheckedTrenchesNames(filteredCheckedTrenchesNames);
       }

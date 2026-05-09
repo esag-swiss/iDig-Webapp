@@ -144,20 +144,20 @@ export const useDataStore = defineStore("data", {
 
     checkedTrenchesItemsPlans(state) {
       return state.checkedTrenchesItems.filter((item) =>
-        item?.Type?.includes("Plan")
+        item?.Type?.includes("Plan"),
       );
     },
 
     checkedTrenchesItemsSelectedType(state) {
       // Filtrage par Type
       let filteredItems = state.checkedTrenchesItems.filter((item) =>
-        item?.Type?.includes(state.selectedType)
+        item?.Type?.includes(state.selectedType),
       );
 
       // Si aucun élément n'est trouvé avec Type, filtrer par Subtype
       if (filteredItems.length === 0) {
         filteredItems = state.checkedTrenchesItems.filter((item) =>
-          item?.Subtype?.includes(state.selectedType)
+          item?.Subtype?.includes(state.selectedType),
         );
       }
 
@@ -171,7 +171,7 @@ export const useDataStore = defineStore("data", {
         return state.checkedTrenchesItemsSelectedType;
       }
       let filteredItems = state.checkedTrenchesItemsSelectedType.filter(
-        (item) => item?.RightsStatus != "Archived"
+        (item) => item?.RightsStatus != "Archived",
       );
       return filteredItems;
     },
@@ -280,8 +280,8 @@ export const useDataStore = defineStore("data", {
                   .toLowerCase()
                   .normalize("NFD")
                   .replace(/[\u0300-\u036f]/g, "")
-                  .includes(searchText)
-          )
+                  .includes(searchText),
+          ),
         );
       }
 
@@ -302,16 +302,16 @@ export const useDataStore = defineStore("data", {
       const { project } = useAppStore();
       return apiFetchIdigTrenchesNames().then((response) => {
         const TrenchesNamesForCurrentProject = response.data.trenches.filter(
-          (trench) => trench.project === project && trench.name !== "undefined"
+          (trench) => trench.project === project && trench.name !== "undefined",
         );
         this.setProjectTrenchesNames(
-          TrenchesNamesForCurrentProject.map((trench) => trench.name)
+          TrenchesNamesForCurrentProject.map((trench) => trench.name),
         );
         this.setProjectTrenchesRights(
           TrenchesNamesForCurrentProject.reduce((acc, trench) => {
             acc[trench.name] = trench.read_only;
             return acc;
-          }, {})
+          }, {}),
         );
       });
     },
@@ -349,7 +349,7 @@ export const useDataStore = defineStore("data", {
         lsStoreProjectsPreferencesBase64(response.data.preferences);
 
         let decodedPref = decodeURIComponent(
-          escape(window.atob(response.data.preferences))
+          escape(window.atob(response.data.preferences)),
         );
         parseAndLoadPreferences(decodedPref);
         setIsLoaded(true);
@@ -390,14 +390,14 @@ export const useDataStore = defineStore("data", {
           if (response.data.surveys) {
             this.checkedTrenchesData[trenchName] = this.addTrenchNameToItems(
               response.data.surveys,
-              trenchName
+              trenchName,
             );
           }
 
           // Update localStorage
           localStorage.setItem(
             "lsLocalTrenchesVersion",
-            JSON.stringify(this.checkedTrenchesVersion)
+            JSON.stringify(this.checkedTrenchesVersion),
           );
 
           // Update IndexedDB
@@ -405,11 +405,11 @@ export const useDataStore = defineStore("data", {
           await storeDataInIndexedDB(
             db,
             trenchName,
-            this.checkedTrenchesData[trenchName]
+            this.checkedTrenchesData[trenchName],
           );
         } catch (error) {
           console.error(
-            `Error fetching data for trench ${trenchName}: ${error}`
+            `Error fetching data for trench ${trenchName}: ${error}`,
           );
         }
       };
@@ -418,7 +418,7 @@ export const useDataStore = defineStore("data", {
     async UpdateSyncTrenchData(trenchName, surveys) {
       this.checkedTrenchesData[trenchName] = this.addTrenchNameToItems(
         surveys,
-        trenchName
+        trenchName,
       );
 
       // Update IndexedDB
@@ -426,7 +426,7 @@ export const useDataStore = defineStore("data", {
       await storeDataInIndexedDB(
         db,
         trenchName,
-        this.checkedTrenchesData[trenchName]
+        this.checkedTrenchesData[trenchName],
       );
     },
 

@@ -119,7 +119,7 @@ export default {
     totalPatches() {
       return this.syncPatches.map((patche) => {
         const local = this.itemsEdited.find(
-          (item) => item.IdentifierUUID === patche.id
+          (item) => item.IdentifierUUID === patche.id,
         );
         return { ...patche, local };
       });
@@ -129,7 +129,7 @@ export default {
       const result = {};
       this.totalPatches.forEach((patche) => {
         result[patche.id] = Object.keys(
-          this.compareObjectsThree(patche.old, patche.new, patche.local || {})
+          this.compareObjectsThree(patche.old, patche.new, patche.local || {}),
         );
       });
       return result;
@@ -147,7 +147,7 @@ export default {
           results.push(patche.local);
         } else if (choice === "merged") {
           results.push(
-            this.mergeVersions(patche.old, patche.new, patche.local)
+            this.mergeVersions(patche.old, patche.new, patche.local),
           );
         } else {
           results.push(patche.new);
@@ -208,7 +208,7 @@ export default {
 
       surveys = [
         ...this.trenchtoSync(this.syncTrench).filter(
-          (item) => !this.UUIDsSyncPatches.includes(item.IdentifierUUID)
+          (item) => !this.UUIDsSyncPatches.includes(item.IdentifierUUID),
         ),
         ...this.finalVersionItems,
       ];
@@ -216,7 +216,7 @@ export default {
         this.syncTrench,
         head,
         surveys,
-        preferences
+        preferences,
       );
 
       if (resp.data.status === "pushed" || resp.data.status === "ok") {
@@ -224,7 +224,7 @@ export default {
         // Update localStorage
         localStorage.setItem(
           "lsLocalTrenchesVersion",
-          JSON.stringify(this.checkedTrenchesVersion)
+          JSON.stringify(this.checkedTrenchesVersion),
         );
 
         this.UpdateSyncTrenchData(this.syncTrench, surveys);

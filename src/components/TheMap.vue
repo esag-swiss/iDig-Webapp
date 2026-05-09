@@ -58,21 +58,23 @@ export default {
       "tableFilteredCheckedTrenchesItems",
     ]),
     itemsForMap() {
-      return this.tableFilteredCheckedTrenchesItems ??
-        this.checkedTrenchesItemsSelectedTypeAndSearched;
+      return (
+        this.tableFilteredCheckedTrenchesItems ??
+        this.checkedTrenchesItemsSelectedTypeAndSearched
+      );
     },
   },
   watch: {
     // initialize map when first toggled on
     isMapMinimized: async function () {
- try {
-          this.destroyMap();
-          await this.$nextTick();
-          // Reinitialize the map
-          await this.initMap();
-        } catch (error) {
-          console.error(error);
-        }
+      try {
+        this.destroyMap();
+        await this.$nextTick();
+        // Reinitialize the map
+        await this.initMap();
+      } catch (error) {
+        console.error(error);
+      }
     },
     // load items layer after all selected trenches are loaded
     loadingCount: function (newLoadingCount, oldLoadingCount) {
@@ -146,7 +148,7 @@ export default {
       this.baseLayersTree = baseLayersTree;
       this.overlaysTree = await createMapsOverlaysTree(
         this.checkedTrenchesItemsPlans,
-        this.projectPreferencesCRS
+        this.projectPreferencesCRS,
       );
 
       // Creation de la carte
@@ -167,7 +169,7 @@ export default {
       // Ajout du control de couches en arborescence
       this.treeLayerControl = L.control.layers.tree(
         baseLayersTree,
-        this.overlaysTree
+        this.overlaysTree,
       );
       this.treeLayerControl.addTo(this.map);
 
@@ -189,7 +191,7 @@ export default {
         {
           fitBounds: shouldFitBounds,
           fitBoundsOnEmpty: true,
-        }
+        },
       );
     },
 

@@ -19,7 +19,7 @@ export function lsStoreProfiles(profile, server, project, username, password) {
   const profiles = JSON.parse(
     localStorage.getItem("profiles") ||
       localStorage.getItem("connections") || // for backward compatibility
-      "[]"
+      "[]",
   );
 
   // Create a new connection object with the current credentials
@@ -29,7 +29,7 @@ export function lsStoreProfiles(profile, server, project, username, password) {
         conn.profile === profile &&
         conn.server === server &&
         conn.project === project &&
-        conn.username === username
+        conn.username === username,
     )
   ) {
     Notify.create({
@@ -56,12 +56,12 @@ export function lsUpdateProfile(profile, key, value) {
   const profiles = JSON.parse(
     localStorage.getItem("profiles") ||
       localStorage.getItem("connections") || // for backward compatibility
-      "[]"
+      "[]",
   );
 
   // Find the index of the connection to update
   const index = profiles.findIndex(
-    (localStorage) => localStorage.profile === profile
+    (localStorage) => localStorage.profile === profile,
   );
 
   // If the connection exists, update it
@@ -108,7 +108,7 @@ export function lsStoreCheckedFieldNames() {
 
   // 1st, get the full checked array saved in local storage, if any :
   let checkedFieldNamesPerType = localStorage.getItem(
-    "checkedFieldNamesPerType"
+    "checkedFieldNamesPerType",
   )
     ? JSON.parse(localStorage.getItem("checkedFieldNamesPerType"))
     : {};
@@ -119,7 +119,7 @@ export function lsStoreCheckedFieldNames() {
   // 3rd, store it in local storage :
   localStorage.setItem(
     "checkedFieldNamesPerType",
-    JSON.stringify(checkedFieldNamesPerType)
+    JSON.stringify(checkedFieldNamesPerType),
   );
 }
 
@@ -134,7 +134,7 @@ export function lsLoadCheckedFieldNames() {
     setCheckedFieldNames(
       JSON.parse(localStorage.getItem("checkedFieldNamesPerType"))?.[
         selectedType
-      ]
+      ],
     );
   } else {
     // else we check the Identifier checkbox by default.
@@ -148,7 +148,7 @@ export function lsStoreProjectsPreferencesBase64(preferencesBase64) {
 
   // 1st, get ProjectsPreferencesBase64 in local storage, if any :
   let ProjectsPreferencesBase64 = localStorage.getItem(
-    "lsProjectsPreferencesBase64"
+    "lsProjectsPreferencesBase64",
   )
     ? JSON.parse(localStorage.getItem("lsProjectsPreferencesBase64"))
     : {};
@@ -159,7 +159,7 @@ export function lsStoreProjectsPreferencesBase64(preferencesBase64) {
   // 3rd, store it in local storage :
   localStorage.setItem(
     "lsProjectsPreferencesBase64",
-    JSON.stringify(ProjectsPreferencesBase64)
+    JSON.stringify(ProjectsPreferencesBase64),
   );
 }
 

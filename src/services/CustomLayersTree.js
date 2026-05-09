@@ -3,7 +3,7 @@ import "leaflet.control.layers.tree";
 L.Control.Layers.Tree.include({
   unselectAll: function () {
     const checkboxes = this._container.querySelectorAll(
-      'input[type="checkbox"]'
+      'input[type="checkbox"]',
     );
     checkboxes.forEach((checkbox) => {
       if (checkbox.checked) {

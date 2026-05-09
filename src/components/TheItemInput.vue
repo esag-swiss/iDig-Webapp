@@ -1,11 +1,11 @@
 <template>
   <q-input
     v-if="editMode"
+    v-model="currentItem[field.field]"
     square
     filled
     dense
     :clearable="currentItem[field.field] !== previousValue"
-    v-model="currentItem[field.field]"
     :label="previousValue !== currentItem[field.field] ? previousValue : ''"
     @clear="currentItem[field.field] = previousValue"
   />

@@ -28,6 +28,7 @@ import router from "./router/index.js"; // Assurez-vous que le routeur est impor
 
 const pinia = createPinia();
 const i18n = createI18n({
+  legacy: true, // required to keep $t / this.$t in Options API components
   locale: "fr", // langue par défaut
   fallbackLocale: "en", // langue de secours
   messages: {
