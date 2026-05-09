@@ -1,6 +1,8 @@
 {
   "app": {
     "fields": "Felder",
+    "items": "{count} Eintrag | {count} Einträge",
+    "toggle_group": "{name} ein-/ausklappen",
     "trenches": "Sektoren",
     "trenche": "Sektor",
     "loaded": "Geladen",

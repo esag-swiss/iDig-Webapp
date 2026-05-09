@@ -1,6 +1,8 @@
 {
   "app": {
     "fields": "Fields",
+    "items": "{count} item | {count} items",
+    "toggle_group": "Toggle {name}",
     "trenches": "Sectors",
     "trenche": "Sector",
     "loaded": "loaded",

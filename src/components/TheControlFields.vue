@@ -36,35 +36,30 @@
       }}<q-tooltip class="bg-accent"> {{ $t("app.fieldTip") }} </q-tooltip>
     </h3>
     <!-- liste les groupes pour le type sélectionné -->
-    <ul
+    <BaseAccordion
       v-for="(group, index) in groupOfFieldsAccordingToTypeAndSubtype"
-      :key="group"
-      class="list-group"
+      :key="group.group"
+      :initial-open="index === 0"
+      :toggle-aria-label="
+        $t('app.toggle_group', { name: group.labels?.[lang] ?? group.group })
+      "
     >
-      <li
-        class="list-group-item accordion text-bold"
-        @click="isDisplayedArray[index] = !isDisplayedArray[index]"
-      >
-        {{ group.labels?.[lang] ?? group.group }}
-      </li>
-
-      <!-- liste les champs pour chaque groupe -->
-      <div v-if="isDisplayedArray[index]">
+      <template #title>
+        <BaseCheckbox
+          class="text-bold"
+          :model-value="isGroupAllChecked(group)"
+          :label="group.labels?.[lang] ?? group.group"
+          @update:model-value="checkFieldGroup(group)"
+        />
+      </template>
+      <template #content>
         <div v-for="(field, i) in group.fields" :key="i" class="m-0">
-          <input
-            v-model="checkedFieldNames"
-            :value="field.field"
-            type="checkbox"
+          <BaseCheckbox
+            :model-value="checkedFieldNames.includes(field.field)"
+            :label="fieldLabel(field)"
+            @update:model-value="(checked) => toggleField(field.field, checked)"
           />
-          <label class="pl-1 m-0" for="checkbox">
-            {{
-              // labels from types.groups.fields.labels.[lang] except if empty
-              field.labels?.[lang] ||
-              projectPreferencesFieldsWithTranslation?.[field.field] ||
-              fieldsSchema?.[field.field]?.labels?.[lang] ||
-              field.field
-            }}</label
-          ><q-toggle
+          <q-toggle
             v-if="field.field === 'RightsStatus'"
             v-model="hideArchived"
             :size="'sm'"
@@ -75,8 +70,8 @@
             >"hide arrchived items"
           </q-tooltip>
         </div>
-      </div>
-    </ul>
+      </template>
+    </BaseAccordion>
   </div>
 </template>
 
@@ -88,12 +83,15 @@ import {
   lsLoadCheckedFieldNames,
   lsStoreCheckedFieldNames,
 } from "@/services/localStorageManager";
+import { fieldsSchema } from "@/assets/nativeFields";
+import BaseCheckbox from "@/components/base/BaseCheckbox.vue";
+import BaseAccordion from "@/components/base/BaseAccordion.vue";
 
 export default {
+  components: { BaseCheckbox, BaseAccordion },
   data() {
     return {
       defaultColumns: {},
-      isDisplayedArray: [true],
       hideArchived: false, // for the q-toggle
     };
   },
@@ -153,6 +151,39 @@ export default {
     ...mapActions(useAppStore, ["SetIsArchivedItemsHided"]),
     changeLang(lang) {
       this.setLang(lang);
+    },
+    isGroupAllChecked(group) {
+      return (
+        group.fields.length > 0 &&
+        group.fields.every((f) => this.checkedFieldNames.includes(f.field))
+      );
+    },
+    checkFieldGroup(group) {
+      const groupFieldNames = group.fields.map((f) => f.field);
+      const uniqueCheckedFieldNames = new Set(this.checkedFieldNames);
+      if (this.isGroupAllChecked(group)) {
+        groupFieldNames.forEach((name) => uniqueCheckedFieldNames.delete(name));
+      } else {
+        groupFieldNames.forEach((name) => uniqueCheckedFieldNames.add(name));
+      }
+      this.checkedFieldNames = [...uniqueCheckedFieldNames];
+    },
+    toggleField(fieldName, checked) {
+      const uniqueCheckedFieldNames = new Set(this.checkedFieldNames);
+      if (checked) {
+        uniqueCheckedFieldNames.add(fieldName);
+      } else {
+        uniqueCheckedFieldNames.delete(fieldName);
+      }
+      this.checkedFieldNames = [...uniqueCheckedFieldNames];
+    },
+    fieldLabel(field) {
+      return (
+        field.labels?.[this.lang] ||
+        this.projectPreferencesFieldsWithTranslation?.[field.field] ||
+        fieldsSchema?.[field.field]?.labels?.[this.lang] ||
+        field.field
+      );
     },
   },
 };
