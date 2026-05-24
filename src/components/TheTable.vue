@@ -2,9 +2,9 @@
   <div
     v-show="selectedItem || syncPatches"
     class="TheItemframe"
-    @click="clearTheItem(), setSyncPatches('')"
+    @click="(clearTheItem(), setSyncPatches(''))"
   ></div>
-  <ThePatches v-if="syncPatches" @clearTheItem="clearTheItem()"></ThePatches>
+  <ThePatches v-if="syncPatches" @clear-the-item="clearTheItem()"></ThePatches>
   <TheItem v-if="selectedItem"> </TheItem>
 
   <q-bar Class="bg-grey-1 full-width row ">
@@ -107,8 +107,8 @@ export default {
           action: (e, column) => {
             this.setCheckedFieldNames(
               this.checkedFieldNames.filter(
-                (fieldName) => fieldName !== column.getField()
-              )
+                (fieldName) => fieldName !== column.getField(),
+              ),
             );
           },
         },
@@ -119,7 +119,7 @@ export default {
             let groups = this.tabulator.getGroups();
             groups.forEach((group) => {
               console.log(
-                `Group ${group.getKey()} has ${group.getRows().length} rows`
+                `Group ${group.getKey()} has ${group.getRows().length} rows`,
               );
             });
           },
@@ -133,7 +133,7 @@ export default {
               .filter((group) => group.getRows().length > 1)
               .map((group) => group.getKey());
             this.tabulator.setFilter((data) =>
-              duplicateKeys.includes(data[column.getField()])
+              duplicateKeys.includes(data[column.getField()]),
             );
           },
         },
@@ -175,7 +175,7 @@ export default {
     },
     userHasRwRightsOnAtLeastOneTrench() {
       return this.checkedTrenchesNames.some(
-        (trench) => this.projectTrenchesRights[trench] === false
+        (trench) => this.projectTrenchesRights[trench] === false,
       );
     },
   },
@@ -244,7 +244,7 @@ export default {
           this.tabulator.replaceData(newRows);
         }
       },
-      { deep: true }
+      { deep: true },
     );
 
     this.$watch(
@@ -268,7 +268,7 @@ export default {
             }
           });
         }
-      }
+      },
     );
 
     this.tabulator.on("cellEdited", (cell) => {
@@ -307,7 +307,11 @@ export default {
     });
   },
   methods: {
-    ...mapActions(useDataStore, ["setSyncPatches", "setSelectedItem", "setTableFilteredCheckedTrenchesItems"]),
+    ...mapActions(useDataStore, [
+      "setSyncPatches",
+      "setSelectedItem",
+      "setTableFilteredCheckedTrenchesItems",
+    ]),
     ...mapActions(useAppStore, ["setIsItemSelected"]),
     clearTheItem() {
       this.setSelectedItem(null);
@@ -352,17 +356,17 @@ export default {
               var text = doc.splitTextToSize(
                 this.checkedTrenchesNames.join(", "),
                 pageWidth + 350,
-                {}
+                {},
               );
               doc.setFontSize(8).text(text, 40, doc.lastAutoTable.finalY + 5);
               doc.addFileToVFS(
                 "Avrile-SansRegular-Normal.ttf",
-                avrileSansRegularNormal
+                avrileSansRegularNormal,
               );
               doc.addFont(
                 "Avrile-SansRegular-Normal.ttf",
                 "avrileSansRegularNormal",
-                "normal"
+                "normal",
               );
               doc.setFont("avrileSansRegularNormal");
               return {
@@ -372,7 +376,7 @@ export default {
                 },
               };
             },
-          }
+          },
         );
       } else {
         this.tabulator.download(
@@ -381,7 +385,7 @@ export default {
             " " +
             this.checkedTrenchesNames.join(", ") +
             "." +
-            fileType
+            fileType,
         );
       }
     },
@@ -438,7 +442,7 @@ export default {
       await Promise.all(
         trenchNames.map(async (trenchName) => {
           const localData = JSON.stringify(
-            this.checkedTrenchesData[trenchName]
+            this.checkedTrenchesData[trenchName],
           );
           // readDataInIndexedDB renvoie le clonableData (chaine JSON) ou null s'il n'existe pas
           const storedData = await readDataInIndexedDB(db, trenchName);
@@ -448,7 +452,7 @@ export default {
             console.log(compte);
             editedTrenches.push(trenchName);
           }
-        })
+        }),
       );
 
       return editedTrenches;

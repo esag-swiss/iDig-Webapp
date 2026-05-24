@@ -11,7 +11,7 @@
       :icon="isLoaded ? 'logout' : 'login'"
       @click="if (username !== '') $emit('connect');"
     >
-      <template v-slot:label>
+      <template #label>
         <div class="q-pl-md">{{ username }}</div>
         <q-tooltip v-if="isLoaded" class="bg-accent">log out</q-tooltip>
         <q-tooltip v-else-if="username === ''" class="bg-accent">{{
@@ -30,8 +30,8 @@
         <q-item
           v-for="profile in connectionProfiles"
           :key="profile.server"
-          clickable
           v-close-popup
+          clickable
           @click="onProfileClick(profile)"
         >
           <q-item-section avatar>
@@ -171,7 +171,7 @@ export default {
       connectionProfiles: JSON.parse(
         localStorage.getItem("profiles") ||
           localStorage.getItem("connections") ||
-          "[]"
+          "[]",
       ),
     };
   },
@@ -209,7 +209,7 @@ export default {
     lsConnections2Profiles() {
       // Convert old connections format to profiles
       const connections = JSON.parse(
-        localStorage.getItem("connections") || "[]"
+        localStorage.getItem("connections") || "[]",
       );
       const nameCounts = {};
       const profiles = connections.map((conn) => {
@@ -234,13 +234,13 @@ export default {
       const profiles = JSON.parse(
         localStorage.getItem("profiles") ||
           localStorage.getItem("connections") || // for backward compatibility
-          "[]"
+          "[]",
       );
       const updatedProfiles = profiles.filter(
         (item) =>
           item.server !== profile.server ||
           item.project !== profile.project ||
-          item.username !== profile.username
+          item.username !== profile.username,
       );
       localStorage.setItem("profiles", JSON.stringify(updatedProfiles));
       this.connectionProfiles = updatedProfiles;
@@ -275,7 +275,7 @@ export default {
           this.newServer,
           this.newProject,
           this.newUsername,
-          this.newPassword
+          this.newPassword,
         );
       }
     },
@@ -284,7 +284,7 @@ export default {
       const profiles = JSON.parse(
         localStorage.getItem("profiles") ||
           localStorage.getItem("connections") || // for backward compatibility
-          "[]"
+          "[]",
       );
       const dataStr =
         "data:text/json;charset=utf-8," +
@@ -309,7 +309,7 @@ export default {
             const existing = JSON.parse(
               localStorage.getItem("profiles") ||
                 localStorage.getItem("connections") || // for backward compatibility
-                "[]"
+                "[]",
             );
             const merged = [...existing];
             imported.forEach((item) => {
@@ -364,7 +364,7 @@ export default {
               const cleaned = original.replace(/,\s*(?=[}\]])/g, "");
               if (original !== cleaned) {
                 console.warn(
-                  " Removed trailing commas from JSON input to ensure valid format."
+                  " Removed trailing commas from JSON input to ensure valid format.",
                 );
               }
               preferences = JSON.parse(cleaned);

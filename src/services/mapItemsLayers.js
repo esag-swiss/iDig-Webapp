@@ -46,13 +46,13 @@ export function loadItemsLayer(
   map,
   currentItemsLayer,
   checkedTrenchesItemsSelectedTypeAndSearched,
-  options = {}
+  options = {},
 ) {
   const { fitBounds = true, fitBoundsOnEmpty = true } = options;
   const geojsonData = geoSerializedToGeojson(
-    checkedTrenchesItemsSelectedTypeAndSearched || []
+    checkedTrenchesItemsSelectedTypeAndSearched || [],
   );
-  
+
   let itemsLayer = currentItemsLayer;
   // Vérifier si un layer existant doit être retiré
   if (!itemsLayer) {

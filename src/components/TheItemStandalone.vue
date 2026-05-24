@@ -91,7 +91,7 @@
           v-for="(field, index) in group.fields.filter(
             (item) =>
               fieldsOfCurrentItem.includes(item.field) &&
-              item.field !== 'Subtype'
+              item.field !== 'Subtype',
           )"
           :key="field"
           class="d-flex align-items-start border-bottom"
@@ -142,17 +142,17 @@
             >
               <q-chip
                 v-for="item in itemsInChips(currentItem[field.field])"
-                clickable
-                @click="
-                  openInNewTab(
-                    item.fullItem.IdentifierUUID,
-                    item.fullItem.Trench
-                  )
-                "
                 :key="item"
+                clickable
                 color="primary"
                 text-color="white"
                 class="q-chip"
+                @click="
+                  openInNewTab(
+                    item.fullItem.IdentifierUUID,
+                    item.fullItem.Trench,
+                  )
+                "
               >
                 {{ item.chipText }}
               </q-chip>
@@ -234,7 +234,7 @@ export default {
           fieldsToAdd.forEach((field) => {
             if (
               !obj.fields.some(
-                (existingField) => existingField.field === field.field
+                (existingField) => existingField.field === field.field,
               )
             ) {
               obj.fields.push(field);
@@ -257,7 +257,7 @@ export default {
           fieldsToAdd.forEach((field) => {
             if (
               !obj.fields.some(
-                (existingField) => existingField.field === field.field
+                (existingField) => existingField.field === field.field,
               )
             ) {
               obj.fields.push(field);
@@ -269,7 +269,7 @@ export default {
           fieldsToAdd.forEach((field) => {
             if (
               !obj.fields.some(
-                (existingField) => existingField.field === field.field
+                (existingField) => existingField.field === field.field,
               )
             ) {
               obj.fields.push(field);
@@ -285,7 +285,7 @@ export default {
           fieldsToAdd.forEach((field) => {
             if (
               !obj.fields.some(
-                (existingField) => existingField.field === field.field
+                (existingField) => existingField.field === field.field,
               )
             ) {
               obj.fields.push(field);
@@ -314,8 +314,8 @@ export default {
       let groups = this.groupOfFieldsAccordingToTypeAndNative;
       groups = groups.filter((obj) =>
         obj.fields.some((field) =>
-          this.fieldsOfCurrentItem.includes(field.field)
-        )
+          this.fieldsOfCurrentItem.includes(field.field),
+        ),
       );
       return groups;
     },
@@ -337,7 +337,7 @@ export default {
       });
 
       fieldsNotPrinsentInGroup = this.fieldsOfCurrentItem.filter(
-        (item) => !notToDisplay.includes(item)
+        (item) => !notToDisplay.includes(item),
       );
       return fieldsNotPrinsentInGroup;
     },
@@ -359,7 +359,7 @@ export default {
           preferences = JSON.parse(
             base64Preferences
               .replace(/},\n\t+}/g, "}}")
-              .replace(/},\n\t+]/g, "}]")
+              .replace(/},\n\t+]/g, "}]"),
           );
         } catch (e) {
           let message = `error: default preference file is not a valid json<br/>${e?.message}<br/>`;
@@ -377,15 +377,15 @@ export default {
       };
 
       this.projectsPreferencesBase64 = JSON.parse(
-        localStorage.getItem("lsProjectsPreferencesBase64")
+        localStorage.getItem("lsProjectsPreferencesBase64"),
       );
 
       this.projectPreferencesBase64 = decodeURIComponent(
         escape(
           window.atob(
-            this.projectsPreferencesBase64[localStorage.getItem("project")]
-          )
-        )
+            this.projectsPreferencesBase64[localStorage.getItem("project")],
+          ),
+        ),
       );
       processPreferences(this.projectPreferencesBase64);
     } catch (error) {
@@ -397,14 +397,14 @@ export default {
 
         // Lire les données depuis IndexedDB
         this.trenchData = JSON.parse(
-          await readDataInIndexedDB(db, this.trenchSource)
+          await readDataInIndexedDB(db, this.trenchSource),
         );
 
         // Vérifier si les données ont été trouvées
         if (this.trenchData && Array.isArray(this.trenchData)) {
           // Trouver l'élément correspondant
           const matchedItem = this.trenchData.find(
-            (x) => x.IdentifierUUID === this.itemId
+            (x) => x.IdentifierUUID === this.itemId,
           );
 
           if (matchedItem) {
@@ -445,7 +445,7 @@ export default {
         relatedItems = [this.currentItem.IdentifierUUID];
         // Récupérer les URL d'images pour chaque UUID trouvé
         const imagePromises = relatedItems.map((uuid) =>
-          this.findObjectByUuid(uuid)
+          this.findObjectByUuid(uuid),
         );
         // Attendre la résolution de toutes les promesses d'URL d'images
         const resolvedImages = await Promise.all(imagePromises);
@@ -462,7 +462,7 @@ export default {
 
         // Récupérer les URL d'images pour chaque UUID trouvé
         const imagePromises = relatedItems.map((uuid) =>
-          this.findObjectByUuid(uuid)
+          this.findObjectByUuid(uuid),
         );
         // Attendre la résolution de toutes les promesses d'URL d'images
         const resolvedImages = await Promise.all(imagePromises);
@@ -480,7 +480,7 @@ export default {
 
       // Filtrer les éléments correspondant à l'UUID
       const filteredItems = this.trenchData.filter(
-        (x) => x.IdentifierUUID === IdentifierUUID && x.Type === "Image"
+        (x) => x.IdentifierUUID === IdentifierUUID && x.Type === "Image",
       );
 
       if (filteredItems.length > 0) {
@@ -508,7 +508,7 @@ export default {
           // Si l'image n'est pas dans IndexedDB, la récupérer via l'API
           const response = await apiFetchImageSRC(
             RelationAttachments,
-            this.currentItem.Trench
+            this.currentItem.Trench,
           );
 
           if (response && response.data) {
@@ -545,7 +545,7 @@ export default {
 
     chipText(IdentifierUUID) {
       const filteredItems = this.trenchData.filter((x) =>
-        x.IdentifierUUID.includes(IdentifierUUID)
+        x.IdentifierUUID.includes(IdentifierUUID),
       );
 
       if (filteredItems.length > 0) {

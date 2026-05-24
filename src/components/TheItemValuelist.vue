@@ -13,11 +13,11 @@
     input-debounce="0"
     :options="options"
     new-value-mode="add"
+    class="select"
     @clear="currentItem[field.field] = previousValue"
     @filter="filterFn"
-    class="select"
   >
-    <template v-slot:no-option>
+    <template #no-option>
       <q-item>
         <q-item-section class="text-grey"> No results </q-item-section>
       </q-item>
@@ -77,7 +77,7 @@ export default {
       update(() => {
         const needle = val.toLowerCase();
         this.options = this.listValueInField(this.field.field).filter(
-          (v) => v && v.toLowerCase().indexOf(needle) > -1
+          (v) => v && v.toLowerCase().indexOf(needle) > -1,
         );
       });
     },
@@ -93,7 +93,7 @@ export default {
     },
     listValueInField(field) {
       let valeursField = this.checkedTrenchesItemsSelectedType.map(
-        (objet) => objet[field]
+        (objet) => objet[field],
       );
       let valuelistItems =
         this.fieldDefinition(this.field.field, this.group).valuelist || [];

@@ -63,8 +63,8 @@ function processPolygon(coverageSerialized2ndLevel) {
   return [
     makePolyClockwise(
       coverageSerialized2ndLevel.map((v) =>
-        CoverageSerializedXYZToGeojsonPosition(v)
-      )
+        CoverageSerializedXYZToGeojsonPosition(v),
+      ),
     ),
   ];
 }
@@ -112,16 +112,18 @@ export function geoSerializedToGeojson(json) {
           geoType = "MultiPolygon";
           geojsonCoordinates = polyStrings.map((v) => [
             makePolyClockwise(
-              v.split(LEVEL_2_SEPARATOR).map((coordinateRow) =>
-                CoverageSerializedXYZToGeojsonPosition(coordinateRow)
-              )
+              v
+                .split(LEVEL_2_SEPARATOR)
+                .map((coordinateRow) =>
+                  CoverageSerializedXYZToGeojsonPosition(coordinateRow),
+                ),
             ),
           ]);
         } else {
           // pour gérer le cas super rare ou /n/n/n mais pas de /n/n !
           geoType = "Point";
           geojsonCoordinates = CoverageSerializedXYZToGeojsonPosition(
-            polyStrings[0]
+            polyStrings[0],
           );
         }
       } else {

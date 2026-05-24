@@ -23,7 +23,7 @@ let Minimaliste = L.tileLayer(
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     subdomains: "abcd",
     maxZoom: 25,
-  }
+  },
 );
 
 let Sombre = L.tileLayer(
@@ -33,7 +33,7 @@ let Sombre = L.tileLayer(
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     subdomains: "abcd",
     maxZoom: 25,
-  }
+  },
 );
 
 let Satellite = L.tileLayer(
@@ -42,7 +42,7 @@ let Satellite = L.tileLayer(
     maxZoom: 25,
     maxNativeZoom: 19,
     subdomains: ["mt0", "mt1", "mt2", "mt3"],
-  }
+  },
 );
 
 export const baseLayersTree = {
@@ -59,14 +59,18 @@ export const baseLayersTree = {
 
 export async function createMapsOverlaysTree(
   checkedTrenchesItemsPlans,
-  projectPreferencesCRS
+  projectPreferencesCRS,
 ) {
   const groupedOverlays = {};
   const seenTitles = new Set();
 
   for (const obj of checkedTrenchesItemsPlans) {
-    if (!obj?.Title) continue;
-    if (seenTitles.has(obj.Title)) continue;
+    if (!obj?.Title) {
+      continue;
+    }
+    if (seenTitles.has(obj.Title)) {
+      continue;
+    }
     seenTitles.add(obj.Title);
 
     // il y a deux façon dont les plans sont attachés : soit avec un RelationAttachments contruit avec le champ FormatImage (aka file name) qui contient les coordonnées entre parenthèses (ΒΓ West (408,300,421,315).png) et le checksum (un timestamp) soit avec un RelationAttachments construit de la sorte : n=AMA15-Stoa nord sond.png\nd=2015-07-27T11:00:18Z\n\nn=AMA15-Stoa nord sond.wld\nd=2017-02-14T08:16:50Z c'est à dire avec un champ FormatImage qui contient le nom du fichier et un champ FormatWld qui contient le nom du fichier wld et son checksum. On vérifie la présence de "\n\n" ou de ")." pour différencier les deux formats.
@@ -79,7 +83,7 @@ export async function createMapsOverlaysTree(
         obj.RelationAttachments,
         obj.Trench,
         projectPreferencesCRS,
-        obj.Title
+        obj.Title,
       );
 
       if (!overlay) {
@@ -106,7 +110,7 @@ export async function createMapsOverlaysTree(
 
   // Trier les groupedOverlays par ordre alphabétique des labels
   const sortedGroupedOverlays = Object.values(groupedOverlays).sort((a, b) =>
-    a.label.localeCompare(b.label)
+    a.label.localeCompare(b.label),
   );
 
   const result = {
@@ -122,7 +126,7 @@ async function createOverlay(
   RelationAttachments,
   Trench,
   projectPreferencesCRS,
-  imageTitle
+  imageTitle,
 ) {
   let imageName;
   let imageUrl;
@@ -143,10 +147,12 @@ async function createOverlay(
     imageUrl = URL.createObjectURL(result.imageBlob);
     planlatLngBounds = result.planlatLngBounds;
   } else {
-
     const fetchImage = async () => {
-      const response = await apiFetchImage(parsedRelationAttachments.imageEntry.name,
-          parsedRelationAttachments.imageEntry.checksum, Trench);
+      const response = await apiFetchImage(
+        parsedRelationAttachments.imageEntry.name,
+        parsedRelationAttachments.imageEntry.checksum,
+        Trench,
+      );
       if (!response?.data) {
         throw new Error("Image non récupérée depuis l'API");
       }
@@ -160,9 +166,8 @@ async function createOverlay(
         /\.tiff?$/i.test(parsedRelationAttachments.imageEntry?.name || "");
 
       if (isTiff) {
-        const { pngBlob, width, height } = await convertGeoTiffBlobToPngBlob(
-          rawBlob
-        );
+        const { pngBlob, width, height } =
+          await convertGeoTiffBlobToPngBlob(rawBlob);
         imageBlob = pngBlob; // on stocke le PNG décodé pour Leaflet/IndexedDB
         imageWidth = width;
         imageHeight = height;
@@ -184,8 +189,8 @@ async function createOverlay(
               new Error(
                 `Format image non supporté par le navigateur pour imageOverlay: ${
                   imageBlob.type || "unknown"
-                }`
-              )
+                }`,
+              ),
             );
         });
 
@@ -200,7 +205,7 @@ async function createOverlay(
         const textContent = await apiFetchWld(
           parsedRelationAttachments.wldEntry.name,
           parsedRelationAttachments.wldEntry.checksum,
-          Trench
+          Trench,
         );
         // convertit le contenu du WLD en coordonnées géographiques
         const wldCoefficients = textContent
@@ -233,7 +238,7 @@ async function createOverlay(
     } catch (error) {
       console.log(
         `[Overlay] skipped: échec fetch/decode (Trench: ${Trench}, Title: ${imageTitle})`,
-        error
+        error,
       );
       return null;
     }
@@ -245,12 +250,12 @@ async function createOverlay(
   // Conversion des coordonnées pour Leaflet
   const leafletLatLngBounds = buildLeafletBounds(
     planlatLngBounds,
-    projectPreferencesCRS
+    projectPreferencesCRS,
   );
 
   if (!leafletLatLngBounds || !leafletLatLngBounds.isValid()) {
     console.log(
-      `[Overlay] skipped: conversion CRS invalide (Trench: ${Trench}, Title: ${imageTitle})`
+      `[Overlay] skipped: conversion CRS invalide (Trench: ${Trench}, Title: ${imageTitle})`,
     );
     return null;
   }
@@ -293,7 +298,7 @@ function parseRelationAttachments(RelationAttachments) {
       entry.name.toLowerCase().endsWith(".tif") ||
       entry.name.toLowerCase().endsWith(".tiff") ||
       entry.name.toLowerCase().endsWith(".jpg") ||
-      entry.name.toLowerCase().endsWith(".jpeg")
+      entry.name.toLowerCase().endsWith(".jpeg"),
   );
 
   const boundsMatch = RelationAttachments.match(/\(([^)]+)\)/)?.[1] ?? null;
@@ -309,7 +314,7 @@ function parseRelationAttachments(RelationAttachments) {
   const wldEntry = entries.find(
     (entry) =>
       entry.name.toLowerCase().endsWith(".wld") ||
-      entry.name.toLowerCase().endsWith(".tfw")
+      entry.name.toLowerCase().endsWith(".tfw"),
   );
   const hasWld = Boolean(wldEntry);
 
@@ -324,11 +329,11 @@ function parseRelationAttachments(RelationAttachments) {
 function buildLeafletBounds(planlatLngBounds, projectPreferencesCRS) {
   const swConverted = convertToEPSG4326(
     planlatLngBounds.SW,
-    projectPreferencesCRS
+    projectPreferencesCRS,
   )?.coords;
   const neConverted = convertToEPSG4326(
     planlatLngBounds.NE,
-    projectPreferencesCRS
+    projectPreferencesCRS,
   )?.coords;
 
   if (!Array.isArray(swConverted) || !Array.isArray(neConverted)) {
@@ -395,8 +400,8 @@ async function convertGeoTiffBlobToPngBlob(tiffBlob) {
   const pngBlob = await new Promise((resolve, reject) =>
     canvas.toBlob(
       (b) => (b ? resolve(b) : reject(new Error("toBlob failed"))),
-      "image/png"
-    )
+      "image/png",
+    ),
   );
 
   return { pngBlob, width, height };

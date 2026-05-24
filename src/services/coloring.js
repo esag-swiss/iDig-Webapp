@@ -12,7 +12,7 @@ export const SurveyStatus = {
 
 function rgba(r, g, b, a) {
   return `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(
-    b * 255
+    b * 255,
   )}, ${a})`;
 }
 
@@ -85,11 +85,11 @@ export function colorByStatus(survey) {
 export function colorByChronology(survey) {
   let start = parseInt(
     survey.coverageEarliest || survey.coverageLatest || "",
-    10
+    10,
   );
   let end = parseInt(
     survey.coverageLatest || survey.coverageEarliest || "",
-    10
+    10,
   );
   if (isNaN(start) && isNaN(end)) {
     return rgba(0.9, 0.9, 0.9, 0.2);

@@ -77,7 +77,7 @@ export default {
           ...items.map((row) =>
             header
               .map((fieldName) => JSON.stringify(row[fieldName], replacer))
-              .join("\t")
+              .join("\t"),
           ),
         ].join("\r\n");
       } else if (fileType === "json") {
@@ -86,7 +86,7 @@ export default {
       } else if (fileType === "geojson") {
         this.fileName = "Trenches";
         this.fileData = JSON.stringify(
-          geoSerializedToGeojson(this.checkedTrenchesItems)
+          geoSerializedToGeojson(this.checkedTrenchesItems),
         );
       }
 
@@ -111,7 +111,7 @@ export default {
         false,
         false,
         0,
-        null
+        null,
       );
       a.dispatchEvent(e);
     },

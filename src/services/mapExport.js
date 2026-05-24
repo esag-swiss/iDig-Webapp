@@ -26,7 +26,7 @@ export function exportMapAsPNG() {
 export async function exportMapAsCompositeSVG() {
   const mapElement = document.getElementById("mapContainer");
   const svgLayer = document.querySelector(
-    "#mapContainer .leaflet-overlay-pane svg"
+    "#mapContainer .leaflet-overlay-pane svg",
   );
   if (!mapElement || !svgLayer) {
     alert("Impossible de trouver le fond raster ou la couche SVG.");

@@ -1,12 +1,12 @@
 <template>
   <q-chip
     v-for="item in itemsInChips(currentItem[field.field])"
-    clickable
-    @click="setSelectedItem(item.fullItem)"
     :key="item"
+    clickable
     color="primary"
     text-color="white"
     class="q-chip"
+    @click="setSelectedItem(item.fullItem)"
   >
     {{ item.chipText }}
   </q-chip>

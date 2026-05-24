@@ -68,7 +68,7 @@ export const getImageFromDB = async (db, imageTitle) => {
     request.onerror = (event) => {
       console.error(
         "Erreur lors de la récupération de l'image depuis IndexedDB :",
-        event.target.error
+        event.target.error,
       );
       reject(event.target.error);
     };

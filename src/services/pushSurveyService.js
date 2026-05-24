@@ -30,7 +30,7 @@ export async function pushSurvey({
     trenchName,
     trenchVersion,
     surveys,
-    projectPreferencesBase64
+    projectPreferencesBase64,
   );
 
   if (resp.data.status === "pushed" || resp.data.status === "ok") {
@@ -39,7 +39,7 @@ export async function pushSurvey({
 
     localStorage.setItem(
       "lsLocalTrenchesVersion",
-      JSON.stringify(dataStore.checkedTrenchesVersion)
+      JSON.stringify(dataStore.checkedTrenchesVersion),
     );
 
     UpdateSyncTrenchData(trenchName, surveys);
