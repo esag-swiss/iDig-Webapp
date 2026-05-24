@@ -602,9 +602,8 @@ export default {
         return null; // Retourne null si aucune donnée n'est disponible
       }
 
-      // Filtrer les éléments correspondant à l'UUID
       const filteredItems = trenchData.filter(
-        (x) => x.IdentifierUUID === IdentifierUUID && x.Type === "Image",
+        (x) => x.IdentifierUUID === IdentifierUUID && x.RelationAttachments,
       );
 
       if (filteredItems.length > 0) {
