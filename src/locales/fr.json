@@ -1,6 +1,8 @@
 {
   "app": {
     "fields": "Champs",
+    "items": "{count} item | {count} items",
+    "toggle_group": "Plier/Déplier {name}",
     "trenches": "Secteurs",
     "trenche": "Secteur",
     "loaded": "chargé",

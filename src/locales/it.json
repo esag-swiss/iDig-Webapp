@@ -1,6 +1,8 @@
 {
   "app": {
     "fields": "Campi",
+    "items": "{count} elemento | {count} elementi",
+    "toggle_group": "Mostra/Nascondi {name}",
     "trenches": "Settori",
     "trenche": "Settore",
     "loaded": "caricato",

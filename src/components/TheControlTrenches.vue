@@ -46,72 +46,46 @@
       </q-card>
     </q-dialog>
     <!-- liste trenches -->
-    <div v-if="projectTrenchesNames.length < 15">
-      <ul
-        v-for="trenchName in projectTrenchesNames"
-        :key="trenchName"
-        class="list-group"
-      >
-        <li class="list-group-item accordion">
-          <input
-            id="trench-checkbox"
-            v-model="checkedTrenchesNames"
-            type="checkbox"
-            :value="trenchName"
-          />
-          <label class="px-1 m-0" for="trench-checkbox">{{ trenchName }}</label>
-        </li>
-      </ul>
+    <div v-if="trenchNames.length < 15" class="py-1">
+      <div v-for="trenchName in trenchNames" :key="trenchName">
+        <BaseCheckbox
+          :model-value="checkedTrenchesNames.includes(trenchName)"
+          :label="trenchName"
+          @update:model-value="
+            (checked) => toggleTrench(trenchName, checked)
+          "
+        />
+      </div>
     </div>
     <div v-else>
-      <ul
-        v-for="(trenchGroupName, index) in accordionLabels"
-        :key="trenchGroupName"
-        class="list-group"
+      <BaseAccordion
+        v-for="(trenchGroup, index) in groupedTrenches"
+        :key="trenchGroup.name"
+        :initial-open="index === 0"
+        :toggle-aria-label="`Toggle ${trenchGroup.name}`"
       >
-        <li
-          class="list-group-item accordion text-bold"
-          @click="isDisplayedArray[index] = !isDisplayedArray[index]"
-        >
-          <label class="px-1 m-0 text-bold" for="checkbox">
-            <q-icon
-              v-if="isDisplayedArray[index]"
-              name="keyboard_arrow_down"
-            /><q-icon
-              v-if="!isDisplayedArray[index]"
-              name="keyboard_arrow_right"
-            />{{ trenchGroupName }}</label
-          >
-          <input
-            v-model="isCheckedArray[index]"
-            type="checkbox"
-            @change="checkGroup(trenchGroupName, isCheckedArray[index])"
+        <template #title>
+          <BaseCheckbox
+            class="text-bold"
+            :model-value="isGroupAllChecked(trenchGroup.trenches)"
+            :label="trenchGroup.name"
+            @update:model-value="
+              (checked) => checkGroup(trenchGroup.trenches, checked)
+            "
           />
-        </li>
-        <!-- liste trenches -->
-        <div v-if="isDisplayedArray[index]">
-          <ul
-            v-for="trenchName in projectTrenchesNames"
-            :key="trenchName"
-            class="list-group"
-          >
-            <li
-              v-if="trenchName.includes(trenchGroupName)"
-              class="list-group-item accordion"
-            >
-              <input
-                id="trench-checkbox"
-                v-model="checkedTrenchesNames"
-                type="checkbox"
-                :value="trenchName"
-              />
-              <label class="px-1 m-0" for="trench-checkbox">{{
-                trenchName
-              }}</label>
-            </li>
-          </ul>
-        </div>
-      </ul>
+        </template>
+        <template #content>
+          <div v-for="trenchName in trenchGroup.trenches" :key="trenchName">
+            <BaseCheckbox
+              :model-value="checkedTrenchesNames.includes(trenchName)"
+              :label="trenchName"
+              @update:model-value="
+                (checked) => toggleTrench(trenchName, checked)
+              "
+            />
+          </div>
+        </template>
+      </BaseAccordion>
     </div>
   </div>
 </template>
@@ -119,12 +93,13 @@
 <script>
 import { mapActions, mapState, mapWritableState } from "pinia";
 import { useDataStore } from "@/stores/data";
+import BaseAccordion from "@/components/base/BaseAccordion.vue";
+import BaseCheckbox from "@/components/base/BaseCheckbox.vue";
 
 export default {
+  components: { BaseAccordion, BaseCheckbox },
   data() {
     return {
-      isDisplayedArray: [],
-      isCheckedArray: [],
       isAllChecked: false,
       toAllChecked: false,
       confirmAllChecked: false,
@@ -133,11 +108,22 @@ export default {
   computed: {
     ...mapState(useDataStore, ["projectTrenchesNames", "checkedTrenchesItems"]),
     ...mapWritableState(useDataStore, ["checkedTrenchesNames"]), // mapWritableState for v-model only
+    trenchNames() {
+      return this.projectTrenchesNames ?? [];
+    },
     accordionLabels() {
       // create groups by 5 first caracters and send reverse order
-      return [...new Set(this.projectTrenchesNames?.map((x) => x.substr(0, 5)))]
+      return [...new Set(this.trenchNames.map((x) => x.substr(0, 5)))]
         .sort()
         .reverse();
+    },
+    groupedTrenches() {
+      return this.accordionLabels.map((name) => ({
+        name,
+        trenches: this.trenchNames.filter((trenchName) =>
+          trenchName.includes(name),
+        ),
+      }));
     },
   },
   watch: {
@@ -151,7 +137,7 @@ export default {
       this.removeCheckedTrenchesData(removedTrenches);
       this.addCheckedTrenchesData(addedTrenches);
 
-      if (newTrenchList.length === this.projectTrenchesNames.length) {
+      if (newTrenchList.length === this.trenchNames.length) {
         this.isAllChecked = true;
       } else if (newTrenchList.length === 0) {
         this.isAllChecked = false;
@@ -169,7 +155,7 @@ export default {
     ]),
     handleCheckboxUpdate(value) {
       if (value === true) {
-        if (this.projectTrenchesNames.length > 15) {
+        if (this.trenchNames.length > 15) {
           this.confirmAllChecked = true;
         } else {
           this.checkAll();
@@ -179,26 +165,40 @@ export default {
       }
     },
     checkAll() {
-      this.setCheckedTrenchesNames([...this.projectTrenchesNames]);
-      this.isCheckedArray = this.accordionLabels.map(() => true);
+      this.setCheckedTrenchesNames([...this.trenchNames]);
     },
     uncheckAll() {
       this.setCheckedTrenchesNames([]);
-      this.isCheckedArray = this.accordionLabels.map(() => false);
     },
-    checkGroup(checkGroup, checked) {
+    isGroupAllChecked(groupTrenches) {
+      return (
+        groupTrenches.length > 0 &&
+        groupTrenches.every((trenchName) =>
+          this.checkedTrenchesNames.includes(trenchName),
+        )
+      );
+    },
+    checkGroup(groupTrenches, checked) {
+      const uniqueCheckedTrenchesNames = new Set(this.checkedTrenchesNames);
       if (checked) {
-        let newCheckedTrenchesNames = this.checkedTrenchesNames.concat(
-          this.projectTrenchesNames.filter((item) => item.includes(checkGroup)),
+        groupTrenches.forEach((trenchName) =>
+          uniqueCheckedTrenchesNames.add(trenchName),
         );
-        this.setCheckedTrenchesNames(newCheckedTrenchesNames);
       } else {
-        // Removes items from checkGroup and checkedTrenchesNames
-        let filteredCheckedTrenchesNames = this.checkedTrenchesNames.filter(
-          (item) => !item.includes(checkGroup),
+        groupTrenches.forEach((trenchName) =>
+          uniqueCheckedTrenchesNames.delete(trenchName),
         );
-        this.setCheckedTrenchesNames(filteredCheckedTrenchesNames);
       }
+      this.setCheckedTrenchesNames([...uniqueCheckedTrenchesNames]);
+    },
+    toggleTrench(trenchName, checked) {
+      const uniqueCheckedTrenchesNames = new Set(this.checkedTrenchesNames);
+      if (checked) {
+        uniqueCheckedTrenchesNames.add(trenchName);
+      } else {
+        uniqueCheckedTrenchesNames.delete(trenchName);
+      }
+      this.setCheckedTrenchesNames([...uniqueCheckedTrenchesNames]);
     },
   },
 };

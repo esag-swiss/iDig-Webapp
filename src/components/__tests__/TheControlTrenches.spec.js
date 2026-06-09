@@ -12,6 +12,18 @@ describe("TheControlTrenches", () => {
     const wrapper = mount(TheControlTrenches, {
       global: {
         plugins: [pinia], // Add Pinia as a plugin globally
+        mocks: {
+          $t: (key) => (key === "app.trenches" ? "Secteurs" : key),
+        },
+        stubs: {
+          "q-checkbox": true,
+          "q-tooltip": true,
+          "q-dialog": true,
+          "q-card": true,
+          "q-card-section": true,
+          "q-card-actions": true,
+          "q-btn": true,
+        },
       },
       props: { projectTrenchesNames: [] },
     });

@@ -7,7 +7,7 @@
   <ThePatches v-if="syncPatches" @clear-the-item="clearTheItem()"></ThePatches>
   <TheItem v-if="selectedItem"> </TheItem>
 
-  <q-bar Class="bg-grey-1 full-width row ">
+  <q-bar class="bg-grey-1 full-width row">
     <div class="q-align-center">
       <q-btn
         :size="'sm'"
@@ -23,6 +23,11 @@
       >
     </div>
     <q-space />
+    <div class="text-grey-8 q-px-sm small">
+      {{
+        $t("app.items", { count: displayedItemsCount }, displayedItemsCount)
+      }}
+    </div>
     <div>
       <q-btn
         v-if="tableEditMode && editedCells.length > 0"
@@ -65,7 +70,6 @@ import { applyPlugin } from "jspdf-autotable";
 applyPlugin(jsPDF);
 import { openDB, readDataInIndexedDB } from "@/services/indexedDbManager";
 import { pushSurvey } from "@/services/pushSurveyService";
-import { DateTime } from "luxon";
 
 export default {
   name: "TheTable",
@@ -97,8 +101,15 @@ export default {
       "projectPreferencesTypesTranslationPlurals",
       "projectPreferencesTypesTranslation",
       "checkedTrenchesItemsSelectedTypeAndSearched",
+      "tableFilteredCheckedTrenchesItems",
       "projectPreferencesBase64",
     ]),
+
+    displayedItemsCount() {
+      return this.tableFilteredCheckedTrenchesItems
+        ? this.tableFilteredCheckedTrenchesItems.length
+        : this.checkedTrenchesItemsSelectedTypeAndSearched.length;
+    },
 
     columnsTabulator() {
       var headerMenu = [
@@ -139,13 +150,13 @@ export default {
         },
         {
           label: "Ungroup or clear",
-          action: (e, column) => {
+          action: () => {
             this.tabulator.setGroupBy(false);
             this.tabulator.clearFilter();
           },
         },
       ];
-      function printFormatter(cell, formatterParams, onRendered) {
+      function printFormatter(cell) {
         if (
           cell.getField() === "DateEarliest" ||
           cell.getField() === "DateLatest"
@@ -271,7 +282,7 @@ export default {
       },
     );
 
-    this.tabulator.on("cellEdited", (cell) => {
+    this.tabulator.on("cellEdited", () => {
       this.editedCells = this.tabulator.getEditedCells();
     });
 
@@ -294,7 +305,7 @@ export default {
       if (rows && rows.length) {
         try {
           activeData = rows.map((r) => r.getData());
-        } catch (e) {
+        } catch {
           activeData = null;
         }
       }

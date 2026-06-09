@@ -1,6 +1,8 @@
 {
   "app": {
     "fields": "Πεδία",
+    "items": "{count} στοιχείο | {count} στοιχεία",
+    "toggle_group": "Εναλλαγή {name}",
     "trenches": "Τομείς",
     "trenche": "Τομέας",
     "loaded": "Φορτώθηκε",
