@@ -17,6 +17,7 @@ import {
   readDataInIndexedDB,
 } from "@/services/indexedDbManager";
 import { fieldsSchema } from "@/assets/nativeFields";
+import { resolveProjectCrs } from "@/services/coordinateUtils";
 
 export const useDataStore = defineStore("data", {
   state: () => ({
@@ -332,11 +333,12 @@ export const useDataStore = defineStore("data", {
           });
           throw e;
         }
-        if (cleanPreferences.crs) {
-          this.setProjectPreferencesCrs(cleanPreferences.crs);
-        } else if (cleanPreferences.project === "Agora") {
-          // Agora project doesn't have property CRS
-          this.setProjectPreferencesCrs(cleanPreferences.project);
+        const resolvedCrs = resolveProjectCrs(
+          cleanPreferences.crs,
+          cleanPreferences.project
+        );
+        if (resolvedCrs) {
+          this.setProjectPreferencesCrs(resolvedCrs);
         }
         this.setProjectPreferencesTypes(cleanPreferences.types);
         this.setProjectPreferencesFields(cleanPreferences.fields);
