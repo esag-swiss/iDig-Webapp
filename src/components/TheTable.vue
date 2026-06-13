@@ -63,6 +63,7 @@ import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
 import TheItem from "@/components/TheItem.vue";
 import ThePatches from "@/components/ThePatches.vue";
+import { fieldsSchema } from "@/assets/nativeFields";
 
 import { avrileSansRegularNormal } from "@/assets/AvrileSans-Regular-normal.js";
 import jsPDF from "jspdf";
@@ -77,6 +78,7 @@ export default {
 
   data() {
     return {
+      fieldsSchema: fieldsSchema,
       tabulator: null, //variable to hold table
       tableEditMode: false,
       editedCells: [],
@@ -402,7 +404,9 @@ export default {
     },
 
     getColumnFormatter(fieldName) {
-      if (fieldName === "Type" || fieldName === "Subtype") {
+      if (this.fieldsSchema?.[fieldName]?.type === "link") {
+        return (cell) => this.linkChipsFormatter(cell);
+      } else if (fieldName === "Type" || fieldName === "Subtype") {
         return (cell) => {
           const value = cell.getValue();
           return this.projectPreferencesTypesTranslation[value] ?? value;
@@ -427,6 +431,68 @@ export default {
       }
       // Vous pouvez ajouter d'autres conditions ou retourner undefined pour le cas par défaut
       return undefined;
+    },
+    linkChipsFormatter(cell) {
+      const currentItem = cell.getRow().getData();
+      const container = document.createElement("div");
+      container.className = "table-link-chips";
+
+      this.itemsInChips(cell.getValue(), currentItem).forEach((item) => {
+        const chip = document.createElement("span");
+        chip.className =
+          "q-chip row inline no-wrap items-center q-chip--colored bg-primary text-white q-chip--clickable cursor-pointer table-link-chip";
+        chip.textContent = item.chipText;
+        chip.title = item.chipText;
+
+        chip.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          if (item.fullItem) {
+            this.setSelectedItem(item.fullItem);
+            this.setIsItemSelected(true);
+          }
+        });
+
+        container.appendChild(chip);
+      });
+
+      return container;
+    },
+    itemsInChips(IdentifierUUIDs, currentItem) {
+      if (!IdentifierUUIDs) {
+        return [];
+      }
+
+      return String(IdentifierUUIDs)
+        .split("\n")
+        .filter(Boolean)
+        .map((IdentifierUUID) => this.chipText(IdentifierUUID, currentItem));
+    },
+    chipText(IdentifierUUID, currentItem) {
+      const filteredItems =
+        this.checkedTrenchesData[currentItem.Trench]?.filter((x) =>
+          x.IdentifierUUID.includes(IdentifierUUID),
+        ) ?? [];
+
+      if (filteredItems.length > 0) {
+        const item = filteredItems[0];
+        return {
+          chipText:
+            (this.projectPreferencesTypesTranslation[item.Subtype] ??
+              this.projectPreferencesTypesTranslation[item.Type]) +
+            " " +
+            item.Identifier +
+            " : " +
+            item.Title,
+          fullItem: item,
+        };
+      }
+
+      return {
+        chipText: "Unknown Item",
+        fullItem: null,
+      };
     },
     getColumnFormatterParams(fieldName) {
       if (
@@ -497,5 +563,21 @@ export default {
 }
 .TheItemframe:hover {
   background: rgba(0, 0, 0, 0.5);
+}
+
+:deep(.table-link-chips) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+:deep(.table-link-chip) {
+  max-width: 240px;
+  min-height: 24px;
+  margin: 1px;
+  padding: 0 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
