@@ -84,6 +84,7 @@ import { apiPushTrench } from "@/services/ApiClient";
 
 export default {
   name: "ThePatches",
+  emits: ["clearTheItem"],
   data() {
     return {
       UUIDsWithSelectedOptions: {},

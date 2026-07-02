@@ -19,6 +19,30 @@
     "lastLogin": "Last login",
     "createProfile": "Create a profile to connect to the server",
     "exportProfiles": "Export profiles",
-    "importProfiles": "Import profiles"
+    "importProfiles": "Import profiles",
+    "photos": "Photos",
+    "add_photos": "Add photos",
+    "upload_sector_changes": "Upload the current sector's changes to the iDig server",
+    "disable_edit_mode": "Disable edit mode",
+    "edit_not_allowed": "You are not allowed to edit this sector",
+    "enable_edit_mode": "Enable edit mode",
+    "search_placeholder": "Search...",
+    "photo_add_failed": "Failed to add the photo",
+    "attachment_not_found_locally": "The photo \"{name}\" cannot be found locally and cannot be uploaded.",
+    "attachments_upload_failed": "Some photos could not be uploaded to the server.",
+    "pagination": {
+      "first": "First",
+      "first_title": "First Page",
+      "last": "Last",
+      "last_title": "Last Page",
+      "prev": "Prev",
+      "prev_title": "Previous Page",
+      "next": "Next",
+      "next_title": "Next Page",
+      "showing": "Showing",
+      "of": "of",
+      "rows": "rows",
+      "pages": "pages"
+    }
   }
 }

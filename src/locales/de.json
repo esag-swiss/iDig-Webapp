@@ -14,6 +14,30 @@
     "typeTip": "Daten filtern und nur Felder anzeigen, die für den ausgewählten Typ oder Untertyp verfügbar sind",
     "fieldTip": "Verfügbare Felder für den ausgewählten Typ oder Untertyp",
     "upload local pref": "Lokale Einstellungen hochladen",
-    "upload pref from trench": " Einstellungen aus dem Sektor hochladen"
+    "upload pref from trench": " Einstellungen aus dem Sektor hochladen",
+    "photos": "Fotos",
+    "add_photos": "Fotos hinzufügen",
+    "upload_sector_changes": "Änderungen des aktuellen Sektors auf den iDig-Server hochladen",
+    "disable_edit_mode": "Bearbeitungsmodus deaktivieren",
+    "edit_not_allowed": "Sie dürfen diesen Sektor nicht bearbeiten",
+    "enable_edit_mode": "Bearbeitungsmodus aktivieren",
+    "search_placeholder": "Suchen...",
+    "photo_add_failed": "Foto konnte nicht hinzugefügt werden",
+    "attachment_not_found_locally": "Das Foto „{name}“ wurde lokal nicht gefunden und kann nicht hochgeladen werden.",
+    "attachments_upload_failed": "Einige Fotos konnten nicht an den Server gesendet werden.",
+    "pagination": {
+      "first": "Erste",
+      "first_title": "Erste Seite",
+      "last": "Letzte",
+      "last_title": "Letzte Seite",
+      "prev": "Zurück",
+      "prev_title": "Vorherige Seite",
+      "next": "Weiter",
+      "next_title": "Nächste Seite",
+      "showing": "Zeige",
+      "of": "von",
+      "rows": "Zeilen",
+      "pages": "Seiten"
+    }
   }
 }

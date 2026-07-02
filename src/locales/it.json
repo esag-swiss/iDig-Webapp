@@ -14,6 +14,30 @@
     "typeTip": "filtrare i dati e mostrare solo i campi disponibili per il tipo o sottotipo selezionato",
     "fieldTip": "campi disponibili per il tipo o sottotipo selezionato",
     "upload local pref": "Carica file di preferenze locali",
-    "upload pref from trench": "Carica preferenze da un settore scelto"
+    "upload pref from trench": "Carica preferenze da un settore scelto",
+    "photos": "Foto",
+    "add_photos": "Aggiungi foto",
+    "upload_sector_changes": "Carica le modifiche del settore corrente sul server iDig",
+    "disable_edit_mode": "Disattiva la modalità di modifica",
+    "edit_not_allowed": "Non sei autorizzato a modificare questo settore",
+    "enable_edit_mode": "Attiva la modalità di modifica",
+    "search_placeholder": "Cerca...",
+    "photo_add_failed": "Impossibile aggiungere la foto",
+    "attachment_not_found_locally": "La foto «{name}» non è disponibile localmente e non può essere caricata.",
+    "attachments_upload_failed": "Alcune foto non è stato possibile inviarle al server.",
+    "pagination": {
+      "first": "Primo",
+      "first_title": "Prima pagina",
+      "last": "Ultimo",
+      "last_title": "Ultima pagina",
+      "prev": "Precedente",
+      "prev_title": "Pagina precedente",
+      "next": "Successivo",
+      "next_title": "Pagina successiva",
+      "showing": "Visualizzati",
+      "of": "di",
+      "rows": "righe",
+      "pages": "pagine"
+    }
   }
 }

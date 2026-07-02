@@ -21,9 +21,9 @@
           :size="'sm'"
           @click="pushSurveyHandler()"
         />
-        <q-tooltip class="bg-accent"
-          >upload curent trench modification to iDig server</q-tooltip
-        >
+        <q-tooltip class="bg-accent">{{
+          $t("app.upload_sector_changes")
+        }}</q-tooltip>
       </div>
       <div class="mx-1">
         <q-toggle
@@ -38,10 +38,10 @@
         <q-tooltip class="bg-accent"
           >{{
             editMode
-              ? "disable edit mode"
+              ? $t("app.disable_edit_mode")
               : projectTrenchesRights[selectedItem.Trench]
-                ? "you are not allowed to edit this trench"
-                : "enable edit mode"
+                ? $t("app.edit_not_allowed")
+                : $t("app.enable_edit_mode")
           }}
         </q-tooltip>
       </div>
@@ -54,62 +54,28 @@
       <!--   IMAGE DISPLAY SECTION (for RelationAttachments and RelationIncludesUUID) -->
       <!-------------------------------------------------------------------------------->
 
-      <ul v-if="!editMode" class="list-group">
-        <div v-if="relatedImageUrls.length > 0" class="col-12 p-1">
-          <div v-if="!selectedImageUrl" class="thumbnails-container">
-            <!-- Image miniature avec clic pour agrandir -->
-            <img
-              v-for="(url, index) in relatedImageUrls"
-              :key="index"
-              :src="url"
-              class="img-thumbnail"
-              @click="
-                selectedImageUrl = relatedImageUrls[index];
-                relatedImageUrlsselectedIndex = index;
-              "
-            />
-          </div>
+      <BaseImageGallery
+        v-if="!editMode"
+        :images="relatedImageUrls"
+        class="col-12 p-1"
+      />
 
-          <!-- Overlay avec l'image agrandie -->
-          <div
-            v-if="selectedImageUrl"
-            class="image-overlay"
-            @click="selectedImageUrl = null"
-          >
-            <!-- Bouton gauche -->
-            <q-btn
-              :size="sm"
-              round
-              color="secondary"
-              icon="west"
-              @click.stop="
-                relatedImageUrlsselectedIndex =
-                  (relatedImageUrlsselectedIndex -
-                    1 +
-                    relatedImageUrls.length) %
-                  relatedImageUrls.length;
-                selectedImageUrl =
-                  relatedImageUrls[relatedImageUrlsselectedIndex];
-              "
-            ></q-btn>
-            <!-- Image affichée -->
-            <img :src="selectedImageUrl" class="img-fullscreen" alt="Image" />
-            <!-- Bouton droit -->
-
-            <q-btn
-              :size="sm"
-              round
-              color="secondary"
-              icon="east"
-              @click.stop="
-                relatedImageUrlsselectedIndex =
-                  (relatedImageUrlsselectedIndex + 1) % relatedImageUrls.length;
-                selectedImageUrl =
-                  relatedImageUrls[relatedImageUrlsselectedIndex];
-              "
-            ></q-btn>
-          </div>
-        </div>
+      <ul v-if="editMode" class="list-group">
+        <li
+          class="list-group-item text-uppercase accordion p-1 pl-2 border-bottom"
+        >
+          {{ $t("app.photos") }}
+        </li>
+        <li class="list-group-item p-2">
+          <BasePhotoUploader
+            :photos="pendingPhotos"
+            :label="$t('app.add_photos')"
+            accept="image/*"
+            multiple
+            @add="addPhotos"
+            @remove="removePendingPhoto"
+          />
+        </li>
       </ul>
 
       <!--   LISTE OF GROUPS and FIELDS section) -->
@@ -157,8 +123,7 @@
               v-if="fieldDefinition(field.field, group)?.tips?.[lang]"
               anchor="bottom left"
               self="top left"
-              class="bg-accent"
-              style="white-space: pre-line"
+              class="bg-accent tooltip-pre-line"
               >({{ field.field }})<br />
               {{ fieldDefinition(field.field, group).tips[lang] }}</q-tooltip
             >
@@ -241,7 +206,6 @@
               :current-item="selectedItem"
               :edit-mode="editMode"
               :group="group"
-              TheItemMultivalue
               :index-group="indexGroup"
               :index="index"
             />
@@ -274,7 +238,10 @@
         >
           Extra fields
           <q-tooltip class="bg-accent"
-            >Fields not included in groups section, these fields are not included in any group in the project preferences, but they are present in the current item. They are displayed here for information purposes only.
+            >Fields not included in groups section, these fields are not
+            included in any group in the project preferences, but they are
+            present in the current item. They are displayed here for information
+            purposes only.
           </q-tooltip>
         </li>
         <!-- ROWS -->
@@ -325,7 +292,7 @@
 
 <script>
 import { Notify } from "quasar";
-import { apiPushTrench, apiFetchImageSRC } from "@/services/ApiClient";
+import { apiFetchImageSRC } from "@/services/ApiClient";
 import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
@@ -334,7 +301,16 @@ import {
   openDB,
   addPlanToDB,
   getImageFromDB,
+  savePendingAttachment,
+  deletePendingAttachment,
 } from "@/services/indexedDbManager";
+import {
+  computeSHA256,
+  fileExtension,
+  addAttachment,
+  removeAttachment,
+  parseAttachments,
+} from "@/services/attachmentUtils";
 import TheItemType from "@/components/TheItemType.vue";
 import TheItemRightsStatus from "@/components/TheItemRightsStatus.vue";
 import TheItemBoolean from "@/components/TheItemBoolean.vue";
@@ -345,6 +321,8 @@ import TheItemMultiline from "@/components/TheItemMultiline.vue";
 import TheItemMultivalue from "@/components/TheItemMultivalue.vue";
 import TheItemValuelist from "@/components/TheItemValuelist.vue";
 import TheItemInput from "@/components/TheItemInput.vue";
+import BaseImageGallery from "@/components/base/BaseImageGallery.vue";
+import BasePhotoUploader from "@/components/base/BasePhotoUploader.vue";
 import { pushSurvey } from "@/services/pushSurveyService";
 import { resolveFieldDefinition } from "@/services/fieldDefinition";
 
@@ -361,6 +339,8 @@ export default {
     TheItemMultivalue,
     TheItemValuelist,
     TheItemInput,
+    BaseImageGallery,
+    BasePhotoUploader,
   },
 
   data() {
@@ -368,9 +348,8 @@ export default {
       fieldsSchema: fieldsSchema,
       editMode: false,
       arrayForMultivalueFields: [],
-      relatedImageUrls: [], // Tableau pour stocker les URLs d'images récupérées
-      selectedImageUrl: null, // Pour stocker l'URL de l'image sélectionnée
-      relatedImageUrlsselectedIndex: null,
+      relatedImageUrls: [],
+      pendingPhotos: [],
     };
   },
   computed: {
@@ -492,18 +471,17 @@ export default {
   },
 
   watch: {
-    selectedItem: {
+    "selectedItem.IdentifierUUID": {
       handler() {
-        if (!this.selectedItem) {
-          this.fetchImages();
-        }
+        this.fetchImages();
       },
       immediate: true,
-      deep: true,
     },
-  },
-  mounted() {
-    this.fetchImages();
+    editMode(isEditMode) {
+      if (!isEditMode) {
+        this.fetchImages();
+      }
+    },
   },
 
   methods: {
@@ -525,6 +503,83 @@ export default {
       });
     },
 
+    setRelationAttachments(newValue) {
+      this.selectedItem.RelationAttachments = newValue;
+
+      const trench = this.selectedItem.Trench;
+      const storeItem = this.checkedTrenchesData[trench]?.find(
+        (item) => item.IdentifierUUID === this.selectedItem.IdentifierUUID,
+      );
+      if (storeItem && storeItem !== this.selectedItem) {
+        storeItem.RelationAttachments = newValue;
+      }
+    },
+
+    async addPhotos(files) {
+      if (!files) {
+        return;
+      }
+      const selectedFiles = Array.isArray(files) ? files : [files];
+      const db = await openDB();
+
+      for (const file of selectedFiles) {
+        try {
+          const checksum = await computeSHA256(file);
+          const name = `${checksum}.${fileExtension(file.name)}`;
+
+          await savePendingAttachment(db, {
+            name,
+            checksum,
+            trench: this.selectedItem.Trench,
+            blob: file,
+          });
+          await addPlanToDB(db, name.split(".")[0], file, null);
+
+          this.setRelationAttachments(
+            addAttachment(
+              this.selectedItem.RelationAttachments,
+              name,
+              checksum,
+            ),
+          );
+
+          if (!this.pendingPhotos.some((photo) => photo.name === name)) {
+            this.pendingPhotos.push({
+              name,
+              url: URL.createObjectURL(file),
+            });
+          }
+        } catch (error) {
+          console.error("Erreur lors de l'ajout de la photo :", error);
+          Notify.create({
+            type: "negative",
+            message: this.$t("app.photo_add_failed"),
+          });
+        }
+      }
+    },
+
+    async removePendingPhoto(name) {
+      this.setRelationAttachments(
+        removeAttachment(this.selectedItem.RelationAttachments, name),
+      );
+
+      const index = this.pendingPhotos.findIndex(
+        (photo) => photo.name === name,
+      );
+      if (index !== -1) {
+        URL.revokeObjectURL(this.pendingPhotos[index].url);
+        this.pendingPhotos.splice(index, 1);
+      }
+
+      try {
+        const db = await openDB();
+        await deletePendingAttachment(db, name);
+      } catch (error) {
+        console.error("Erreur lors de la suppression de la photo :", error);
+      }
+    },
+
     pushSurveyHandler() {
       pushSurvey({
         trenchName: this.selectedItem.Trench,
@@ -535,36 +590,26 @@ export default {
     },
 
     async fetchImages() {
-      let relatedItems = [];
-      if (this.selectedItem?.RelationAttachments) {
-        relatedItems = [this.selectedItem.IdentifierUUID];
-        // Récupérer les URL d'images pour chaque UUID trouvé
-        const imagePromises = relatedItems.map((uuid) =>
-          this.findObjectByUuid(uuid),
-        );
-        // Attendre la résolution de toutes les promesses d'URL d'images
-        const resolvedImages = await Promise.all(imagePromises);
+      const relatedItems = [];
 
-        // Filtrer les résultats pour ne garder que les valeurs non nulles
-        this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
+      if (this.selectedItem?.RelationAttachments) {
+        relatedItems.push(this.selectedItem.IdentifierUUID);
       }
+
       if (this.selectedItem?.RelationIncludesUUID && this.selectedItem.Trench) {
         if (this.selectedItem.RelationIncludesUUID.includes("\n")) {
-          relatedItems = this.selectedItem.RelationIncludesUUID.split("\n");
+          relatedItems.push(
+            ...this.selectedItem.RelationIncludesUUID.split("\n"),
+          );
         } else {
-          relatedItems = [this.selectedItem.RelationIncludesUUID];
+          relatedItems.push(this.selectedItem.RelationIncludesUUID);
         }
-
-        // Récupérer les URL d'images pour chaque UUID trouvé
-        const imagePromises = relatedItems.map((uuid) =>
-          this.findObjectByUuid(uuid),
-        );
-        // Attendre la résolution de toutes les promesses d'URL d'images
-        const resolvedImages = await Promise.all(imagePromises);
-
-        // Filtrer les résultats pour ne garder que les valeurs non nulles
-        this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
       }
+
+      const resolvedImages = await Promise.all(
+        relatedItems.map((uuid) => this.findObjectByUuid(uuid)),
+      );
+      this.relatedImageUrls = resolvedImages.filter(Boolean);
     },
 
     findObjectByUuid(IdentifierUUID) {
@@ -582,16 +627,17 @@ export default {
       if (filteredItems.length > 0) {
         return this.fetchURLs(filteredItems[0].RelationAttachments); // Récupérer l'image
       } else {
-        return "null"; // Si aucun élément n'est trouvé, retournez null
+        return null; // Si aucun élément n'est trouvé, retournez null
       }
     },
 
     async fetchURLs(RelationAttachments) {
       try {
-        // Extraire l'identifiant unique de l'image à partir de RelationAttachments
-        let imageName = RelationAttachments.split("\n")[0]
-          .split("=")[1]
-          .split(".")[0];
+        const attachment = parseAttachments(RelationAttachments)[0];
+        if (!attachment) {
+          return "/src/assets/missing.PNG";
+        }
+        const imageName = attachment.name.split(".")[0];
 
         // Ouvrir IndexedDB et vérifier si l'image y est déjà stockée
         const db = await openDB();
@@ -630,16 +676,6 @@ export default {
         return "/src/assets/missing.PNG"; // Placeholder en cas d'erreur
       }
     },
-
-    // Ouvrir l'image agrandie
-    openImage(url) {
-      this.selectedImageUrl = url;
-    },
-
-    // Fermer l'image agrandie
-    closeImage() {
-      this.selectedImageUrl = null; // Réinitialiser l'URL pour masquer l'image
-    },
   },
 };
 </script>
@@ -674,44 +710,8 @@ export default {
   cursor: default;
 }
 
-/* Style pour la miniature */
-.img-thumbnail {
-  max-width: 100px;
-  cursor: pointer;
-}
-.img-thumbnail:hover {
-  border: 2px solid #5b5d5f;
-}
-
-/* Conteneur pour aligner les images miniatures horizontalement */
-.thumbnails-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 0px;
-  max-width: 100%; /* Ajuste la largeur au conteneur */
-}
-
-/* Overlay qui couvre toute la page */
-.image-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8); /* Fond semi-transparent */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1050; /* Assure que l'overlay est au-dessus du reste */
-  cursor: pointer;
-}
-
-/* Image en plein écran dans l'overlay */
-.img-fullscreen {
-  max-width: 90%; /* Largeur maximale de 90% de l'écran */
-  max-height: 90%; /* Hauteur maximale de 90% de l'écran */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optionnel, ajoute une ombre */
-  cursor: pointer;
+.tooltip-pre-line {
+  white-space: pre-line;
 }
 </style>
 <style>

@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-mutating-props -->
   <q-input
     v-if="editMode"
     v-model="currentItem[field.field]"
@@ -6,6 +7,7 @@
     type="textarea"
     class="col-12 p-0 border-none"
   />
+  <!-- eslint-enable vue/no-mutating-props -->
 
   <div v-else>{{ currentItem[field.field] }}</div>
 </template>
@@ -14,8 +16,14 @@
 export default {
   name: "TheItemMultiline",
   props: {
-    field: Object,
-    currentItem: Object,
+    field: {
+      type: Object,
+      required: true,
+    },
+    currentItem: {
+      type: Object,
+      required: true,
+    },
     editMode: Boolean,
   },
   data() {

@@ -19,6 +19,30 @@
     "lastLogin": "Dernière connexion",
     "createProfile": "Créer un profil",
     "exportProfiles": "Exporter les profils",
-    "importProfiles": "Importer les profils"
+    "importProfiles": "Importer les profils",
+    "photos": "Photos",
+    "add_photos": "Ajouter des photos",
+    "upload_sector_changes": "Envoyer les modifications du secteur courant vers le serveur iDig",
+    "disable_edit_mode": "Désactiver le mode édition",
+    "edit_not_allowed": "Vous n'êtes pas autorisé à modifier ce secteur",
+    "enable_edit_mode": "Activer le mode édition",
+    "search_placeholder": "Rechercher...",
+    "photo_add_failed": "Échec de l'ajout de la photo",
+    "attachment_not_found_locally": "La photo « {name} » est introuvable localement et ne peut pas être envoyée.",
+    "attachments_upload_failed": "Certaines photos n'ont pas pu être envoyées au serveur.",
+    "pagination": {
+      "first": "Premier",
+      "first_title": "Première page",
+      "last": "Dernier",
+      "last_title": "Dernière page",
+      "prev": "Précédent",
+      "prev_title": "Page précédente",
+      "next": "Suivant",
+      "next_title": "Page suivante",
+      "showing": "Affichage de",
+      "of": "sur",
+      "rows": "lignes",
+      "pages": "pages"
+    }
   }
 }

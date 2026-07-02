@@ -13,7 +13,7 @@
       filled
       dense
       :clearable="searchText !== null"
-      placeholder="Search..."
+      :placeholder="$t('app.search_placeholder')"
       @clear="setSearchText('')"
       @update:model-value="setSearchText(searchTextValue)"
     />

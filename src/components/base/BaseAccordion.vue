@@ -6,6 +6,7 @@
         icon-size="sm"
         :aria-label="toggleAriaLabel"
         class="mr-1"
+        data-test="accordion-toggle"
         @click="toggle"
       />
       <slot name="title" />

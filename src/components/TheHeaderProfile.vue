@@ -331,7 +331,7 @@ export default {
             });
             localStorage.setItem("profiles", JSON.stringify(merged));
             this.connectionProfiles = merged;
-          } catch (err) {
+          } catch {
             console.error("Invalid JSON file");
           }
         };
@@ -375,7 +375,7 @@ export default {
             this.setProjectPreferencesCrs(preferences.crs || "EPSG:4326");
             this.setProjectPreferencesTypes(preferences.types || []);
             this.setProjectPreferencesFields(preferences.fields || []);
-          } catch (err) {
+          } catch {
             console.error("Invalid JSON file");
           }
         };
