@@ -1,28 +1,38 @@
 <template>
-  <q-select
+  <q-input
     v-if="editMode"
     v-model="currentItem[field.field]"
-    use-input
     square
     dense
-    options-dense
     filled
-    fill-input
-    hide-selected
-    clearable
-    input-debounce="0"
-    :options="options"
-    new-value-mode="add"
     class="select"
-    @clear="currentItem[field.field] = previousValue"
-    @filter="filterFn"
+    @focus="menuOpen = true"
   >
-    <template #no-option>
-      <q-item>
-        <q-item-section class="text-grey"> No results </q-item-section>
-      </q-item>
-    </template>
-  </q-select>
+    <q-menu
+      v-model="menuOpen"
+      no-focus
+      no-parent-event
+      no-refocus
+      fit
+      anchor="bottom left"
+      self="top left"
+    >
+      <q-list dense>
+        <q-item
+          v-for="option in filteredOptions"
+          :key="option"
+          v-close-popup
+          clickable
+          @click="currentItem[field.field] = option"
+        >
+          <q-item-section>{{ option }}</q-item-section>
+        </q-item>
+        <q-item v-if="filteredOptions.length === 0">
+          <q-item-section class="text-grey">No results</q-item-section>
+        </q-item>
+      </q-list>
+    </q-menu>
+  </q-input>
 
   <div v-else>
     {{ currentItem[field.field] }}
@@ -56,9 +66,8 @@ export default {
   data() {
     return {
       fieldsSchema: fieldsSchema,
-      selectedTypeSubtype: null,
-      options: [],
       previousValue: null,
+      menuOpen: false,
     };
   },
 
@@ -68,19 +77,30 @@ export default {
       "projectPreferencesFields",
       "checkedTrenchesItemsSelectedType",
     ]),
+    allOptions() {
+      const valeursField = this.checkedTrenchesItemsSelectedType.map(
+        (objet) => objet[this.field.field],
+      );
+      const valuelistItems =
+        this.fieldDefinition(this.field.field, this.group).valuelist || [];
+      return valeursField
+        .concat(valuelistItems)
+        .filter(
+          (valeur, index, self) => valeur && self.indexOf(valeur) === index,
+        )
+        .sort();
+    },
+    filteredOptions() {
+      const needle = (this.currentItem[this.field.field] || "").toLowerCase();
+      return this.allOptions.filter(
+        (v) => v.toLowerCase().indexOf(needle) > -1,
+      );
+    },
   },
   mounted() {
     this.previousValue = this.currentItem[this.field.field];
   },
   methods: {
-    filterFn(val, update, abort) {
-      update(() => {
-        const needle = val.toLowerCase();
-        this.options = this.listValueInField(this.field.field).filter(
-          (v) => v && v.toLowerCase().indexOf(needle) > -1,
-        );
-      });
-    },
     fieldDefinition(field, groupObject) {
       return resolveFieldDefinition({
         field,
@@ -91,24 +111,11 @@ export default {
         fieldsSchema: this.fieldsSchema,
       });
     },
-    listValueInField(field) {
-      let valeursField = this.checkedTrenchesItemsSelectedType.map(
-        (objet) => objet[field],
-      );
-      let valuelistItems =
-        this.fieldDefinition(this.field.field, this.group).valuelist || [];
-      valeursField = valeursField.concat(valuelistItems);
-      // Filtrer les doublons
-      return valeursField
-        .filter((valeur, index, self) => self.indexOf(valeur) === index)
-        .sort();
-    },
   },
 };
 </script>
 
 <style scoped>
-/* this style to correct a strange style differnece between first and secanod q-select component */
 .select {
   margin: 4px;
 }
