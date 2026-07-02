@@ -190,6 +190,7 @@
               class="col-12 p-1"
               :field="field"
               :current-item="selectedItem"
+              :edit-mode="editMode"
             />
             <!-- BOOLEAN -->
             <TheItemBoolean
