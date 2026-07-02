@@ -156,7 +156,7 @@ export default {
         attributionControl: false,
         zoomControl: true,
         zoomDelta: 0.25,
-        zoomSnap: 0,
+        zoomSnap: 0.25,
         zoomAnimation: false,
         fadeAnimation: false,
         markerZoomAnimation: false,
