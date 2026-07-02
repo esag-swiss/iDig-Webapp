@@ -18,6 +18,12 @@ export const openDB = () => {
           keyPath: "imageTitle",
         });
       }
+
+      if (!db.objectStoreNames.contains("pendingAttachmentsStore")) {
+        db.createObjectStore("pendingAttachmentsStore", {
+          keyPath: "name",
+        });
+      }
     };
 
     request.onsuccess = (event) => {
@@ -72,6 +78,48 @@ export const getImageFromDB = async (db, imageTitle) => {
       );
       reject(event.target.error);
     };
+  });
+};
+
+export const savePendingAttachment = async (
+  db,
+  { name, checksum, trench, blob },
+) => {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(
+      ["pendingAttachmentsStore"],
+      "readwrite",
+    );
+    const store = transaction.objectStore("pendingAttachmentsStore");
+    store.put({ name, checksum, trench, blob });
+
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = (event) => reject(event.target.error);
+  });
+};
+
+export const getPendingAttachment = async (db, name) => {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(["pendingAttachmentsStore"], "readonly");
+    const store = transaction.objectStore("pendingAttachmentsStore");
+    const request = store.get(name);
+
+    request.onsuccess = (event) => resolve(event.target.result || null);
+    request.onerror = (event) => reject(event.target.error);
+  });
+};
+
+export const deletePendingAttachment = async (db, name) => {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(
+      ["pendingAttachmentsStore"],
+      "readwrite",
+    );
+    const store = transaction.objectStore("pendingAttachmentsStore");
+    store.delete(name);
+
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = (event) => reject(event.target.error);
   });
 };
 

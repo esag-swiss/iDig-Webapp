@@ -2,12 +2,7 @@ import { createApp } from "vue";
 import * as Sentry from "@sentry/vue";
 import { Quasar, Notify } from "quasar";
 import { createPinia } from "pinia";
-import { createI18n } from "vue-i18n";
-import fr from "./locales/fr.json";
-import en from "./locales/en.json";
-import de from "./locales/de.json";
-import it from "./locales/it.json";
-import el from "./locales/el.json";
+import i18n from "./i18n";
 
 // Import icon libraries
 import "@quasar/extras/roboto-font/roboto-font.css";
@@ -28,18 +23,6 @@ import "./assets/main.css";
 import router from "./router/index.js"; // Assurez-vous que le routeur est importé
 
 const pinia = createPinia();
-const i18n = createI18n({
-  legacy: true, // required to keep $t / this.$t in Options API components
-  locale: "fr", // langue par défaut
-  fallbackLocale: "en", // langue de secours
-  messages: {
-    fr,
-    en,
-    de,
-    it,
-    el,
-  },
-});
 const myApp = createApp(App);
 
 if (import.meta.env.VITE_SENTRY_DSN) {

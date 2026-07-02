@@ -1,3 +1,4 @@
+import L from "leaflet";
 import "leaflet.control.layers.tree";
 
 L.Control.Layers.Tree.include({

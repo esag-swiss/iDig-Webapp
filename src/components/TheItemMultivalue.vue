@@ -144,10 +144,12 @@ export default {
     },
     updateMultiArrayNew(field, value) {
       if (value) {
+        // eslint-disable-next-line vue/no-mutating-props
         this.currentItem[field] = value.join("\n");
       }
     },
     resetValue() {
+      // eslint-disable-next-line vue/no-mutating-props
       this.currentItem[this.field.field] = this.previousValue;
       this.model =
         this.currentItem[this.field.field] &&

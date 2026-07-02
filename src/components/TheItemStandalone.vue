@@ -73,7 +73,7 @@
 
       <!--   LISTE OF GROUPS and FIELDS section) -->
       <ul
-        v-for="(group, indexGroup) in groupsOfFieldsAccordingToItem"
+        v-for="group in groupsOfFieldsAccordingToItem"
         :key="group"
         class="list-group"
       >
@@ -88,7 +88,7 @@
         <!-- ROWS   -->
 
         <div
-          v-for="(field, index) in group.fields.filter(
+          v-for="field in group.fields.filter(
             (item) =>
               fieldsOfCurrentItem.includes(item.field) &&
               item.field !== 'Subtype',
@@ -174,6 +174,7 @@
 </template>
 
 <script>
+import { Notify } from "quasar";
 import {
   openDB,
   addPlanToDB,
