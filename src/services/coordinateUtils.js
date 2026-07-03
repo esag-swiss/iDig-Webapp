@@ -11,6 +11,10 @@ proj4.defs([
     "+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9996 +x_0=500000 +y_0=0 +datum=GGRS87 +units=m +no_defs ",
   ],
   [
+    "GGR87",
+    "+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9996 +x_0=500000 +y_0=0 +datum=GGRS87 +units=m +no_defs ",
+  ],
+  [
     "AEO_Aegina",
     "+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9996 +x_0=500000 +y_0=0 +datum=GGRS87 +units=m +no_defs ",
   ],
@@ -37,6 +41,7 @@ proj4.defs([
 const HARDCODED_CRS_NAMES = new Set([
   "EPSG:2100",
   "GGRS87",
+  "GGR87",
   "AEO_Aegina",
   "Amarynthos",
   "EPSG:4326",
@@ -61,13 +66,16 @@ export const CRS_FORMAT = Object.freeze({
 // ───────────────────────────────────────────────────────────────────────────
 
 const EPSG_WITH_PREFIX_REGEX = /^EPSG:\d+$/i;
+const EPSG_IN_TEXT_REGEX = /\bEPSG\s*:?\s*(\d{4,6})\b/i;
 const EPSG_BARE_NUMERIC_REGEX = /^\d{4,6}$/;
 const PROJ4_PREFIX_REGEX = /^\+proj=/i;
 const WKT_ROOT_KEYWORD_REGEX =
   /^(PROJCS|GEOGCS|PROJCRS|GEOGCRS|GEOCCS|COMPDCS|COMPD_CS|VERT_CS|VERTCRS|BOUNDCRS|ENGCRS|TIMECRS)\s*\[/i;
 
 const isEpsg = (value) =>
-  EPSG_WITH_PREFIX_REGEX.test(value) || EPSG_BARE_NUMERIC_REGEX.test(value);
+  EPSG_WITH_PREFIX_REGEX.test(value) ||
+  EPSG_IN_TEXT_REGEX.test(value) ||
+  EPSG_BARE_NUMERIC_REGEX.test(value);
 const isProj4 = (value) => PROJ4_PREFIX_REGEX.test(value);
 const isWkt = (value) => WKT_ROOT_KEYWORD_REGEX.test(value);
 const isNamedCrs = (value) => HARDCODED_CRS_NAMES.has(value);
@@ -106,7 +114,12 @@ export function detectCrsFormat(crsValue) {
 // ───────────────────────────────────────────────────────────────────────────
 
 function normalizeEpsgCode(value) {
-  const code = EPSG_WITH_PREFIX_REGEX.test(value) ? value.split(":")[1] : value;
+  const match = EPSG_IN_TEXT_REGEX.exec(value);
+  const code = match
+    ? match[1]
+    : EPSG_WITH_PREFIX_REGEX.test(value)
+      ? value.split(":")[1]
+      : value;
   return `EPSG:${code}`;
 }
 
