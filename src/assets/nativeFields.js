@@ -87,7 +87,7 @@ export const fieldsSchema = {
   },
   Subtype: {
     field: "subtype",
-    group: "General",
+    group: "General Section",
     type: "ExtraFields",
     labels: {
       en: "Subtype",
@@ -365,7 +365,7 @@ export const fieldsSchema = {
     },
   },
 
-  // "group": "Relationships",
+  // "group": "Relation Section",
   RelationBelongsToUUID: {
     labels: {
       fr: "appartient à",
@@ -375,7 +375,7 @@ export const fieldsSchema = {
       el: "ανήκει σε",
     },
     type: "link",
-    group: "Relationships",
+    group: "Relation Section",
   },
   RelationCutsUUID: {
     labels: {
@@ -386,7 +386,7 @@ export const fieldsSchema = {
       el: "κόβει",
     },
     type: "link",
-    group: "Relationships",
+    group: "Relation Section",
   },
   RelationIncludesUUID: {
     labels: {
@@ -397,7 +397,7 @@ export const fieldsSchema = {
       el: "περιλαμβάνει",
     },
     type: "link",
-    group: "Relationships",
+    group: "Relation Section",
   },
   RelationIsAboveUUID: {
     labels: {
@@ -408,7 +408,7 @@ export const fieldsSchema = {
       el: "βρίσκεται πάνω",
     },
     type: "link",
-    group: "Relationships",
+    group: "Relation Section",
   },
   RelationIsBeforeUUID: {
     labels: {
@@ -419,7 +419,7 @@ export const fieldsSchema = {
       el: "είναι πριν",
     },
     type: "link",
-    group: "Relationships",
+    group: "Relation Section",
   },
   RelationIsBelowUUID: {
     labels: {
@@ -430,7 +430,7 @@ export const fieldsSchema = {
       el: "βρίσκεται κάτω",
     },
     type: "link",
-    group: "Relationships",
+    group: "Relation Section",
   },
   RelationIsCoevalWithUUID: {
     labels: {
@@ -441,7 +441,7 @@ export const fieldsSchema = {
       el: "είναι σύγχρονος με",
     },
     type: "link",
-    group: "Relationships",
+    group: "Relation Section",
   },
   RelationIsCutByUUID: {
     labels: {
@@ -452,7 +452,7 @@ export const fieldsSchema = {
       el: "κόβεται από",
     },
     type: "link",
-    group: "Relationships",
+    group: "Relation Section",
   },
   RelationIsNextToUUID: {
     labels: {
@@ -463,7 +463,7 @@ export const fieldsSchema = {
       el: "είναι δίπλα σε",
     },
     type: "link",
-    group: "Relationships",
+    group: "Relation Section",
   },
   RelationIsAfterUUID: {
     labels: {
@@ -474,7 +474,7 @@ export const fieldsSchema = {
       el: "είναι μετά",
     },
     type: "link",
-    group: "Relationships",
+    group: "Relation Section",
   },
   // COVERAGE TEMPORAL DATE
   CoverageUTC: {
@@ -546,7 +546,6 @@ export const fieldsSchema = {
   CoverageTemporal: {
     type: "Date?",
     field: "CoverageTemporal/Temporal",
-    typeiDig: "ExtraFields",
     labels: {
       en: "coverage temporelle",
       fr: "couverture temporelle",
@@ -594,17 +593,18 @@ export const fieldsSchema = {
   },
 
   // COVERAGE SPATIAL
-  // TODO indentify those that are generated during iPad export
   CoverageSerialized: {
     field: "CoverageSerialized",
+    group: "Points",
     labels: {
       en: "spatial point data",
       fr: "Données topo iDig",
     },
     tips: {
-      en: "raw spatial point data (including fields set by the total station)",
-      fr: "Données ponctuelles spatiales brutes (incluant les champs définis par la station totale)",
+      en: "raw spatial point data (including fields set by the total station) in iDig format",
+      fr: "Données ponctuelles spatiales brutes (incluant les champs définis par la station totale) au format iDig",
     },
+    comment: "Each point is a key=value block separated by blank lines. Coordinates are x, y, z as C-style hexadecimal floats, e.g. 0X1.66D1P+16. Common metadata keys are d date, n point/coverage label, tp=YES, re=YES, sometimes ae=YES. Station-total style points often include p=<point id> and sometimes h=<height>, e.g. p=S28_0419. Multi-surface values use triple newlines, often with labels like OK / UK, haut / bas.",
   },
 
   //  “convenience” fields generated from the “source of truth” inside CoverageSerialized.
