@@ -14,6 +14,7 @@
       :name="icon"
       :size="iconSize"
       :class="[label && 'mr-1']"
+      data-test="base-button-icon"
     />
     <span v-if="label">{{ label }}</span>
   </button>

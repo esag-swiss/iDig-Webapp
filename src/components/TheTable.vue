@@ -224,6 +224,27 @@ export default {
       },
       pagination: true,
       paginationCounter: "rows",
+      locale: "idig",
+      langs: {
+        idig: {
+          pagination: {
+            first: this.$t("app.pagination.first"),
+            first_title: this.$t("app.pagination.first_title"),
+            last: this.$t("app.pagination.last"),
+            last_title: this.$t("app.pagination.last_title"),
+            prev: this.$t("app.pagination.prev"),
+            prev_title: this.$t("app.pagination.prev_title"),
+            next: this.$t("app.pagination.next"),
+            next_title: this.$t("app.pagination.next_title"),
+            counter: {
+              showing: this.$t("app.pagination.showing"),
+              of: this.$t("app.pagination.of"),
+              rows: this.$t("app.pagination.rows"),
+              pages: this.$t("app.pagination.pages"),
+            },
+          },
+        },
+      },
       editTriggerEvent: "dblclick",
       rowContextMenu: [
         {

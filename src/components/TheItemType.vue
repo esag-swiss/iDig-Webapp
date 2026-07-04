@@ -30,8 +30,14 @@ import { useDataStore } from "@/stores/data";
 export default {
   name: "TheItemType",
   props: {
-    field: Object,
-    currentItem: Object,
+    field: {
+      type: Object,
+      required: true,
+    },
+    currentItem: {
+      type: Object,
+      required: true,
+    },
     editMode: Boolean,
   },
   data() {
@@ -47,7 +53,9 @@ export default {
   },
   methods: {
     updateTypeAndSubtype(value) {
+      // eslint-disable-next-line vue/no-mutating-props
       this.currentItem.Type = value.type;
+      // eslint-disable-next-line vue/no-mutating-props
       this.currentItem.Subtype = value.subtype;
     },
   },

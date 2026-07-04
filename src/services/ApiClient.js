@@ -179,6 +179,36 @@ export function apiPushTrench(trench, head, surveys, preferences) {
     .finally(() => decrementLoadingCount());
 }
 
+export function apiUploadAttachment(trench, name, checksum, blob) {
+  const {
+    server,
+    project,
+    username,
+    password,
+    incrementLoadingCount,
+    decrementLoadingCount,
+  } = useAppStore();
+
+  incrementLoadingCount();
+  return axios({
+    headers: {
+      "Content-Type": blob.type || "application/octet-stream",
+    },
+    method: "put",
+    url: `${server}/idig/${project}/${trench}/attachments/${name}?checksum=${checksum}`,
+    auth: { username, password },
+    data: blob,
+  })
+    .catch((error) => {
+      displayError(
+        `Failed to upload the photo <strong>${name}</strong>.`,
+        error,
+      );
+      throw error;
+    })
+    .finally(() => decrementLoadingCount());
+}
+
 export function apiFetchImageSRC(RelationAttachments, trench) {
   const {
     server,

@@ -37,16 +37,16 @@ describe("BaseAccordion", () => {
     });
     expect(wrapper.text()).not.toContain("Content body");
 
-    await wrapper.find("button").trigger("click");
+    await wrapper.find('[data-test="accordion-toggle"]').trigger("click");
     expect(wrapper.text()).toContain("Content body");
 
-    await wrapper.find("button").trigger("click");
+    await wrapper.find('[data-test="accordion-toggle"]').trigger("click");
     expect(wrapper.text()).not.toContain("Content body");
   });
 
   it("should expose a button element for the toggle (keyboard accessible)", () => {
     const wrapper = mount(BaseAccordion, globalStubs);
-    const button = wrapper.find("button");
+    const button = wrapper.find('[data-test="accordion-toggle"]');
     expect(button.exists()).toBe(true);
     expect(button.attributes("type")).toBe("button");
   });
