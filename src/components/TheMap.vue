@@ -43,6 +43,7 @@ export default {
       enableScrollWheelZoom: true,
       wheelDebounceTime: 140,
       wheelPxPerZoomLevel: 180,
+      selectedBaseLayer: null,
     };
   },
   computed: {
@@ -163,7 +164,7 @@ export default {
         scrollWheelZoom: this.enableScrollWheelZoom,
         wheelDebounceTime: this.wheelDebounceTime,
         wheelPxPerZoomLevel: this.wheelPxPerZoomLevel,
-        layers: this.baseLayersTree.children[3].layer,
+        layers: this.selectedBaseLayer ?? this.baseLayersTree.children[3].layer,
       });
 
       // Ajout du control de couches en arborescence
@@ -172,6 +173,10 @@ export default {
         this.overlaysTree,
       );
       this.treeLayerControl.addTo(this.map);
+
+      this.map.on("baselayerchange", (event) => {
+        this.selectedBaseLayer = event.layer;
+      });
 
       // Ajout de l'échelle
       L.control
