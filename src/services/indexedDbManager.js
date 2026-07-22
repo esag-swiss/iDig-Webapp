@@ -1,6 +1,6 @@
 export const openDB = () => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("iDigIndexedDB", 1);
+    const request = indexedDB.open("iDigIndexedDB");
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;

@@ -102,7 +102,7 @@ export default {
       "projectTrenchesRights",
       "projectPreferencesTypesTranslationPlurals",
       "projectPreferencesTypesTranslation",
-      "checkedTrenchesItemsSelectedTypeAndSearched",
+      "checkedTrenchesItemsRelationFiltered",
       "tableFilteredCheckedTrenchesItems",
       "projectPreferencesBase64",
     ]),
@@ -110,7 +110,7 @@ export default {
     displayedItemsCount() {
       return this.tableFilteredCheckedTrenchesItems
         ? this.tableFilteredCheckedTrenchesItems.length
-        : this.checkedTrenchesItemsSelectedTypeAndSearched.length;
+        : this.checkedTrenchesItemsRelationFiltered.length;
     },
 
     columnsTabulator() {
@@ -201,7 +201,7 @@ export default {
       },
       // Treat field names as literal keys (do not parse dots as nested paths).
       nestedFieldSeparator: false,
-      data: this.checkedTrenchesItemsSelectedTypeAndSearched, //link data to table
+      data: this.checkedTrenchesItemsRelationFiltered, //link data to table
       // reactiveData: true, //turn on data reactivity
       layout: "fitColumns", //fit columns to width of table (optional)
       printAsHtml: true,
@@ -251,7 +251,7 @@ export default {
     });
 
     this.$watch(
-      () => this.checkedTrenchesItemsSelectedTypeAndSearched,
+      () => this.checkedTrenchesItemsRelationFiltered,
       (newRows) => {
         if (this.tabulator) {
           this.tabulator.replaceData(newRows);

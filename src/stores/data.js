@@ -18,6 +18,14 @@ import {
 } from "@/services/indexedDbManager";
 import { fieldsSchema } from "@/assets/nativeFields";
 import { resolveProjectCrs } from "@/services/coordinateUtils";
+import {
+  buildUuidIndex,
+  resolveRelatedItems,
+} from "@/services/relationResolver";
+
+function normalizeText(value) {
+  return String(value).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
 
 export const useDataStore = defineStore("data", {
   state: () => ({
@@ -40,6 +48,7 @@ export const useDataStore = defineStore("data", {
     // Holds the subset of items currently visible in the Tabulator table
     // (set by TheTable component when the user applies client-side filters)
     tableFilteredCheckedTrenchesItems: null,
+    relationFilter: null,
   }),
 
   getters: {
@@ -141,6 +150,14 @@ export const useDataStore = defineStore("data", {
 
     checkedTrenchesItems(state) {
       return [].concat(...Object.values(state.checkedTrenchesData));
+    },
+
+    uuidIndexByTrench(state) {
+      const index = {};
+      for (const [trench, items] of Object.entries(state.checkedTrenchesData)) {
+        index[trench] = buildUuidIndex(items);
+      }
+      return index;
     },
 
     checkedTrenchesItemsPlans(state) {
@@ -295,6 +312,34 @@ export const useDataStore = defineStore("data", {
         }
         return searchProperty;
       }
+    },
+
+    checkedTrenchesItemsRelationFiltered(state) {
+      const filter = state.relationFilter;
+      if (
+        !filter ||
+        !filter.relation ||
+        !filter.property ||
+        !filter.value?.trim()
+      ) {
+        return state.checkedTrenchesItemsSelectedTypeAndSearched;
+      }
+
+      const needle = normalizeText(filter.value.trim());
+      const indexByTrench = this.uuidIndexByTrench;
+      const items = state.checkedTrenchesItemsSelectedTypeAndSearched;
+
+      return items.filter((item) => {
+        const related = resolveRelatedItems(
+          item,
+          filter.relation,
+          indexByTrench[item.Trench],
+        );
+        return related.some((relatedItem) => {
+          const haystack = normalizeText(relatedItem?.[filter.property] ?? "");
+          return haystack.includes(needle);
+        });
+      });
     },
   },
 
@@ -499,6 +544,10 @@ export const useDataStore = defineStore("data", {
 
     setTableFilteredCheckedTrenchesItems(items) {
       this.tableFilteredCheckedTrenchesItems = items;
+    },
+
+    setRelationFilter(relationFilter) {
+      this.relationFilter = relationFilter;
     },
 
     setSyncPatches(syncPatches) {
