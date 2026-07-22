@@ -40,5 +40,11 @@
       "pages": "Seiten"
     },
     "download pref": "preferences.json herunterladen"
+    "search_mode_basic": "Einfach",
+    "search_mode_expert": "Experte",
+    "search_placeholder": "Suchen...",
+    "search_expert_placeholder": "JMESPath-Ausdruck, z. B. [?Type=='Context']",
+    "search_expert_help": "Expertenmodus: Filtern Sie Elemente mit einem JMESPath-Ausdruck, der auf den rohen Feldschlüsseln ausgewertet wird (Groß-/Kleinschreibung beachten). z. B. [?contains(Title, 'FK') && RightsStatus=='All Done']",
+    "search_expert_error": "Ungültiger Ausdruck:"
   }
 }

@@ -40,6 +40,12 @@
       "pages": "σελίδες"
     },
     "download pref": "Λήψη του preferences.json"
+    "search_mode_basic": "Βασική",
+    "search_mode_expert": "Έμπειρη",
+    "search_placeholder": "Αναζήτηση...",
+    "search_expert_placeholder": "Έκφραση JMESPath, π.χ. [?Type=='Context']",
+    "search_expert_help": "Λειτουργία ειδικού: φιλτράρετε τα στοιχεία με μια έκφραση JMESPath που αξιολογείται στα ακατέργαστα κλειδιά πεδίων (με διάκριση πεζών-κεφαλαίων). π.χ. [?contains(Title, 'FK') && RightsStatus=='All Done']",
+    "search_expert_error": "Μη έγκυρη έκφραση:"
   },
   "buttons": {
     "save": "Αποθήκευση",
