@@ -12,6 +12,7 @@
           <TheControlSearch></TheControlSearch>
           <TheControlTrenches></TheControlTrenches>
           <TheControlFields></TheControlFields>
+          <TheControlRelationFilter></TheControlRelationFilter>
           <TheControlExport></TheControlExport>
         </div>
       </nav>
@@ -82,6 +83,7 @@ import TheHeader from "@/components/TheHeader.vue";
 import TheControlSearch from "@/components/TheControlSearch.vue";
 import TheControlTrenches from "@/components/TheControlTrenches.vue";
 import TheControlFields from "@/components/TheControlFields.vue";
+import TheControlRelationFilter from "@/components/TheControlRelationFilter.vue";
 import TheControlExport from "@/components/TheControlExport.vue";
 import TheTable from "@/components/TheTable.vue";
 import TheSpinner from "@/components/TheSpinner.vue";
@@ -98,6 +100,7 @@ export default {
     TheControlSearch,
     TheControlTrenches,
     TheControlFields,
+    TheControlRelationFilter,
     TheControlExport,
     TheTable,
     TheMap,
