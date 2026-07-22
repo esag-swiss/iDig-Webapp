@@ -12,6 +12,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@jmespath-community/jmespath": "^1.3.0",
     "@quasar/extras": "^1.18.0",
     "@sentry/vue": "^10.52.0",
     "axios": "^1.15.2",
