@@ -14,6 +14,17 @@
 
       <div class="mx-1">
         <q-btn
+          round
+          color="secondary"
+          icon="print"
+          :size="'sm'"
+          class="print-action"
+          @click="printItemSheet"
+        />
+        <q-tooltip class="bg-accent">print item as sheet</q-tooltip>
+      </div>
+      <div class="mx-1 no-print">
+        <q-btn
           v-if="editMode"
           round
           color="secondary"
@@ -25,7 +36,7 @@
           >upload curent trench modification to iDig server</q-tooltip
         >
       </div>
-      <div class="mx-1">
+      <div class="mx-1 no-print">
         <q-toggle
           v-model="editMode"
           :disable="
@@ -324,8 +335,7 @@
 </template>
 
 <script>
-import { Notify } from "quasar";
-import { apiPushTrench, apiFetchImageSRC } from "@/services/ApiClient";
+import dayjs from "dayjs";  
 import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
@@ -347,6 +357,7 @@ import TheItemValuelist from "@/components/TheItemValuelist.vue";
 import TheItemInput from "@/components/TheItemInput.vue";
 import { pushSurvey } from "@/services/pushSurveyService";
 import { resolveFieldDefinition } from "@/services/fieldDefinition";
+
 
 export default {
   name: "TheItem",
@@ -386,7 +397,7 @@ export default {
       "checkedTrenchesItemsSelectedType",
       "selectedItem",
     ]),
-    ...mapState(useAppStore, ["username", "lang"]),
+    ...mapState(useAppStore, ["username", "lang", "project"]),
 
     //  array of fields presents in current item
     fieldsOfCurrentItem() {
@@ -640,6 +651,243 @@ export default {
     closeImage() {
       this.selectedImageUrl = null; // Réinitialiser l'URL pour masquer l'image
     },
+
+    escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    },
+
+    getFieldLabel(field, group) {
+      return (
+        field.labels?.[this.lang] ||
+        this.projectPreferencesFieldsWithTranslation?.[field.field] ||
+        this.fieldsSchema?.[field.field]?.labels?.[this.lang] ||
+        field.field
+      );
+    },
+
+    itemLabelForPrint(item) {
+      if (!item) {
+        return "Unknown";
+      }
+
+      const typeLabel =
+        this.projectPreferencesTypesTranslation[item.Subtype] ||
+        this.projectPreferencesTypesTranslation[item.Type] ||
+        item.Type ||
+        "";
+
+      return [typeLabel, item.Identifier, item.Title]
+        .filter((part) => part && String(part).trim() !== "")
+        .join(" ");
+    },
+
+    relationRowsForField(fieldName) {
+      const raw = this.selectedItem?.[fieldName];
+      if (!raw) {
+        return [];
+      }
+
+      const uuids = String(raw)
+        .split("\n")
+        .map((x) => x.trim())
+        .filter(Boolean);
+
+      const trenchItems = this.checkedTrenchesData?.[this.selectedItem.Trench] || [];
+
+      return uuids.map((uuid) => {
+        const fullItem = trenchItems.find((x) => x.IdentifierUUID.includes(uuid));
+        return {
+          relationField: fieldName,
+          type: fullItem ? this.itemLabelForPrint({ Type: fullItem.Type, Subtype: fullItem.Subtype, Identifier: "", Title: "" }).trim() : "Unknown",
+          identifier: fullItem?.Identifier || "",
+          title: fullItem?.Title || "",
+          uuid,
+        };
+      });
+    },
+
+    scalarValueForPrint(fieldName, group) {
+      const value = this.selectedItem?.[fieldName];
+      if (value === undefined || value === null || value === "") {
+        return "";
+      }
+
+      if (fieldName === "Type") {
+        return (
+          this.projectPreferencesTypesTranslation[this.selectedItem.Subtype] ||
+          this.projectPreferencesTypesTranslation[this.selectedItem[fieldName]] ||
+          this.selectedItem[fieldName]
+        );
+      }
+
+      if (fieldName === "CoverageSerialized") {
+        return "geodata";
+      }
+
+      if (this.fieldsSchema[fieldName]?.type === "boolean") {
+        return String(value) === "1" ? "Yes" : "No";
+      }
+
+      if (this.fieldsSchema[fieldName]?.type === "DateUTC") {
+        return dayjs(value).format("DD/MM/YYYY");
+      }
+
+      if (
+        this.fieldsSchema[fieldName]?.type === "link" ||
+        this.fieldDefinition(fieldName, group)?.hasOwnProperty("link")
+      ) {
+        return this.relationRowsForField(fieldName)
+          .map((row) => [row.type, row.identifier, row.title].filter(Boolean).join(" | "))
+          .join("\n");
+      }
+
+      return String(value);
+    },
+
+    printItemSheet() {
+      if (!this.selectedItem) {
+        return;
+      }
+
+      const groups = this.groupsOfFieldsAccordingToItem;
+      let contentHtml = "";
+      const allRelationRows = [];
+
+      groups.forEach((group) => {
+        const fields = group.fields.filter(
+          (item) =>
+            this.fieldsOfCurrentItem.includes(item.field) && item.field !== "Subtype",
+        );
+
+        let rowsHtml = "";
+        fields.forEach((field) => {
+          const fieldName = field.field;
+          const label = this.escapeHtml(this.getFieldLabel(field, group));
+          const value = this.escapeHtml(this.scalarValueForPrint(fieldName, group));
+
+          // if (this.fieldsSchema[fieldName]?.type === "link") {
+          //   allRelationRows.push(...this.relationRowsForField(fieldName));
+          // }
+
+          rowsHtml += `<tr><th style="width: 15%;">${label}</th><td>${value.replace(/\n/g, "<br>")}</td></tr>`;
+        });
+
+        if (rowsHtml) {
+          const groupLabel = this.escapeHtml(group.labels ? group.labels[this.lang] : group.group);
+          contentHtml += `
+            <section>
+              <h2>${groupLabel}</h2>
+              <table>
+                <tbody>${rowsHtml}</tbody>
+              </table>
+            </section>
+          `;
+        }
+      });
+
+
+      const headerType =
+      this.project + " " +
+        (this.projectPreferencesTypesTranslation[this.selectedItem.Subtype] ||
+        this.projectPreferencesTypesTranslation[this.selectedItem.Type] ||
+        this.selectedItem.Type ||
+        "");
+
+      const title = `${headerType} ${this.selectedItem.Identifier || ""}`.trim();
+
+      const html = `
+        <!doctype html>
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <title>${this.escapeHtml(title)}</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                color: #000;
+                background: #fff;
+                margin: 40px;
+                font-size: 12px;
+                line-height: 1.4;
+              }
+              h1 {
+                font-size: 22 px;
+                margin: 0 0 12px 0;
+              }
+              h2 {
+                font-size: 14px;
+                margin: 18px 0 8px 0;
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 10px;
+              }
+              th,
+              td {
+                border: 1px solid #333;
+                padding: 6px;
+                text-align: left;
+                vertical-align: top;
+              }
+              th {
+                width: 30%;
+                background: #f2f2f2;
+              }
+              @media print {
+                body {
+                  margin: 40px;
+                }
+              }
+            </style>
+          </head>
+          <body>
+            <h1>${this.escapeHtml(title)}</h1>
+            ${contentHtml}
+          </body>
+        </html>
+      `;
+
+      const iframe = document.createElement("iframe");
+      iframe.style.position = "fixed";
+      iframe.style.right = "0";
+      iframe.style.bottom = "0";
+      iframe.style.width = "0";
+      iframe.style.height = "0";
+      iframe.style.border = "0";
+      document.body.appendChild(iframe);
+
+      const frameDoc = iframe.contentWindow?.document;
+      if (!frameDoc || !iframe.contentWindow) {
+        document.body.removeChild(iframe);
+        return;
+      }
+
+      frameDoc.open();
+      frameDoc.write(html);
+      frameDoc.close();
+
+      const runPrint = () => {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+        setTimeout(() => {
+          if (document.body.contains(iframe)) {
+            document.body.removeChild(iframe);
+          }
+        }, 300);
+      };
+
+      if (frameDoc.readyState === "complete") {
+        runPrint();
+      } else {
+        iframe.onload = runPrint;
+      }
+    },
   },
 };
 </script>
@@ -712,6 +960,58 @@ export default {
   max-height: 90%; /* Hauteur maximale de 90% de l'écran */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optionnel, ajoute une ombre */
   cursor: pointer;
+}
+
+@media print {
+  .TheItemwrapper {
+    position: static;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    border-radius: 0;
+    background: #fff;
+    padding: 0;
+  }
+
+  .sticky-top {
+    position: static;
+  }
+
+  .no-print,
+  .print-action,
+  .image-overlay,
+  .thumbnails-container,
+  .img-thumbnail {
+    display: none !important;
+  }
+
+  .TheItem {
+    margin-top: 0;
+    width: 100%;
+  }
+
+  .TheItemwrapper,
+  .TheItemwrapper * {
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
+  }
+
+  .TheItemwrapper,
+  .TheItem,
+  .list-group,
+  .list-group-item,
+  .accordion {
+    background: #fff !important;
+  }
+
+  .q-field,
+  .q-field__control,
+  .q-field__native,
+  .q-field__input,
+  .q-field__label {
+    color: #000 !important;
+    background: #fff !important;
+  }
 }
 </style>
 <style>
