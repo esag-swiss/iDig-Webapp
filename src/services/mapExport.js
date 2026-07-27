@@ -51,21 +51,33 @@ export async function exportMapAsCompositeSVG() {
   const imgData = canvas.toDataURL("image/png");
 
   // 2. Prépare le SVG vectoriel
-  const svgClone = svgLayer.cloneNode(true);
-  // Récupère la taille du conteneur
   const width = mapElement.offsetWidth;
   const height = mapElement.offsetHeight;
 
-  // 3. Crée un SVG composite
+  const svgRect = svgLayer.getBoundingClientRect();
+  const mapRect = mapElement.getBoundingClientRect();
+  const offsetX = svgRect.left - mapRect.left;
+  const offsetY = svgRect.top - mapRect.top;
+  const viewBoxAttr = svgLayer.getAttribute("viewBox");
+  const [viewBoxX, viewBoxY] = viewBoxAttr
+    ? viewBoxAttr.split(/\s+/).map(Number)
+    : [0, 0];
+  const translateX = offsetX - (viewBoxX || 0);
+  const translateY = offsetY - (viewBoxY || 0);
+
+  const svgClone = svgLayer.cloneNode(true);
   const serializer = new XMLSerializer();
-  const svgContent = serializer.serializeToString(svgClone);
-  // Reconstruis le SVG pour Illustrator en ajoutant le namespace xlink et en passant à xlink:href
+  const innerContent = Array.from(svgClone.childNodes)
+    .map((node) => serializer.serializeToString(node))
+    .join("");
+
+  // 3. Crée un SVG composite
   const compositeSVG = `<?xml version="1.0" encoding="UTF-8"?>
   <svg xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
     <image xlink:href="${imgData}" x="0" y="0" width="${width}" height="${height}"/>
-    ${svgContent}
+    <g transform="translate(${translateX} ${translateY})">${innerContent}</g>
   </svg>`;
   // 4. Télécharge le SVG composite
   const blob = new Blob([compositeSVG], { type: "image/svg+xml" });

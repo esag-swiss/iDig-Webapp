@@ -1,4 +1,5 @@
 import { convertToEPSG4326 } from "@/services/coordinateUtils";
+import { hexFloatToDecimal } from "@/services/coverageSerialized";
 import { useDataStore } from "@/stores/data";
 
 const LEVEL_2_SEPARATOR = "\n\n";
@@ -151,7 +152,10 @@ export function CoverageSerializedXYZToGeojsonPosition(XYZ) {
     const [key, value] = rawCoordinate.split("=");
 
     if (COORDINATE_PREFIXES.includes(key)) {
-      values.push(hexToDecimal(value));
+      const coordinate = hexFloatToDecimal(value);
+      if (coordinate !== null) {
+        values.push(coordinate);
+      }
     }
 
     return values;
@@ -167,40 +171,6 @@ export function CoverageSerializedXYZToGeojsonPosition(XYZ) {
   }
 
   return coordinates;
-}
-
-function hexToDecimal(hex) {
-  const match = /^0X([0-9A-Fa-f]+).([0-9A-Fa-f]+)P([+-]?\d+)$/i.exec(hex);
-
-  if (match) {
-    const hexadecimal = match[1];
-    const fractionalPart = match[2] || "";
-    const exponent = match[3];
-
-    let decimal = 0;
-    let power = 0;
-
-    for (let i = hexadecimal.length - 1; i >= 0; i--) {
-      const digit = parseInt(hexadecimal[i], 16);
-      decimal += digit * 16 ** power;
-      power++;
-    }
-
-    let fractional = 0;
-    power = -1;
-
-    for (let i = 0; i < fractionalPart.length; i++) {
-      const digit = parseInt(fractionalPart[i], 16);
-      fractional += digit * 16 ** power;
-      power--;
-    }
-
-    decimal += fractional;
-    decimal *= 2 ** exponent;
-
-    return Number(decimal);
-  }
-  return 0;
 }
 
 // to be a valid geojson we need coordinates of polygones to be clockwise
