@@ -535,36 +535,25 @@ export default {
     },
 
     async fetchImages() {
-      let relatedItems = [];
+      const relatedItems = [];
+
       if (this.selectedItem?.RelationAttachments) {
-        relatedItems = [this.selectedItem.IdentifierUUID];
-        // Récupérer les URL d'images pour chaque UUID trouvé
-        const imagePromises = relatedItems.map((uuid) =>
-          this.findObjectByUuid(uuid),
-        );
-        // Attendre la résolution de toutes les promesses d'URL d'images
-        const resolvedImages = await Promise.all(imagePromises);
-
-        // Filtrer les résultats pour ne garder que les valeurs non nulles
-        this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
+        relatedItems.push(this.selectedItem.IdentifierUUID);
       }
+
       if (this.selectedItem?.RelationIncludesUUID && this.selectedItem.Trench) {
-        if (this.selectedItem.RelationIncludesUUID.includes("\n")) {
-          relatedItems = this.selectedItem.RelationIncludesUUID.split("\n");
-        } else {
-          relatedItems = [this.selectedItem.RelationIncludesUUID];
-        }
-
-        // Récupérer les URL d'images pour chaque UUID trouvé
-        const imagePromises = relatedItems.map((uuid) =>
-          this.findObjectByUuid(uuid),
-        );
-        // Attendre la résolution de toutes les promesses d'URL d'images
-        const resolvedImages = await Promise.all(imagePromises);
-
-        // Filtrer les résultats pour ne garder que les valeurs non nulles
-        this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
+        relatedItems.push(...this.selectedItem.RelationIncludesUUID.split("\n"));
       }
+
+      if (relatedItems.length === 0) {
+        return;
+      }
+
+      const resolvedImages = await Promise.all(
+        relatedItems.map((uuid) => this.findObjectByUuid(uuid)),
+      );
+
+      this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
     },
 
     findObjectByUuid(IdentifierUUID) {
