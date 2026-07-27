@@ -19,6 +19,12 @@
     "lastLogin": "Last login",
     "createProfile": "Create a profile to connect to the server",
     "exportProfiles": "Export profiles",
-    "importProfiles": "Import profiles"
+    "importProfiles": "Import profiles",
+    "search_mode_basic": "Basic",
+    "search_mode_expert": "Expert",
+    "search_placeholder": "Search...",
+    "search_expert_placeholder": "JMESPath expression, e.g. [?Type=='Context']",
+    "search_expert_help": "Expert mode: filter items with a JMESPath expression evaluated on raw field keys (case sensitive). e.g. [?contains(Title, 'FK') && RightsStatus=='All Done']",
+    "search_expert_error": "Invalid expression:"
   }
 }

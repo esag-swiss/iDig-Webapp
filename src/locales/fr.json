@@ -19,6 +19,12 @@
     "lastLogin": "Dernière connexion",
     "createProfile": "Créer un profil",
     "exportProfiles": "Exporter les profils",
-    "importProfiles": "Importer les profils"
+    "importProfiles": "Importer les profils",
+    "search_mode_basic": "Basique",
+    "search_mode_expert": "Expert",
+    "search_placeholder": "Rechercher...",
+    "search_expert_placeholder": "Expression JMESPath, ex. [?Type=='Context']",
+    "search_expert_help": "Mode expert : filtrez les items avec une expression JMESPath évaluée sur les clés brutes (sensible à la casse). ex. [?contains(Title, 'FK') && RightsStatus=='All Done']",
+    "search_expert_error": "Expression invalide :"
   }
 }

@@ -14,7 +14,13 @@
     "typeTip": " φιλτράρισμα δεδομένων και εμφάνιση μόνο των πεδίων που είναι διαθέσιμα για τον επιλεγμένο τύπο ή υποτύπο",
     "fieldTip": " διαθέσιμα πεδία για τον επιλεγμένο τύπο ή υποτύπο",
     "upload local pref": "Ανέβασμα τοπικού αρχείου προτιμήσεων",
-    "upload pref from trench": " Ανέβασμα προτιμήσεων από τον επιλεγμένο τομέα"
+    "upload pref from trench": " Ανέβασμα προτιμήσεων από τον επιλεγμένο τομέα",
+    "search_mode_basic": "Βασική",
+    "search_mode_expert": "Έμπειρη",
+    "search_placeholder": "Αναζήτηση...",
+    "search_expert_placeholder": "Έκφραση JMESPath, π.χ. [?Type=='Context']",
+    "search_expert_help": "Λειτουργία ειδικού: φιλτράρετε τα στοιχεία με μια έκφραση JMESPath που αξιολογείται στα ακατέργαστα κλειδιά πεδίων (με διάκριση πεζών-κεφαλαίων). π.χ. [?contains(Title, 'FK') && RightsStatus=='All Done']",
+    "search_expert_error": "Μη έγκυρη έκφραση:"
   },
   "buttons": {
     "save": "Αποθήκευση",

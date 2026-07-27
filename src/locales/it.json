@@ -14,6 +14,12 @@
     "typeTip": "filtrare i dati e mostrare solo i campi disponibili per il tipo o sottotipo selezionato",
     "fieldTip": "campi disponibili per il tipo o sottotipo selezionato",
     "upload local pref": "Carica file di preferenze locali",
-    "upload pref from trench": "Carica preferenze da un settore scelto"
+    "upload pref from trench": "Carica preferenze da un settore scelto",
+    "search_mode_basic": "Base",
+    "search_mode_expert": "Esperto",
+    "search_placeholder": "Cerca...",
+    "search_expert_placeholder": "Espressione JMESPath, es. [?Type=='Context']",
+    "search_expert_help": "Modalità esperto: filtra gli elementi con un'espressione JMESPath valutata sulle chiavi grezze (sensibile alle maiuscole). es. [?contains(Title, 'FK') && RightsStatus=='All Done']",
+    "search_expert_error": "Espressione non valida:"
   }
 }
