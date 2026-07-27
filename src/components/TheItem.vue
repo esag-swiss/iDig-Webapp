@@ -570,7 +570,7 @@ export default {
       this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
     },
 
-    findRelationAttachmentsByUuid(IdentifierUUID) {
+    findObjectByUuid(IdentifierUUID) {
       // Vérifie si les données existent pour la tranchée actuelle
       const trenchData = this.checkedTrenchesData[this.selectedItem.Trench];
 
