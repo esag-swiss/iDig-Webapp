@@ -549,26 +549,24 @@ export default {
     },
 
     async fetchImages() {
-      let relatedItems = [];
-      if (this.selectedItem?.RelationIncludesUUID && this.selectedItem.Trench) {
-        if (this.selectedItem.RelationIncludesUUID.includes("\n")) {
-          relatedItems = this.selectedItem.RelationIncludesUUID.split("\n");
-        } else {
-          relatedItems = [this.selectedItem.RelationIncludesUUID];
-        }
-      }
+      const relatedItems = [];
+
       if (this.selectedItem?.RelationAttachments) {
         relatedItems.push(this.selectedItem.IdentifierUUID);
       }
 
-      // Récupérer les URL d'images pour chaque UUID trouvé
-      const imagePromises = relatedItems.map((uuid) =>
-        this.findRelationAttachmentsByUuid(uuid),
-      );
-      // Attendre la résolution de toutes les promesses d'URL d'images
-      const resolvedImages = await Promise.all(imagePromises);
+      if (this.selectedItem?.RelationIncludesUUID && this.selectedItem.Trench) {
+        relatedItems.push(...this.selectedItem.RelationIncludesUUID.split("\n"));
+      }
 
-      // Filtrer les résultats pour ne garder que les valeurs non nulles
+      if (relatedItems.length === 0) {
+        return;
+      }
+
+      const resolvedImages = await Promise.all(
+        relatedItems.map((uuid) => this.findObjectByUuid(uuid)),
+      );
+
       this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
     },
 
