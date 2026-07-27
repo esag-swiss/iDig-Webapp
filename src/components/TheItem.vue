@@ -285,7 +285,10 @@
         >
           Extra fields
           <q-tooltip class="bg-accent"
-            >Fields not included in groups section, these fields are not included in any group in the project preferences, but they are present in the current item. They are displayed here for information purposes only.
+            >Fields not included in groups section, these fields are not
+            included in any group in the project preferences, but they are
+            present in the current item. They are displayed here for information
+            purposes only.
           </q-tooltip>
         </li>
         <!-- ROWS -->
@@ -335,7 +338,8 @@
 </template>
 
 <script>
-import dayjs from "dayjs";  
+import dayjs from "dayjs";
+import { apiFetchImageSRC } from "@/services/ApiClient";
 import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
@@ -357,7 +361,6 @@ import TheItemValuelist from "@/components/TheItemValuelist.vue";
 import TheItemInput from "@/components/TheItemInput.vue";
 import { pushSurvey } from "@/services/pushSurveyService";
 import { resolveFieldDefinition } from "@/services/fieldDefinition";
-
 
 export default {
   name: "TheItem",
@@ -547,38 +550,29 @@ export default {
 
     async fetchImages() {
       let relatedItems = [];
-      if (this.selectedItem?.RelationAttachments) {
-        relatedItems = [this.selectedItem.IdentifierUUID];
-        // Récupérer les URL d'images pour chaque UUID trouvé
-        const imagePromises = relatedItems.map((uuid) =>
-          this.findObjectByUuid(uuid),
-        );
-        // Attendre la résolution de toutes les promesses d'URL d'images
-        const resolvedImages = await Promise.all(imagePromises);
-
-        // Filtrer les résultats pour ne garder que les valeurs non nulles
-        this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
-      }
       if (this.selectedItem?.RelationIncludesUUID && this.selectedItem.Trench) {
         if (this.selectedItem.RelationIncludesUUID.includes("\n")) {
           relatedItems = this.selectedItem.RelationIncludesUUID.split("\n");
         } else {
           relatedItems = [this.selectedItem.RelationIncludesUUID];
         }
-
-        // Récupérer les URL d'images pour chaque UUID trouvé
-        const imagePromises = relatedItems.map((uuid) =>
-          this.findObjectByUuid(uuid),
-        );
-        // Attendre la résolution de toutes les promesses d'URL d'images
-        const resolvedImages = await Promise.all(imagePromises);
-
-        // Filtrer les résultats pour ne garder que les valeurs non nulles
-        this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
       }
+      if (this.selectedItem?.RelationAttachments) {
+        relatedItems.push(this.selectedItem.IdentifierUUID);
+      }
+
+      // Récupérer les URL d'images pour chaque UUID trouvé
+      const imagePromises = relatedItems.map((uuid) =>
+        this.findRelationAttachmentsByUuid(uuid),
+      );
+      // Attendre la résolution de toutes les promesses d'URL d'images
+      const resolvedImages = await Promise.all(imagePromises);
+
+      // Filtrer les résultats pour ne garder que les valeurs non nulles
+      this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
     },
 
-    findObjectByUuid(IdentifierUUID) {
+    findRelationAttachmentsByUuid(IdentifierUUID) {
       // Vérifie si les données existent pour la tranchée actuelle
       const trenchData = this.checkedTrenchesData[this.selectedItem.Trench];
 
@@ -697,13 +691,23 @@ export default {
         .map((x) => x.trim())
         .filter(Boolean);
 
-      const trenchItems = this.checkedTrenchesData?.[this.selectedItem.Trench] || [];
+      const trenchItems =
+        this.checkedTrenchesData?.[this.selectedItem.Trench] || [];
 
       return uuids.map((uuid) => {
-        const fullItem = trenchItems.find((x) => x.IdentifierUUID.includes(uuid));
+        const fullItem = trenchItems.find((x) =>
+          x.IdentifierUUID.includes(uuid),
+        );
         return {
           relationField: fieldName,
-          type: fullItem ? this.itemLabelForPrint({ Type: fullItem.Type, Subtype: fullItem.Subtype, Identifier: "", Title: "" }).trim() : "Unknown",
+          type: fullItem
+            ? this.itemLabelForPrint({
+                Type: fullItem.Type,
+                Subtype: fullItem.Subtype,
+                Identifier: "",
+                Title: "",
+              }).trim()
+            : "Unknown",
           identifier: fullItem?.Identifier || "",
           title: fullItem?.Title || "",
           uuid,
@@ -720,7 +724,9 @@ export default {
       if (fieldName === "Type") {
         return (
           this.projectPreferencesTypesTranslation[this.selectedItem.Subtype] ||
-          this.projectPreferencesTypesTranslation[this.selectedItem[fieldName]] ||
+          this.projectPreferencesTypesTranslation[
+            this.selectedItem[fieldName]
+          ] ||
           this.selectedItem[fieldName]
         );
       }
@@ -742,7 +748,9 @@ export default {
         this.fieldDefinition(fieldName, group)?.hasOwnProperty("link")
       ) {
         return this.relationRowsForField(fieldName)
-          .map((row) => [row.type, row.identifier, row.title].filter(Boolean).join(" | "))
+          .map((row) =>
+            [row.type, row.identifier, row.title].filter(Boolean).join(" | "),
+          )
           .join("\n");
       }
 
@@ -761,14 +769,17 @@ export default {
       groups.forEach((group) => {
         const fields = group.fields.filter(
           (item) =>
-            this.fieldsOfCurrentItem.includes(item.field) && item.field !== "Subtype",
+            this.fieldsOfCurrentItem.includes(item.field) &&
+            item.field !== "Subtype",
         );
 
         let rowsHtml = "";
         fields.forEach((field) => {
           const fieldName = field.field;
           const label = this.escapeHtml(this.getFieldLabel(field, group));
-          const value = this.escapeHtml(this.scalarValueForPrint(fieldName, group));
+          const value = this.escapeHtml(
+            this.scalarValueForPrint(fieldName, group),
+          );
 
           // if (this.fieldsSchema[fieldName]?.type === "link") {
           //   allRelationRows.push(...this.relationRowsForField(fieldName));
@@ -778,7 +789,9 @@ export default {
         });
 
         if (rowsHtml) {
-          const groupLabel = this.escapeHtml(group.labels ? group.labels[this.lang] : group.group);
+          const groupLabel = this.escapeHtml(
+            group.labels ? group.labels[this.lang] : group.group,
+          );
           contentHtml += `
             <section>
               <h2>${groupLabel}</h2>
@@ -790,15 +803,16 @@ export default {
         }
       });
 
-
       const headerType =
-      this.project + " " +
+        this.project +
+        " " +
         (this.projectPreferencesTypesTranslation[this.selectedItem.Subtype] ||
-        this.projectPreferencesTypesTranslation[this.selectedItem.Type] ||
-        this.selectedItem.Type ||
-        "");
+          this.projectPreferencesTypesTranslation[this.selectedItem.Type] ||
+          this.selectedItem.Type ||
+          "");
 
-      const title = `${headerType} ${this.selectedItem.Identifier || ""}`.trim();
+      const title =
+        `${headerType} ${this.selectedItem.Identifier || ""}`.trim();
 
       const html = `
         <!doctype html>
