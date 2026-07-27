@@ -1,26 +1,14 @@
 <template>
   <div class="q-pa-xs">
-    <q-btn-dropdown
+    <q-btn-dropdown  v-if="isLoaded"
       size="0.8em"
-      split
       rounded
       :outline="!isLoaded"
-      :disable-main-btn="username === ''"
       size:xs
       color="secondary"
-      :icon="isLoaded ? 'logout' : 'login'"
-      @click="if (username !== '') $emit('connect');"
     >
       <template #label>
-        <div class="q-pl-md">{{ username }}</div>
-        <q-tooltip v-if="isLoaded" class="bg-accent">log out</q-tooltip>
-        <q-tooltip v-else-if="username === ''" class="bg-accent">{{
-          $t("app.createProfile")
-        }}</q-tooltip>
-        <q-tooltip v-else class="bg-accent"
-          >{{ $t("app.lastLogin") }} {{ username }}<br />{{ project }}
-          {{ server }}</q-tooltip
-        >
+        <div class="q-pl-md">{{ $t("app.preferences") }}</div>
       </template>
 
       <q-list v-if="!isLoaded">
@@ -107,8 +95,44 @@
           </q-item-section>
         </q-item>
       </q-list>
-
-
+      <q-item
+        v-if="isLoaded"
+        v-close-popup
+        clickable
+        @click="importPreferences"
+      >
+        <q-item-section avatar>
+          <q-icon name="file_upload" color="secondary" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ $t("app.upload local pref") }}</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item v-if="isLoaded">
+        <q-item-section avatar>
+          <q-icon name="file_upload" color="secondary" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ $t("app.upload pref from trench") }}</q-item-label>
+        </q-item-section>
+        <q-item-section>
+          <q-btn-dropdown>
+            <q-list dense>
+              <q-item
+                v-for="trenchName in projectTrenchesNames"
+                :key="trenchName"
+                v-close-popup
+                clickable
+                @click="importTrenchPreferences(trenchName)"
+              >
+                <q-item-section>
+                  <q-item-label>{{ trenchName }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </q-item-section>
+      </q-item>
     </q-btn-dropdown>
   </div>
 </template>
@@ -171,7 +195,7 @@ export default {
       "fetchAndLoadPreferences",
     ]),
     lsConnections2Profiles() {
-      // Convert old connections format to profiles
+      // TODO remove this function after migrating all users to profiles
       const connections = JSON.parse(
         localStorage.getItem("connections") || "[]",
       );

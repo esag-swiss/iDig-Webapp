@@ -9,8 +9,9 @@
       <span>{{ server.replace(/^https?:\/\//, "").replace(/:\d+$/, "") }}</span>
     </div>
     <q-space /> <q-space /> <q-space /> <q-space /><q-space /> <q-space />
-    <TheHeaderLang />
+    <TheHeaderPreferences />
     <TheHeaderProfile @connect="connect" />
+    <TheHeaderLang />
   </q-toolbar>
 </template>
 <script>
@@ -21,9 +22,9 @@ import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
 import TheHeaderLang from "@/components/TheHeaderLang.vue";
 import TheHeaderProfile from "@/components/TheHeaderProfile.vue";
-
+import TheHeaderPreferences from "@/components/TheHeaderPreferences.vue";
 export default {
-  components: { TheHeaderLang, TheHeaderProfile },
+  components: { TheHeaderLang, TheHeaderProfile, TheHeaderPreferences },
   computed: {
     ...mapState(useAppStore, [
       "server",
