@@ -10,31 +10,34 @@ import {
 describe("detectCrsFormat", () => {
   it("should recognise EPSG codes with and without prefix", () => {
     expect(detectCrsFormat("EPSG:2100")).toBe(CRS_FORMAT.EPSG);
+    expect(detectCrsFormat("EPSG2100")).toBe(CRS_FORMAT.EPSG);
+    expect(detectCrsFormat("EPSG2100 GGR87")).toBe(CRS_FORMAT.EPSG);
     expect(detectCrsFormat("epsg:32634")).toBe(CRS_FORMAT.EPSG);
     expect(detectCrsFormat("2100")).toBe(CRS_FORMAT.EPSG);
   });
 
   it("should recognise PROJ4 strings", () => {
     expect(
-      detectCrsFormat("+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9996 +x_0=500000")
+      detectCrsFormat("+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9996 +x_0=500000"),
     ).toBe(CRS_FORMAT.PROJ4);
     expect(detectCrsFormat("  +proj=longlat +datum=WGS84 +no_defs")).toBe(
-      CRS_FORMAT.PROJ4
+      CRS_FORMAT.PROJ4,
     );
   });
 
   it("should recognise WKT strings", () => {
     expect(
-      detectCrsFormat('PROJCS["GGRS87 / Greek Grid",GEOGCS["GGRS87",...]]')
+      detectCrsFormat('PROJCS["GGRS87 / Greek Grid",GEOGCS["GGRS87",...]]'),
     ).toBe(CRS_FORMAT.WKT);
     expect(detectCrsFormat('GEOGCRS["WGS 84",DATUM["WGS_1984",...]]')).toBe(
-      CRS_FORMAT.WKT
+      CRS_FORMAT.WKT,
     );
   });
 
   it("should recognise hardcoded named CRS", () => {
     expect(detectCrsFormat("Amarynthos")).toBe(CRS_FORMAT.NAMED);
     expect(detectCrsFormat("Agora")).toBe(CRS_FORMAT.NAMED);
+    expect(detectCrsFormat("GGR87")).toBe(CRS_FORMAT.NAMED);
     expect(detectCrsFormat("UTM zone 34")).toBe(CRS_FORMAT.NAMED);
   });
 
@@ -63,6 +66,8 @@ describe("resolveProjectCrs", () => {
 
   it("should normalise EPSG codes and accept bare numeric codes", () => {
     expect(resolveProjectCrs("epsg:2100", "Amarynthos")).toBe("EPSG:2100");
+    expect(resolveProjectCrs("EPSG2100", "Port_Malia")).toBe("EPSG:2100");
+    expect(resolveProjectCrs("EPSG2100 GGR87", "Port_Malia")).toBe("EPSG:2100");
     expect(resolveProjectCrs("2100", "Amarynthos")).toBe("EPSG:2100");
   });
 
@@ -73,7 +78,7 @@ describe("resolveProjectCrs", () => {
   it("should register PROJ4 strings dynamically and return a stable key", () => {
     const key = resolveProjectCrs(
       "+proj=tmerc +lat_0=0 +lon_0=24 +k=0.9996 +x_0=500000 +y_0=0 +datum=GGRS87 +units=m +no_defs",
-      "MyCustomProject"
+      "MyCustomProject",
     );
     expect(key).toBe("MyCustomProject__fromPreferences");
     expect(proj4.defs(key)).toBeTruthy();
@@ -111,7 +116,7 @@ describe("convertToEPSG4326", () => {
   it("should work after dynamic registration of a PROJ4 string", () => {
     const key = resolveProjectCrs(
       "+proj=utm +zone=34 +datum=WGS84 +units=m +no_defs",
-      "DynamicUtm"
+      "DynamicUtm",
     );
     const { coords } = convertToEPSG4326([500000, 4000000], key);
     expect(coords.every(Number.isFinite)).toBe(true);

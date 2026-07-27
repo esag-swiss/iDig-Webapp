@@ -115,7 +115,7 @@
       <!--   LISTE OF GROUPS and FIELDS section) -->
       <ul
         v-for="(group, indexGroup) in editMode
-          ? groupOfFieldsAccordingToTypeAndNative
+          ? groupOfFieldsAccordingToType
           : groupsOfFieldsAccordingToItem"
         :key="group"
         class="list-group"
@@ -190,6 +190,7 @@
               class="col-12 p-1"
               :field="field"
               :current-item="selectedItem"
+              :edit-mode="editMode"
             />
             <!-- BOOLEAN -->
             <TheItemBoolean
@@ -271,7 +272,10 @@
         <li
           class="list-group-item text-uppercase accordion p-1 pl-2 border-bottom"
         >
-          Fields not included in groups
+          Extra fields
+          <q-tooltip class="bg-accent"
+            >Fields not included in groups section, these fields are not included in any group in the project preferences, but they are present in the current item. They are displayed here for information purposes only.
+          </q-tooltip>
         </li>
         <!-- ROWS -->
         <div
@@ -389,77 +393,6 @@ export default {
       return Object.getOwnPropertyNames(this.selectedItem);
     },
 
-    groupOfFieldsAccordingToTypeAndNative() {
-      // all groups according to type from Preferences + natives fields or groups
-      let groups = [...this.groupOfFieldsAccordingToType];
-      groups.forEach((obj) => {
-        if (obj.group === "General Section") {
-          let fieldsToAdd = [{ field: "Subtype" }];
-          fieldsToAdd.forEach((field) => {
-            if (
-              !obj.fields.some(
-                (existingField) => existingField.field === field.field,
-              )
-            ) {
-              obj.fields.push(field);
-            }
-          });
-        }
-        if (obj.group === "Relation Section") {
-          let fieldsToAdd = [
-            { field: "RelationIsAboveUUID" },
-            { field: "RelationIsBelowUUID" },
-            { field: "RelationIsNextToUUID" },
-            { field: "RelationCutsUUID" },
-            { field: "RelationIsCutByUUID" },
-            { field: "RelationIsAfterUUID" },
-            { field: "RelationIsBeforeUUID" },
-            { field: "RelationIsCoevalWithUUID" },
-            { field: "RelationBelongsToUUID" },
-            { field: "RelationIncludesUUID" },
-          ];
-          fieldsToAdd.forEach((field) => {
-            if (
-              !obj.fields.some(
-                (existingField) => existingField.field === field.field,
-              )
-            ) {
-              obj.fields.push(field);
-            }
-          });
-        }
-        if (obj.group === "Points") {
-          let fieldsToAdd = [{ field: "CoverageSerialized" }];
-          fieldsToAdd.forEach((field) => {
-            if (
-              !obj.fields.some(
-                (existingField) => existingField.field === field.field,
-              )
-            ) {
-              obj.fields.push(field);
-            }
-          });
-        }
-        if (obj.group === "Status Section") {
-          let fieldsToAdd = [
-            { field: "RightsSidelined" },
-            { field: "RightsLocked" },
-            { field: "RightsStatus" },
-          ];
-          fieldsToAdd.forEach((field) => {
-            if (
-              !obj.fields.some(
-                (existingField) => existingField.field === field.field,
-              )
-            ) {
-              obj.fields.push(field);
-            }
-          });
-        }
-      });
-      return groups;
-    },
-
     groupOfFieldsAccordingToType() {
       // all groups according to type from Preferences, include subtype if exists, otherwise type
       const bySubtype = this.projectPreferencesTypes.find((x) => {
@@ -479,14 +412,53 @@ export default {
       });
 
       const typeObj = bySubtype || byType;
-      const groups = typeObj ? typeObj.groups : [];
+
+      // Start from the groups configured in the project preferences for the
+      // selected subtype/type. Each group is cloned so this computed value can
+      // safely add fields without mutating the original preferences object.
+      // The fields array is also cloned because it is enriched below.
+      const groups = typeObj
+        ? typeObj.groups.map((group) => ({
+            ...group,
+            fields: [...(group.fields || [])],
+          }))
+        : [];
+
+      // Ensure every field declared in fieldsSchema and assigned to a group is
+      // present in the group list. Preferences may define the expected group
+      // order/content, while fieldsSchema is the source of truth for available
+      // fields and their metadata.
+      Object.entries(this.fieldsSchema).forEach(([fieldName, fieldSchema]) => {
+        // Fields without a group are intentionally ignored here: this method
+        // only prepares grouped fields for display.
+        if (!fieldSchema?.group) {
+          return;
+        }
+
+        // Reuse an existing group when preferences already define it. If the
+        // schema references a group missing from preferences, create it so the
+        // field remains visible instead of being dropped.
+        let group = groups.find((obj) => obj.group === fieldSchema.group);
+        if (!group) {
+          group = { group: fieldSchema.group, fields: [] };
+          groups.push(group);
+        }
+
+        // Avoid duplicating fields already listed by preferences. When a field
+        // is missing, append its schema metadata and add the field name because
+        // the schema object itself is keyed by name and does not contain it.
+        if (!group.fields.some((field) => field.field === fieldName)) {
+          group.fields.push({ ...fieldSchema, field: fieldName });
+        }
+      });
+
       // except Attachments since photos are managed elsewhere
       return groups.filter((obj) => obj.group !== "Attachments");
     },
 
     groupsOfFieldsAccordingToItem() {
       // used to display only groups where items has fields
-      let groups = this.groupOfFieldsAccordingToTypeAndNative;
+      let groups = this.groupOfFieldsAccordingToType;
       groups = groups.filter((obj) =>
         obj.fields.some((field) =>
           this.fieldsOfCurrentItem.includes(field.field),
@@ -499,13 +471,14 @@ export default {
       let notToDisplay = [
         // "IdentifierUUID",
         "Trench",
+        "RightsLocked",
         "RightsTrashed",
         "RightsDeleted",
         "DateTimeZone",
       ];
       let fieldsNotPrinsentInGroup = [];
 
-      this.groupOfFieldsAccordingToTypeAndNative.forEach((obj) => {
+      this.groupOfFieldsAccordingToType.forEach((obj) => {
         obj.fields.forEach((key) => {
           notToDisplay.push(key.field);
         });

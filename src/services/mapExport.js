@@ -1,5 +1,7 @@
 import html2canvas from "html2canvas";
 
+const EXPORT_RASTER_SCALE = 3;
+
 export function exportMapAsPNG() {
   const mapElement = document.getElementById("mapContainer");
   // Utiliser html2canvas pour capturer l'élément de la carte
@@ -47,6 +49,7 @@ export async function exportMapAsCompositeSVG() {
     },
     useCORS: true,
     async: true,
+    scale: EXPORT_RASTER_SCALE,
   });
   const imgData = canvas.toDataURL("image/png");
 
