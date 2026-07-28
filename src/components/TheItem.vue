@@ -746,6 +746,14 @@ export default {
         this.fieldDefinition(fieldName, group)?.hasOwnProperty("link")
       ) {
         return this.relationRowsForField(fieldName)
+          .slice()
+          .sort((a, b) =>
+            String(a.identifier ?? "").localeCompare(
+              String(b.identifier ?? ""),
+              undefined,
+              { numeric: true, sensitivity: "base" },
+            ),
+          )
           .map((row) =>
             [row.type, row.identifier, row.title].filter(Boolean).join(" | "),
           )
@@ -762,7 +770,6 @@ export default {
 
       const groups = this.groupsOfFieldsAccordingToItem;
       let contentHtml = "";
-      const allRelationRows = [];
 
       groups.forEach((group) => {
         const fields = group.fields.filter(
@@ -778,10 +785,6 @@ export default {
           const value = this.escapeHtml(
             this.scalarValueForPrint(fieldName, group),
           );
-
-          // if (this.fieldsSchema[fieldName]?.type === "link") {
-          //   allRelationRows.push(...this.relationRowsForField(fieldName));
-          // }
 
           rowsHtml += `<tr><th style="width: 15%;">${label}</th><td>${value.replace(/\n/g, "<br>")}</td></tr>`;
         });
