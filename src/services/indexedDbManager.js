@@ -1,6 +1,11 @@
 export const openDB = () => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("iDigIndexedDB", 1);
+    // Do not force a version here: another application branch may already
+    // have upgraded the same database. Opening it without a version uses the
+    // existing version and avoids a VersionError (for example, v1 after v2).
+    // A database created for the first time still starts at version 1 and
+    // triggers onupgradeneeded below.
+    const request = indexedDB.open("iDigIndexedDB");
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
