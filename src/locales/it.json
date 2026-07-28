@@ -14,6 +14,7 @@
     "typeTip": "filtrare i dati e mostrare solo i campi disponibili per il tipo o sottotipo selezionato",
     "fieldTip": "campi disponibili per il tipo o sottotipo selezionato",
     "upload local pref": "Carica file di preferenze locali",
-    "upload pref from trench": "Carica preferenze da un settore scelto"
+    "upload pref from trench": "Carica preferenze da un settore scelto",
+    "download pref": "Scarica preferences.json"
   }
 }

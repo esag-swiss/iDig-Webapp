@@ -18,6 +18,7 @@
     "selectProfile": "Choisir un profil",
     "lastLogin": "Dernière connexion",
     "createProfile": "Créer un profil",
+    "download pref": "Télécharger le fichier preferences.json",
     "exportProfiles": "Exporter les profils",
     "importProfiles": "Importer les profils"
   }

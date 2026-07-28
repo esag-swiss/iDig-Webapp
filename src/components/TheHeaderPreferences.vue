@@ -108,6 +108,19 @@
           <q-item-label>{{ $t("app.upload local pref") }}</q-item-label>
         </q-item-section>
       </q-item>
+      <q-item
+        v-if="isLoaded"
+        v-close-popup
+        clickable
+        @click="exportPreferences"
+      >
+        <q-item-section avatar>
+          <q-icon name="file_download" color="secondary" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ $t("app.download pref") }}</q-item-label>
+        </q-item-section>
+      </q-item>
       <q-item v-if="isLoaded">
         <q-item-section avatar>
           <q-icon name="file_upload" color="secondary" />
@@ -171,7 +184,10 @@ export default {
       "password",
       "isLoaded",
     ]),
-    ...mapState(useDataStore, ["projectTrenchesNames"]),
+    ...mapState(useDataStore, [
+      "projectPreferencesBase64",
+      "projectTrenchesNames",
+    ]),
   },
   mounted() {
     if (!localStorage.getItem("profiles")) {
@@ -370,6 +386,24 @@ export default {
         reader.readAsText(file);
       };
       input.click();
+    },
+    exportPreferences() {
+      if (!this.projectPreferencesBase64) return;
+
+      const binary = window.atob(this.projectPreferencesBase64);
+      const bytes = Uint8Array.from(binary, (character) =>
+        character.charCodeAt(0),
+      );
+      const url = URL.createObjectURL(
+        new Blob([bytes], { type: "application/json;charset=utf-8" }),
+      );
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "preferences.json";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
     },
     async importTrenchPreferences(trench) {
       await this.fetchAndLoadPreferences(trench);
