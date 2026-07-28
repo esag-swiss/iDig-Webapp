@@ -162,7 +162,10 @@ function warnFallback(reason, fallbackKey) {
 // to the hardcoded named definitions when the value is unrecognised.
 export function resolveProjectCrs(crsValue, projectName) {
   const fallbackKey =
-    projectName && hasProj4Def(projectName) ? projectName : null;
+    projectName &&
+    (hasProj4Def(projectName) || HARDCODED_CRS_NAMES.has(projectName))
+      ? projectName
+      : null;
 
   const value = trimmedOrNull(crsValue);
   if (!value) {
