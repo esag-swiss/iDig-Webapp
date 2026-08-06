@@ -2,7 +2,8 @@
   <div class="q-pa-xs">
     <q-btn-dropdown
       size="0.8em"
-      split
+      :split="!isLoaded"
+      :dropdown-icon="!isLoaded ? 'arrow_drop_down' : 'person'"
       rounded
       :outline="!isLoaded"
       :disable-main-btn="username === ''"
