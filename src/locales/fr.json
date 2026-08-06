@@ -20,6 +20,11 @@
     "createProfile": "Créer un profil",
     "download pref": "Télécharger le fichier preferences.json",
     "exportProfiles": "Exporter les profils",
-    "importProfiles": "Importer les profils"
+    "importProfiles": "Importer les profils",
+    "relation_filter_title": "Filtre relationnel",
+    "relation_filter_tip": "Filtrer les éléments selon une propriété de leurs éléments liés",
+    "relation_filter_relation": "Choisir une relation",
+    "relation_filter_property": "Choisir un champ",
+    "relation_filter_value": "Valeur…"
   }
 }

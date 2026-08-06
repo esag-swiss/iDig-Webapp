@@ -20,6 +20,11 @@
     "createProfile": "Create a profile to connect to the server",
     "download pref": "Download preferences.json",
     "exportProfiles": "Export profiles",
-    "importProfiles": "Import profiles"
+    "importProfiles": "Import profiles",
+    "relation_filter_title": "Relational filter",
+    "relation_filter_tip": "Filter items by a property of their related items",
+    "relation_filter_relation": "Select a relation",
+    "relation_filter_property": "Select a field",
+    "relation_filter_value": "Value…"
   }
 }
