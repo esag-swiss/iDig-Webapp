@@ -18,6 +18,7 @@
     "selectProfile": "Select a profile",
     "lastLogin": "Last login",
     "createProfile": "Create a profile to connect to the server",
+    "download pref": "Download preferences.json",
     "exportProfiles": "Export profiles",
     "importProfiles": "Import profiles"
   }

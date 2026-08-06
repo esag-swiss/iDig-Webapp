@@ -51,6 +51,7 @@ const HARDCODED_CRS_NAMES = new Set([
   "EPSG:32635",
   "UTM zone 35",
   "Agora",
+  "Eretria_HATT",
 ]);
 
 export const CRS_FORMAT = Object.freeze({
@@ -161,7 +162,10 @@ function warnFallback(reason, fallbackKey) {
 // to the hardcoded named definitions when the value is unrecognised.
 export function resolveProjectCrs(crsValue, projectName) {
   const fallbackKey =
-    projectName && hasProj4Def(projectName) ? projectName : null;
+    projectName &&
+    (hasProj4Def(projectName) || HARDCODED_CRS_NAMES.has(projectName))
+      ? projectName
+      : null;
 
   const value = trimmedOrNull(crsValue);
   if (!value) {
@@ -201,8 +205,38 @@ export function resolveProjectCrs(crsValue, projectName) {
 // ───────────────────────────────────────────────────────────────────────────
 // Coordinate conversion
 // ───────────────────────────────────────────────────────────────────────────
+function eretriaHattToEgsa(x, y) {
+  const X =
+    497061.26 +
+    0.9996595 * x +
+    0.0003688 * y +
+    0.64e-9 * x * x -
+    0.04e-9 * y * y -
+    0.38e-9 * x * y;
+
+  const Y =
+    4233369.6 -
+    0.0003775 * x +
+    0.9996308 * y +
+    0.1e-9 * x * x -
+    0.12e-9 * y * y -
+    0.25e-9 * x * y;
+
+  return [X, Y];
+}
 
 export function convertToEPSG4326(xyArray, crs) {
+  if (crs === "Eretria_HATT") {
+    const [xEgsa, yEgsa] = eretriaHattToEgsa(
+      Number(xyArray[0]),
+      Number(xyArray[1]),
+    );
+
+    const coords = proj4("EPSG:2100", "EPSG:4326", [xEgsa, yEgsa]);
+
+    return { coords };
+  }
+
   const coords = proj4(crs, "EPSG:4326", xyArray);
   return { coords };
 }

@@ -96,6 +96,7 @@ describe("resolveProjectCrs", () => {
     expect(resolveProjectCrs(undefined, "Agora")).toBe("Agora");
     expect(resolveProjectCrs(null, "Amarynthos")).toBe("Amarynthos");
     expect(resolveProjectCrs("", "Agora")).toBe("Agora");
+    expect(resolveProjectCrs(undefined, "Eretria_HATT")).toBe("Eretria_HATT");
   });
 
   it("should return null when no fallback is available", () => {
@@ -120,5 +121,12 @@ describe("convertToEPSG4326", () => {
     );
     const { coords } = convertToEPSG4326([500000, 4000000], key);
     expect(coords.every(Number.isFinite)).toBe(true);
+  });
+
+  it("should convert Eretria HATT coordinates through EGSA87", () => {
+    const { coords } = convertToEPSG4326([0, 0], "Eretria_HATT");
+
+    expect(coords[0]).toBeCloseTo(23.968123, 5);
+    expect(coords[1]).toBeCloseTo(38.250931, 5);
   });
 });

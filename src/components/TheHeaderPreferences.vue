@@ -1,27 +1,14 @@
 <template>
   <div class="q-pa-xs">
-    <q-btn-dropdown
+    <q-btn-dropdown  v-if="isLoaded"
       size="0.8em"
-      :split="!isLoaded"
-      :dropdown-icon="!isLoaded ? 'arrow_drop_down' : 'person'"
       rounded
       :outline="!isLoaded"
-      :disable-main-btn="username === ''"
       size:xs
       color="secondary"
-      :icon="isLoaded ? 'logout' : 'login'"
-      @click="if (username !== '') $emit('connect');"
     >
       <template #label>
-        <div class="q-pl-md">{{ username }}</div>
-        <q-tooltip v-if="isLoaded" class="bg-accent">log out</q-tooltip>
-        <q-tooltip v-else-if="username === ''" class="bg-accent">{{
-          $t("app.createProfile")
-        }}</q-tooltip>
-        <q-tooltip v-else class="bg-accent"
-          >{{ $t("app.lastLogin") }} {{ username }}<br />{{ project }}
-          {{ server }}</q-tooltip
-        >
+        <div class="q-pl-md">{{ $t("app.preferences") }}</div>
       </template>
 
       <q-list v-if="!isLoaded">
@@ -108,8 +95,57 @@
           </q-item-section>
         </q-item>
       </q-list>
-
-
+      <q-item
+        v-if="isLoaded"
+        v-close-popup
+        clickable
+        @click="importPreferences"
+      >
+        <q-item-section avatar>
+          <q-icon name="file_upload" color="secondary" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ $t("app.upload local pref") }}</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item
+        v-if="isLoaded"
+        v-close-popup
+        clickable
+        @click="exportPreferences"
+      >
+        <q-item-section avatar>
+          <q-icon name="file_download" color="secondary" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ $t("app.download pref") }}</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item v-if="isLoaded">
+        <q-item-section avatar>
+          <q-icon name="file_upload" color="secondary" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ $t("app.upload pref from trench") }}</q-item-label>
+        </q-item-section>
+        <q-item-section>
+          <q-btn-dropdown>
+            <q-list dense>
+              <q-item
+                v-for="trenchName in projectTrenchesNames"
+                :key="trenchName"
+                v-close-popup
+                clickable
+                @click="importTrenchPreferences(trenchName)"
+              >
+                <q-item-section>
+                  <q-item-label>{{ trenchName }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </q-item-section>
+      </q-item>
     </q-btn-dropdown>
   </div>
 </template>
@@ -148,7 +184,10 @@ export default {
       "password",
       "isLoaded",
     ]),
-    ...mapState(useDataStore, ["projectTrenchesNames"]),
+    ...mapState(useDataStore, [
+      "projectPreferencesBase64",
+      "projectTrenchesNames",
+    ]),
   },
   mounted() {
     if (!localStorage.getItem("profiles")) {
@@ -172,7 +211,7 @@ export default {
       "fetchAndLoadPreferences",
     ]),
     lsConnections2Profiles() {
-      // Convert old connections format to profiles
+      // TODO remove this function after migrating all users to profiles
       const connections = JSON.parse(
         localStorage.getItem("connections") || "[]",
       );
@@ -347,6 +386,24 @@ export default {
         reader.readAsText(file);
       };
       input.click();
+    },
+    exportPreferences() {
+      if (!this.projectPreferencesBase64) return;
+
+      const binary = window.atob(this.projectPreferencesBase64);
+      const bytes = Uint8Array.from(binary, (character) =>
+        character.charCodeAt(0),
+      );
+      const url = URL.createObjectURL(
+        new Blob([bytes], { type: "application/json;charset=utf-8" }),
+      );
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "preferences.json";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
     },
     async importTrenchPreferences(trench) {
       await this.fetchAndLoadPreferences(trench);
