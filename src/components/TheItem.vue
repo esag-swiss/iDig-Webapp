@@ -14,6 +14,17 @@
 
       <div class="mx-1">
         <q-btn
+          round
+          color="secondary"
+          icon="print"
+          :size="'sm'"
+          class="print-action"
+          @click="printItemSheet"
+        />
+        <q-tooltip class="bg-accent">print item as sheet</q-tooltip>
+      </div>
+      <div class="mx-1 no-print">
+        <q-btn
           v-if="editMode"
           round
           color="secondary"
@@ -25,7 +36,7 @@
           >upload curent trench modification to iDig server</q-tooltip
         >
       </div>
-      <div class="mx-1">
+      <div class="mx-1 no-print">
         <q-toggle
           v-model="editMode"
           :disable="
@@ -158,7 +169,6 @@
               anchor="bottom left"
               self="top left"
               class="bg-accent"
-              style="white-space: pre-line"
               >({{ field.field }})<br />
               {{ fieldDefinition(field.field, group).tips[lang] }}</q-tooltip
             >
@@ -274,7 +284,10 @@
         >
           Extra fields
           <q-tooltip class="bg-accent"
-            >Fields not included in groups section, these fields are not included in any group in the project preferences, but they are present in the current item. They are displayed here for information purposes only.
+            >Fields not included in groups section, these fields are not
+            included in any group in the project preferences, but they are
+            present in the current item. They are displayed here for information
+            purposes only.
           </q-tooltip>
         </li>
         <!-- ROWS -->
@@ -324,8 +337,7 @@
 </template>
 
 <script>
-import { Notify } from "quasar";
-import { apiPushTrench, apiFetchImageSRC } from "@/services/ApiClient";
+import { apiFetchImageSRC } from "@/services/ApiClient";
 import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
@@ -347,6 +359,7 @@ import TheItemValuelist from "@/components/TheItemValuelist.vue";
 import TheItemInput from "@/components/TheItemInput.vue";
 import { pushSurvey } from "@/services/pushSurveyService";
 import { resolveFieldDefinition } from "@/services/fieldDefinition";
+import { printItemSheet as printItemSheetDocument } from "@/services/itemPrint";
 
 export default {
   name: "TheItem",
@@ -386,7 +399,7 @@ export default {
       "checkedTrenchesItemsSelectedType",
       "selectedItem",
     ]),
-    ...mapState(useAppStore, ["username", "lang"]),
+    ...mapState(useAppStore, ["username", "lang", "project"]),
 
     //  array of fields presents in current item
     fieldsOfCurrentItem() {
@@ -535,36 +548,25 @@ export default {
     },
 
     async fetchImages() {
-      let relatedItems = [];
+      const relatedItems = [];
+
       if (this.selectedItem?.RelationAttachments) {
-        relatedItems = [this.selectedItem.IdentifierUUID];
-        // Récupérer les URL d'images pour chaque UUID trouvé
-        const imagePromises = relatedItems.map((uuid) =>
-          this.findObjectByUuid(uuid),
-        );
-        // Attendre la résolution de toutes les promesses d'URL d'images
-        const resolvedImages = await Promise.all(imagePromises);
-
-        // Filtrer les résultats pour ne garder que les valeurs non nulles
-        this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
+        relatedItems.push(this.selectedItem.IdentifierUUID);
       }
+
       if (this.selectedItem?.RelationIncludesUUID && this.selectedItem.Trench) {
-        if (this.selectedItem.RelationIncludesUUID.includes("\n")) {
-          relatedItems = this.selectedItem.RelationIncludesUUID.split("\n");
-        } else {
-          relatedItems = [this.selectedItem.RelationIncludesUUID];
-        }
-
-        // Récupérer les URL d'images pour chaque UUID trouvé
-        const imagePromises = relatedItems.map((uuid) =>
-          this.findObjectByUuid(uuid),
-        );
-        // Attendre la résolution de toutes les promesses d'URL d'images
-        const resolvedImages = await Promise.all(imagePromises);
-
-        // Filtrer les résultats pour ne garder que les valeurs non nulles
-        this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
+        relatedItems.push(...this.selectedItem.RelationIncludesUUID.split("\n"));
       }
+
+      if (relatedItems.length === 0) {
+        return;
+      }
+
+      const resolvedImages = await Promise.all(
+        relatedItems.map((uuid) => this.findObjectByUuid(uuid)),
+      );
+
+      this.relatedImageUrls = resolvedImages.filter((url) => url !== "null");
     },
 
     findObjectByUuid(IdentifierUUID) {
@@ -640,6 +642,28 @@ export default {
     closeImage() {
       this.selectedImageUrl = null; // Réinitialiser l'URL pour masquer l'image
     },
+
+    printItemSheet() {
+      if (!this.selectedItem) {
+        return;
+      }
+
+      printItemSheetDocument({
+        selectedItem: this.selectedItem,
+        groups: this.groupsOfFieldsAccordingToItem,
+        fieldsOfCurrentItem: this.fieldsOfCurrentItem,
+        lang: this.lang,
+        project: this.project,
+        projectPreferencesTypes: this.projectPreferencesTypes,
+        projectPreferencesTypesTranslation:
+          this.projectPreferencesTypesTranslation,
+        projectPreferencesFields: this.projectPreferencesFields,
+        projectPreferencesFieldsWithTranslation:
+          this.projectPreferencesFieldsWithTranslation,
+        fieldsSchema: this.fieldsSchema,
+        checkedTrenchesData: this.checkedTrenchesData,
+      });
+    },
   },
 };
 </script>
@@ -712,6 +736,58 @@ export default {
   max-height: 90%; /* Hauteur maximale de 90% de l'écran */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optionnel, ajoute une ombre */
   cursor: pointer;
+}
+
+@media print {
+  .TheItemwrapper {
+    position: static;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    border-radius: 0;
+    background: #fff;
+    padding: 0;
+  }
+
+  .sticky-top {
+    position: static;
+  }
+
+  .no-print,
+  .print-action,
+  .image-overlay,
+  .thumbnails-container,
+  .img-thumbnail {
+    display: none !important;
+  }
+
+  .TheItem {
+    margin-top: 0;
+    width: 100%;
+  }
+
+  .TheItemwrapper,
+  .TheItemwrapper * {
+    color: #000 !important;
+    -webkit-text-fill-color: #000 !important;
+  }
+
+  .TheItemwrapper,
+  .TheItem,
+  .list-group,
+  .list-group-item,
+  .accordion {
+    background: #fff !important;
+  }
+
+  .q-field,
+  .q-field__control,
+  .q-field__native,
+  .q-field__input,
+  .q-field__label {
+    color: #000 !important;
+    background: #fff !important;
+  }
 }
 </style>
 <style>
