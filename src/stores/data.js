@@ -17,6 +17,7 @@ import {
   readDataInIndexedDB,
 } from "@/services/indexedDbManager";
 import { resolveProjectCrs } from "@/services/coordinateUtils";
+import { runExpression } from "@/services/expertSearch";
 
 export const useDataStore = defineStore("data", {
   state: () => ({
@@ -30,6 +31,7 @@ export const useDataStore = defineStore("data", {
     checkedTrenchesData: {},
     checkedTrenchesVersion: lsLoadCheckedTrenchesVersion(),
     searchText: "",
+    searchMode: "basic",
     syncPatches: "",
     syncTrench: "",
     syncNewVersion: "",
@@ -180,6 +182,14 @@ export const useDataStore = defineStore("data", {
       // Early exit if no search text provided
       if (state.searchText.trim() === "") {
         return state.checkedTrenchesItemsSelectedTypeFiltered;
+      }
+
+      // Mode expert : évaluation d'une expression JMESPath
+      if (state.searchMode === "expert") {
+        return runExpression(
+          state.checkedTrenchesItemsSelectedTypeFiltered,
+          state.searchText,
+        );
       }
 
       const searchText = state.searchText.trim();
@@ -494,6 +504,10 @@ export const useDataStore = defineStore("data", {
 
     setSearchText(searchText) {
       this.searchText = searchText;
+    },
+
+    setSearchMode(searchMode) {
+      this.searchMode = searchMode;
     },
 
     setTableFilteredCheckedTrenchesItems(items) {

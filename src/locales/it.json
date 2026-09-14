@@ -40,5 +40,11 @@
       "pages": "pagine"
     },
     "download pref": "Scarica preferences.json"
+    "search_mode_basic": "Base",
+    "search_mode_expert": "Esperto",
+    "search_placeholder": "Cerca...",
+    "search_expert_placeholder": "Espressione JMESPath, es. [?Type=='Context']",
+    "search_expert_help": "Modalità esperto: filtra gli elementi con un'espressione JMESPath valutata sulle chiavi grezze (sensibile alle maiuscole). es. [?contains(Title, 'FK') && RightsStatus=='All Done']",
+    "search_expert_error": "Espressione non valida:"
   }
 }
