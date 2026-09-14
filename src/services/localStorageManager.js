@@ -2,7 +2,7 @@ import { useAppStore } from "@/stores/app";
 import { useDataStore } from "@/stores/data";
 import { Notify } from "quasar";
 
-export function lsStoreConnection() {
+function lsStoreConnection() {
   // Store the current connection details in local storage
   // This is used to persist the connection state across sessions
   // and to allow the user to reconnect without re-entering credentials.
@@ -14,7 +14,7 @@ export function lsStoreConnection() {
   localStorage.setItem("password", password);
 }
 
-export function lsStoreProfiles(profile, server, project, username, password) {
+function lsStoreProfiles(profile, server, project, username, password) {
   // Retrieve existing profiles array or initialize an empty one
   const profiles = JSON.parse(
     localStorage.getItem("profiles") ||
@@ -51,7 +51,7 @@ export function lsStoreProfiles(profile, server, project, username, password) {
     localStorage.setItem("profiles", JSON.stringify(profiles));
   }
 }
-export function lsUpdateProfile(profile, key, value) {
+function lsUpdateProfile(profile, key, value) {
   // Retrieve existing profiles array or initialize an empty one
   const profiles = JSON.parse(
     localStorage.getItem("profiles") ||
@@ -74,36 +74,36 @@ export function lsUpdateProfile(profile, key, value) {
   }
 }
 
-export const lsLoadCurrentProfile = () => {
+function lsLoadCurrentProfile () {
   return localStorage.getItem("currentProfile") ?? "";
 };
-export const lsLoadUsername = () => {
+function lsLoadUsername () {
   return localStorage.getItem("username") ?? "";
 };
-export const lsLoadPassword = () => {
+function lsLoadPassword () {
   return localStorage.getItem("password") ?? "";
 };
-export const lsLoadServer = () => {
+function lsLoadServer () {
   return localStorage.getItem("server") ?? "";
 };
-export const lsLoadProject = () => {
+function lsLoadProject () {
   return localStorage.getItem("project") ?? "";
 };
-export const lsLoadCheckedTrenchesVersion = () => {
+function lsLoadCheckedTrenchesVersion () {
   return localStorage.getItem("lsLocalTrenchesVersion")
     ? JSON.parse(localStorage.getItem("lsLocalTrenchesVersion"))
     : {};
 };
-export function lsStoreLang() {
+function lsStoreLang() {
   const { lang, currentProfile } = useAppStore();
   lsUpdateProfile(currentProfile, "lang", lang);
   localStorage.setItem("lang", lang);
 }
-export const lsLoadLang = () => {
+function lsLoadLang () {
   return localStorage.getItem("lang") ?? "fr";
 };
 
-export function lsStoreCheckedFieldNames() {
+function lsStoreCheckedFieldNames() {
   const { checkedFieldNames, selectedType } = useDataStore();
 
   // 1st, get the full checked array saved in local storage, if any :
@@ -123,7 +123,7 @@ export function lsStoreCheckedFieldNames() {
   );
 }
 
-export function lsLoadCheckedFieldNames() {
+function lsLoadCheckedFieldNames() {
   const { setCheckedFieldNames, selectedType } = useDataStore();
 
   if (
@@ -143,7 +143,42 @@ export function lsLoadCheckedFieldNames() {
   }
 }
 
-export function lsStoreProjectsPreferencesBase64(preferencesBase64) {
+function lsStoreFavoritePlans(favoritePlanIds) {
+  const { project } = useAppStore();
+
+  let favoritePlansPerProject = localStorage.getItem("lsFavoritePlans")
+    ? JSON.parse(localStorage.getItem("lsFavoritePlans"))
+    : {};
+
+  favoritePlansPerProject[project] = favoritePlanIds;
+
+  localStorage.setItem(
+    "lsFavoritePlans",
+    JSON.stringify(favoritePlansPerProject),
+  );
+}
+
+function lsLoadFavoritePlans() {
+  const { project } = useAppStore();
+
+  if (
+    localStorage.getItem("lsFavoritePlans") &&
+    JSON.parse(localStorage.getItem("lsFavoritePlans"))?.[project]
+  ) {
+    return JSON.parse(localStorage.getItem("lsFavoritePlans"))?.[project];
+  }
+  return [];
+}
+
+function lsStorePlansGroupBy(groupBy) {
+  localStorage.setItem("lsPlansGroupBy", groupBy);
+}
+
+function lsLoadPlansGroupBy() {
+  return localStorage.getItem("lsPlansGroupBy") ?? "trench";
+}
+
+function lsStoreProjectsPreferencesBase64(preferencesBase64) {
   const { project } = useAppStore();
 
   // 1st, get ProjectsPreferencesBase64 in local storage, if any :
@@ -163,17 +198,22 @@ export function lsStoreProjectsPreferencesBase64(preferencesBase64) {
   );
 }
 
-export function lsLoadProjectsPreferencesBase64() {
-  const { project } = useAppStore();
-
-  if (
-    localStorage.getItem("lsProjectsPreferencesBase64") &&
-    JSON.parse(localStorage.getItem("lsProjectsPreferencesBase64"))?.[project]
-  ) {
-    return JSON.parse(localStorage.getItem("lsProjectsPreferencesBase64"))?.[
-      project
-    ];
-  } else {
-    console.log("No preferences found for ", project);
-  }
+export {
+  lsStoreConnection,
+  lsStoreProfiles,
+  lsLoadCurrentProfile,
+  lsLoadUsername,
+  lsLoadPassword,
+  lsLoadServer,
+  lsLoadProject,
+  lsLoadCheckedTrenchesVersion,
+  lsStoreLang,
+  lsLoadLang,
+  lsStoreCheckedFieldNames,
+  lsLoadCheckedFieldNames,
+  lsStoreFavoritePlans,
+  lsLoadFavoritePlans,
+  lsStorePlansGroupBy,
+  lsLoadPlansGroupBy,
+  lsStoreProjectsPreferencesBase64,
 }

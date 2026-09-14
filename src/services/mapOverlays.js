@@ -45,7 +45,7 @@ let Satellite = L.tileLayer(
   },
 );
 
-export const baseLayersTree = {
+const baseLayersTree = {
   label: "Base Layers",
   children: [
     { label: "OSM", layer: osmLayer },
@@ -55,13 +55,13 @@ export const baseLayersTree = {
   ],
 };
 
-// OVERLAYS TREE ------------------------------
+// OVERLAYS LIST ------------------------------
 
-export async function createMapsOverlaysTree(
+async function createMapsOverlaysList(
   checkedTrenchesItemsPlans,
   projectPreferencesCRS,
 ) {
-  const groupedOverlays = {};
+  const overlays = [];
   const seenTitles = new Set();
 
   for (const obj of checkedTrenchesItemsPlans) {
@@ -90,36 +90,17 @@ export async function createMapsOverlaysTree(
         continue;
       }
 
-      // Extraire le préfixe des 5 premières lettres de `Title`
-      const prefix = obj.Title.substring(0, 5);
-
-      // Créer un groupe pour chaque préfixe si nécessaire
-      if (!groupedOverlays[prefix]) {
-        groupedOverlays[prefix] = {
-          label: prefix,
-          selectAllCheckbox: true,
-          collapsed: true,
-          children: [],
-        };
-      }
-
-      // Ajouter l'overlay à l'entrée correspondante
-      groupedOverlays[prefix].children.push(overlay);
+      overlays.push({
+        id: obj.IdentifierUUID ?? obj.Title,
+        title: obj.Title,
+        trench: obj.Trench ?? "",
+        dateEarliest: obj.DateEarliest ?? null,
+        layer: overlay.layer,
+      });
     }
   }
 
-  // Trier les groupedOverlays par ordre alphabétique des labels
-  const sortedGroupedOverlays = Object.values(groupedOverlays).sort((a, b) =>
-    a.label.localeCompare(b.label),
-  );
-
-  const result = {
-    label: "Plans Orthophotos",
-    selectAllCheckbox: "Un/select all",
-    children: sortedGroupedOverlays,
-  };
-
-  return result;
+  return overlays;
 }
 
 async function createOverlay(
@@ -405,4 +386,9 @@ async function convertGeoTiffBlobToPngBlob(tiffBlob) {
   );
 
   return { pngBlob, width, height };
+}
+
+export {
+  baseLayersTree,
+  createMapsOverlaysList,
 }

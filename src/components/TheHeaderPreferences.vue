@@ -1,6 +1,7 @@
 <template>
   <div class="q-pa-xs">
-    <q-btn-dropdown  v-if="isLoaded"
+    <q-btn-dropdown
+      v-if="isLoaded"
       size="0.8em"
       rounded
       :outline="!isLoaded"
@@ -388,7 +389,7 @@ export default {
       input.click();
     },
     exportPreferences() {
-      if (!this.projectPreferencesBase64) return;
+      if (!this.projectPreferencesBase64) {return;}
 
       const binary = window.atob(this.projectPreferencesBase64);
       const bytes = Uint8Array.from(binary, (character) =>
