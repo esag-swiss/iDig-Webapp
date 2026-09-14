@@ -126,7 +126,7 @@ export default {
 
       try {
         this.map.stop();
-      } catch (error) {
+      } catch {
         // noop
       }
 

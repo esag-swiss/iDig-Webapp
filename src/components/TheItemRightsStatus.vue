@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-mutating-props -->
   <q-select
     v-model="currentItem[field.field]"
     dense
@@ -12,6 +13,7 @@
     map-options
     class="select"
   />
+  <!-- eslint-enable vue/no-mutating-props -->
 </template>
 
 <script>
@@ -19,8 +21,14 @@ import { fieldsSchema } from "@/assets/nativeFields";
 export default {
   name: "TheItemRightsStatus",
   props: {
-    field: Object,
-    currentItem: Object,
+    field: {
+      type: Object,
+      required: true,
+    },
+    currentItem: {
+      type: Object,
+      required: true,
+    },
     disable: Boolean,
   },
   data() {

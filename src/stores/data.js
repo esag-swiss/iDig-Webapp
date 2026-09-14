@@ -16,7 +16,6 @@ import {
   storeDataInIndexedDB,
   readDataInIndexedDB,
 } from "@/services/indexedDbManager";
-import { fieldsSchema } from "@/assets/nativeFields";
 import { resolveProjectCrs } from "@/services/coordinateUtils";
 
 export const useDataStore = defineStore("data", {
@@ -335,7 +334,7 @@ export const useDataStore = defineStore("data", {
         }
         const resolvedCrs = resolveProjectCrs(
           cleanPreferences.crs,
-          cleanPreferences.project
+          cleanPreferences.project,
         );
         if (resolvedCrs) {
           this.setProjectPreferencesCrs(resolvedCrs);

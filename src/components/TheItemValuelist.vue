@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-mutating-props -->
   <q-input
     v-if="editMode"
     v-model="currentItem[field.field]"
@@ -33,6 +34,7 @@
       </q-list>
     </q-menu>
   </q-input>
+  <!-- eslint-enable vue/no-mutating-props -->
 
   <div v-else>
     {{ currentItem[field.field] }}

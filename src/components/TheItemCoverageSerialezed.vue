@@ -115,6 +115,7 @@ export default {
 
       this.parseError = "";
       this.isApplyingText = true;
+      // eslint-disable-next-line vue/no-mutating-props
       this.currentItem[this.field.field] = result.value;
     },
 
@@ -123,6 +124,7 @@ export default {
       this.parseError = "";
       this.coverageTemplate = "";
       this.isApplyingText = true;
+      // eslint-disable-next-line vue/no-mutating-props
       this.currentItem[this.field.field] = "";
     },
   },

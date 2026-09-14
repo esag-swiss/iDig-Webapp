@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-mutating-props -->
   <q-toggle
     v-model="currentItem[field.field]"
     false-value="0"
@@ -6,14 +7,21 @@
     color="green"
     :disable="disable"
   />
+  <!-- eslint-enable vue/no-mutating-props -->
 </template>
 
 <script>
 export default {
   name: "TheItemBoolean",
   props: {
-    field: Object,
-    currentItem: Object,
+    field: {
+      type: Object,
+      required: true,
+    },
+    currentItem: {
+      type: Object,
+      required: true,
+    },
     disable: Boolean,
   },
   methods: {},

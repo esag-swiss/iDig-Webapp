@@ -9,8 +9,14 @@ import dayjs from "dayjs";
 export default {
   name: "TheItemDateUTC",
   props: {
-    field: Object,
-    currentItem: Object,
+    field: {
+      type: Object,
+      required: true,
+    },
+    currentItem: {
+      type: Object,
+      required: true,
+    },
     editMode: Boolean,
   },
   data() {

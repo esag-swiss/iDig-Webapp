@@ -27,7 +27,7 @@ describe("BaseButton", () => {
       BaseButton,
       { props: { icon: "home", ariaLabel: "Home" }, ...globalStubs },
     );
-    expect(wrapper.findComponent({ name: "BaseIcon" }).exists()).toBe(true);
+    expect(wrapper.find('[data-test="base-button-icon"]').exists()).toBe(true);
   });
 
   it("should render both label and icon when both are provided", () => {
@@ -36,7 +36,7 @@ describe("BaseButton", () => {
       { props: { label: "Home", icon: "home" }, ...globalStubs },
     );
     expect(wrapper.text()).toContain("Home");
-    expect(wrapper.findComponent({ name: "BaseIcon" }).exists()).toBe(true);
+    expect(wrapper.find('[data-test="base-button-icon"]').exists()).toBe(true);
   });
 
   it("should emit click when the button is clicked", async () => {

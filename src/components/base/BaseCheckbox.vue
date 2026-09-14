@@ -9,6 +9,7 @@
     <input
       type="checkbox"
       class="mr-1"
+      data-test="checkbox-input"
       :checked="modelValue"
       :disabled="disabled"
       @change="$emit('update:modelValue', $event.target.checked)"
