@@ -15,6 +15,7 @@ export const useAppStore = defineStore("app", {
     isMapMinimized: true,
     isItemSelected: false,
     isArchivedItemsHided: false,
+    showItemsWithoutCoordinates: false,
     // Load local storage values lastly used for these elements, or empty string if not exist :
     currentProfile: lsLoadCurrentProfile(),
     lang: lsLoadLang(),
@@ -31,7 +32,6 @@ export const useAppStore = defineStore("app", {
     decrementLoadingCount() {
       this.loadingCount -= 1;
     },
-
     setCurrentProfile(value) {
       this.currentProfile = value;
     },
@@ -59,8 +59,11 @@ export const useAppStore = defineStore("app", {
     setIsItemSelected(value) {
       this.isItemSelected = value;
     },
-    SetIsArchivedItemsHided(value) {
+    setIsArchivedItemsHided(value) {
       this.isArchivedItemsHided = value;
+    },
+    setShowItemsWithoutCoordinates(value) {
+      this.showItemsWithoutCoordinates = value;
     },
   },
 });
