@@ -82,6 +82,7 @@ export default {
       tabulator: null, //variable to hold table
       tableEditMode: false,
       editedCells: [],
+      lastSelectedType: null,
     };
   },
 
@@ -260,27 +261,32 @@ export default {
       { deep: true },
     );
 
+    this.lastSelectedType = this.selectedType;
     this.$watch(
       () => this.columnsTabulator,
       (newCols) => {
-        if (this.tabulator) {
-          // setColumns resets header filter UI values; persist and restore them.
-          const headerFilters = this.tabulator.getHeaderFilters?.() ?? [];
-          const headerFilterValues = headerFilters.reduce((acc, filter) => {
-            if (filter?.field) {
-              acc[filter.field] = filter.value;
-            }
-            return acc;
-          }, {});
+        if (!this.tabulator) {
+          return;
+        }
+        const newFields = new Set(newCols.map((column) => column.field));
+        const currentValues = this.currentHeaderFilterValues();
+        const typeChanged = this.lastSelectedType !== this.selectedType;
 
-          this.tabulator.setColumns(newCols);
+        Object.keys(currentValues).forEach((field) => {
+          this.tabulator.setHeaderFilterValue(field, "");
+        });
 
-          Object.entries(headerFilterValues).forEach(([field, value]) => {
-            if (value !== undefined && value !== null) {
+        this.tabulator.setColumns(newCols);
+
+        if (!typeChanged) {
+          Object.entries(currentValues).forEach(([field, value]) => {
+            if (newFields.has(field) && value !== undefined && value !== null) {
               this.tabulator.setHeaderFilterValue(field, value);
             }
           });
         }
+
+        this.lastSelectedType = this.selectedType;
       },
     );
 
@@ -339,6 +345,15 @@ export default {
       }).href;
 
       window.open(link, "_blank");
+    },
+    currentHeaderFilterValues() {
+      const headerFilters = this.tabulator.getHeaderFilters?.() ?? [];
+      return headerFilters.reduce((acc, filter) => {
+        if (filter?.field) {
+          acc[filter.field] = filter.value;
+        }
+        return acc;
+      }, {});
     },
     printTable() {
       this.tabulator.print(false, true);
