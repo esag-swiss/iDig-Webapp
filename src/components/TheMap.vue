@@ -25,7 +25,10 @@ import {
   createMapsOverlaysTree,
   baseLayersTree,
 } from "@/services/mapOverlays.js";
-import { loadItemsLayer } from "@/services/mapItemsLayers.js";
+import {
+  loadItemsLayer,
+  loadNoCoordinatesItemsLayer,
+} from "@/services/mapItemsLayers.js";
 import { exportMapAsCompositeSVG } from "@/services/mapExport.js";
 
 export default {
@@ -34,6 +37,7 @@ export default {
     return {
       map: null,
       itemsLayer: null,
+      noCoordinatesItemsLayer: null,
       overlayLayers: null,
       baseLayersTree: null,
       overlaysTree: null,
@@ -51,12 +55,14 @@ export default {
       "isMapMinimized",
       "loadingCount",
       "isItemSelected",
+      "showItemsWithoutCoordinates",
     ]),
     ...mapState(useDataStore, [
       "checkedTrenchesItemsPlans",
       "checkedTrenchesItemsSelectedTypeAndSearched",
       "projectPreferencesCRS",
       "tableFilteredCheckedTrenchesItems",
+      "itemByUuid",
     ]),
     itemsForMap() {
       return (
@@ -86,6 +92,7 @@ export default {
         !this.isProcessingTrenchItemsPlans
       ) {
         this.loadItemsLayer(false);
+        this.loadNoCoordinatesItemsLayer();
       }
     },
     // reload items layer after removing trenches or when table pushes filtered data
@@ -96,6 +103,12 @@ export default {
         !this.isProcessingTrenchItemsPlans
       ) {
         this.loadItemsLayer(false);
+        this.loadNoCoordinatesItemsLayer();
+      }
+    },
+    showItemsWithoutCoordinates: function () {
+      if (this.map && !this.isProcessingTrenchItemsPlans) {
+        this.loadNoCoordinatesItemsLayer();
       }
     },
     // reload overlays tree when changing trenches
@@ -133,6 +146,11 @@ export default {
       if (this.itemsLayer) {
         this.itemsLayer.remove();
         this.itemsLayer = null;
+      }
+
+      if (this.noCoordinatesItemsLayer) {
+        this.noCoordinatesItemsLayer.remove();
+        this.noCoordinatesItemsLayer = null;
       }
 
       if (this.treeLayerControl) {
@@ -185,6 +203,7 @@ export default {
 
       // Ajout des items
       this.loadItemsLayer(true);
+      this.loadNoCoordinatesItemsLayer();
     },
 
     loadItemsLayer(shouldFitBounds = false) {
@@ -197,6 +216,25 @@ export default {
           fitBounds: shouldFitBounds,
           fitBoundsOnEmpty: true,
         },
+      );
+    },
+
+    loadNoCoordinatesItemsLayer() {
+      if (!this.showItemsWithoutCoordinates && !this.noCoordinatesItemsLayer) {
+        return;
+      }
+
+      if (!this.showItemsWithoutCoordinates) {
+        this.noCoordinatesItemsLayer.remove();
+        this.noCoordinatesItemsLayer = null;
+        return;
+      }
+
+      this.noCoordinatesItemsLayer = loadNoCoordinatesItemsLayer(
+        this.map,
+        this.noCoordinatesItemsLayer,
+        this.itemsForMap,
+        this.itemByUuid,
       );
     },
 

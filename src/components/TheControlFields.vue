@@ -29,6 +29,20 @@
     </option>
   </select>
 
+  <!-- ITEMS WITHOUT COORDINATES -->
+  <div class="p-1 m-1 border-0">
+    <q-toggle
+      v-model="showNoCoordinates"
+      size="sm"
+      color="primary"
+      :label="$t('app.show_items_without_coordinates')"
+      @update:model-value="(val) => setShowItemsWithoutCoordinates(val)"
+    />
+    <q-tooltip class="bg-accent">
+      {{ $t("app.show_items_without_coordinates_tip") }}
+    </q-tooltip>
+  </div>
+
   <!-- FIELDS -->
   <div class="p-1 m-1 border-0">
     <h3>
@@ -64,7 +78,7 @@
             v-model="hideArchived"
             :size="'sm'"
             color="red"
-            @update:model-value="(val) => SetIsArchivedItemsHided(val)"
+            @update:model-value="(val) => setIsArchivedItemsHided(val)"
           />
           <q-tooltip v-if="field.field === 'RightsStatus'" class="bg-accent"
             >"hide arrchived items"
@@ -92,7 +106,8 @@ export default {
   data() {
     return {
       defaultColumns: {},
-      hideArchived: false, // for the q-toggle
+      hideArchived: false,
+      showNoCoordinates: false,
     };
   },
   computed: {
@@ -148,7 +163,10 @@ export default {
   },
   methods: {
     ...mapActions(useDataStore, ["setSelectedType"]),
-    ...mapActions(useAppStore, ["SetIsArchivedItemsHided"]),
+    ...mapActions(useAppStore, [
+      "setIsArchivedItemsHided",
+      "setShowItemsWithoutCoordinates",
+    ]),
     changeLang(lang) {
       this.setLang(lang);
     },

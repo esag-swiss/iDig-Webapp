@@ -142,6 +142,16 @@ export const useDataStore = defineStore("data", {
       return [].concat(...Object.values(state.checkedTrenchesData));
     },
 
+    itemByUuid(state) {
+      const map = new Map();
+      state.checkedTrenchesItems.forEach((item) => {
+        if (item?.IdentifierUUID) {
+          map.set(item.IdentifierUUID, item);
+        }
+      });
+      return (uuid) => map.get(uuid);
+    },
+
     checkedTrenchesItemsPlans(state) {
       return state.checkedTrenchesItems.filter((item) =>
         item?.Type?.includes("Plan"),
