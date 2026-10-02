@@ -2,12 +2,14 @@ import { apiPushTrench, apiUploadAttachment } from "@/services/ApiClient";
 import { Notify } from "quasar";
 import { useDataStore } from "@/stores/data";
 import { attachmentChecksumsFromSurveys } from "@/services/attachmentUtils";
+import { findModifiedArchivedItems } from "@/services/helpers/itemHelper";
 import {
   openDB,
   getPendingAttachment,
   deletePendingAttachment,
+  readDataInIndexedDB,
 } from "@/services/indexedDbManager";
-import i18n from "@/i18n";
+import  { t } from "@/i18n";
 
 function removeTrenchProp(trenchData) {
   return trenchData.map((obj) => {
@@ -15,6 +17,31 @@ function removeTrenchProp(trenchData) {
     delete newObj.Trench;
     return newObj;
   });
+}
+
+async function lastSyncedSurveys(trenchName) {
+  const db = await openDB();
+  const stored = await readDataInIndexedDB(db, trenchName);
+  return stored ? removeTrenchProp(JSON.parse(stored)) : [];
+}
+
+function notifyArchivedItemsModified(items) {
+  Notify.create({
+    type: "negative",
+    message: t("app.archived_items_modified", {
+      items: items
+        .map((item) => item.Identifier || item.IdentifierUUID)
+        .join(", "),
+    }),
+    timeout: 10000,
+  });
+}
+
+function isArchivedConflict(error) {
+  return (
+    error?.response?.status === 409 &&
+    Array.isArray(error.response.data?.archived)
+  );
 }
 
 async function uploadMissingAttachments(trenchName, missing, surveys) {
@@ -27,7 +54,7 @@ async function uploadMissingAttachments(trenchName, missing, surveys) {
 
     if (!checksum || !pending) {
       throw new Error(
-        i18n.global.t("app.attachment_not_found_locally", { name }),
+        t("app.attachment_not_found_locally", { name }),
       );
     }
 
@@ -55,12 +82,31 @@ export async function pushSurvey({
 }) {
   const dataStore = useDataStore();
   let surveys = removeTrenchProp(trenchSurvey);
-  let resp = await apiPushTrench(
-    trenchName,
-    trenchVersion,
+
+  const modifiedArchived = findModifiedArchivedItems(
+    await lastSyncedSurveys(trenchName),
     surveys,
-    projectPreferencesBase64,
   );
+  if (modifiedArchived.length > 0) {
+    notifyArchivedItemsModified(modifiedArchived);
+    return null;
+  }
+
+  const push = () =>
+    apiPushTrench(trenchName, trenchVersion, surveys, projectPreferencesBase64);
+  let resp;
+  try {
+    resp = await push();
+  } catch (error) {
+    if (!isArchivedConflict(error)) {
+      throw error;
+    }
+    const archivedUuids = new Set(error.response.data.archived);
+    notifyArchivedItemsModified(
+      surveys.filter((survey) => archivedUuids.has(survey.IdentifierUUID)),
+    );
+    return null;
+  }
 
   let previousMissing = "";
   while (resp.data.status === "missing") {
@@ -68,7 +114,7 @@ export async function pushSurvey({
     if (currentMissing === previousMissing) {
       Notify.create({
         type: "negative",
-        message: i18n.global.t("app.attachments_upload_failed"),
+        message: t("app.attachments_upload_failed"),
       });
       return resp;
     }
@@ -84,12 +130,7 @@ export async function pushSurvey({
       return resp;
     }
 
-    resp = await apiPushTrench(
-      trenchName,
-      trenchVersion,
-      surveys,
-      projectPreferencesBase64,
-    );
+    resp = await push();
   }
 
   if (resp.data.status === "pushed" || resp.data.status === "ok") {

@@ -8,6 +8,11 @@
           projectPreferencesTypesTranslation[currentItem.Type]
         }}
         {{ currentItem.Identifier }}
+        <BaseBadge
+          v-if="isArchived(currentItem)"
+          class="q-ml-sm"
+          :label="$t('app.archived_badge')"
+        />
       </div>
     </div>
     <div class="TheItem center-block mx-auto">
@@ -187,9 +192,12 @@ import { useDataStore } from "@/stores/data";
 import { fieldsSchema } from "@/assets/nativeFields";
 import dayjs from "dayjs";
 import { apiFetchImageSRC } from "@/services/ApiClient";
+import BaseBadge from "@/components/base/BaseBadge.vue";
+import { isArchived } from "@/services/helpers/itemHelper";
 
 export default {
   name: "TheItemStandalone",
+  components: { BaseBadge },
   props: {
     itemId: {
       type: String,
@@ -425,13 +433,7 @@ export default {
   },
 
   methods: {
-    // ...mapActions(useAppStore, [
-    //   "setIsLoaded",
-    //   "setServer",
-    //   "setProject",
-    //   "setUsername",
-    //   "setPassword",
-    // ]),
+    isArchived,
     ...mapActions(useDataStore, [
       "setProjectTrenchesNames",
       "setProjectPreferencesCrs",

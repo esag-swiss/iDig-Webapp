@@ -31,6 +31,9 @@
     "photo_add_failed": "Échec de l'ajout de la photo",
     "attachment_not_found_locally": "La photo « {name} » est introuvable localement et ne peut pas être envoyée.",
     "attachments_upload_failed": "Certaines photos n'ont pas pu être envoyées au serveur.",
+    "archived_badge": "Archive",
+    "archived_not_editable": "Item archivé : modification impossible",
+    "archived_items_modified": "Les items archivés suivants ne peuvent pas être modifiés : {items}",
     "pagination": {
       "first": "Premier",
       "first_title": "Première page",
