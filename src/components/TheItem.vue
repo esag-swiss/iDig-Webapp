@@ -10,6 +10,12 @@
           projectPreferencesTypesTranslation[selectedItem.Type]
         }}
         {{ selectedItem.Identifier }}
+        <q-badge
+          v-if="isArchived(selectedItem)"
+          color="grey-7"
+          class="q-ml-sm align-middle"
+          :label="$t('app.archived_badge')"
+        />
       </div>
 
       <div class="mx-1">
@@ -41,7 +47,7 @@
           v-model="editMode"
           :disable="
             projectTrenchesRights[selectedItem.Trench] ||
-            selectedItem.RightsStatus === 'Archived' ||
+            isArchived(selectedItem) ||
             selectedItem.RightsLocked === '1'
           "
           color="red"
@@ -52,7 +58,9 @@
               ? $t("app.disable_edit_mode")
               : projectTrenchesRights[selectedItem.Trench]
                 ? $t("app.edit_not_allowed")
-                : $t("app.enable_edit_mode")
+                : isArchived(selectedItem)
+                  ? $t("app.archived_not_editable")
+                  : $t("app.enable_edit_mode")
           }}
         </q-tooltip>
       </div>
@@ -336,6 +344,7 @@ import BaseImageGallery from "@/components/base/BaseImageGallery.vue";
 import BasePhotoUploader from "@/components/base/BasePhotoUploader.vue";
 import { pushSurvey } from "@/services/pushSurveyService";
 import { resolveFieldDefinition } from "@/services/fieldDefinition";
+import { isArchived } from "@/services/archivedItems";
 import { printItemSheet as printItemSheetDocument } from "@/services/itemPrint";
 
 export default {
@@ -503,6 +512,8 @@ export default {
       "setSyncNewVersion",
       "UpdateSyncTrenchData",
     ]),
+
+    isArchived,
 
     fieldDefinition(field, groupObject) {
       return resolveFieldDefinition({
