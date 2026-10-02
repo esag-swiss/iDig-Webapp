@@ -31,6 +31,7 @@
     "photo_add_failed": "Échec de l'ajout de la photo",
     "attachment_not_found_locally": "La photo « {name} » est introuvable localement et ne peut pas être envoyée.",
     "attachments_upload_failed": "Certaines photos n'ont pas pu être envoyées au serveur.",
+    "show_thumbnails": "Afficher les vignettes",
     "pagination": {
       "first": "Premier",
       "first_title": "Première page",

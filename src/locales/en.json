@@ -31,6 +31,7 @@
     "photo_add_failed": "Failed to add the photo",
     "attachment_not_found_locally": "The photo \"{name}\" cannot be found locally and cannot be uploaded.",
     "attachments_upload_failed": "Some photos could not be uploaded to the server.",
+    "show_thumbnails": "Show thumbnails",
     "pagination": {
       "first": "First",
       "first_title": "First Page",
