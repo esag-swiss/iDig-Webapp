@@ -1,7 +1,7 @@
 {
   "app": {
     "fields": "Champs",
-    "items": "{count} item | {count} items",
+    "items": "{count} élément | {count} éléments",
     "toggle_group": "Plier/Déplier {name}",
     "trenches": "Secteurs",
     "trenche": "Secteur",
@@ -24,6 +24,7 @@
     "photos": "Photos",
     "add_photos": "Ajouter des photos",
     "upload_sector_changes": "Envoyer les modifications du secteur courant vers le serveur iDig",
+    "upload_changes": "Envoyer {count} modification vers le serveur iDig | Envoyer {count} modifications vers le serveur iDig",
     "disable_edit_mode": "Désactiver le mode édition",
     "edit_not_allowed": "Vous n'êtes pas autorisé à modifier ce secteur",
     "enable_edit_mode": "Activer le mode édition",
@@ -31,6 +32,22 @@
     "photo_add_failed": "Échec de l'ajout de la photo",
     "attachment_not_found_locally": "La photo « {name} » est introuvable localement et ne peut pas être envoyée.",
     "attachments_upload_failed": "Certaines photos n'ont pas pu être envoyées au serveur.",
+    "show_thumbnails": "Afficher les vignettes",
+    "thumbnails": "Vignettes",
+    "edit_mode": "Mode édition",
+    "table": {
+      "download_csv": "Télécharger les éléments au format .csv",
+      "print": "Imprimer",
+      "print_tip": "Imprimer le tableau ou l'enregistrer en PDF",
+      "hide_column": "Masquer la colonne",
+      "group_by": "Grouper par",
+      "find_duplicates": "Trouver les doublons",
+      "ungroup_or_clear": "Dégrouper / effacer",
+      "copy_to_clipboard": "Copier dans le presse-papiers",
+      "open_in_new_tab": "Ouvrir dans un nouvel onglet",
+      "unknown_item": "Élément inconnu",
+      "invalid_date": "(date invalide)"
+    },
     "pagination": {
       "first": "Premier",
       "first_title": "Première page",

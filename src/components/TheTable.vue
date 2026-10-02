@@ -10,16 +10,22 @@
   <q-bar class="bg-grey-1 full-width row">
     <div class="q-align-center">
       <q-btn
-        :size="'sm'"
+        size="sm"
         color="secondary"
         label=".csv"
         @click="exportFile('csv')"
-        ><q-tooltip class="bg-accent"
-          >download items as .csv file</q-tooltip
-        ></q-btn
+        ><q-tooltip class="bg-accent">{{
+          $t("app.table.download_csv")
+        }}</q-tooltip></q-btn
       >
-      <q-btn :size="'sm'" color="secondary" label="print" @click="printTable()"
-        ><q-tooltip class="bg-accent">you may print as .PDF</q-tooltip></q-btn
+      <q-btn
+        :size="'sm'"
+        color="secondary"
+        :label="$t('app.table.print')"
+        @click="printTable()"
+        ><q-tooltip class="bg-accent">{{
+          $t("app.table.print_tip")
+        }}</q-tooltip></q-btn
       >
     </div>
     <q-space />
@@ -37,20 +43,29 @@
         :size="'sm'"
         @click="pushSurveyHandler()"
       />
-      <q-tooltip class="bg-accent"
-        >upload {{ editedCells.length }} modification(s) to iDig
-        server</q-tooltip
-      >
+      <q-tooltip class="bg-accent">{{
+        $t(
+          "app.upload_changes",
+          { count: editedCells.length },
+          editedCells.length,
+        )
+      }}</q-tooltip>
     </div>
-    <div>
-      <q-toggle
-        v-if="userHasRwRightsOnAtLeastOneTrench"
-        v-model="tableEditMode"
-        :size="'sm'"
-        color="red"
-      />
-      <q-tooltip class="bg-accent">"enable edit mode" </q-tooltip>
-    </div>
+    <BaseToggleWithTooltip
+      v-model="showThumbnails"
+      icon="image"
+      :label="$t('app.thumbnails')"
+      :tooltip="$t('app.show_thumbnails')"
+    />
+    <BaseToggleWithTooltip
+      v-if="userHasRwRightsOnAtLeastOneTrench"
+      v-model="tableEditMode"
+      color="red"
+      :label="$t('app.edit_mode')"
+      :tooltip="
+        tableEditMode ? $t('app.disable_edit_mode') : $t('app.enable_edit_mode')
+      "
+    />
   </q-bar>
   <div ref="table" class="q-pa-xs"></div>
 </template>
@@ -71,10 +86,12 @@ import { applyPlugin } from "jspdf-autotable";
 applyPlugin(jsPDF);
 import { openDB, readDataInIndexedDB } from "@/services/indexedDbManager";
 import { pushSurvey } from "@/services/pushSurveyService";
+import { useTableThumbnails } from "@/composables/useTableThumbnails";
+import BaseToggleWithTooltip from "@/components/base/BaseToggleWithTooltip.vue";
 
 export default {
   name: "TheTable",
-  components: { TheItem, ThePatches },
+  components: { TheItem, ThePatches, BaseToggleWithTooltip },
 
   data() {
     return {
@@ -83,6 +100,7 @@ export default {
       tableEditMode: false,
       editedCells: [],
       lastSelectedType: null,
+      showThumbnails: false,
     };
   },
 
@@ -117,7 +135,7 @@ export default {
     columnsTabulator() {
       var headerMenu = [
         {
-          label: "Hide Column",
+          label: () => this.$t("app.table.hide_column"),
           action: (e, column) => {
             this.setCheckedFieldNames(
               this.checkedFieldNames.filter(
@@ -127,7 +145,7 @@ export default {
           },
         },
         {
-          label: "Group by",
+          label: () => this.$t("app.table.group_by"),
           action: (e, column) => {
             this.tabulator.setGroupBy(column.getField());
             let groups = this.tabulator.getGroups();
@@ -139,7 +157,7 @@ export default {
           },
         },
         {
-          label: "Find duplicates",
+          label: () => this.$t("app.table.find_duplicates"),
           action: (e, column) => {
             this.tabulator.setGroupBy(column.getField());
             let groups = this.tabulator.getGroups();
@@ -152,7 +170,7 @@ export default {
           },
         },
         {
-          label: "Ungroup or clear",
+          label: () => this.$t("app.table.ungroup_or_clear"),
           action: () => {
             this.tabulator.setGroupBy(false);
             this.tabulator.clearFilter();
@@ -173,7 +191,7 @@ export default {
         }
         return cell.getValue();
       }
-      return this.checkedFieldNames.map((fieldName) => ({
+      const columns = this.checkedFieldNames.map((fieldName) => ({
         title:
           this.projectPreferencesFieldsWithTranslation?.[fieldName] ||
           this.fieldsSchema?.[fieldName]?.labels?.[this.lang] ||
@@ -186,12 +204,39 @@ export default {
         formatterParams: this.getColumnFormatterParams(fieldName),
         formatterPrint: printFormatter,
       }));
+      if (this.showThumbnails) {
+        columns.unshift({
+          title: "",
+          field: "_thumbnail",
+          width: 64,
+          hozAlign: "center",
+          headerSort: false,
+          resizable: false,
+          download: false,
+          print: false,
+          formatter: (cell, params, onRendered) =>
+            this.tableThumbnails.thumbnailFormatter(cell, onRendered),
+        });
+      }
+      return columns;
     },
     userHasRwRightsOnAtLeastOneTrench() {
       return this.checkedTrenchesNames.some(
         (trench) => this.projectTrenchesRights[trench] === false,
       );
     },
+  },
+
+  watch: {
+    showThumbnails(isShown) {
+      if (!isShown) {
+        this.tableThumbnails.disconnect();
+      }
+    },
+  },
+
+  created() {
+    this.tableThumbnails = useTableThumbnails(() => this.checkedTrenchesData);
   },
 
   mounted() {
@@ -249,7 +294,7 @@ export default {
       editTriggerEvent: "dblclick",
       rowContextMenu: [
         {
-          label: "Copy to clipboard",
+          label: () => this.$t("app.table.copy_to_clipboard"),
 
           action: function (e, row) {
             const rowData = row.getData();
@@ -264,7 +309,7 @@ export default {
         },
         {
           disabled: false,
-          label: "Open to new tab",
+          label: () => this.$t("app.table.open_in_new_tab"),
           action: (e, row) => {
             this.openInNewTab(row.getData());
           },
@@ -346,6 +391,10 @@ export default {
       }
     });
   },
+  beforeUnmount() {
+    this.tableThumbnails.disconnect();
+  },
+
   methods: {
     ...mapActions(useDataStore, [
       "setSyncPatches",
@@ -526,7 +575,7 @@ export default {
       }
 
       return {
-        chipText: "Unknown Item",
+        chipText: this.$t("app.table.unknown_item"),
         fullItem: null,
       };
     },
@@ -538,7 +587,7 @@ export default {
       ) {
         return {
           outputFormat: "DD/MM/YYYY",
-          invalidPlaceholder: "(invalid date)",
+          invalidPlaceholder: this.$t("app.table.invalid_date"),
         };
       }
 
@@ -599,6 +648,19 @@ export default {
 }
 .TheItemframe:hover {
   background: rgba(0, 0, 0, 0.5);
+}
+
+:deep(.table-thumbnail) {
+  width: 48px;
+  height: 48px;
+  margin: auto;
+  background: #eee;
+}
+
+:deep(.table-thumbnail img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 :deep(.table-link-chips) {
