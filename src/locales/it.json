@@ -25,6 +25,7 @@
     "photo_add_failed": "Impossibile aggiungere la foto",
     "attachment_not_found_locally": "La foto «{name}» non è disponibile localmente e non può essere caricata.",
     "attachments_upload_failed": "Alcune foto non è stato possibile inviarle al server.",
+    "show_thumbnails": "Mostra miniature",
     "pagination": {
       "first": "Primo",
       "first_title": "Prima pagina",

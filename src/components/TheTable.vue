@@ -44,6 +44,15 @@
     </div>
     <div>
       <q-toggle
+        v-model="showThumbnails"
+        :size="'sm'"
+        color="secondary"
+        icon="image"
+      />
+      <q-tooltip class="bg-accent">{{ $t("app.show_thumbnails") }}</q-tooltip>
+    </div>
+    <div>
+      <q-toggle
         v-if="userHasRwRightsOnAtLeastOneTrench"
         v-model="tableEditMode"
         :size="'sm'"
@@ -71,6 +80,7 @@ import { applyPlugin } from "jspdf-autotable";
 applyPlugin(jsPDF);
 import { openDB, readDataInIndexedDB } from "@/services/indexedDbManager";
 import { pushSurvey } from "@/services/pushSurveyService";
+import { thumbnailAttachment, loadThumbnailUrl } from "@/services/thumbnails";
 
 export default {
   name: "TheTable",
@@ -83,6 +93,9 @@ export default {
       tableEditMode: false,
       editedCells: [],
       lastSelectedType: null,
+      // OFF by default: thumbnails download full-resolution photos.
+      showThumbnails: false,
+      thumbnailObserver: null,
     };
   },
 
@@ -173,7 +186,7 @@ export default {
         }
         return cell.getValue();
       }
-      return this.checkedFieldNames.map((fieldName) => ({
+      const columns = this.checkedFieldNames.map((fieldName) => ({
         title:
           this.projectPreferencesFieldsWithTranslation?.[fieldName] ||
           this.fieldsSchema?.[fieldName]?.labels?.[this.lang] ||
@@ -186,11 +199,35 @@ export default {
         formatterParams: this.getColumnFormatterParams(fieldName),
         formatterPrint: printFormatter,
       }));
+      if (this.showThumbnails) {
+        columns.unshift({
+          title: "",
+          field: "_thumbnail",
+          width: 64,
+          hozAlign: "center",
+          headerSort: false,
+          resizable: false,
+          download: false,
+          print: false,
+          formatter: (cell, params, onRendered) =>
+            this.thumbnailFormatter(cell, onRendered),
+        });
+      }
+      return columns;
     },
     userHasRwRightsOnAtLeastOneTrench() {
       return this.checkedTrenchesNames.some(
         (trench) => this.projectTrenchesRights[trench] === false,
       );
+    },
+  },
+
+  watch: {
+    showThumbnails(isShown) {
+      if (!isShown) {
+        this.thumbnailObserver?.disconnect();
+        this.thumbnailObserver = null;
+      }
     },
   },
 
@@ -346,6 +383,10 @@ export default {
       }
     });
   },
+  beforeUnmount() {
+    this.thumbnailObserver?.disconnect();
+  },
+
   methods: {
     ...mapActions(useDataStore, [
       "setSyncPatches",
@@ -467,6 +508,53 @@ export default {
       }
       // Vous pouvez ajouter d'autres conditions ou retourner undefined pour le cas par défaut
       return undefined;
+    },
+    thumbnailFormatter(cell, onRendered) {
+      const item = cell.getRow().getData();
+      const container = document.createElement("div");
+      container.className = "table-thumbnail";
+
+      const attachment = thumbnailAttachment(
+        item,
+        this.checkedTrenchesData[item.Trench],
+      );
+      if (attachment) {
+        container.dataset.trench = item.Trench;
+        container.dataset.name = attachment.name;
+        container.dataset.checksum = attachment.checksum;
+        onRendered(() => this.observeThumbnail(container));
+      }
+      return container;
+    },
+    observeThumbnail(container) {
+      // Lazy loading: the photo is only read from IndexedDB (or downloaded)
+      // once its cell scrolls into view.
+      if (!this.thumbnailObserver) {
+        this.thumbnailObserver = new IntersectionObserver(
+          (entries, observer) => {
+            entries
+              .filter((entry) => entry.isIntersecting)
+              .forEach(({ target }) => {
+                observer.unobserve(target);
+                this.renderThumbnail(target);
+              });
+          },
+          { rootMargin: "100px" },
+        );
+      }
+      this.thumbnailObserver.observe(container);
+    },
+    async renderThumbnail(container) {
+      const { trench, name, checksum } = container.dataset;
+      const url = await loadThumbnailUrl({ name, checksum }, trench);
+      if (!url) {
+        return;
+      }
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = name;
+      img.decoding = "async";
+      container.replaceChildren(img);
     },
     linkChipsFormatter(cell) {
       const currentItem = cell.getRow().getData();
@@ -599,6 +687,19 @@ export default {
 }
 .TheItemframe:hover {
   background: rgba(0, 0, 0, 0.5);
+}
+
+:deep(.table-thumbnail) {
+  width: 48px;
+  height: 48px;
+  margin: auto;
+  background: #eee;
+}
+
+:deep(.table-thumbnail img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 :deep(.table-link-chips) {
