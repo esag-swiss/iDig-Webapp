@@ -25,6 +25,9 @@
     "photo_add_failed": "Foto konnte nicht hinzugefügt werden",
     "attachment_not_found_locally": "Das Foto „{name}“ wurde lokal nicht gefunden und kann nicht hochgeladen werden.",
     "attachments_upload_failed": "Einige Fotos konnten nicht an den Server gesendet werden.",
+    "archived_badge": "Archiv",
+    "archived_not_editable": "Archiviertes Element: Bearbeitung nicht möglich",
+    "archived_items_modified": "Die folgenden archivierten Elemente können nicht geändert werden: {items}",
     "pagination": {
       "first": "Erste",
       "first_title": "Erste Seite",
