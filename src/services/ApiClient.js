@@ -267,6 +267,16 @@ export function apiFetchImage(filename, checksum, trench) {
     .finally(() => decrementLoadingCount());
 }
 
+export function apiFetchAttachment(filename, checksum, trench) {
+  const { server, project, username, password } = useAppStore();
+  return axios({
+    method: "get",
+    url: `${server}/idig/${project}/${trench}/attachments/${filename}?checksum=${checksum}`,
+    responseType: "blob",
+    auth: { username, password },
+  });
+}
+
 export function apiFetchWld(filename, checksum, trench) {
   const {
     server,

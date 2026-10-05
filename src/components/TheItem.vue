@@ -36,26 +36,24 @@
           $t("app.upload_sector_changes")
         }}</q-tooltip>
       </div>
-      <div class="mx-1 no-print">
-        <q-toggle
-          v-model="editMode"
-          :disable="
-            projectTrenchesRights[selectedItem.Trench] ||
-            selectedItem.RightsStatus === 'Archived' ||
-            selectedItem.RightsLocked === '1'
-          "
-          color="red"
-        />
-        <q-tooltip class="bg-accent"
-          >{{
-            editMode
-              ? $t("app.disable_edit_mode")
-              : projectTrenchesRights[selectedItem.Trench]
-                ? $t("app.edit_not_allowed")
-                : $t("app.enable_edit_mode")
-          }}
-        </q-tooltip>
-      </div>
+      <BaseToggleWithTooltip
+        v-model="editMode"
+        class="mx-1 no-print"
+        color="red"
+        :label="$t('app.edit_mode')"
+        :disable="
+          projectTrenchesRights[selectedItem.Trench] ||
+          selectedItem.RightsStatus === 'Archived' ||
+          selectedItem.RightsLocked === '1'
+        "
+        :tooltip="
+          editMode
+            ? $t('app.disable_edit_mode')
+            : projectTrenchesRights[selectedItem.Trench]
+              ? $t('app.edit_not_allowed')
+              : $t('app.enable_edit_mode')
+        "
+      />
     </div>
     <div class="TheItem center-block mx-auto">
       <!-------------------------------------------------------------------------------->
@@ -334,6 +332,7 @@ import TheItemValuelist from "@/components/TheItemValuelist.vue";
 import TheItemInput from "@/components/TheItemInput.vue";
 import BaseImageGallery from "@/components/base/BaseImageGallery.vue";
 import BasePhotoUploader from "@/components/base/BasePhotoUploader.vue";
+import BaseToggleWithTooltip from "@/components/base/BaseToggleWithTooltip.vue";
 import { pushSurvey } from "@/services/pushSurveyService";
 import { resolveFieldDefinition } from "@/services/fieldDefinition";
 import { printItemSheet as printItemSheetDocument } from "@/services/itemPrint";
@@ -353,6 +352,7 @@ export default {
     TheItemInput,
     BaseImageGallery,
     BasePhotoUploader,
+    BaseToggleWithTooltip,
   },
 
   data() {
