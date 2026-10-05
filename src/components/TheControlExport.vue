@@ -1,121 +1,21 @@
 <template>
   <div class="container-fluid px-1 q-gutter-sm">
-    <h3>Export</h3>
-    <q-btn
-      align="left"
-      size="10px"
-      padding="2px 5px"
-      color="secondary"
-      label=".json"
-      @click="exportFile('json')"
-      ><q-tooltip class="bg-accent"
-        >items from selected trenches with all non empty fields as .json
-        file</q-tooltip
-      ></q-btn
-    >
-    <q-btn
-      align="left"
-      size="10px"
-      padding="2px 5px"
-      color="secondary"
-      label=".tab"
-      @click="exportFile('tab')"
-      ><q-tooltip class="bg-accent"
-        >items of selected type with all fields use in the set of data as .tab
-        file</q-tooltip
-      ></q-btn
-    >
-    <q-btn
-      align="left"
-      size="10px"
-      padding="2px 5px"
-      color="secondary"
-      label="Geojson"
-      @click="exportFile('geojson')"
-      ><q-tooltip class="bg-accent"
-        >all geolocalized items from selected trenches</q-tooltip
-      ></q-btn
-    >
+    <h3>{{ $t("app.export") }}</h3>
+    <BaseButton
+      variant="primary"
+      size="sm"
+      icon="download"
+      :label="$t('app.export_open')"
+      @click="isExportOpen = true"
+    />
+    <TheExportModal v-model="isExportOpen" />
   </div>
 </template>
-<script>
-import { geoSerializedToGeojson } from "@/services/json2geojson";
-import { mapState } from "pinia";
-import { useDataStore } from "@/stores/data";
 
-export default {
-  name: "TheControlExport",
+<script setup>
+import { ref } from "vue";
+import BaseButton from "@/components/base/BaseButton.vue";
+import TheExportModal from "@/components/TheExportModal.vue";
 
-  data() {
-    return {
-      fileData: "",
-      fileName: "",
-    };
-  },
-  computed: {
-    ...mapState(useDataStore, [
-      "checkedTrenchesItems",
-      "checkedTrenchesItemsSelectedType",
-      "selectedType",
-    ]),
-  },
-  methods: {
-    exportFile: function (fileType) {
-      if (fileType === "tab") {
-        this.fileName = this.selectedType;
-        const items = this.checkedTrenchesItems;
-        const replacer = (key, value) => (value === null ? "" : value); // specify how you want to handle null values here
-        const uniqueKeys = new Set();
-
-        items.forEach((item) => {
-          Object.keys(item).forEach((key) => uniqueKeys.add(key));
-        });
-        const header = Array.from(uniqueKeys);
-
-        this.fileData = [
-          header.join("\t"),
-          ...items.map((row) =>
-            header
-              .map((fieldName) => JSON.stringify(row[fieldName], replacer))
-              .join("\t"),
-          ),
-        ].join("\r\n");
-      } else if (fileType === "json") {
-        this.fileName = this.selectedType;
-        this.fileData = JSON.stringify(this.checkedTrenchesItems);
-      } else if (fileType === "geojson") {
-        this.fileName = "Trenches";
-        this.fileData = JSON.stringify(
-          geoSerializedToGeojson(this.checkedTrenchesItems),
-        );
-      }
-
-      const blob = new Blob([this.fileData], { type: "text/plain" });
-      const e = document.createEvent("MouseEvents"),
-        a = document.createElement("a");
-      a.download = this.fileName + "." + fileType;
-      a.href = window.URL.createObjectURL(blob);
-      a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
-      e.initEvent(
-        "click",
-        true,
-        false,
-        window,
-        0,
-        0,
-        0,
-        0,
-        0,
-        false,
-        false,
-        false,
-        false,
-        0,
-        null,
-      );
-      a.dispatchEvent(e);
-    },
-  },
-};
+const isExportOpen = ref(false);
 </script>
-<style></style>
