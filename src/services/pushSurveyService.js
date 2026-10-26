@@ -2,10 +2,12 @@ import { apiPushTrench, apiUploadAttachment } from "@/services/ApiClient";
 import { Notify } from "quasar";
 import { useDataStore } from "@/stores/data";
 import { attachmentChecksumsFromSurveys } from "@/services/attachmentUtils";
+import { findModifiedArchivedItems } from "@/services/archivedItems";
 import {
   openDB,
   getPendingAttachment,
   deletePendingAttachment,
+  readDataInIndexedDB,
 } from "@/services/indexedDbManager";
 import i18n from "@/i18n";
 
@@ -15,6 +17,34 @@ function removeTrenchProp(trenchData) {
     delete newObj.Trench;
     return newObj;
   });
+}
+
+// Last synced state of the trench, as cached in IndexedDB.
+async function lastSyncedSurveys(trenchName) {
+  const db = await openDB();
+  const stored = await readDataInIndexedDB(db, trenchName);
+  return stored ? removeTrenchProp(JSON.parse(stored)) : [];
+}
+
+function notifyArchivedItemsModified(items) {
+  Notify.create({
+    type: "negative",
+    message: i18n.global.t("app.archived_items_modified", {
+      items: items
+        .map((item) => item.Identifier || item.IdentifierUUID)
+        .join(", "),
+    }),
+    timeout: 10000,
+  });
+}
+
+// idig-server answers 409 with the UUIDs of the archived surveys the push
+// would have modified.
+function isArchivedConflict(error) {
+  return (
+    error?.response?.status === 409 &&
+    Array.isArray(error.response.data?.archived)
+  );
 }
 
 async function uploadMissingAttachments(trenchName, missing, surveys) {
@@ -55,12 +85,31 @@ export async function pushSurvey({
 }) {
   const dataStore = useDataStore();
   let surveys = removeTrenchProp(trenchSurvey);
-  let resp = await apiPushTrench(
-    trenchName,
-    trenchVersion,
+
+  const modifiedArchived = findModifiedArchivedItems(
+    await lastSyncedSurveys(trenchName),
     surveys,
-    projectPreferencesBase64,
   );
+  if (modifiedArchived.length > 0) {
+    notifyArchivedItemsModified(modifiedArchived);
+    return null;
+  }
+
+  const push = () =>
+    apiPushTrench(trenchName, trenchVersion, surveys, projectPreferencesBase64);
+  let resp;
+  try {
+    resp = await push();
+  } catch (error) {
+    if (!isArchivedConflict(error)) {
+      throw error;
+    }
+    const archivedUuids = new Set(error.response.data.archived);
+    notifyArchivedItemsModified(
+      surveys.filter((survey) => archivedUuids.has(survey.IdentifierUUID)),
+    );
+    return null;
+  }
 
   let previousMissing = "";
   while (resp.data.status === "missing") {
@@ -84,12 +133,7 @@ export async function pushSurvey({
       return resp;
     }
 
-    resp = await apiPushTrench(
-      trenchName,
-      trenchVersion,
-      surveys,
-      projectPreferencesBase64,
-    );
+    resp = await push();
   }
 
   if (resp.data.status === "pushed" || resp.data.status === "ok") {

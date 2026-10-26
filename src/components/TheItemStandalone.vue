@@ -8,6 +8,12 @@
           projectPreferencesTypesTranslation[currentItem.Type]
         }}
         {{ currentItem.Identifier }}
+        <q-badge
+          v-if="isArchived(currentItem)"
+          color="grey-7"
+          class="q-ml-sm align-middle"
+          :label="$t('app.archived_badge')"
+        />
       </div>
     </div>
     <div class="TheItem center-block mx-auto">
@@ -187,6 +193,7 @@ import { useDataStore } from "@/stores/data";
 import { fieldsSchema } from "@/assets/nativeFields";
 import dayjs from "dayjs";
 import { apiFetchImageSRC } from "@/services/ApiClient";
+import { isArchived } from "@/services/archivedItems";
 
 export default {
   name: "TheItemStandalone",
@@ -425,6 +432,7 @@ export default {
   },
 
   methods: {
+    isArchived,
     // ...mapActions(useAppStore, [
     //   "setIsLoaded",
     //   "setServer",
