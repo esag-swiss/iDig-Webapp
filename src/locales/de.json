@@ -72,6 +72,9 @@
     "export_import_failed": "Ungültige Vorlagendatei",
     "export_copy": "Kopie",
     "show_thumbnails": "Vorschaubilder anzeigen",
+    "archived_badge": "Archiv",
+    "archived_not_editable": "Archiviertes Element: Bearbeitung nicht möglich",
+    "archived_items_modified": "Die folgenden archivierten Elemente können nicht geändert werden: {items}",
     "pagination": {
       "first": "Erste",
       "first_title": "Erste Seite",
