@@ -156,6 +156,11 @@ export const useDataStore = defineStore("data", {
       return index;
     },
 
+    itemByUuid(state) {
+      const index = buildUuidIndex(state.checkedTrenchesItems);
+      return (uuid) => index.get(uuid);
+    },
+
     checkedTrenchesItemsPlans(state) {
       return state.checkedTrenchesItems.filter((item) =>
         item?.Type?.includes("Plan"),

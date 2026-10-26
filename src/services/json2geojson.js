@@ -8,7 +8,14 @@ const FEATURE_COLLECTION_NAME = "trenches";
 const COVERAGE_KEY = "CoverageSerialized";
 const COORDINATE_PREFIXES = ["x", "y", "z"];
 
-export function determineGeoType(coverageSerialized) {
+const GEOMETRY_DEPTH = {
+  Point: 0,
+  LineString: 1,
+  Polygon: 2,
+  MultiPolygon: 3,
+};
+
+function determineGeoType(coverageSerialized) {
   let geoType = "";
   const level3 = cleanMulti(coverageSerialized);
 
@@ -46,14 +53,14 @@ function processLevel2(coverageSerialized2ndLevel) {
 
   if (level2.length < 2) {
     if (coverageSerialized2ndLevel.includes("x=")) {
-      return CoverageSerializedXYZToGeojsonPosition(coverageSerialized2ndLevel);
+      return coverageSerializedXYZToGeojsonPosition(coverageSerialized2ndLevel);
     }
 
     return level2;
   }
 
   if (level2.length < 4) {
-    return level2.map((v) => CoverageSerializedXYZToGeojsonPosition(v));
+    return level2.map((v) => coverageSerializedXYZToGeojsonPosition(v));
   }
 
   level2 = processPolygon(level2);
@@ -64,7 +71,7 @@ function processPolygon(coverageSerialized2ndLevel) {
   return [
     makePolyClockwise(
       coverageSerialized2ndLevel.map((v) =>
-        CoverageSerializedXYZToGeojsonPosition(v),
+        coverageSerializedXYZToGeojsonPosition(v),
       ),
     ),
   ];
@@ -87,7 +94,107 @@ function buildFeature(item, geoType, geojsonCoordinates) {
   };
 }
 
-export function geoSerializedToGeojson(json) {
+function hasCoordinates(item) {
+  return Boolean(
+    item &&
+      Object.prototype.hasOwnProperty.call(item, COVERAGE_KEY) &&
+      item.CoverageSerialized &&
+      item.CoverageSerialized.includes("x="),
+  );
+}
+
+function centroidOfPositions(coordinates, depth) {
+  if (depth === 0) {
+    return coordinates ? [coordinates] : [];
+  }
+  return (coordinates || []).flatMap((child) =>
+    centroidOfPositions(child, depth - 1),
+  );
+}
+
+function geometryCentroid(geometry) {
+  if (!geometry) {
+    return null;
+  }
+  if (geometry.type === "Point") {
+    return geometry.coordinates;
+  }
+
+  const depth = GEOMETRY_DEPTH[geometry.type];
+  const positions = centroidOfPositions(geometry.coordinates, depth);
+  if (positions.length === 0) {
+    return null;
+  }
+
+  const [sumLng, sumLat] = positions.reduce(
+    ([accLng, accLat], [lng, lat]) => [accLng + lng, accLat + lat],
+    [0, 0],
+  );
+  return [sumLng / positions.length, sumLat / positions.length];
+}
+
+function findNearestAncestorWithCoordinates(item, itemByUuid) {
+  const visited = new Set();
+  let current = item;
+
+  while (current?.RelationBelongsToUUID) {
+    const parentUuid = current.RelationBelongsToUUID.split("\n")[0].trim();
+    if (!parentUuid || visited.has(parentUuid)) {
+      return null;
+    }
+    visited.add(parentUuid);
+
+    const parent = itemByUuid(parentUuid);
+    if (!parent) {
+      return null;
+    }
+    if (hasCoordinates(parent)) {
+      return parent;
+    }
+    current = parent;
+  }
+
+  return null;
+}
+
+function noCoordinatesItemsToGeojson(items, itemByUuid) {
+  const geojson = {
+    type: "FeatureCollection",
+    name: FEATURE_COLLECTION_NAME,
+    features: [],
+  };
+
+  for (const item of items) {
+    if (!item || hasCoordinates(item)) {
+      continue;
+    }
+
+    const ancestor = findNearestAncestorWithCoordinates(item, itemByUuid);
+    if (!ancestor) {
+      continue;
+    }
+
+    const ancestorGeojson = geoSerializedToGeojson([ancestor]);
+    const ancestorFeature = ancestorGeojson.features[0];
+    if (!ancestorFeature) {
+      continue;
+    }
+
+    const centroid = geometryCentroid(ancestorFeature.geometry);
+    if (!centroid) {
+      continue;
+    }
+
+    const feature = buildFeature(item, "Point", centroid);
+    feature.properties.noCoordinates = true;
+    feature.properties.resolvedFromUUID = ancestor.IdentifierUUID;
+    geojson.features.push(feature);
+  }
+
+  return geojson;
+}
+
+function geoSerializedToGeojson(json) {
   const geojson = {
     type: "FeatureCollection",
     name: FEATURE_COLLECTION_NAME,
@@ -116,14 +223,14 @@ export function geoSerializedToGeojson(json) {
               v
                 .split(LEVEL_2_SEPARATOR)
                 .map((coordinateRow) =>
-                  CoverageSerializedXYZToGeojsonPosition(coordinateRow),
+                  coverageSerializedXYZToGeojsonPosition(coordinateRow),
                 ),
             ),
           ]);
         } else {
           // pour gérer le cas super rare ou /n/n/n mais pas de /n/n !
           geoType = "Point";
-          geojsonCoordinates = CoverageSerializedXYZToGeojsonPosition(
+          geojsonCoordinates = coverageSerializedXYZToGeojsonPosition(
             polyStrings[0],
           );
         }
@@ -146,7 +253,7 @@ export function geoSerializedToGeojson(json) {
 
 // Convert coordinates from iDig format to geojson position in EPSG4326
 // Geojson position is the fundamental geometry construct
-export function CoverageSerializedXYZToGeojsonPosition(XYZ) {
+function coverageSerializedXYZToGeojsonPosition(XYZ) {
   let coordinates = XYZ.split("\n");
   coordinates = coordinates.reduce((values, rawCoordinate) => {
     const [key, value] = rawCoordinate.split("=");
@@ -180,4 +287,10 @@ function makePolyClockwise(poly) {
     sum += (poly[i + 1][0] - poly[i][0]) * (poly[i + 1][1] + poly[i][1]);
   }
   return sum > 0 ? poly.slice().reverse() : poly;
+}
+
+export {
+  noCoordinatesItemsToGeojson,
+  geoSerializedToGeojson,
+  determineGeoType,
 }
