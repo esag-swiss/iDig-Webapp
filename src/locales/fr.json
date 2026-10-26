@@ -77,6 +77,7 @@
     "export_reset": "Modèles par défaut",
     "export_import_failed": "Fichier de modèles invalide",
     "export_copy": "copie",
+    "show_thumbnails": "Afficher les vignettes",
     "pagination": {
       "first": "Premier",
       "first_title": "Première page",

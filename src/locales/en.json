@@ -77,6 +77,7 @@
     "export_reset": "Default templates",
     "export_import_failed": "Invalid templates file",
     "export_copy": "copy",
+    "show_thumbnails": "Show thumbnails",
     "pagination": {
       "first": "First",
       "first_title": "First Page",
