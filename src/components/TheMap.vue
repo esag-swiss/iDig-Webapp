@@ -1,5 +1,11 @@
 <template>
   <div v-show="!isItemSelected" id="mapContainer"></div>
+  <TheMapLayerModal
+    v-show="!isItemSelected"
+    :plans="overlayPlans"
+    :visible-plan-ids="visiblePlanIds"
+    @toggle-visible="togglePlanVisible"
+  />
   <div v-show="!isItemSelected" id="exportButtons">
     <q-btn
       v-show="!isItemSelected && !isMapMinimized"
@@ -16,13 +22,11 @@
 <script>
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import "leaflet.control.layers.tree";
-import "leaflet.control.layers.tree/L.Control.Layers.Tree.css";
 import { mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
 import {
-  createMapsOverlaysTree,
+  createMapsOverlaysList,
   baseLayersTree,
 } from "@/services/mapOverlays.js";
 import {
@@ -30,9 +34,11 @@ import {
   loadNoCoordinatesItemsLayer,
 } from "@/services/mapItemsLayers.js";
 import { exportMapAsCompositeSVG } from "@/services/mapExport.js";
+import TheMapLayerModal from "@/components/TheMapLayerModal.vue";
 
 export default {
   name: "TheMap",
+  components: { TheMapLayerModal },
   data() {
     return {
       map: null,
@@ -40,8 +46,9 @@ export default {
       noCoordinatesItemsLayer: null,
       overlayLayers: null,
       baseLayersTree: null,
-      overlaysTree: null,
-      treeLayerControl: null,
+      overlayPlans: [],
+      visiblePlanIds: [],
+      baseLayerControl: null,
       firstMapShowed: true,
       isProcessingTrenchItemsPlans: false,
       enableScrollWheelZoom: true,
@@ -153,10 +160,13 @@ export default {
         this.noCoordinatesItemsLayer = null;
       }
 
-      if (this.treeLayerControl) {
-        this.treeLayerControl.remove();
-        this.treeLayerControl = null;
+      if (this.baseLayerControl) {
+        this.baseLayerControl.remove();
+        this.baseLayerControl = null;
       }
+
+      this.overlayPlans = [];
+      this.visiblePlanIds = [];
 
       this.map.off();
       this.map.remove();
@@ -165,10 +175,11 @@ export default {
 
     async initMap() {
       this.baseLayersTree = baseLayersTree;
-      this.overlaysTree = await createMapsOverlaysTree(
+      this.overlayPlans = await createMapsOverlaysList(
         this.checkedTrenchesItemsPlans,
         this.projectPreferencesCRS,
       );
+      this.visiblePlanIds = this.overlayPlans.map((plan) => plan.id);
 
       // Creation de la carte
       this.map = L.map("mapContainer", {
@@ -185,16 +196,24 @@ export default {
         layers: this.selectedBaseLayer ?? this.baseLayersTree.children[3].layer,
       });
 
-      // Ajout du control de couches en arborescence
-      this.treeLayerControl = L.control.layers.tree(
-        baseLayersTree,
-        this.overlaysTree,
+      const baseLayersObject = Object.fromEntries(
+        this.baseLayersTree.children.map((baseLayer) => [
+          baseLayer.label,
+          baseLayer.layer,
+        ]),
       );
-      this.treeLayerControl.addTo(this.map);
+      this.baseLayerControl = L.control
+        .layers(baseLayersObject, null, {
+          collapsed: false,
+          position: "topleft",
+        })
+        .addTo(this.map);
 
       this.map.on("baselayerchange", (event) => {
         this.selectedBaseLayer = event.layer;
       });
+
+      this.overlayPlans.forEach((plan) => plan.layer.addTo(this.map));
 
       // Ajout de l'échelle
       L.control
@@ -204,6 +223,17 @@ export default {
       // Ajout des items
       this.loadItemsLayer(true);
       this.loadNoCoordinatesItemsLayer();
+    },
+
+    togglePlanVisible(plan) {
+      const isVisible = this.visiblePlanIds.includes(plan.id);
+      if (isVisible) {
+        plan.layer.remove();
+        this.visiblePlanIds = this.visiblePlanIds.filter((id) => id !== plan.id);
+      } else {
+        plan.layer.addTo(this.map);
+        this.visiblePlanIds = [...this.visiblePlanIds, plan.id];
+      }
     },
 
     loadItemsLayer(shouldFitBounds = false) {
