@@ -16,6 +16,7 @@ export const useAppStore = defineStore("app", {
     isItemSelected: false,
     isArchivedItemsHided: false,
     showItemsWithoutCoordinates: false,
+    visiblePlanIds: [],
     // Load local storage values lastly used for these elements, or empty string if not exist :
     currentProfile: lsLoadCurrentProfile(),
     lang: lsLoadLang(),
@@ -64,6 +65,9 @@ export const useAppStore = defineStore("app", {
     },
     setShowItemsWithoutCoordinates(value) {
       this.showItemsWithoutCoordinates = value;
+    },
+    setVisiblePlanIds(value) {
+      this.visiblePlanIds = value;
     },
   },
 });

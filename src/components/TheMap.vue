@@ -1,5 +1,13 @@
 <template>
   <div v-show="!isItemSelected" id="mapContainer"></div>
+  <div v-show="!isItemSelected" class="the-map__top-right-controls">
+    <TheMapNoCoordinatesToggle />
+    <TheMapLayerModal
+      :plans="overlayPlans"
+      :visible-plan-ids="visiblePlanIds"
+      @toggle-visible="togglePlanVisible"
+    />
+  </div>
   <div v-show="!isItemSelected" id="exportButtons">
     <q-btn
       v-show="!isItemSelected && !isMapMinimized"
@@ -11,25 +19,17 @@
       ><q-tooltip class="bg-accent">export map</q-tooltip></q-btn
     >
   </div>
-  <Teleport
-    v-if="noCoordinatesControlElement"
-    :to="noCoordinatesControlElement"
-  >
-    <TheMapNoCoordinatesToggle />
-  </Teleport>
 </template>
 
 <script>
 import { markRaw } from "vue";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import "leaflet.control.layers.tree";
-import "leaflet.control.layers.tree/L.Control.Layers.Tree.css";
-import { mapState } from "pinia";
+import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
 import {
-  createMapsOverlaysTree,
+  createMapsOverlaysList,
   baseLayersTree,
   defaultBaseLayer,
 } from "@/services/mapOverlays.js";
@@ -40,23 +40,23 @@ import {
   updateNoCoordinatesMarkersRadius,
 } from "@/services/mapItemsLayers.js";
 import { exportMapAsCompositeSVG } from "@/services/mapExport.js";
+import TheMapLayerModal from "@/components/TheMapLayerModal.vue";
 import TheMapNoCoordinatesToggle from "@/components/TheMapNoCoordinatesToggle.vue";
 
 export default {
   name: "TheMap",
-  components: { TheMapNoCoordinatesToggle },
+  components: { TheMapLayerModal, TheMapNoCoordinatesToggle },
   data() {
     return {
       map: null,
       itemsLayer: null,
       noCoordinatesItemsLayer: null,
       noCoordinatesFittedBounds: null,
-      noCoordinatesControl: null,
-      noCoordinatesControlElement: null,
       baseLayersTree: null,
-      overlaysTree: null,
-      treeLayerControl: null,
+      overlayPlans: [],
+      baseLayerControl: null,
       isProcessingTrenchItemsPlans: false,
+      latestMapInitId: 0,
       enableScrollWheelZoom: true,
       wheelDebounceTime: 140,
       wheelPxPerZoomLevel: 180,
@@ -69,6 +69,7 @@ export default {
       "loadingCount",
       "isItemSelected",
       "showItemsWithoutCoordinates",
+      "visiblePlanIds",
     ]),
     ...mapState(useDataStore, [
       "checkedTrenchesItemsPlans",
@@ -85,16 +86,8 @@ export default {
     },
   },
   watch: {
-    // initialize map when first toggled on
-    isMapMinimized: async function () {
-      try {
-        this.destroyMap();
-        await this.$nextTick();
-        // Reinitialize the map
-        await this.initMap();
-      } catch (error) {
-        console.error(error);
-      }
+    isMapMinimized: function () {
+      this.rebuildMap();
     },
     // load items layer after all selected trenches are loaded
     loadingCount: function (newLoadingCount, oldLoadingCount) {
@@ -124,20 +117,9 @@ export default {
         this.loadNoCoordinatesItemsLayer();
       }
     },
-    // reload overlays tree when changing trenches
-    checkedTrenchesItemsPlans: async function () {
-      if (this.map && !this.isProcessingTrenchItemsPlans) {
-        this.isProcessingTrenchItemsPlans = true;
-        try {
-          this.destroyMap();
-          await this.$nextTick();
-          // Reinitialize the map
-          await this.initMap();
-        } catch (error) {
-          console.error(error);
-        } finally {
-          this.isProcessingTrenchItemsPlans = false;
-        }
+    checkedTrenchesItemsPlans: function () {
+      if (this.map || this.isProcessingTrenchItemsPlans) {
+        this.rebuildMap();
       }
     },
   },
@@ -145,7 +127,23 @@ export default {
     this.destroyMap();
   },
   methods: {
+    ...mapActions(useAppStore, ["setVisiblePlanIds"]),
+
+    async rebuildMap() {
+      this.isProcessingTrenchItemsPlans = true;
+      try {
+        this.destroyMap();
+        await this.$nextTick();
+        await this.initMap();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.isProcessingTrenchItemsPlans = false;
+      }
+    },
+
     destroyMap() {
+      this.latestMapInitId += 1;
       if (!this.map) {
         return;
       }
@@ -167,16 +165,12 @@ export default {
       }
       this.noCoordinatesFittedBounds = null;
 
-      if (this.noCoordinatesControl) {
-        this.noCoordinatesControlElement = null;
-        this.noCoordinatesControl.remove();
-        this.noCoordinatesControl = null;
+      if (this.baseLayerControl) {
+        this.baseLayerControl.remove();
+        this.baseLayerControl = null;
       }
 
-      if (this.treeLayerControl) {
-        this.treeLayerControl.remove();
-        this.treeLayerControl = null;
-      }
+      this.overlayPlans = [];
 
       this.map.off();
       this.map.remove();
@@ -184,15 +178,23 @@ export default {
     },
 
     async initMap() {
+      const mapInitId = ++this.latestMapInitId;
       // Leaflet objects stay out of Vue reactivity: through a proxy, map.off() misses
       // its listeners and zooming crashes on a closed tooltip
       this.baseLayersTree = markRaw(baseLayersTree);
-      this.overlaysTree = markRaw(
-        await createMapsOverlaysTree(
-          this.checkedTrenchesItemsPlans,
-          this.projectPreferencesCRS,
-        ),
+      const overlayPlans = await createMapsOverlaysList(
+        this.checkedTrenchesItemsPlans,
+        this.projectPreferencesCRS,
       );
+      // A newer init or a destroy happened while the plans were loading: building this map
+      // too would leave its rasters on screen, out of reach of the plans panel
+      if (mapInitId !== this.latestMapInitId) {
+        return;
+      }
+      this.overlayPlans = overlayPlans.map((plan) => ({
+        ...plan,
+        layer: markRaw(plan.layer),
+      }));
 
       this.map = markRaw(
         L.map("mapContainer", {
@@ -210,11 +212,20 @@ export default {
         }),
       );
 
-      this.treeLayerControl = markRaw(
-        L.control.layers.tree(baseLayersTree, this.overlaysTree),
+      const baseLayersObject = Object.fromEntries(
+        this.baseLayersTree.children.map((baseLayer) => [
+          baseLayer.label,
+          baseLayer.layer,
+        ]),
       );
-      this.addNoCoordinatesControl();
-      this.treeLayerControl.addTo(this.map);
+      this.baseLayerControl = markRaw(
+        L.control
+          .layers(baseLayersObject, null, {
+            collapsed: false,
+            position: "topleft",
+          })
+          .addTo(this.map),
+      );
 
       this.map.on("baselayerchange", (event) => {
         this.selectedBaseLayer = markRaw(event.layer);
@@ -229,6 +240,10 @@ export default {
         }
       });
 
+      this.overlayPlans
+        .filter((plan) => this.isPlanVisible(plan))
+        .forEach((plan) => plan.layer.addTo(this.map));
+
       L.control
         .scale({ position: "bottomleft", imperial: false })
         .addTo(this.map);
@@ -237,17 +252,20 @@ export default {
       this.loadNoCoordinatesItemsLayer();
     },
 
-    addNoCoordinatesControl() {
-      const control = L.control({ position: "topright" });
-      control.onAdd = () => {
-        const element = L.DomUtil.create("div");
-        L.DomEvent.disableClickPropagation(element);
-        L.DomEvent.disableScrollPropagation(element);
-        this.noCoordinatesControlElement = element;
-        return element;
-      };
-      control.addTo(this.map);
-      this.noCoordinatesControl = markRaw(control);
+    isPlanVisible(plan) {
+      return this.visiblePlanIds.includes(plan.id);
+    },
+
+    togglePlanVisible(plan) {
+      if (this.isPlanVisible(plan)) {
+        plan.layer.remove();
+        this.setVisiblePlanIds(
+          this.visiblePlanIds.filter((id) => id !== plan.id),
+        );
+      } else {
+        plan.layer.addTo(this.map);
+        this.setVisiblePlanIds([...this.visiblePlanIds, plan.id]);
+      }
     },
 
     loadItemsLayer(shouldFitBounds = false) {
@@ -307,6 +325,15 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
+}
+.the-map__top-right-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
 }
 </style>
 
