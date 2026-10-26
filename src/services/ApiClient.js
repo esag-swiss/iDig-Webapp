@@ -267,6 +267,18 @@ export function apiFetchImage(filename, checksum, trench) {
     .finally(() => decrementLoadingCount());
 }
 
+// Background fetch used by table thumbnails: no global spinner and no alert,
+// since dozens of these may run while the user scrolls.
+export function apiFetchAttachment(filename, checksum, trench) {
+  const { server, project, username, password } = useAppStore();
+  return axios({
+    method: "get",
+    url: `${server}/idig/${project}/${trench}/attachments/${filename}?checksum=${checksum}`,
+    responseType: "blob",
+    auth: { username, password },
+  });
+}
+
 export function apiFetchWld(filename, checksum, trench) {
   const {
     server,
