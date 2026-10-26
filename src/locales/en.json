@@ -53,6 +53,12 @@
     "relation_filter_relation": "Select a relation",
     "relation_filter_property": "Select a field",
     "relation_filter_value": "Value…",
-    "relation_filter_reset": "Reset filter"
+    "relation_filter_reset": "Reset filter",
+    "search_mode_basic": "Basic",
+    "search_mode_expert": "Expert",
+    "search_placeholder": "Search...",
+    "search_expert_placeholder": "JMESPath expression, e.g. [?Type=='Context']",
+    "search_expert_help": "Expert mode: filter items with a JMESPath expression evaluated on raw field keys (case sensitive). e.g. [?contains(Title, 'FK') && RightsStatus=='All Done']",
+    "search_expert_error": "Invalid expression:"
   }
 }
