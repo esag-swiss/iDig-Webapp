@@ -18,4 +18,5 @@ const i18n = createI18n({
   },
 });
 
+export const t = i18n.global.t;
 export default i18n;

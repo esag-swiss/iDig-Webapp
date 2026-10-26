@@ -54,14 +54,14 @@ export default {
     ]),
     ...mapState(useDataStore, [
       "checkedTrenchesItemsPlans",
-      "checkedTrenchesItemsSelectedTypeAndSearched",
+      "checkedTrenchesItemsRelationFiltered",
       "projectPreferencesCRS",
       "tableFilteredCheckedTrenchesItems",
     ]),
     itemsForMap() {
       return (
         this.tableFilteredCheckedTrenchesItems ??
-        this.checkedTrenchesItemsSelectedTypeAndSearched
+        this.checkedTrenchesItemsRelationFiltered
       );
     },
   },
