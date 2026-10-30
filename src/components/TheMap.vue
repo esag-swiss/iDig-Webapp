@@ -11,9 +11,16 @@
       ><q-tooltip class="bg-accent">export map</q-tooltip></q-btn
     >
   </div>
+  <Teleport
+    v-if="noCoordinatesControlElement"
+    :to="noCoordinatesControlElement"
+  >
+    <TheMapNoCoordinatesToggle />
+  </Teleport>
 </template>
 
 <script>
+import { markRaw } from "vue";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "leaflet.control.layers.tree";
@@ -26,23 +33,28 @@ import {
   baseLayersTree,
 } from "@/services/mapOverlays.js";
 import {
+  fitMapOnNoCoordinatesItemsOnly,
   loadItemsLayer,
   loadNoCoordinatesItemsLayer,
+  updateNoCoordinatesMarkersRadius,
 } from "@/services/mapItemsLayers.js";
 import { exportMapAsCompositeSVG } from "@/services/mapExport.js";
+import TheMapNoCoordinatesToggle from "@/components/TheMapNoCoordinatesToggle.vue";
 
 export default {
   name: "TheMap",
+  components: { TheMapNoCoordinatesToggle },
   data() {
     return {
       map: null,
       itemsLayer: null,
       noCoordinatesItemsLayer: null,
-      overlayLayers: null,
+      noCoordinatesFittedBounds: null,
+      noCoordinatesControl: null,
+      noCoordinatesControlElement: null,
       baseLayersTree: null,
       overlaysTree: null,
       treeLayerControl: null,
-      firstMapShowed: true,
       isProcessingTrenchItemsPlans: false,
       enableScrollWheelZoom: true,
       wheelDebounceTime: 140,
@@ -152,6 +164,13 @@ export default {
         this.noCoordinatesItemsLayer.remove();
         this.noCoordinatesItemsLayer = null;
       }
+      this.noCoordinatesFittedBounds = null;
+
+      if (this.noCoordinatesControl) {
+        this.noCoordinatesControlElement = null;
+        this.noCoordinatesControl.remove();
+        this.noCoordinatesControl = null;
+      }
 
       if (this.treeLayerControl) {
         this.treeLayerControl.remove();
@@ -164,58 +183,81 @@ export default {
     },
 
     async initMap() {
-      this.baseLayersTree = baseLayersTree;
-      this.overlaysTree = await createMapsOverlaysTree(
-        this.checkedTrenchesItemsPlans,
-        this.projectPreferencesCRS,
+      // Leaflet objects stay out of Vue reactivity: through a proxy, map.off() misses
+      // its listeners and zooming crashes on a closed tooltip
+      this.baseLayersTree = markRaw(baseLayersTree);
+      this.overlaysTree = markRaw(
+        await createMapsOverlaysTree(
+          this.checkedTrenchesItemsPlans,
+          this.projectPreferencesCRS,
+        ),
       );
 
-      // Creation de la carte
-      this.map = L.map("mapContainer", {
-        attributionControl: false,
-        zoomControl: true,
-        zoomDelta: 0.25,
-        zoomSnap: 0.25,
-        zoomAnimation: false,
-        fadeAnimation: false,
-        markerZoomAnimation: false,
-        scrollWheelZoom: this.enableScrollWheelZoom,
-        wheelDebounceTime: this.wheelDebounceTime,
-        wheelPxPerZoomLevel: this.wheelPxPerZoomLevel,
-        layers: this.selectedBaseLayer ?? this.baseLayersTree.children[3].layer,
-      });
-
-      // Ajout du control de couches en arborescence
-      this.treeLayerControl = L.control.layers.tree(
-        baseLayersTree,
-        this.overlaysTree,
+      this.map = markRaw(
+        L.map("mapContainer", {
+          attributionControl: false,
+          zoomControl: true,
+          zoomDelta: 0.25,
+          zoomSnap: 0.25,
+          zoomAnimation: false,
+          fadeAnimation: false,
+          markerZoomAnimation: false,
+          scrollWheelZoom: this.enableScrollWheelZoom,
+          wheelDebounceTime: this.wheelDebounceTime,
+          wheelPxPerZoomLevel: this.wheelPxPerZoomLevel,
+          layers:
+            this.selectedBaseLayer ?? this.baseLayersTree.children[3].layer,
+        }),
       );
+
+      this.treeLayerControl = markRaw(
+        L.control.layers.tree(baseLayersTree, this.overlaysTree),
+      );
+      this.addNoCoordinatesControl();
       this.treeLayerControl.addTo(this.map);
 
       this.map.on("baselayerchange", (event) => {
-        this.selectedBaseLayer = event.layer;
+        this.selectedBaseLayer = markRaw(event.layer);
       });
 
-      // Ajout de l'échelle
+      this.map.on("zoomend", () => {
+        if (this.noCoordinatesItemsLayer) {
+          updateNoCoordinatesMarkersRadius({
+            map: this.map,
+            layer: this.noCoordinatesItemsLayer,
+          });
+        }
+      });
+
       L.control
         .scale({ position: "bottomleft", imperial: false })
         .addTo(this.map);
 
-      // Ajout des items
       this.loadItemsLayer(true);
       this.loadNoCoordinatesItemsLayer();
     },
 
+    addNoCoordinatesControl() {
+      const control = L.control({ position: "topright" });
+      control.onAdd = () => {
+        const element = L.DomUtil.create("div");
+        L.DomEvent.disableClickPropagation(element);
+        L.DomEvent.disableScrollPropagation(element);
+        this.noCoordinatesControlElement = element;
+        return element;
+      };
+      control.addTo(this.map);
+      this.noCoordinatesControl = markRaw(control);
+    },
+
     loadItemsLayer(shouldFitBounds = false) {
-      // Prefer Tabulator visible data when available (set by TheTable.vue)
-      this.itemsLayer = loadItemsLayer(
-        this.map,
-        this.itemsLayer, // Passe l'ancien layer pour suppression
-        this.itemsForMap,
-        {
+      this.itemsLayer = markRaw(
+        loadItemsLayer({
+          map: this.map,
+          currentItemsLayer: this.itemsLayer,
+          items: this.itemsForMap,
           fitBounds: shouldFitBounds,
-          fitBoundsOnEmpty: true,
-        },
+        }),
       );
     },
 
@@ -227,15 +269,24 @@ export default {
       if (!this.showItemsWithoutCoordinates) {
         this.noCoordinatesItemsLayer.remove();
         this.noCoordinatesItemsLayer = null;
+        this.noCoordinatesFittedBounds = null;
         return;
       }
 
-      this.noCoordinatesItemsLayer = loadNoCoordinatesItemsLayer(
-        this.map,
-        this.noCoordinatesItemsLayer,
-        this.itemsForMap,
-        this.itemByUuid,
+      this.noCoordinatesItemsLayer = markRaw(
+        loadNoCoordinatesItemsLayer({
+          map: this.map,
+          currentLayer: this.noCoordinatesItemsLayer,
+          items: this.itemsForMap,
+          itemByUuid: this.itemByUuid,
+        }),
       );
+      this.noCoordinatesFittedBounds = fitMapOnNoCoordinatesItemsOnly({
+        map: this.map,
+        itemsLayer: this.itemsLayer,
+        noCoordinatesLayer: this.noCoordinatesItemsLayer,
+        lastFittedBounds: this.noCoordinatesFittedBounds,
+      });
     },
 
     exportMapAsPNG() {
