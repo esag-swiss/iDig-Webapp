@@ -3,6 +3,7 @@ import {
   computeSHA256,
   fileExtension,
   parseAttachments,
+  parseImageAttachments,
   serializeAttachments,
   addAttachment,
   removeAttachment,
@@ -55,6 +56,23 @@ describe("parseAttachments", () => {
   it("should return an empty array for empty input", () => {
     expect(parseAttachments("")).toEqual([]);
     expect(parseAttachments(undefined)).toEqual([]);
+  });
+});
+
+describe("parseImageAttachments", () => {
+  it("should keep every image attachment", () => {
+    const field = "n=a.jpg\nd=1111\n\nn=b.png\nd=2222";
+    expect(parseImageAttachments(field)).toEqual([
+      { name: "a.jpg", checksum: "1111" },
+      { name: "b.png", checksum: "2222" },
+    ]);
+  });
+
+  it("should skip georeferencing sidecar files", () => {
+    const field = "n=a.tif\nd=1111\n\nn=a.WLD\nd=2222\n\nn=a.tfw\nd=3333";
+    expect(parseImageAttachments(field)).toEqual([
+      { name: "a.tif", checksum: "1111" },
+    ]);
   });
 });
 
