@@ -287,9 +287,9 @@
             />
 
             <TheItemInput
-              v-else-if="editMode && field !== 'IdentifierUUID'"
+              v-else-if="editMode && !appManagedFields.includes(field)"
               class="col-12 p-1"
-              :field="field"
+              :field="{ field }"
               :current-item="selectedItem"
               :edit-mode="editMode"
             />
@@ -358,6 +358,8 @@ export default {
   data() {
     return {
       fieldsSchema: fieldsSchema,
+      // extra fields handled by the app, never offered as free text input
+      appManagedFields: ["IdentifierUUID", "RelationAttachments"],
       editMode: false,
       arrayForMultivalueFields: [],
       relatedImageUrls: [],
