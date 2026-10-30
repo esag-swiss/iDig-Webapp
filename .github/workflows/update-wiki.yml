@@ -1,0 +1,80 @@
+name: Update Wiki
+
+on:
+  push:
+    branches:
+      - dev
+
+permissions:
+  contents: write
+
+jobs:
+  update-wiki:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout wiki
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+
+      - name: Copy static wiki pages
+        run: |
+          cp .github/wiki/Home.md        wiki/Home.md
+          cp .github/wiki/Features.md   wiki/Features.md
+          cp .github/wiki/Development.md wiki/Development.md
+
+      - name: Generate Changelog page
+        run: |
+          {
+            echo "# Changelog"
+            echo ""
+            echo "_Auto-generated on $(date -u '+%Y-%m-%d %H:%M UTC') from the \`dev\` branch._"
+            echo ""
+            echo "---"
+            echo ""
+
+            # Collect the last 30 merge commits (PRs merged with --no-ff or squash merges).
+            # The sed filter removes git's auto-generated "-- not a merge commit" separator
+            # lines that appear when --merges has nothing to output for a range, while
+            # keeping markdown horizontal rules (---) that start the body of each entry.
+            git log dev \
+              --merges \
+              --pretty=format:"## %s%n%n**Date:** %ad%n%n%b%n---" \
+              --date=short \
+              -n 30 \
+            | sed '/^--[^-]/d' \
+            || true
+
+            # Fall back to individual commits when no merge commits exist at all
+            # (e.g. the project uses squash-merge or linear history exclusively).
+            MERGES=$(git log dev --merges --oneline -n 1 | wc -l)
+            if [ "$MERGES" -lt 1 ]; then
+              git log dev \
+                --no-merges \
+                --pretty=format:"## %s%n%n**Date:** %ad  **SHA:** \`%h\`%n%n%b%n---" \
+                --date=short \
+                -n 30 \
+              | sed '/^--[^-]/d' \
+              || true
+            fi
+          } > wiki/Changelog.md
+
+      - name: Commit and push wiki
+        working-directory: wiki
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Home.md Features.md Development.md Changelog.md
+          if git diff --cached --quiet; then
+            echo "No wiki changes to commit."
+          else
+            git commit -m "docs: sync wiki from dev $(date -u '+%Y-%m-%d')"
+            git push
+          fi
