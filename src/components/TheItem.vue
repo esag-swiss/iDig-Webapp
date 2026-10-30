@@ -688,6 +688,28 @@ export default {
         return "/src/assets/missing.PNG"; // Placeholder en cas d'erreur
       }
     },
+
+    printItemSheet() {
+      if (!this.selectedItem) {
+        return;
+      }
+
+      printItemSheetDocument({
+        selectedItem: this.selectedItem,
+        groups: this.groupsOfFieldsAccordingToItem,
+        fieldsOfCurrentItem: this.fieldsOfCurrentItem,
+        lang: this.lang,
+        project: this.project,
+        projectPreferencesTypes: this.projectPreferencesTypes,
+        projectPreferencesTypesTranslation:
+          this.projectPreferencesTypesTranslation,
+        projectPreferencesFields: this.projectPreferencesFields,
+        projectPreferencesFieldsWithTranslation:
+          this.projectPreferencesFieldsWithTranslation,
+        fieldsSchema: this.fieldsSchema,
+        checkedTrenchesData: this.checkedTrenchesData,
+      });
+    },
   },
 };
 </script>
