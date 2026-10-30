@@ -9,32 +9,12 @@ import {
 import { apiFetchImage, apiFetchWld } from "@/services/ApiClient";
 
 // BASE LAYERS or TILES LAYERS
-let osmLayer = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
+let osmLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 25,
   maxNativeZoom: 19,
   attribution:
-    '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 });
-
-let Minimaliste = L.tileLayer(
-  "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
-  {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: "abcd",
-    maxZoom: 25,
-  },
-);
-
-let Sombre = L.tileLayer(
-  "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
-  {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: "abcd",
-    maxZoom: 25,
-  },
-);
 
 let Satellite = L.tileLayer(
   "http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
@@ -45,12 +25,12 @@ let Satellite = L.tileLayer(
   },
 );
 
+export const defaultBaseLayer = osmLayer;
+
 export const baseLayersTree = {
   label: "Base Layers",
   children: [
     { label: "OSM", layer: osmLayer },
-    { label: "Light", layer: Minimaliste },
-    { label: "Dark", layer: Sombre },
     { label: "Satellite", layer: Satellite },
   ],
 };

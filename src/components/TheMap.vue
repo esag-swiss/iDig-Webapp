@@ -24,6 +24,7 @@ import { useAppStore } from "@/stores/app";
 import {
   createMapsOverlaysTree,
   baseLayersTree,
+  defaultBaseLayer,
 } from "@/services/mapOverlays.js";
 import {
   loadItemsLayer,
@@ -182,7 +183,7 @@ export default {
         scrollWheelZoom: this.enableScrollWheelZoom,
         wheelDebounceTime: this.wheelDebounceTime,
         wheelPxPerZoomLevel: this.wheelPxPerZoomLevel,
-        layers: this.selectedBaseLayer ?? this.baseLayersTree.children[3].layer,
+        layers: this.selectedBaseLayer ?? defaultBaseLayer,
       });
 
       // Ajout du control de couches en arborescence
