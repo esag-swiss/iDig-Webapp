@@ -303,7 +303,7 @@
 
 <script>
 import { Notify } from "quasar";
-import { apiFetchImageSRC } from "@/services/ApiClient";
+import { apiFetchImage } from "@/services/ApiClient";
 import { mapActions, mapState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import { useAppStore } from "@/stores/app";
@@ -320,7 +320,7 @@ import {
   fileExtension,
   addAttachment,
   removeAttachment,
-  parseAttachments,
+  parseImageAttachments,
 } from "@/services/attachmentUtils";
 import TheItemType from "@/components/TheItemType.vue";
 import TheItemRightsStatus from "@/components/TheItemRightsStatus.vue";
@@ -621,7 +621,7 @@ export default {
       const resolvedImages = await Promise.all(
         relatedItems.map((uuid) => this.findObjectByUuid(uuid)),
       );
-      this.relatedImageUrls = resolvedImages.filter(Boolean);
+      this.relatedImageUrls = resolvedImages.flat().filter(Boolean);
     },
 
     findObjectByUuid(IdentifierUUID) {
@@ -644,12 +644,18 @@ export default {
     },
 
     async fetchURLs(RelationAttachments) {
+      const attachments = parseImageAttachments(RelationAttachments);
+      if (attachments.length === 0) {
+        return ["/src/assets/missing.PNG"];
+      }
+      return Promise.all(
+        attachments.map((attachment) => this.fetchAttachmentURL(attachment)),
+      );
+    },
+
+    async fetchAttachmentURL({ name, checksum }) {
       try {
-        const attachment = parseAttachments(RelationAttachments)[0];
-        if (!attachment) {
-          return "/src/assets/missing.PNG";
-        }
-        const imageName = attachment.name.split(".")[0];
+        const imageName = name.split(".")[0];
 
         // Ouvrir IndexedDB et vérifier si l'image y est déjà stockée
         const db = await openDB();
@@ -661,8 +667,9 @@ export default {
           return imageUrl; // Retourner l'URL de l'image
         } else {
           // Si l'image n'est pas dans IndexedDB, la récupérer via l'API
-          const response = await apiFetchImageSRC(
-            RelationAttachments,
+          const response = await apiFetchImage(
+            name,
+            checksum,
             this.selectedItem.Trench,
           );
 
