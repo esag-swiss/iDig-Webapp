@@ -4,12 +4,24 @@ import {
   noCoordinatesItemsToGeojson,
 } from "@/services/json2geojson";
 import { colorForSurvey } from "@/services/coloring.js";
+import {
+  clamp,
+  interpolate,
+  progressBetween,
+} from "@/services/helpers/numberHelper";
 import i18n from "@/i18n.js";
 
 const DEFAULT_BOUNDS = L.latLngBounds([
   [35, 20], // Greece south west corner
   [42, 30], // Greece north east corner
 ]);
+
+const NO_COORDINATES_MAX_RADIUS = 7;
+const NO_COORDINATES_MIN_RADIUS = 4;
+const NO_COORDINATES_SHRINK_START_ZOOM = 18;
+const NO_COORDINATES_SHRINK_END_ZOOM = 23;
+// Items sharing one centroid have an empty extent, which would zoom to the maximum
+const NO_COORDINATES_FIT_MAX_ZOOM = 19;
 
 // style for GeoJSON features
 function getFeatureStyle(feature) {
@@ -36,10 +48,51 @@ function getPointToLayer(feature, latlng) {
   });
 }
 
+function noCoordinatesRadiusForZoom(zoom) {
+  const shrinkProgress = progressBetween({
+    value: zoom,
+    start: NO_COORDINATES_SHRINK_START_ZOOM,
+    end: NO_COORDINATES_SHRINK_END_ZOOM,
+  });
+  return interpolate({
+    from: NO_COORDINATES_MAX_RADIUS,
+    to: NO_COORDINATES_MIN_RADIUS,
+    progress: clamp({ value: shrinkProgress, min: 0, max: 1 }),
+  });
+}
+
+function updateNoCoordinatesMarkersRadius({ map, layer }) {
+  const radius = noCoordinatesRadiusForZoom(map.getZoom());
+  layer.eachLayer((marker) => marker.setRadius(radius));
+}
+
+function fitMapOnNoCoordinatesItemsOnly({
+  map,
+  itemsLayer,
+  noCoordinatesLayer,
+  lastFittedBounds,
+}) {
+  if (itemsLayer.getBounds().isValid()) {
+    return null;
+  }
+
+  const bounds = noCoordinatesLayer.getBounds();
+  if (!bounds.isValid()) {
+    return null;
+  }
+
+  const hasExtentChanged = !bounds.equals(lastFittedBounds);
+  if (hasExtentChanged) {
+    map.fitBounds(bounds, { maxZoom: NO_COORDINATES_FIT_MAX_ZOOM });
+  }
+
+  return bounds;
+}
+
 function getNoCoordinatesPointToLayer(feature, latlng) {
   const col = colorForSurvey(feature.properties.type, "type");
   return L.circleMarker(latlng, {
-    radius: 7,
+    radius: NO_COORDINATES_MAX_RADIUS,
     fillColor: col,
     color: col,
     weight: 2,
@@ -62,19 +115,10 @@ function bindFeatureCallbacks(feature, layer) {
   }
 }
 
-export function loadItemsLayer(
-  map,
-  currentItemsLayer,
-  checkedTrenchesItemsSelectedTypeAndSearched,
-  options = {},
-) {
-  const { fitBounds = true, fitBoundsOnEmpty = true } = options;
-  const geojsonData = geoSerializedToGeojson(
-    checkedTrenchesItemsSelectedTypeAndSearched || [],
-  );
+function loadItemsLayer({ map, currentItemsLayer, items, fitBounds }) {
+  const geojsonData = geoSerializedToGeojson(items || []);
 
   let itemsLayer = currentItemsLayer;
-  // Vérifier si un layer existant doit être retiré
   if (!itemsLayer) {
     itemsLayer = L.geoJSON(geojsonData, {
       onEachFeature: bindFeatureCallbacks,
@@ -94,20 +138,15 @@ export function loadItemsLayer(
     const bounds = itemsLayer.getBounds();
     if (bounds.isValid()) {
       map.fitBounds(bounds);
-    } else if (fitBoundsOnEmpty) {
+    } else {
       map.fitBounds(DEFAULT_BOUNDS);
     }
   }
 
-  return itemsLayer; // Retourne le nouveau layer pour mise à jour
+  return itemsLayer;
 }
 
-export function loadNoCoordinatesItemsLayer(
-  map,
-  currentLayer,
-  items,
-  itemByUuid,
-) {
+function loadNoCoordinatesItemsLayer({ map, currentLayer, items, itemByUuid }) {
   const geojsonData = noCoordinatesItemsToGeojson(items || [], itemByUuid);
 
   if (currentLayer) {
@@ -116,6 +155,7 @@ export function loadNoCoordinatesItemsLayer(
     if (!map.hasLayer(currentLayer)) {
       currentLayer.addTo(map);
     }
+    updateNoCoordinatesMarkersRadius({ map, layer: currentLayer });
 
     return currentLayer;
   }
@@ -125,6 +165,15 @@ export function loadNoCoordinatesItemsLayer(
     pointToLayer: getNoCoordinatesPointToLayer,
   });
   layer.addTo(map);
+  updateNoCoordinatesMarkersRadius({ map, layer });
 
   return layer;
 }
+
+export {
+  fitMapOnNoCoordinatesItemsOnly,
+  loadItemsLayer,
+  loadNoCoordinatesItemsLayer,
+  noCoordinatesRadiusForZoom,
+  updateNoCoordinatesMarkersRadius,
+};
