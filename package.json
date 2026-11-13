@@ -17,6 +17,8 @@
     "axios": "^1.15.2",
     "big-integer": "^1.6.52",
     "dayjs": "^1.11.20",
+    "docx": "^9.8.1",
+    "exceljs": "^4.4.0",
     "geotiff": "^3.0.5",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
