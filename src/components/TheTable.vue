@@ -71,6 +71,7 @@ import { applyPlugin } from "jspdf-autotable";
 applyPlugin(jsPDF);
 import { openDB, readDataInIndexedDB } from "@/services/indexedDbManager";
 import { pushSurvey } from "@/services/pushSurveyService";
+import { isArchived } from "@/services/archivedItems";
 
 export default {
   name: "TheTable",
@@ -182,6 +183,8 @@ export default {
         field: fieldName,
         headerMenu: headerMenu,
         editor: "input",
+        // Archived items are frozen, like in the item form.
+        editable: (cell) => !isArchived(cell.getRow().getData()),
         formatter: this.getColumnFormatter(fieldName),
         formatterParams: this.getColumnFormatterParams(fieldName),
         formatterPrint: printFormatter,
@@ -218,9 +221,15 @@ export default {
       movableColumns: true,
       columns: this.columnsTabulator, //define table columns
       height: "97%",
-      rowFormatter: function (row) {
-        if (row.getData().RightsStatus === "Archived") {
-          row.getElement().style.backgroundColor = "rgba(128, 128, 153, 0.376)";
+      rowFormatter: (row) => {
+        const element = row.getElement();
+        const archived = isArchived(row.getData());
+        element.classList.toggle("table-row-archived", archived);
+        if (archived) {
+          element.dataset.archivedLabel = this.$t("app.archived_badge");
+          element.title = this.$t("app.archived_not_editable");
+        } else {
+          element.removeAttribute("title");
         }
       },
       pagination: true,
@@ -599,6 +608,25 @@ export default {
 }
 .TheItemframe:hover {
   background: rgba(0, 0, 0, 0.5);
+}
+
+:deep(.tabulator-row.table-row-archived) {
+  background-color: rgba(128, 128, 153, 0.376);
+  color: #6c6c7a;
+}
+
+:deep(.tabulator-row.table-row-archived)::after {
+  content: attr(data-archived-label);
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #6c6c7a;
+  color: #fff;
+  font-size: 11px;
+  pointer-events: none;
 }
 
 :deep(.table-link-chips) {

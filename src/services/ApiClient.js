@@ -173,7 +173,10 @@ export function apiPushTrench(trench, head, surveys, preferences) {
     }),
   })
     .catch((error) => {
-      displayError("Context : pushTrench", error);
+      // 409: archived items rejected by the server, reported by pushSurvey.
+      if (error?.response?.status !== 409) {
+        displayError("Context : pushTrench", error);
+      }
       throw error;
     })
     .finally(() => decrementLoadingCount());
