@@ -29,20 +29,6 @@
     </option>
   </select>
 
-  <!-- ITEMS WITHOUT COORDINATES -->
-  <div class="p-1 m-1 border-0">
-    <q-toggle
-      v-model="showNoCoordinates"
-      size="sm"
-      color="primary"
-      :label="$t('app.show_items_without_coordinates')"
-      @update:model-value="(val) => setShowItemsWithoutCoordinates(val)"
-    />
-    <q-tooltip class="bg-accent">
-      {{ $t("app.show_items_without_coordinates_tip") }}
-    </q-tooltip>
-  </div>
-
   <!-- FIELDS -->
   <div class="p-1 m-1 border-0">
     <h3>
@@ -107,7 +93,6 @@ export default {
     return {
       defaultColumns: {},
       hideArchived: false,
-      showNoCoordinates: false,
     };
   },
   computed: {
@@ -163,10 +148,7 @@ export default {
   },
   methods: {
     ...mapActions(useDataStore, ["setSelectedType"]),
-    ...mapActions(useAppStore, [
-      "setIsArchivedItemsHided",
-      "setShowItemsWithoutCoordinates",
-    ]),
+    ...mapActions(useAppStore, ["setIsArchivedItemsHided"]),
     changeLang(lang) {
       this.setLang(lang);
     },
