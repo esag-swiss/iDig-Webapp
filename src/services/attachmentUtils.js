@@ -45,6 +45,14 @@ export function parseAttachments(relationAttachments) {
     .filter((attachment) => attachment.name && attachment.checksum);
 }
 
+// Plans carry a georeferencing sidecar (.wld/.tfw) that is not displayable and
+// shares its base name, hence its IndexedDB key, with the plan image.
+export function parseImageAttachments(relationAttachments) {
+  return parseAttachments(relationAttachments).filter(
+    (attachment) => !/\.(wld|tfw)$/i.test(attachment.name),
+  );
+}
+
 export function serializeAttachments(attachments) {
   return attachments
     .map(({ name, checksum }) => `n=${name}\nd=${checksum}`)
