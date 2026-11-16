@@ -51,9 +51,7 @@
         <BaseCheckbox
           :model-value="checkedTrenchesNames.includes(trenchName)"
           :label="trenchName"
-          @update:model-value="
-            (checked) => toggleTrench(trenchName, checked)
-          "
+          @update:model-value="(checked) => toggleTrench(trenchName, checked)"
         />
       </div>
     </div>
@@ -95,6 +93,10 @@ import { mapActions, mapState, mapWritableState } from "pinia";
 import { useDataStore } from "@/stores/data";
 import BaseAccordion from "@/components/base/BaseAccordion.vue";
 import BaseCheckbox from "@/components/base/BaseCheckbox.vue";
+import {
+  trenchCampaign,
+  sortCampaignsNewestFirst,
+} from "@/services/helpers/trenchHelper";
 
 export default {
   components: { BaseAccordion, BaseCheckbox },
@@ -112,10 +114,9 @@ export default {
       return this.projectTrenchesNames ?? [];
     },
     accordionLabels() {
-      // create groups by 5 first caracters and send reverse order
-      return [...new Set(this.trenchNames.map((x) => x.substr(0, 5)))]
-        .sort()
-        .reverse();
+      return sortCampaignsNewestFirst(
+        new Set(this.trenchNames.map(trenchCampaign)),
+      );
     },
     groupedTrenches() {
       return this.accordionLabels.map((name) => ({

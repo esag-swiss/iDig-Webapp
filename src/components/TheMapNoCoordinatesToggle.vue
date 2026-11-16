@@ -25,6 +25,8 @@ const { setShowItemsWithoutCoordinates } = appStore;
 
 <style scoped>
 .toggle-container {
+  display: flex;
+  align-items: center;
   padding: 6px 10px;
   white-space: nowrap;
   background: #fff;
