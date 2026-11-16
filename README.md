@@ -1,45 +1,65 @@
-# Contributing
+# iDig Webapp
 
-This template should help get you started developing with Vue 3 in Vite.
+## Overview
 
-## Recommended IDE Setup
+iDig Webapp is a Vue 3 / Vite application used to connect to an iDig server, inspect trench data, and work with maps, tables, and exports.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Development progress
 
-## Customize configuration
+### Current features
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- Server connection through reusable local profiles
+- Profile import/export and backward compatibility with older saved connections
+- Multilingual UI: French, English, Greek, Italian, and German
+- Sector/trench selection with grouped navigation for large projects
+- Search with quoted terms, `AND` / `OR`, and field-based filters
+- Type and field selection driven by project preferences
+- Hide archived items with the `RightsStatus` toggle
+- Table and map views with quick switching
+- Exports in `.json`, `.tab`, and `GeoJSON` formats
+- Standalone item route for direct item access
+- Preferences import from local files or from an existing trench
 
-## Project Setup
+### Typical workflow
+
+1. Create or select a profile.
+2. Connect to the iDig server.
+3. Load trench preferences.
+4. Select sectors and fields.
+5. Search, inspect, and export the selected data.
+
+## Project setup
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Run the app in development
 
 ```sh
 npm run dev
 ```
 
-### Compile and Minify for Production
+### Build for production
 
 ```sh
 npm run build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+### Run unit tests
 
 ```sh
 npm run test:unit
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+### Lint the codebase
 
 ```sh
 npm run lint
 ```
 
-# Using iDig webapp
+## Notes
 
-iDig webapp is an application to visualize and manage iDig data provided by an iDig server, then IDig server is mandatory. You may test and use iDig webapp at https://idig.archaiodata.com/. First fillin the conection details of your iDig server then click on connexion. If connexion is valid settings will be stored localy.
+- iDig Webapp requires an iDig server connection to load data.
+- A public demo is available at https://idig.archaiodata.com/.
+- Connection details are stored locally after a successful login.
