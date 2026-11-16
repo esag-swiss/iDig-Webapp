@@ -71,6 +71,7 @@
     "export_reset": "Προεπιλεγμένα πρότυπα",
     "export_import_failed": "Μη έγκυρο αρχείο προτύπων",
     "export_copy": "αντίγραφο",
+    "show_thumbnails": "Εμφάνιση μικρογραφιών",
     "pagination": {
       "first": "Πρώτη",
       "first_title": "Πρώτη σελίδα",

@@ -71,6 +71,7 @@
     "export_reset": "Standardvorlagen",
     "export_import_failed": "Ungültige Vorlagendatei",
     "export_copy": "Kopie",
+    "show_thumbnails": "Vorschaubilder anzeigen",
     "pagination": {
       "first": "Erste",
       "first_title": "Erste Seite",
