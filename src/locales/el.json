@@ -72,6 +72,9 @@
     "export_import_failed": "Μη έγκυρο αρχείο προτύπων",
     "export_copy": "αντίγραφο",
     "show_thumbnails": "Εμφάνιση μικρογραφιών",
+    "archived_badge": "Αρχείο",
+    "archived_not_editable": "Αρχειοθετημένο στοιχείο: δεν επιτρέπεται η επεξεργασία",
+    "archived_items_modified": "Τα ακόλουθα αρχειοθετημένα στοιχεία δεν μπορούν να τροποποιηθούν: {items}",
     "pagination": {
       "first": "Πρώτη",
       "first_title": "Πρώτη σελίδα",
