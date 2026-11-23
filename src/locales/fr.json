@@ -78,6 +78,7 @@
     "export_import_failed": "Fichier de modèles invalide",
     "export_copy": "copie",
     "show_thumbnails": "Afficher les vignettes",
+    "thumbnail": "Vignette",
     "archived_badge": "Archive",
     "archived_not_editable": "Item archivé : modification impossible",
     "archived_items_modified": "Les items archivés suivants ne peuvent pas être modifiés : {items}",

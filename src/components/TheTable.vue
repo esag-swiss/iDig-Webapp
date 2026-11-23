@@ -83,6 +83,8 @@ import { pushSurvey } from "@/services/pushSurveyService";
 import { thumbnailAttachment, loadThumbnailUrl } from "@/services/thumbnails";
 import { isArchived } from "@/services/archivedItems";
 
+const THUMBNAIL_FIELD = "_thumbnail";
+
 export default {
   name: "TheTable",
   components: { TheItem, ThePatches },
@@ -203,12 +205,20 @@ export default {
         formatterPrint: printFormatter,
       }));
       if (this.showThumbnails) {
-        columns.unshift({
-          title: "",
-          field: "_thumbnail",
-          width: 64,
+        columns.splice(this.thumbnailColumnIndex(columns), 0, {
+          title: this.$t("app.thumbnail"),
+          field: THUMBNAIL_FIELD,
+          width: 90,
           hozAlign: "center",
           headerSort: false,
+          headerMenu: [
+            {
+              label: "Hide Column",
+              action: () => {
+                this.showThumbnails = false;
+              },
+            },
+          ],
           resizable: false,
           download: false,
           print: false,
@@ -232,6 +242,10 @@ export default {
         this.thumbnailObserver = null;
       }
     },
+  },
+
+  created() {
+    this.thumbnailColumnPreviousField = null;
   },
 
   mounted() {
@@ -356,6 +370,12 @@ export default {
         this.lastSelectedType = this.selectedType;
       },
     );
+
+    this.tabulator.on("columnMoved", (column, columns) => {
+      if (column.getField() === THUMBNAIL_FIELD) {
+        this.rememberThumbnailColumnPlace(columns);
+      }
+    });
 
     this.tabulator.on("cellEdited", () => {
       this.editedCells = this.tabulator.getEditedCells();
@@ -564,6 +584,19 @@ export default {
       img.alt = name;
       img.decoding = "async";
       container.replaceChildren(img);
+    },
+    // Kept outside data(): remembering the place must not rebuild the columns,
+    // which would undo the move the user just made.
+    rememberThumbnailColumnPlace(columns) {
+      const fields = columns.map((column) => column.getField());
+      const index = fields.indexOf(THUMBNAIL_FIELD);
+      this.thumbnailColumnPreviousField = index > 0 ? fields[index - 1] : null;
+    },
+    thumbnailColumnIndex(columns) {
+      const previousIndex = columns.findIndex(
+        (column) => column.field === this.thumbnailColumnPreviousField,
+      );
+      return previousIndex + 1;
     },
     linkChipsFormatter(cell) {
       const currentItem = cell.getRow().getData();
