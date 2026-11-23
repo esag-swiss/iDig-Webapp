@@ -80,7 +80,11 @@ import { applyPlugin } from "jspdf-autotable";
 applyPlugin(jsPDF);
 import { openDB, readDataInIndexedDB } from "@/services/indexedDbManager";
 import { pushSurvey } from "@/services/pushSurveyService";
-import { thumbnailAttachment, loadThumbnailUrl } from "@/services/thumbnails";
+import {
+  thumbnailAttachment,
+  loadThumbnailUrl,
+  reloadThumbnailUrl,
+} from "@/services/thumbnails";
 import { isArchived } from "@/services/archivedItems";
 
 export default {
@@ -555,14 +559,25 @@ export default {
     },
     async renderThumbnail(container) {
       const { trench, name, checksum } = container.dataset;
-      const url = await loadThumbnailUrl({ name, checksum }, trench);
+      const attachment = { name, checksum };
+      const url = await loadThumbnailUrl({ attachment, trench });
       if (!url) {
         return;
       }
       const img = document.createElement("img");
-      img.src = url;
       img.alt = name;
       img.decoding = "async";
+      img.addEventListener(
+        "error",
+        async () => {
+          const reloadedUrl = await reloadThumbnailUrl({ attachment, trench });
+          if (reloadedUrl) {
+            img.src = reloadedUrl;
+          }
+        },
+        { once: true },
+      );
+      img.src = url;
       container.replaceChildren(img);
     },
     linkChipsFormatter(cell) {
