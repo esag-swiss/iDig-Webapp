@@ -15,7 +15,7 @@
     "fieldTip": "Verfügbare Felder für den ausgewählten Typ oder Untertyp",
     "show_items_without_coordinates": "Einträge ohne Koordinaten",
     "items_without_coordinates_position": "Position: Zentroid des Herkunftskontexts",
-    "approximate_position_no_coordinates": "Ungefähre Position (keine Koordinaten)",
+    "approximate_position_no_coordinates": "Position (Zentroid des Herkunftskontexts)",
     "upload local pref": "Lokale Einstellungen hochladen",
     "upload pref from trench": " Einstellungen aus dem Sektor hochladen",
     "photos": "Fotos",

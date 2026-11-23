@@ -15,7 +15,7 @@
     "fieldTip": "fields available for the selected type or subtype",
     "show_items_without_coordinates": "Items without coordinates",
     "items_without_coordinates_position": "Position: centroid of the context of origin",
-    "approximate_position_no_coordinates": "Approximate position (no coordinates)",
+    "approximate_position_no_coordinates": "Position (centroid of the context of origin)",
     "upload local pref": "Upload local preferences file",
     "upload pref from trench": "Upload preferences from a chosen sector",
     "selectProfile": "Select a profile",
