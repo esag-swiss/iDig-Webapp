@@ -1,3 +1,5 @@
+import { EXAMPLE_COMPOSITION } from "@/services/export/composedText";
+
 const STORAGE_KEY = "exportTemplates";
 
 export const DEFAULT_DOCX_OPTIONS = {
@@ -10,13 +12,14 @@ export const DEFAULT_DOCX_OPTIONS = {
 
 const BASE_TEMPLATE = {
   name: "",
-  layout: "listing", // catalogue: one sheet per item | listing: one table per type
+  layout: "listing", // catalogue: one sheet per item | listing: one table per type | modular: one composed paragraph per item
   title: "{project} – {trenches}",
   itemTitle: "{Identifier} – {Title}",
   fieldsMode: "table", // table: visible table columns | all: every filled field | custom
   fields: [],
   sortBy: "Identifier",
   skipEmpty: true,
+  composition: [],
   docx: DEFAULT_DOCX_OPTIONS,
 };
 
@@ -35,18 +38,45 @@ export const DEFAULT_TEMPLATES = [
     layout: "listing",
     docx: { ...DEFAULT_DOCX_OPTIONS, orientation: "landscape" },
   },
+  {
+    ...BASE_TEMPLATE,
+    id: "composed",
+    name: "Texte composé",
+    layout: "modular",
+    itemTitle: "",
+    composition: EXAMPLE_COMPOSITION,
+  },
 ];
 
 // Fills the keys missing from a stored or imported template with defaults, so
 // templates saved by an older version keep working.
 export function normalizeTemplate(template) {
+  const { template: legacyComposition, ...rest } = template;
   return {
     ...BASE_TEMPLATE,
-    ...template,
+    ...rest,
     id: template.id || newTemplateId(),
+    itemTitle: itemTitleOf(template),
     fields: Array.isArray(template.fields) ? template.fields : [],
+    composition: compositionOf({ template, legacyComposition }),
     docx: { ...DEFAULT_DOCX_OPTIONS, ...template.docx },
   };
+}
+
+// A composed text starts with its own identifier: no heading by default.
+function itemTitleOf(template) {
+  if (template.itemTitle !== undefined) {
+    return template.itemTitle;
+  }
+  return template.layout === "modular" ? "" : BASE_TEMPLATE.itemTitle;
+}
+
+// Composition files written by hand name the parts list "template".
+function compositionOf({ template, legacyComposition }) {
+  if (Array.isArray(template.composition)) {
+    return template.composition;
+  }
+  return Array.isArray(legacyComposition) ? legacyComposition : [];
 }
 
 export function newTemplateId() {

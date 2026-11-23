@@ -88,7 +88,29 @@ function catalogueEntry(docx, group, item, options) {
   return children;
 }
 
-export async function toDocx(model, template) {
+function itemHeadingParagraph({ docx, item, options }) {
+  return new docx.Paragraph({
+    heading: docx.HeadingLevel.HEADING_2,
+    spacing: { before: 240, after: 80 },
+    pageBreakBefore: options.pageBreakBefore,
+    keepNext: true,
+    children: [new docx.TextRun({ text: item.heading, color: options.accent })],
+  });
+}
+
+function composedEntry({ docx, item, options }) {
+  const paragraph = new docx.Paragraph({
+    spacing: { after: 160 },
+    pageBreakBefore: !item.heading && options.pageBreakBefore,
+    children: textRuns(docx, item.text),
+  });
+  if (!item.heading) {
+    return [paragraph];
+  }
+  return [itemHeadingParagraph({ docx, item, options }), paragraph];
+}
+
+export async function toDocx({ model, template }) {
   const docx = await import("docx");
   const format = { ...DEFAULT_DOCX_OPTIONS, ...template.docx };
   const accent = hex(format.accentColor);
@@ -126,7 +148,20 @@ export async function toDocx(model, template) {
       }),
     );
 
-    if (model.layout === "catalogue") {
+    if (model.layout === "modular") {
+      group.items.forEach((item, itemIndex) => {
+        children.push(
+          ...composedEntry({
+            docx,
+            item,
+            options: {
+              accent,
+              pageBreakBefore: format.pageBreak === "item" && itemIndex > 0,
+            },
+          }),
+        );
+      });
+    } else if (model.layout === "catalogue") {
       group.items.forEach((item, itemIndex) => {
         children.push(
           ...catalogueEntry(docx, group, item, {

@@ -31,12 +31,30 @@ function catalogueEntries(group, skipEmpty) {
     .join("\n\n");
 }
 
+function composedEntries(group) {
+  return group.items
+    .map((item) => {
+      const paragraph = escapeInline(item.text);
+      return item.heading
+        ? `### ${escapeInline(item.heading)}\n\n${paragraph}`
+        : paragraph;
+    })
+    .join("\n\n");
+}
+
+function groupBody({ model, group }) {
+  if (model.layout === "catalogue") {
+    return catalogueEntries(group, model.skipEmpty);
+  }
+  if (model.layout === "modular") {
+    return composedEntries(group);
+  }
+  return listingTable(group);
+}
+
 export function toMarkdown(model) {
   const sections = model.groups.map((group) => {
-    const body =
-      model.layout === "catalogue"
-        ? catalogueEntries(group, model.skipEmpty)
-        : listingTable(group);
+    const body = groupBody({ model, group });
     return `## ${escapeInline(group.label)} (${group.items.length})\n\n${body}`;
   });
 
