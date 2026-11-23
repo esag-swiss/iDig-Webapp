@@ -20,6 +20,7 @@
     "docx": "^9.8.1",
     "exceljs": "^4.4.0",
     "geotiff": "^3.0.5",
+    "heic-to": "^1.6.7",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
