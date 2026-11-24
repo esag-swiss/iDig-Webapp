@@ -91,6 +91,7 @@
     "export_import_failed": "Invalid templates file",
     "export_copy": "copy",
     "show_thumbnails": "Show thumbnails",
+    "thumbnail": "Thumbnail",
     "archived_badge": "Archive",
     "archived_not_editable": "Archived item: editing is not allowed",
     "archived_items_modified": "The following archived items cannot be modified: {items}",

@@ -85,6 +85,7 @@
     "export_import_failed": "File di modelli non valido",
     "export_copy": "copia",
     "show_thumbnails": "Mostra miniature",
+    "thumbnail": "Miniatura",
     "archived_badge": "Archivio",
     "archived_not_editable": "Elemento archiviato: modifica non consentita",
     "archived_items_modified": "I seguenti elementi archiviati non possono essere modificati: {items}",
