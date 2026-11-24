@@ -15,7 +15,7 @@
     "fieldTip": "champs disponibles pour le type ou le sous-type sélectionné",
     "show_items_without_coordinates": "Items sans coordonnées",
     "items_without_coordinates_position": "Position : centroïde du contexte de provenance",
-    "approximate_position_no_coordinates": "Position approximative (sans coordonnées)",
+    "approximate_position_no_coordinates": "Position (centroïde du contexte de provenance)",
     "upload local pref": "Charger les préférences d'un fichier local",
     "upload pref from trench": "Charger les préférences depuis un secteur choisi",
     "selectProfile": "Choisir un profil",

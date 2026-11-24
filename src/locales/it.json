@@ -15,7 +15,7 @@
     "fieldTip": "campi disponibili per il tipo o sottotipo selezionato",
     "show_items_without_coordinates": "Elementi senza coordinate",
     "items_without_coordinates_position": "Posizione: centroide del contesto di provenienza",
-    "approximate_position_no_coordinates": "Posizione approssimativa (senza coordinate)",
+    "approximate_position_no_coordinates": "Posizione (centroide del contesto di provenienza)",
     "upload local pref": "Carica file di preferenze locali",
     "upload pref from trench": "Carica preferenze da un settore scelto",
     "photos": "Foto",
