@@ -347,6 +347,24 @@ import { resolveFieldDefinition } from "@/services/fieldDefinition";
 import { isArchived } from "@/services/archivedItems";
 import { printItemSheet as printItemSheetDocument } from "@/services/itemPrint";
 
+// Technical fields the iPad app does not show either: photos are shown in the
+// gallery, not as raw "n=… d=…" text.
+const HIDDEN_EXTRA_FIELDS = [
+  "IdentifierUUID",
+  "Trench",
+  "RightsLocked",
+  "RightsTrashed",
+  "RightsDeleted",
+  "DateTimeZone",
+  "RelationAttachments",
+];
+
+// Columns computed by the table (e.g. "_thumbnail") that Tabulator writes into
+// the rows it displays.
+function isTableOnlyField(field) {
+  return field.startsWith("_");
+}
+
 export default {
   name: "TheItem",
   components: {
@@ -470,26 +488,17 @@ export default {
     },
 
     listFieldsNotIncludedInGroups() {
-      let notToDisplay = [
-        // "IdentifierUUID",
-        "Trench",
-        "RightsLocked",
-        "RightsTrashed",
-        "RightsDeleted",
-        "DateTimeZone",
-      ];
-      let fieldsNotPrinsentInGroup = [];
-
-      this.groupOfFieldsAccordingToType.forEach((obj) => {
-        obj.fields.forEach((key) => {
-          notToDisplay.push(key.field);
-        });
-      });
-
-      fieldsNotPrinsentInGroup = this.fieldsOfCurrentItem.filter(
-        (item) => !notToDisplay.includes(item),
+      const groupedFields = this.groupOfFieldsAccordingToType.flatMap((group) =>
+        group.fields.map(({ field }) => field),
       );
-      return fieldsNotPrinsentInGroup;
+      const hiddenFields = new Set([...HIDDEN_EXTRA_FIELDS, ...groupedFields]);
+
+      return this.fieldsOfCurrentItem.filter(
+        (field) =>
+          !hiddenFields.has(field) &&
+          !isTableOnlyField(field) &&
+          this.selectedItem[field] !== undefined,
+      );
     },
   },
 
