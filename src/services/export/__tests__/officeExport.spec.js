@@ -69,7 +69,7 @@ describe("toDocx", () => {
       layout: "catalogue",
       docx: { orientation: "landscape", font: "Georgia", pageBreak: "item" },
     });
-    const blob = await toDocx(model, template);
+    const blob = await toDocx({ model, template });
     const zip = await JSZip.loadAsync(await blob.arrayBuffer());
     const documentXml = await zip.file("word/document.xml").async("string");
     const stylesXml = await zip.file("word/styles.xml").async("string");

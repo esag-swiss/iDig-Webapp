@@ -117,15 +117,22 @@
             :hint="$t('app.export_variables', { variables: titleVariables })"
           />
           <q-input
-            v-if="current.layout === 'catalogue'"
+            v-if="current.layout !== 'listing'"
             v-model="current.itemTitle"
             dense
             outlined
             :label="$t('app.export_item_title')"
-            :hint="$t('app.export_item_title_hint', { example: itemExample })"
+            :hint="itemTitleHint"
           />
 
-          <div>
+          <TheExportTemplatesComposition
+            v-if="current.layout === 'modular'"
+            v-model="current.composition"
+            :preview-item="previewItem"
+            :preview-context="previewContext"
+          />
+
+          <div v-if="current.layout !== 'modular'">
             <div class="text-caption text-grey-8">
               {{ $t("app.export_fields") }}
             </div>
@@ -136,7 +143,7 @@
             />
           </div>
           <q-select
-            v-if="current.fieldsMode === 'custom'"
+            v-if="current.layout !== 'modular' && current.fieldsMode === 'custom'"
             v-model="current.fields"
             dense
             outlined
@@ -248,6 +255,7 @@
 
 <script>
 import { Notify } from "quasar";
+import TheExportTemplatesComposition from "@/components/TheExportTemplatesComposition.vue";
 import {
   DEFAULT_TEMPLATES,
   loadTemplates,
@@ -259,10 +267,13 @@ import {
 
 export default {
   name: "TheExportTemplates",
+  components: { TheExportTemplatesComposition },
   props: {
     modelValue: { type: Boolean, default: false },
     selectedId: { type: String, default: null },
     fieldOptions: { type: Array, default: () => [] },
+    previewItem: { type: Object, default: null },
+    previewContext: { type: Object, default: () => ({}) },
   },
   emits: ["update:modelValue", "saved"],
 
@@ -299,7 +310,17 @@ export default {
       return [
         { label: this.$t("app.export_layout_catalogue"), value: "catalogue" },
         { label: this.$t("app.export_layout_listing"), value: "listing" },
+        { label: this.$t("app.export_layout_modular"), value: "modular" },
       ];
+    },
+    itemTitleHint() {
+      const hint = this.$t("app.export_item_title_hint", {
+        example: this.itemExample,
+      });
+      if (this.current.layout !== "modular") {
+        return hint;
+      }
+      return `${hint}. ${this.$t("app.export_item_title_optional_hint")}`;
     },
     fieldsModeOptions() {
       return [
@@ -352,7 +373,12 @@ export default {
 
   methods: {
     layoutLabel(layout) {
-      return layout === "catalogue" ? "Catalogue" : "Listing";
+      const labels = {
+        catalogue: "Catalogue",
+        listing: "Listing",
+        modular: this.$t("app.export_layout_modular_short"),
+      };
+      return labels[layout] ?? layout;
     },
     filterFields(value, update) {
       update(() => {

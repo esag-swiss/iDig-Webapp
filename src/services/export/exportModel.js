@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { fieldsSchema } from "@/assets/nativeFields";
+import { composeText } from "@/services/export/composedText";
 
 // Technical fields left out when a template exports "every filled field".
 // Trench is the webapp's synthetic copy of the sector, already in Source.
@@ -120,10 +121,55 @@ function columnFields(template, items, context) {
   return [...known, ...others];
 }
 
+function itemHeading({ item, template, context }) {
+  const heading = fillPattern(template.itemTitle, (field) =>
+    formatValue(field, item, context),
+  );
+  // A composed text carries its own identifier: no heading unless asked for.
+  if (template.layout === "modular") {
+    return heading;
+  }
+  return heading || item.Identifier || "";
+}
+
+function composedGroup({ groupItems, template, context }) {
+  return {
+    columns: [
+      { field: "Identifier", label: fieldLabel("Identifier", context) },
+      { field: "_text", label: context.textLabel ?? "Text" },
+    ],
+    items: groupItems.map((item) => {
+      const text = composeText({
+        composition: template.composition,
+        valueOf: (field) => formatValue(field, item, context),
+      });
+      return {
+        heading: itemHeading({ item, template, context }),
+        text,
+        values: [formatValue("Identifier", item, context), text],
+      };
+    }),
+  };
+}
+
+function fieldsGroup({ groupItems, template, context }) {
+  const columns = columnFields(template, groupItems, context).map((field) => ({
+    field,
+    label: fieldLabel(field, context),
+  }));
+  return {
+    columns,
+    items: groupItems.map((item) => ({
+      heading: itemHeading({ item, template, context }),
+      values: columns.map(({ field }) => formatValue(field, item, context)),
+    })),
+  };
+}
+
 // Groups items by type (one sheet / section per type) and resolves every
 // label and value, so that the docx, xlsx and markdown writers only lay out
 // text.
-export function buildExportModel(items, template, context) {
+export function buildExportModel({ items, template, context }) {
   const byType = new Map();
   items.forEach((item) => {
     const key = item.Type || "";
@@ -144,24 +190,14 @@ export function buildExportModel(items, template, context) {
     const groupItems = [...byType.get(key)].sort((a, b) =>
       compareValues(a[template.sortBy], b[template.sortBy]),
     );
-    const columns = columnFields(template, groupItems, context).map(
-      (field) => ({ field, label: fieldLabel(field, context) }),
-    );
+    const buildGroup =
+      template.layout === "modular" ? composedGroup : fieldsGroup;
 
     return {
       key,
       label:
         context.typePluralLabels?.[key] || context.typeLabels?.[key] || key,
-      columns,
-      items: groupItems.map((item) => ({
-        heading:
-          fillPattern(template.itemTitle, (field) =>
-            formatValue(field, item, context),
-          ) ||
-          item.Identifier ||
-          "",
-        values: columns.map(({ field }) => formatValue(field, item, context)),
-      })),
+      ...buildGroup({ groupItems, template, context }),
     };
   });
 

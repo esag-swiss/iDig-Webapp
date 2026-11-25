@@ -94,6 +94,8 @@
       v-model="isTemplatesDialogOpen"
       :selected-id="templateId"
       :field-options="fieldOptions"
+      :preview-item="previewItem"
+      :preview-context="exportContext"
       @saved="onTemplatesSaved"
     />
   </div>
@@ -165,6 +167,9 @@ export default {
         null
       );
     },
+    previewItem() {
+      return this.exportItems[0] ?? null;
+    },
     templateOptions() {
       return this.templates.map((t) => ({ label: t.name, value: t.id }));
     },
@@ -180,6 +185,7 @@ export default {
           [].concat(t.type),
         ),
         tableFields: this.checkedFieldNames,
+        textLabel: this.$t("app.export_text_column"),
         itemsByUuid: new Map(
           this.checkedTrenchesItems.map((item) => [item.IdentifierUUID, item]),
         ),
@@ -242,11 +248,11 @@ export default {
 
       this.exportingFormat = format;
       try {
-        const model = buildExportModel(
-          this.exportItems,
+        const model = buildExportModel({
+          items: this.exportItems,
           template,
-          this.exportContext,
-        );
+          context: this.exportContext,
+        });
         let blob;
         if (format === "md") {
           blob = new Blob([toMarkdown(model)], {
@@ -257,7 +263,7 @@ export default {
           blob = await toXlsx(model, template);
         } else {
           const { toDocx } = await import("@/services/export/docxExport");
-          blob = await toDocx(model, template);
+          blob = await toDocx({ model, template });
         }
 
         const link = document.createElement("a");

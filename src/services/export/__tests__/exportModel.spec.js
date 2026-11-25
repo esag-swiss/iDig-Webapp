@@ -67,11 +67,7 @@ describe("fillPattern", () => {
 
 describe("buildExportModel", () => {
   it("groups by type in preferences order and sorts items naturally", () => {
-    const model = buildExportModel(
-      items,
-      normalizeTemplate({ layout: "listing" }),
-      context,
-    );
+    const model = buildExportModel({ items, template: normalizeTemplate({ layout: "listing" }), context });
 
     expect(model.title).toBe("Amarynthos – T1, T2");
     expect(model.groups.map((g) => g.label)).toEqual(["Objets", "Contextes"]);
@@ -83,11 +79,7 @@ describe("buildExportModel", () => {
   });
 
   it("exports every filled field except technical ones in 'all' mode", () => {
-    const model = buildExportModel(
-      items,
-      normalizeTemplate({ layout: "catalogue", fieldsMode: "all" }),
-      context,
-    );
+    const model = buildExportModel({ items, template: normalizeTemplate({ layout: "catalogue", fieldsMode: "all" }), context });
     const contextFields = model.groups[1].columns.map((c) => c.field);
 
     expect(contextFields).toContain("RelationIncludesUUID");
@@ -99,11 +91,7 @@ describe("buildExportModel", () => {
   });
 
   it("uses the custom field list in its order", () => {
-    const model = buildExportModel(
-      items,
-      normalizeTemplate({ fieldsMode: "custom", fields: ["Title", "Type"] }),
-      context,
-    );
+    const model = buildExportModel({ items, template: normalizeTemplate({ fieldsMode: "custom", fields: ["Title", "Type"] }), context });
     expect(model.groups[0].columns.map((c) => c.field)).toEqual([
       "Title",
       "Type",
@@ -113,11 +101,7 @@ describe("buildExportModel", () => {
 
 describe("catalogueRows and exportFileName", () => {
   it("drops empty values when asked and builds a safe file name", () => {
-    const model = buildExportModel(
-      items,
-      normalizeTemplate({ fieldsMode: "custom", fields: ["Title", "Type"] }),
-      { ...context, project: "A/B" },
-    );
+    const model = buildExportModel({ items, template: normalizeTemplate({ fieldsMode: "custom", fields: ["Title", "Type"] }), context: { ...context, project: "A/B" } });
     const group = model.groups[0];
     expect(catalogueRows(group, group.items[1], true)).toEqual([
       { label: "Type", value: "Objet" },
@@ -129,11 +113,7 @@ describe("catalogueRows and exportFileName", () => {
 describe("toMarkdown", () => {
   it("writes one table per type for listings, escaping cells", () => {
     const md = toMarkdown(
-      buildExportModel(
-        items,
-        normalizeTemplate({ layout: "listing" }),
-        context,
-      ),
+      buildExportModel({ items, template: normalizeTemplate({ layout: "listing" }), context }),
     );
     expect(md).toContain("# Amarynthos – T1, T2");
     expect(md).toContain("## Objets (2)");
@@ -143,17 +123,44 @@ describe("toMarkdown", () => {
 
   it("writes one entry per item for catalogues", () => {
     const md = toMarkdown(
-      buildExportModel(
-        items,
-        normalizeTemplate({
+      buildExportModel({ items, template: normalizeTemplate({
           layout: "catalogue",
           fieldsMode: "custom",
           fields: ["Description"],
-        }),
-        context,
-      ),
+        }), context }),
     );
     expect(md).toContain("### 2 – Coin \\| bronze");
     expect(md).toContain("- **Description** : line 1<br>line 2");
+  });
+});
+
+describe("when exporting a composed text", () => {
+  const template = normalizeTemplate({
+    layout: "modular",
+    composition: ["{Identifier}", { separator: ". " }, "{Title}"],
+  });
+  const model = buildExportModel({
+    items: [items[1]],
+    template,
+    context: { ...context, textLabel: "Texte" },
+  });
+
+  it("should give each item its composed text", () => {
+    expect(model.groups[0].items[0].text).toBe("2. Coin | bronze");
+  });
+
+  it("should leave the item heading empty by default", () => {
+    expect(model.groups[0].items[0].heading).toBe("");
+  });
+
+  it("should export the identifier and the text as columns", () => {
+    expect(model.groups[0].columns.map((column) => column.label)).toEqual([
+      "Identifier",
+      "Texte",
+    ]);
+  });
+
+  it("should write one escaped paragraph per item in Markdown", () => {
+    expect(toMarkdown(model)).toContain("\n\n2. Coin \\| bronze\n");
   });
 });

@@ -2,9 +2,11 @@ import { describe, it, expect, beforeEach } from "vitest";
 import {
   DEFAULT_TEMPLATES,
   loadTemplates,
+  normalizeTemplate,
   saveTemplates,
   parseTemplatesFile,
 } from "@/services/export/exportTemplates";
+import { EXAMPLE_COMPOSITION } from "@/services/export/composedText";
 
 describe("export templates storage", () => {
   beforeEach(() => localStorage.clear());
@@ -38,5 +40,29 @@ describe("parseTemplatesFile", () => {
   it("rejects files that are not templates", () => {
     expect(() => parseTemplatesFile("[1, 2]")).toThrow();
     expect(() => parseTemplatesFile("nope")).toThrow();
+  });
+});
+
+describe("DEFAULT_TEMPLATES", () => {
+  it("should offer a composed text template filled with the example", () => {
+    const composed = DEFAULT_TEMPLATES.find((t) => t.layout === "modular");
+    expect(composed.composition).toEqual(EXAMPLE_COMPOSITION);
+  });
+});
+
+describe("normalizeTemplate", () => {
+  describe("when importing a composition written by hand", () => {
+    const template = normalizeTemplate({
+      layout: "modular",
+      template: ["{Identifier}"],
+    });
+
+    it("should read the parts list as the composition", () => {
+      expect(template.composition).toEqual(["{Identifier}"]);
+    });
+
+    it("should drop the hand written key", () => {
+      expect(template).not.toHaveProperty("template");
+    });
   });
 });
