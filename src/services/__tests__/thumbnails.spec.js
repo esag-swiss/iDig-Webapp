@@ -10,87 +10,163 @@ vi.mock("@/services/indexedDbManager", () => ({
 import { apiFetchAttachment } from "@/services/ApiClient";
 import { getImageFromDB, addPlanToDB } from "@/services/indexedDbManager";
 
-const attachments = (...names) =>
-  names.map((name) => `n=${name}\nd=sum-${name}`).join("\n\n");
+const ATTACHMENT = { name: "a.jpg", checksum: "c" };
+const TRENCH = "T";
 
-describe("thumbnailAttachment", () => {
-  let thumbnailAttachment;
-  beforeEach(async () => {
-    ({ thumbnailAttachment } = await import("@/services/thumbnails"));
+function serializedAttachments(...names) {
+  return names.map((name) => `n=${name}\nd=sum-${name}`).join("\n\n");
+}
+
+function mockDownload() {
+  apiFetchAttachment.mockResolvedValue({
+    data: new Blob(["x"]),
+    headers: { "content-type": "image/jpeg" },
   });
+}
 
-  it("returns the first displayable photo of the item", () => {
-    const item = { RelationAttachments: attachments("plan.tif", "a.JPG") };
-    expect(thumbnailAttachment(item)).toEqual({
-      name: "a.JPG",
-      checksum: "sum-a.JPG",
+async function importThumbnails() {
+  vi.resetModules();
+  vi.clearAllMocks();
+  globalThis.URL.createObjectURL = vi.fn(() => "blob:url");
+  return import("@/services/thumbnails");
+}
+
+describe("thumbnails", () => {
+  describe("thumbnailAttachment", () => {
+    let thumbnailAttachment;
+    beforeEach(async () => {
+      ({ thumbnailAttachment } = await importThumbnails());
+    });
+
+    it("should return the first displayable photo of the item", () => {
+      const item = {
+        RelationAttachments: serializedAttachments("plan.tif", "a.JPG"),
+      };
+
+      expect(thumbnailAttachment(item)).toEqual({
+        name: "a.JPG",
+        checksum: "sum-a.JPG",
+      });
+    });
+
+    it("should fall back to the photo of an included item", () => {
+      const item = { RelationIncludesUUID: "U1\nU2" };
+      const trenchItems = [
+        { IdentifierUUID: "U1" },
+        {
+          IdentifierUUID: "U2",
+          RelationAttachments: serializedAttachments("b.png"),
+        },
+      ];
+
+      expect(thumbnailAttachment(item, trenchItems)?.name).toBe("b.png");
+    });
+
+    it("should return null when the item has no attachment", () => {
+      expect(thumbnailAttachment({})).toBeNull();
+    });
+
+    it("should return null when no attachment is a photo", () => {
+      const item = { RelationAttachments: serializedAttachments("x.wld") };
+
+      expect(thumbnailAttachment(item)).toBeNull();
     });
   });
 
-  it("falls back to the photo of an included item", () => {
-    const item = { RelationIncludesUUID: "U1\nU2" };
-    const trenchItems = [
-      { IdentifierUUID: "U1" },
-      { IdentifierUUID: "U2", RelationAttachments: attachments("b.png") },
-    ];
-    expect(thumbnailAttachment(item, trenchItems)?.name).toBe("b.png");
-  });
-
-  it("returns null when nothing can be shown", () => {
-    expect(thumbnailAttachment({})).toBeNull();
-    expect(
-      thumbnailAttachment({ RelationAttachments: attachments("x.wld") }),
-    ).toBeNull();
-  });
-});
-
-describe("loadThumbnailUrl", () => {
-  let loadThumbnailUrl;
-  beforeEach(async () => {
-    vi.resetModules();
-    vi.clearAllMocks();
-    globalThis.URL.createObjectURL = vi.fn(() => "blob:url");
-    ({ loadThumbnailUrl } = await import("@/services/thumbnails"));
-  });
-
-  it("reads the IndexedDB cache without downloading", async () => {
-    getImageFromDB.mockResolvedValue({ imageBlob: new Blob(["x"]) });
-
-    expect(await loadThumbnailUrl({ name: "a.jpg", checksum: "c" }, "T")).toBe(
-      "blob:url",
-    );
-    expect(getImageFromDB).toHaveBeenCalledWith({}, "a");
-    expect(apiFetchAttachment).not.toHaveBeenCalled();
-  });
-
-  it("downloads on a cache miss, stores it, and loads only once", async () => {
-    getImageFromDB.mockResolvedValue(null);
-    apiFetchAttachment.mockResolvedValue({
-      data: new Blob(["x"]),
-      headers: { "content-type": "image/jpeg" },
+  describe("loadThumbnailUrl", () => {
+    let loadThumbnailUrl;
+    beforeEach(async () => {
+      ({ loadThumbnailUrl } = await importThumbnails());
     });
 
-    const attachment = { name: "a.jpg", checksum: "c" };
-    await loadThumbnailUrl(attachment, "T");
-    await loadThumbnailUrl(attachment, "T");
+    describe("when the photo is in the IndexedDB cache", () => {
+      beforeEach(() => {
+        getImageFromDB.mockResolvedValue({ imageBlob: new Blob(["x"]) });
+      });
 
-    expect(apiFetchAttachment).toHaveBeenCalledTimes(1);
-    expect(apiFetchAttachment).toHaveBeenCalledWith("a.jpg", "c", "T");
-    expect(addPlanToDB).toHaveBeenCalledWith({}, "a", expect.any(Blob), null);
+      it("should return an object url", async () => {
+        expect(
+          await loadThumbnailUrl({ attachment: ATTACHMENT, trench: TRENCH }),
+        ).toBe("blob:url");
+      });
+
+      it("should not download the photo", async () => {
+        await loadThumbnailUrl({ attachment: ATTACHMENT, trench: TRENCH });
+
+        expect(apiFetchAttachment).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("when the photo is not in the cache", () => {
+      beforeEach(async () => {
+        getImageFromDB.mockResolvedValue(null);
+        mockDownload();
+        await loadThumbnailUrl({ attachment: ATTACHMENT, trench: TRENCH });
+        await loadThumbnailUrl({ attachment: ATTACHMENT, trench: TRENCH });
+      });
+
+      it("should download it only once", () => {
+        expect(apiFetchAttachment).toHaveBeenCalledTimes(1);
+      });
+
+      it("should download it from its trench", () => {
+        expect(apiFetchAttachment).toHaveBeenCalledWith("a.jpg", "c", "T");
+      });
+
+      it("should store it in IndexedDB under its name without extension", () => {
+        expect(addPlanToDB).toHaveBeenCalledWith(
+          {},
+          "a",
+          expect.any(Blob),
+          null,
+        );
+      });
+    });
+
+    describe("when the download fails", () => {
+      beforeEach(() => {
+        vi.spyOn(console, "error").mockImplementation(() => {});
+        getImageFromDB.mockResolvedValue(null);
+        apiFetchAttachment.mockRejectedValueOnce(new Error("offline"));
+      });
+
+      it("should return null", async () => {
+        expect(
+          await loadThumbnailUrl({ attachment: ATTACHMENT, trench: TRENCH }),
+        ).toBeNull();
+      });
+
+      it("should retry the next time", async () => {
+        await loadThumbnailUrl({ attachment: ATTACHMENT, trench: TRENCH });
+        mockDownload();
+
+        expect(
+          await loadThumbnailUrl({ attachment: ATTACHMENT, trench: TRENCH }),
+        ).toBe("blob:url");
+      });
+    });
   });
 
-  it("returns null on failure and retries next time", async () => {
-    vi.spyOn(console, "error").mockImplementation(() => {});
-    getImageFromDB.mockResolvedValue(null);
-    apiFetchAttachment.mockRejectedValueOnce(new Error("offline"));
-
-    const attachment = { name: "a.jpg", checksum: "c" };
-    expect(await loadThumbnailUrl(attachment, "T")).toBeNull();
-
-    apiFetchAttachment.mockResolvedValue({
-      data: new Blob(["x"]),
-      headers: {},
+  describe("reloadThumbnailUrl", () => {
+    let loadThumbnailUrl;
+    let reloadThumbnailUrl;
+    beforeEach(async () => {
+      ({ loadThumbnailUrl, reloadThumbnailUrl } = await importThumbnails());
+      getImageFromDB.mockResolvedValue({ imageBlob: new Blob(["broken"]) });
+      mockDownload();
+      await loadThumbnailUrl({ attachment: ATTACHMENT, trench: TRENCH });
     });
-    expect(await loadThumbnailUrl(attachment, "T")).toBe("blob:url");
+
+    it("should download the photo again even when it is cached", async () => {
+      await reloadThumbnailUrl({ attachment: ATTACHMENT, trench: TRENCH });
+
+      expect(apiFetchAttachment).toHaveBeenCalledTimes(1);
+    });
+
+    it("should replace the cached photo in IndexedDB", async () => {
+      await reloadThumbnailUrl({ attachment: ATTACHMENT, trench: TRENCH });
+
+      expect(addPlanToDB).toHaveBeenCalledWith({}, "a", expect.any(Blob), null);
+    });
   });
 });

@@ -30,7 +30,7 @@ function firstDisplayableAttachment(relationAttachments) {
 
 // The item's own photo, otherwise the photo of the first included item that
 // has one (e.g. a Context showing its Image items), like the item form does.
-export function thumbnailAttachment(item, trenchItems = []) {
+function thumbnailAttachment(item, trenchItems = []) {
   const own = firstDisplayableAttachment(item?.RelationAttachments);
   if (own || !item?.RelationIncludesUUID) {
     return own;
@@ -52,35 +52,65 @@ export function thumbnailAttachment(item, trenchItems = []) {
   return null;
 }
 
-async function loadThumbnailBlob({ name, checksum }, trench) {
-  // Same store and key as the item form and map plans: the name without
-  // extension, in rasterImagesStore.
-  const imageName = name.split(".")[0];
-  const db = await openDB();
-  const cached = await getImageFromDB(db, imageName);
-  if (cached) {
-    return cached.imageBlob;
-  }
+// Same store and key as the item form and map plans: the name without
+// extension, in rasterImagesStore.
+function cacheKey(name) {
+  return name.split(".")[0];
+}
 
-  const response = await apiFetchAttachment(name, checksum, trench);
+async function downloadThumbnailBlob({ attachment, trench }) {
+  const response = await apiFetchAttachment(
+    attachment.name,
+    attachment.checksum,
+    trench,
+  );
   const blob = new Blob([response.data], {
     type: response.headers?.["content-type"],
   });
-  await addPlanToDB(db, imageName, blob, null);
+  const db = await openDB();
+  await addPlanToDB(db, cacheKey(attachment.name), blob, null);
   return blob;
 }
 
-export function loadThumbnailUrl(attachment, trench) {
-  if (!urlCache.has(attachment.name)) {
-    const promise = loadThumbnailBlob(attachment, trench)
-      .then((blob) => URL.createObjectURL(blob))
-      .catch((error) => {
-        // Forget failures so the image is retried next time it is shown.
-        urlCache.delete(attachment.name);
-        console.error(`Thumbnail ${attachment.name} failed to load:`, error);
-        return null;
-      });
-    urlCache.set(attachment.name, promise);
+async function loadThumbnailBlob({ attachment, trench }) {
+  const db = await openDB();
+  const cached = await getImageFromDB(db, cacheKey(attachment.name));
+  if (cached) {
+    return cached.imageBlob;
   }
-  return urlCache.get(attachment.name);
+  return downloadThumbnailBlob({ attachment, trench });
 }
+
+function cacheThumbnailUrl({ attachment, loadBlob }) {
+  const promise = loadBlob()
+    .then((blob) => URL.createObjectURL(blob))
+    .catch((error) => {
+      // Forget failures so the image is retried next time it is shown.
+      urlCache.delete(attachment.name);
+      console.error(`Thumbnail ${attachment.name} failed to load:`, error);
+      return null;
+    });
+  urlCache.set(attachment.name, promise);
+  return promise;
+}
+
+function loadThumbnailUrl({ attachment, trench }) {
+  if (urlCache.has(attachment.name)) {
+    return urlCache.get(attachment.name);
+  }
+  return cacheThumbnailUrl({
+    attachment,
+    loadBlob: () => loadThumbnailBlob({ attachment, trench }),
+  });
+}
+
+// For a cached photo the browser cannot decode: download it again from the
+// server and replace the cache.
+function reloadThumbnailUrl({ attachment, trench }) {
+  return cacheThumbnailUrl({
+    attachment,
+    loadBlob: () => downloadThumbnailBlob({ attachment, trench }),
+  });
+}
+
+export { thumbnailAttachment, loadThumbnailUrl, reloadThumbnailUrl };
