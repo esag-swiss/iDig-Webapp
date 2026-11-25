@@ -89,7 +89,7 @@
           <BasePhotoUploader
             :photos="pendingPhotos"
             :label="$t('app.add_photos')"
-            accept="image/*"
+            accept="image/*,.heic,.heif"
             multiple
             @add="addPhotos"
             @remove="removePendingPhoto"
@@ -323,13 +323,13 @@ import {
   savePendingAttachment,
   deletePendingAttachment,
 } from "@/services/indexedDbManager";
+import { parseImageAttachments } from "@/services/attachmentUtils";
 import {
-  computeSHA256,
-  fileExtension,
-  addAttachment,
-  removeAttachment,
-  parseImageAttachments,
-} from "@/services/attachmentUtils";
+  createPhotoItem,
+  addUuidToRelation,
+  removeUuidFromRelation,
+} from "@/services/photoItem";
+import { preparePhoto } from "@/services/photoFile";
 import TheItemType from "@/components/TheItemType.vue";
 import TheItemRightsStatus from "@/components/TheItemRightsStatus.vue";
 import TheItemBoolean from "@/components/TheItemBoolean.vue";
@@ -537,15 +537,22 @@ export default {
       });
     },
 
-    setRelationAttachments(newValue) {
-      this.selectedItem.RelationAttachments = newValue;
-
-      const trench = this.selectedItem.Trench;
-      const storeItem = this.checkedTrenchesData[trench]?.find(
+    // The form may show a copy of the store item: both must get the change.
+    setSelectedItemField({ field, value }) {
+      const storeItem = this.checkedTrenchesData[
+        this.selectedItem.Trench
+      ]?.find(
         (item) => item.IdentifierUUID === this.selectedItem.IdentifierUUID,
       );
-      if (storeItem && storeItem !== this.selectedItem) {
-        storeItem.RelationAttachments = newValue;
+      for (const item of new Set([this.selectedItem, storeItem])) {
+        if (!item) {
+          continue;
+        }
+        if (value) {
+          item[field] = value;
+        } else {
+          delete item[field];
+        }
       }
     },
 
@@ -558,33 +565,9 @@ export default {
 
       for (const file of selectedFiles) {
         try {
-          const checksum = await computeSHA256(file);
-          const name = `${checksum}.${fileExtension(file.name)}`;
-
-          await savePendingAttachment(db, {
-            name,
-            checksum,
-            trench: this.selectedItem.Trench,
-            blob: file,
-          });
-          await addPlanToDB(db, name.split(".")[0], file, null);
-
-          this.setRelationAttachments(
-            addAttachment(
-              this.selectedItem.RelationAttachments,
-              name,
-              checksum,
-            ),
-          );
-
-          if (!this.pendingPhotos.some((photo) => photo.name === name)) {
-            this.pendingPhotos.push({
-              name,
-              url: URL.createObjectURL(file),
-            });
-          }
+          await this.addPhotoItem({ db, file });
         } catch (error) {
-          console.error("Erreur lors de l'ajout de la photo :", error);
+          console.error("Failed to add the photo:", error);
           Notify.create({
             type: "negative",
             message: this.$t("app.photo_add_failed"),
@@ -593,24 +576,70 @@ export default {
       }
     },
 
-    async removePendingPhoto(name) {
-      this.setRelationAttachments(
-        removeAttachment(this.selectedItem.RelationAttachments, name),
-      );
+    async addPhotoItem({ db, file }) {
+      const { blob: photo, extension } = await preparePhoto({ file });
+      const { item, attachment } = createPhotoItem({
+        parent: this.selectedItem,
+        uuid: crypto.randomUUID().toUpperCase(),
+        extension,
+        date: new Date(),
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      });
 
+      await savePendingAttachment(db, {
+        name: attachment.name,
+        checksum: attachment.checksum,
+        trench: item.Trench,
+        blob: photo,
+      });
+      await addPlanToDB(db, item.IdentifierUUID, photo, null);
+
+      this.checkedTrenchesData[item.Trench].push(item);
+      this.setSelectedItemField({
+        field: "RelationIncludesUUID",
+        value: addUuidToRelation({
+          relationUuids: this.selectedItem.RelationIncludesUUID,
+          uuid: item.IdentifierUUID,
+        }),
+      });
+      this.pendingPhotos.push({
+        name: attachment.name,
+        photoItemUuid: item.IdentifierUUID,
+        url: URL.createObjectURL(photo),
+      });
+    },
+
+    async removePendingPhoto(name) {
       const index = this.pendingPhotos.findIndex(
         (photo) => photo.name === name,
       );
-      if (index !== -1) {
-        URL.revokeObjectURL(this.pendingPhotos[index].url);
-        this.pendingPhotos.splice(index, 1);
+      if (index === -1) {
+        return;
       }
+      const { photoItemUuid, url } = this.pendingPhotos[index];
+      URL.revokeObjectURL(url);
+      this.pendingPhotos.splice(index, 1);
+
+      const trenchItems = this.checkedTrenchesData[this.selectedItem.Trench];
+      const photoItemIndex = trenchItems.findIndex(
+        (item) => item.IdentifierUUID === photoItemUuid,
+      );
+      if (photoItemIndex !== -1) {
+        trenchItems.splice(photoItemIndex, 1);
+      }
+      this.setSelectedItemField({
+        field: "RelationIncludesUUID",
+        value: removeUuidFromRelation({
+          relationUuids: this.selectedItem.RelationIncludesUUID,
+          uuid: photoItemUuid,
+        }),
+      });
 
       try {
         const db = await openDB();
         await deletePendingAttachment(db, name);
       } catch (error) {
-        console.error("Erreur lors de la suppression de la photo :", error);
+        console.error("Failed to delete the pending photo:", error);
       }
     },
 
